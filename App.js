@@ -2,7 +2,7 @@
 require('./globals')
 
 import React from 'react'
-import { Button, TouchableOpacity, Image } from 'react-native'
+import { Button, TouchableOpacity, Image, Text } from 'react-native'
 
 // app navigation
 import { createStackNavigator } from 'react-navigation-stack'
@@ -24,28 +24,30 @@ const StackNavigator = createStackNavigator({
     screen: Home,
     navigationOptions : ({ navigation }) => {
       return {
-        title: 'Home',
+        title: '',
+        // header styling
+        headerStyle: headers.body,
         // right header button
         headerRight: 
-          <Button
-            title={'Settings'}
+          <TouchableOpacity
             onPress={() => navigation.navigate('Settings')}
-          />,
+            style={{marginRight: 20, borderWidth: global.borderWidth }}
+          >
+          <Text  style={{color: 'white'}}>Settings</Text>
+          </TouchableOpacity>,
         // left header button
         headerLeft:
         <TouchableOpacity 
-          //activeOpacity={.7}
           style={headers.userImageTouchableOpacity}
         >
         <Image
-          //resizeMode={'cover'}
+          resizeMode={'stretch'}
           style={headers.userImage}
           source={global.placeholderUserImage}
         />
         </TouchableOpacity>,
 
-        // header styling
-        headerStyle: headers.body,
+        headerTintColor: 'white',
 
       }
 
@@ -59,11 +61,18 @@ const StackNavigator = createStackNavigator({
       return {
         title: 'Settings',
         // left header Home button
+        // header styling
+        headerStyle: headers.body,
+        //  left side of  header
         headerLeft: 
-        <Button
-          title={'Home'}
-          onPress={() => navigation.goBack(null)}
-        />,
+          <TouchableOpacity
+            onPress={() => navigation.goBack(null)}
+            style={{marginLeft: 20, borderWidth: global.borderWidth }}
+          >
+          <Text style={{color: 'white'}}>Home</Text>
+          </TouchableOpacity>,
+
+        headerTintColor: 'white',
 
       }
 

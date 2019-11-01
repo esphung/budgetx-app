@@ -22,7 +22,7 @@ global.borderWidth = 1
 
 if (global.isDebugModeOn != true) {
   // screen background
-  global.backgroundColor = colors.darkGreyBlue
+  global.backgroundColor = colors.darkTwo
 
   // no debug borders
   global.borderWidth = 0

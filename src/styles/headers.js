@@ -15,25 +15,35 @@ global.screenHeight = Math.round(Dimensions.get('window').height);
 require('../../globals')
 
 const headers = StyleSheet.create({
+
   body: {
     height:  global.screenHeight * 0.08,
-
     backgroundColor: global.backgroundColor,
+
+    borderBottomWidth: global.borderWidth,
 
   },
 
   userImageTouchableOpacity: {
-    backgroundColor: global.backgroundColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 35,
+    height: 35,
     borderRadius: 50,
-    marginLeft: global.screenWidth * 0.045,
-    borderWidth:  global.borderWidth,
-  },
-  userImage: {
-    //alignItems: 'center',
-    width: 30,
-    height: 30,
-    //opacity: 0.2,
 
+    backgroundColor: global.backgroundColor,
+    marginLeft: global.screenWidth * 0.04,
+    borderWidth:  global.borderWidth,
+
+    //opacity: 0.2,
+  },
+
+  userImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 18,
+
+    borderWidth:  global.borderWidth,
 
   },
 
