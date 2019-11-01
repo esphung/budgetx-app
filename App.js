@@ -2,7 +2,7 @@
 require('./globals')
 
 import React from 'react'
-import { Button, TouchableOpacity } from 'react-native'
+import { Button, TouchableOpacity, Image } from 'react-native'
 
 // app navigation
 import { createStackNavigator } from 'react-navigation-stack'
@@ -33,14 +33,26 @@ const StackNavigator = createStackNavigator({
           />,
         // left header button
         headerLeft:
-        <TouchableOpacity style={headers.userImageTouchableOpacity}>
-        </TouchableOpacity>
+        <TouchableOpacity 
+          //activeOpacity={.7}
+          style={headers.userImageTouchableOpacity}
+        >
+        <Image
+          //resizeMode={'cover'}
+          style={headers.userImage}
+          source={global.placeholderUserImage}
+        />
+        </TouchableOpacity>,
+
+        // header styling
+        headerStyle: headers.body,
 
       }
 
     }
 
   },
+
   Settings: {
     screen: Settings,
     navigationOptions : ({ navigation }) => {
@@ -54,8 +66,11 @@ const StackNavigator = createStackNavigator({
         />,
 
       }
+
     }
-  }
+
+  },
+
 })
 
 

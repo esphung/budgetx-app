@@ -6,7 +6,7 @@ date:      Thu Oct 31 14:32:40 2019
 */
 
 // app debug mode
-global.isDebugModeOn = true
+//global.isDebugModeOn = true
 
 // ui colors
 import colors from './colors'
