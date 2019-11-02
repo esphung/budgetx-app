@@ -16,36 +16,62 @@ require('../../globals')
 
 const headers = StyleSheet.create({
 
-  body: {
+  headerBody: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
     height:  global.screenHeight * 0.08,
     backgroundColor: global.backgroundColor,
-
     borderBottomWidth: global.borderWidth,
-
   },
 
   userImageTouchableOpacity: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
     width: 35,
     height: 35,
-    borderRadius: 50,
-
+    //borderRadius: 50,
     backgroundColor: global.backgroundColor,
-    marginLeft: global.screenWidth * 0.04,
+    marginLeft: global.screenWidth * 0.025,
     borderWidth:  global.borderWidth,
-
-    //opacity: 0.2,
   },
 
   userImage: {
+    flex: 1,
     width: '100%',
     height: '100%',
-    borderRadius: 18,
-
+    borderRadius: 17,
     borderWidth:  global.borderWidth,
-
   },
+
+  searchBtnTouchableOpacity: {
+    flex: 1,
+    width: 35,
+    height: 35,
+    borderWidth: global.borderWidth,
+    backgroundColor: global.backgroundColor,
+  },
+
+  searchImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    borderWidth:  global.borderWidth,
+  },
+
+  settingsBtnTouchableOpacity: {
+    flex: 1,
+    width: 35,
+    height: 35,
+    borderWidth: global.borderWidth,
+    backgroundColor:global.backgroundColor,
+  },
+
+  settingsImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    borderWidth:  global.borderWidth, 
+  }
 
 });
 

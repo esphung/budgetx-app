@@ -35,3 +35,5 @@ if (global.isDebugModeOn != true) {
 
 // placeholder images
 global.placeholderUserImage = require('./assets/user-placeholder-200x250.png')
+
+global.placeholder500x500 = require('./assets/placeholder500x500.png')
