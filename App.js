@@ -42,14 +42,14 @@ const StackNavigator = createStackNavigator({
           justifyContent: 'center',
           height: '100%',
           width: '100%',
-          marginLeft: 2,//global.screenWidth * 0.01,
+          marginLeft: global.screenWidth * 0.015,
           borderWidth: global.borderWidth,
         }}>
           <TouchableOpacity style={headers.userImageTouchableOpacity}>
             <Image
-              resizeMode={'center'}
+              resizeMode={'contain'}
               style={headers.userImage}
-              source={global.placeholderUserImage}
+              source={global.placeholder500x500}
             />
           </TouchableOpacity>
 
@@ -121,21 +121,22 @@ const StackNavigator = createStackNavigator({
               style={headers.searchBtnTouchableOpacity}>
 
             <Image
-              resizeMode={'center'}
+              resizeMode={'contain'}
               style={headers.searchImage}
-              source={global.placeholder500x500}
+              source={global.searchIcon}
             /> 
 
             </TouchableOpacity>
       
           {/* Settings Button */}
-            <TouchableOpacity onPress={() => navigation.navigate('Settings')}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Settings')}
               style={headers.settingsBtnTouchableOpacity}>
 
               <Image
                 resizeMode={'center'}
                 style={headers.settingsImage}
-                source={global.placeholder500x500}
+                source={global.settingsIcon}
               />
 
             </TouchableOpacity>

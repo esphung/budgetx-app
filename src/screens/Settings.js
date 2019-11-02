@@ -10,7 +10,6 @@ import styles from '../styles/styles'
 export default function Settings() {
   return (
     <View style={styles.body}>
-      <Text style={styles.basicText}>Welcome to Budget X Settings Page</Text>
     </View>
   );
 }

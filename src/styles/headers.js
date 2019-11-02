@@ -45,23 +45,26 @@ const headers = StyleSheet.create({
 
   searchBtnTouchableOpacity: {
     flex: 1,
-    width: 35,
-    height: 35,
+    alignItems: 'center',
+    marginLeft: 3,
+    width: 30,
+    height: 30,
     borderWidth: global.borderWidth,
     backgroundColor: global.backgroundColor,
   },
 
   searchImage: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: '60%',
+    height: '60%',
     borderWidth:  global.borderWidth,
   },
 
   settingsBtnTouchableOpacity: {
     flex: 1,
-    width: 35,
-    height: 35,
+    alignItems: 'center',
+    width: 30,
+    height: 30,
     borderWidth: global.borderWidth,
     backgroundColor:global.backgroundColor,
   },
