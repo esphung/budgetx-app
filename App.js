@@ -134,7 +134,7 @@ const StackNavigator = createStackNavigator({
               style={headers.settingsBtnTouchableOpacity}>
 
               <Image
-                resizeMode={'center'}
+                resizeMode={'cover'}
                 style={headers.settingsImage}
                 source={global.settingsIcon}
               />
