@@ -4,14 +4,24 @@ PURPOSE:    home screen for budget x app
 AUTHOR:     eric phung
 DATE:       Thu Oct 31 23:17:49 2019
 */
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 
-import styles from '../styles/styles'
+
+'use strict';
+
+import React, { Component } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text
+} from 'react-native';
+
+// ui styles
+import styles from '../styles/styles';
 
 // ui colors
-import colors from '../../colors'
+import colors from '../../colors';
 
+// top rectangle
 const rectangle2 = {
   width: 346,
   height: 74,
@@ -23,36 +33,92 @@ const rectangle2 = {
     height: 5
   },
   shadowRadius: 16,
-  shadowOpacity: 1
+  shadowOpacity: 1,
+
+  borderWidth: global.borderWidth,
 };
 
-const dateView = {
-  width: 375,
-  height: 31,
-  opacity: 0.5,
-  backgroundColor: colors.dark
-};
-
-const dateText = {
-  width: 131,
+//  current balance
+const currentBalanceTitleCopy9 = {
+  width: 113,
+  //width: '100%',
   height: 20,
   fontFamily: "SFProDisplay",
-  fontSize: 17,
+  fontSize: 15,
   fontWeight: "normal",
   fontStyle: "normal",
-  letterSpacing: 0.13,
+  letterSpacing: 0.1,
   textAlign: "center",
-  color: "rgba(255, 255, 255, 0.5)"
+  textAlignVertical: 'top',
+  color: colors.shamrockGreen,
+
+  borderWidth: global.borderWidth,
+  borderColor: 'white',
+  borderStyle: 'solid',
 };
 
-export default function Home() {
-  return (
-    <View style={styles.body}>
-      <View style={rectangle2} />
-{/*      <View style={dateView}>
-        <Text  style={dateText}>{String(new Date())}</Text>
-      </View>*/}
-    </View>
-  );
+// current spent
+const currentSpentTitleCopy10 = {
+  width: 113,
+  //width: '100%',
+  height: 20,
+  fontFamily: "SFProDisplay",
+  fontSize: 15,
+  fontWeight: "normal",
+  fontStyle: "normal",
+  letterSpacing: 0.1,
+  textAlign: "center",
+  color: colors.pinkRed,
+
+  borderWidth: global.borderWidth,
+  borderColor: 'white',
+  borderStyle: 'solid',
+};
+
+class Home extends Component {
+  render() {
+    const balancesView =  <View style={rectangle2}>
+                            <View style={
+                              {
+                                flex: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+
+                                borderWidth: global.borderWidth,
+                                borderColor: 'white',
+                                borderStyle: 'solid',
+                              }
+                            }>
+                              <View style={{
+                                width: '50%',
+                                height: '50%',
+                                alignItems: 'center',
+                              }}><Text style={currentBalanceTitleCopy9}>Current Balance</Text></View>
+
+                              <View style={{
+                                width: '50%',
+                                height: '50%',
+                                alignItems: 'center',
+                              }}><Text style={currentSpentTitleCopy10}>Spent This Month</Text></View>
+
+                            </View>
+                          </View>
+    return (
+      <View style={styles.body}>
+        { balancesView }
+      </View>
+    );
+  }
 }
+
+
+export default Home;
+
+
+
+
+
+
+
+
 
