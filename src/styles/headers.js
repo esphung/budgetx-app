@@ -17,16 +17,16 @@ require('../../globals')
 const headers = StyleSheet.create({
 
   headerBody: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    //flex: 1,
+    // alignItems: 'center',
+    // justifyContent: 'center',
     height:  global.screenHeight * 0.08,
     backgroundColor: global.backgroundColor,
     borderBottomWidth: global.borderWidth,
   },
 
   userImageTouchableOpacity: {
-    flex: 1,
+    //flex: 1,
     width: 35,
     height: 35,
     //borderRadius: 50,
@@ -36,7 +36,7 @@ const headers = StyleSheet.create({
   },
 
   userImage: {
-    flex: 1,
+    //flex: 1,
     width: '100%',
     height: '100%',
     borderRadius: 17,
