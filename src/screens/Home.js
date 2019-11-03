@@ -38,7 +38,7 @@ class Home extends Component {
           this.setState({dateLabelView: <DateLabelView date={data.date} />})
     else
       // use today's date as default
-      this.setState({dateLabelView: <DateLabelView />})
+      this.setState({dateLabelView: <DateLabelView date={new Date()} />})
 
     // check for transactions
     if (data.transactions)

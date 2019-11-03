@@ -41,20 +41,15 @@ function getFormattedDate(today)
 
 }
 
-var date = new Date();
-var text = getFormattedDate(date);
-
-const dateString  = String(date)
-
 class DateLabelView extends Component {
   constructor(props) {
     super(props);
-    console.log(date)
+    console.log(this.props.date)
   
     this.state = {};
   }
   render() {
-    const dateString = getFormattedDate(date)
+    const dateString = getFormattedDate(this.props.date)
     return (
       <View style={styles.container}>
         <Text style={styles.date}>{ dateString }</Text>
