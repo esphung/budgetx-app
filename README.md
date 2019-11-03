@@ -4,7 +4,8 @@
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua.
 #### Category
-Finance
+* Finance
+
 #### Features [^1]
 [^1]:   -   Features
         -   Beautiful user interface
@@ -18,6 +19,3 @@ Finance
         -   Multiple accounts
         -   Different currencies
         -   Reports and charts
-
-
-

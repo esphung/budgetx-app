@@ -9,6 +9,8 @@ import { StyleSheet } from 'react-native'
 // import global variables
 require('../../globals')
 
+// ui colors
+import colors from '../../colors';
 
 const styles = StyleSheet.create({
   body: {
@@ -18,11 +20,13 @@ const styles = StyleSheet.create({
     backgroundColor: global.backgroundColor,
     borderWidth: global.borderWidth,
   },
+
   basicText: {
     fontSize:   global.basicTextFontSize,
     color:      global.basicTextColor,
     borderWidth: global.borderWidth,
   }
+
 });
 
-export default styles
+export default styles;
