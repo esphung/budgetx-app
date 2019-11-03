@@ -1,11 +1,16 @@
 # Budget X Mobile App #
-### An app that tracks your moneys. ###
-#### Description
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua.
-#### Category
-* Finance
-
+### An app that tracks your personal finances ###
+<img src="assets/icon.png" alt="drawing" width="200"/><hr>
+#### Purpose ####
+Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+#### Author ####
+Eric Phung
+#### Created ####
+Sun Nov  3 04:53:21 2019
+#### Category ####
+Finance
+<!-- ![Budget X Icon](assets/icon.png "Budget X Icon")
+ -->
 #### Features [^1]
 [^1]:   -   Features
         -   Beautiful user interface
