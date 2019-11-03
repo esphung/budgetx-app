@@ -4,7 +4,6 @@ PURPOSE:    right sid e of header. with setttings and search btns
 AUTHOR:     eric phung 
 DATE:       Sun Nov  3 14:25:49 2019
 */
-'use strict';
 
 import React, { Component } from 'react';
 

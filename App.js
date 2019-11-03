@@ -21,6 +21,8 @@ require('./globals')
 import React from 'react'
 import {
   StyleSheet,
+  TouchableOpacity,
+  Text
 } from 'react-native';
 
 // app navigation
@@ -63,7 +65,7 @@ const StackNavigator = createStackNavigator({
         headerStyle: styles.container,
 
         headerLeft: leftHeaderView,
-        
+
         headerRight: <HeaderRightView />,
 
         headerTintColor: 'white',
