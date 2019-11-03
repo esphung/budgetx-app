@@ -30,7 +30,8 @@ function getFormattedDate(today)
     ]
 
     //return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hour+':'+minu;
-    return day + ', ' + monthNames[mm] + ' ' + parseInt(dd, 10);
+    return day + ', ' + monthNames[mm - 1] + ' ' + parseInt(dd, 10)
+    
 }
 
 var date = new Date();

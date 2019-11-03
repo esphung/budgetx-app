@@ -4,6 +4,7 @@ PURPOSE:    colors for ui scheme
 AUTHOR:     eric phung
 DATE:       Fri Nov  1 12:08:40 2019
 */
+
 // UI Colors
 const colors = {
   darkGreyBlue: "#314054",
