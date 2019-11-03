@@ -1,3 +1,9 @@
+/*
+FILENAME:   HeaderLeftView.js
+PURPOSE:    left side of header in home view
+AUTHOR:     eric phung
+DATE:       Sun Nov  3 13:47:40 2019
+*/
 'use strict';
 
 import React, { Component } from 'react';
@@ -14,33 +20,35 @@ import {
 // ui colors
 import colors from '../../colors';
 
-import headers from '../styles/headers';
-
-const userMessageInfo =   'Enter your email'
-
 class HeaderLeftView extends Component {
+  constructor(props) {
+    super(props);
+  
+    this.state = {
+      text: ''
+    };
+
+    this.handleTextChange = this.handleTextChange.bind(this)
+
+    this.submitBtnPressed  = this.submitBtnPressed.bind(this)
+  }
+
+  handleTextChange(text){
+    this.setState({text})
+    console.log(text)
+  }
+
+  submitBtnPressed(text){
+    console.log(this.state)
+  }
+
   render() {
     return (
-      <View style={
-        {
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          width: global.screenWidth * 0.7,
-          marginLeft: global.screenWidth * 0.015,
-          paddingBottom: global.screenHeight * 0.005,//4,
-          borderWidth: global.borderWidth,
-        }
-      }>
+      <View style={styles.container}>
         <TouchableOpacity style={styles.userImageMaskView}>
           <Image
             resizeMode={'contain'}
-            style={
-              styles.userImage,
-              headers.userImage
-            }
+            style={styles.userImage}
             source={global.placeholder500x500}
           />
         </TouchableOpacity>
@@ -63,7 +71,7 @@ class HeaderLeftView extends Component {
             }
 
           }>
-            { userMessageHeaderString }
+            {this.props.boldMessage}
           </Text>
 
           <TextInput 
@@ -83,19 +91,21 @@ class HeaderLeftView extends Component {
               }
             }
 
-            placeholder={userMessageInfo}
+            placeholder={this.props.normalMessage}//{userMessageInfo}
 
             placeholderTextColor = {global.basicTextColor}
 
             autoCompleteType={'email'}//android
 
-            keyboardAppearance={'dark'}// ios
+            keyboardAppearance={'dark'}//ios
 
-            clearButtonMode={'while-editing'}//ios
+            //clearButtonMode={'while-editing'}//ios
 
-            //clearTextOnFocus={true}//ios
+            textContentType={'emailAddress'}//ios
 
             keyboardType={'email-address'}
+
+            returnKeyType={'next'}
 
             autoCorrect={false}
 
@@ -103,8 +113,13 @@ class HeaderLeftView extends Component {
 
             maxLength={22}
 
-            //onChangeText={(text) => this.setState({textInput})}
-            //value={this.state.textInput}
+            onSubmitEditing={this.submitBtnPressed}
+
+            onChangeText={(text) => this.handleTextChange(text)}
+
+            editable={this.props.isInputEnabled}  
+
+            //value={this.state.text}
           >
           </TextInput>
 
@@ -116,6 +131,13 @@ class HeaderLeftView extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    marginLeft: 3,
+    borderWidth: global.borderWidth,
+  },
+
   userImageMaskView: {
     width: 33,
     height: 33,
@@ -125,10 +147,14 @@ const styles = StyleSheet.create({
     marginLeft: global.screenWidth * 0.025,
     borderWidth:  global.borderWidth,
   },
+
   userImage: {
-    width: 27,
-    height: 27,
-    opacity: 0.2,
+    width: '100%',
+    height: '100%',
+    borderRadius: 17,
+    // width: 27,// if user image available???
+    // height: 27,// if user image available???
+    opacity: 0.2,// if no image available
     backgroundColor: "#ffffff"
   },
   userMessageView: {

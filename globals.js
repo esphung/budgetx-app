@@ -11,6 +11,12 @@ date:      Thu Oct 31 14:32:40 2019
 // ui colors
 import colors from './colors'
 
+// dimensions
+import { Dimensions } from "react-native";
+
+global.screenWidth = Math.round(Dimensions.get('window').width);
+global.screenHeight = Math.round(Dimensions.get('window').height);
+
 // Basic Text
 global.basicTextFontSize = 17
 

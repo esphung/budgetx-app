@@ -6,7 +6,10 @@ DATE:       Fri Nov  1 13:20:51 2019
 */
 // test data
 data = {
-  user: null
+  user: {
+    email: null,
+    name: null
+  }
 }
 
 // import global app variables
@@ -17,12 +20,7 @@ require('./globals')
 
 import React from 'react'
 import {
-  Button,
-  TouchableOpacity,
-  Image,
-  Text,
-  View,
-  TextInput,
+  StyleSheet,
 } from 'react-native';
 
 // app navigation
@@ -32,19 +30,28 @@ import { createAppContainer } from 'react-navigation';
 import Home from './src/screens/Home';
 import Settings from './src/screens/Settings';
 
-// components
+// header components
 import HeaderLeftView from './src/components/HeaderLeftView'
+import HeaderRightView from './src/components/HeaderRightView'
 
-import headers from './src/styles/headers';
-
-// check for user data
-if (data.user) {
-  userMessageHeaderString = data.user.name
-                      
-  console.log(data.user)
+leftHeaderView = function(){
+  if (data.username && data.user.email) {
+    // user has name and email
+    return <HeaderLeftView 
+              boldMessage={data.user.name}
+              normalMessage={data.user.email} 
+              isInputEnabled={false}
+          />
+  }
+  else {
+    // unknown user information
+    return <HeaderLeftView 
+              boldMessage={'Get cross-device sync'}
+              normalMessage={'Enter your email'} 
+              isInputEnabled={true}
+          />
+  }
 }
-else
-  userMessageHeaderString = 'Get cross-device sync'
 
 const StackNavigator = createStackNavigator({
   Home:  {
@@ -52,54 +59,14 @@ const StackNavigator = createStackNavigator({
     navigationOptions : ({ navigation }) => {
       return {
         title: '',
-        // header styling
-        headerStyle: headers.headerBody,
-        // left header button
-        headerLeft: <HeaderLeftView normalMessage={'Enter your email'} />,
 
-        // right header buttons
-        headerRight: 
-          <View style={
-            {
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
+        headerStyle: styles.container,
 
-              justifyContent: 'center',
-              height: '100%',//global.screenHeight * 0.05,
-              width: global.screenWidth * 0.25,
-              marginRight: global.screenWidth * 0.01,
-              borderWidth: global.borderWidth,
-            }
-          }>
-            {/* Search Button */}
-            <TouchableOpacity onPress={''}
-              style={headers.searchBtnTouchableOpacity}>
+        headerLeft: leftHeaderView,
+        
+        headerRight: <HeaderRightView />,
 
-            <Image
-              resizeMode={'contain'}
-              style={headers.searchImage}
-              source={global.searchIcon}
-            /> 
-
-            </TouchableOpacity>
-      
-          {/* Settings Button */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Settings')}
-              style={headers.settingsBtnTouchableOpacity}>
-
-              <Image
-                resizeMode={'cover'}
-                style={headers.settingsImage}
-                source={global.settingsIcon}
-              />
-
-            </TouchableOpacity>
-
-          </View>,
-
-        headerTintColor: global.basicTextColor,
+        headerTintColor: 'white',
 
       }
 
@@ -112,10 +79,7 @@ const StackNavigator = createStackNavigator({
     navigationOptions : ({ navigation }) => {
       return {
         title: 'Settings',
-        // left header Home button
-        // header styling
-        headerStyle: headers.headerBody,
-        //  left side of  header
+        headerStyle: styles.container,
         headerLeft: 
           <TouchableOpacity
             onPress={() => navigation.goBack(null)}
@@ -133,6 +97,14 @@ const StackNavigator = createStackNavigator({
   },
 
 })
+
+const styles = StyleSheet.create({
+  container: {
+    height:  global.screenHeight * 0.08,
+    backgroundColor: global.backgroundColor,
+    borderBottomWidth: global.borderWidth,
+  },
+});
 
 
 const AppContainer = createAppContainer(StackNavigator);

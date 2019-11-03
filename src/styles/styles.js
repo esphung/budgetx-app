@@ -13,14 +13,6 @@ require('../../globals')
 import colors from '../../colors';
 
 const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    alignItems: 'center',
-    //justifyContent: 'center',
-    backgroundColor: global.backgroundColor,
-    borderWidth: global.borderWidth,
-  },
-
   basicText: {
     fontSize:   global.basicTextFontSize,
     color:      global.basicTextColor,
