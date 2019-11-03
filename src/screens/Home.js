@@ -40,8 +40,8 @@ const rectangle2 = {
 
 //  current balance
 const currentBalanceTitleCopy9 = {
-  width: 113,
-  //width: '100%',
+  //width: 113,
+  width: '100%',
   height: 20,
   fontFamily: "SFProDisplay",
   fontSize: 15,
@@ -59,8 +59,8 @@ const currentBalanceTitleCopy9 = {
 
 // current spent
 const currentSpentTitleCopy10 = {
-  width: 113,
-  //width: '100%',
+  //width: 113,
+  width: '100%',
   height: 20,
   fontFamily: "SFProDisplay",
   fontSize: 15,
