@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     flex: 0.05,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 26,
+    marginTop: 31,
 
     width: '100%',//375,
     height: 31,

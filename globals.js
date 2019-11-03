@@ -6,7 +6,7 @@ date:      Thu Oct 31 14:32:40 2019
 */
 
 // app debug mode
-//global.isDebugModeOn = true
+global.isDebugModeOn = true
 
 // ui colors
 import colors from './colors'
@@ -24,7 +24,7 @@ global.basicTextFontSize = 17
 global.smallTextFontSize = 15
 
 // debug borders
-global.borderWidth = 1
+global.borderWidth = 0
 
 if (global.isDebugModeOn != true) {
   // screen background
@@ -37,7 +37,6 @@ if (global.isDebugModeOn != true) {
   global.basicTextColor = 'white'
 
 }
-
 
 // placeholder images
 global.placeholderUserImage = require('./assets/user-placeholder-200x250.png')

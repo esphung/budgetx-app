@@ -10,7 +10,6 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
 
@@ -20,16 +19,21 @@ import DateLabelView from  '../components/DateLabelView';
 
 import NoTransactionsView from '../components/NoTransactionsView';
 
+import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesView';
+
 // ui colors
 import colors from '../../colors';
 
 // import global variables
 require('../../globals')
 
-// test data
-data = {
-  date:           null,
-  transactions:   null
+// home screen test data
+var data = {
+  date:                 null,
+  transactions:         null,
+  currentBalanceValue:  0,
+  currentSpentValue:    0,
+  categories: []
 }
 
 class Home extends Component {
@@ -58,14 +62,21 @@ class Home extends Component {
   }
 
   render() {
+    console.log(data)
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={styles.container}>
-          <BalanceView />
-          { this.state.dateLabelView }
-          { this.state.transactionsView }
-        </View>
-      </TouchableWithoutFeedback>
+      <View style={styles.container}>
+        <BalanceView 
+          currentBalanceValue=  {data.currentBalanceValue}
+          currentSpentValue=    {data.currentSpentValue}
+        />
+{/*        { this.state.dateLabelView }
+        
+        { this.state.transactionsView }*/}
+
+        <ScrollingPillCategoriesView categories={data.categories} />
+
+      </View>
+      
     );
   }
 }

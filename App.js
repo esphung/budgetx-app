@@ -4,11 +4,12 @@ PURPOSE:    entry point for app
 AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
-// test data
-data = {
+
+// app.js test data
+var data = {
   user: {
-    email: null,
-    name: null
+    email: null,//'esphung@gmail.com',//null,
+    name: null,//'eric phung',//null
   }
 }
 
@@ -37,7 +38,7 @@ import HeaderLeftView from './src/components/HeaderLeftView'
 import HeaderRightView from './src/components/HeaderRightView'
 
 leftHeaderView = function(){
-  if (data.username && data.user.email) {
+  if (data.user.name && data.user.email) {
     // user has name and email
     return <HeaderLeftView 
               boldMessage={data.user.name}
@@ -58,21 +59,21 @@ leftHeaderView = function(){
 const StackNavigator = createStackNavigator({
   Home:  {
     screen: Home,
-    navigationOptions : ({ navigation }) => {
-      return {
-        title: '',
+    // navigationOptions : ({ navigation }) => {
+    //   return {
+    //     title: '',
 
-        headerStyle: styles.container,
+    //     headerStyle: styles.container,
 
-        headerLeft: leftHeaderView,
+    //     headerLeft: leftHeaderView,
 
-        headerRight: <HeaderRightView />,
+    //     headerRight: <HeaderRightView />,
 
-        headerTintColor: 'white',
+    //     headerTintColor: 'white',
 
-      }
+    //   }
 
-    }
+    // }
 
   },
 

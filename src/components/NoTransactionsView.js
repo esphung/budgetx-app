@@ -14,6 +14,9 @@ import {
   Text
 } from 'react-native';
 
+// import global variables
+require('../../globals')
+
 class NoTransactionsView extends Component {
   render() {
     return (
@@ -24,9 +27,9 @@ class NoTransactionsView extends Component {
           width: 225,
           height: 84,
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
+          borderWidth: global.borderWidth,
+          borderColor: 'white',
+          borderStyle: 'solid',
         }
       }>
 
