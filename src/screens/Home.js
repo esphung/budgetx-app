@@ -2,7 +2,8 @@
 FILENAME:   Home.js
 PURPOSE:    home screen for budget x app
 AUTHOR:     eric phung
-DATE:       Thu Oct 31 23:17:49 2019
+CREATED:    Thu Oct 31 23:17:49 2019
+            Sun Nov  3 05:40:29 2019
 */
 import React, { Component } from 'react';
 import {

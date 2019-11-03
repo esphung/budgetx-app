@@ -1,3 +1,9 @@
+/*
+FILENAME:   NoTransactionsView.js
+PURPOSE:    shows if app has no transaction data
+AUTHOR:     eric phung 
+DATE:       Sun Nov  3 05:41:17 2019
+*/
 'use strict';
 
 import React, { Component } from 'react';

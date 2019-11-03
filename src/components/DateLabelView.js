@@ -1,3 +1,10 @@
+/*
+FILENAME:   DateLabelView.js
+PURPOSE:    shows date to user
+AUTHOR:     eric phung
+DATE:       Sun Nov  3 05:41:52 2019
+*/
+
 'use strict';
 
 import React, { Component } from 'react';

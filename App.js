@@ -4,6 +4,11 @@ PURPOSE:    entry point for app
 AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
+// test data
+data = {
+  user: null
+}
+
 
 // import global app variables
 require('./globals')
@@ -58,9 +63,17 @@ const userEmailInfoView = {
 };
 
 
-const userMessageHeader = 'Get cross-device sync'
-
 const userMessageInfo =   'Enter your email'
+
+// check for user data
+if (data.user) {
+  userMessageHeaderString = data.user.name
+                      
+  console.log(data.user)
+}
+else
+  userMessageHeaderString = 'Get cross-device sync'
+
 
 const StackNavigator = createStackNavigator({
   Home:  {
@@ -113,9 +126,7 @@ const StackNavigator = createStackNavigator({
                 }
 
               }>
-                {
-                  userMessageHeader
-                }
+                { userMessageHeaderString }
               </Text>
 
               <TextInput 
@@ -134,6 +145,7 @@ const StackNavigator = createStackNavigator({
                     borderWidth: global.borderWidth,
                   }
                 }
+
                 placeholder={userMessageInfo}
 
                 placeholderTextColor = {global.basicTextColor}
@@ -157,9 +169,6 @@ const StackNavigator = createStackNavigator({
                 //onChangeText={(text) => this.setState({textInput})}
                 //value={this.state.textInput}
               >
-                {
-                  //userMessageInfo
-                }
               </TextInput>
 
             </View>
