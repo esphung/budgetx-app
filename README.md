@@ -11,16 +11,15 @@ Sun Nov  3 04:53:21 2019
 Finance
 <!-- ![Budget X Icon](assets/icon.png "Budget X Icon")
  -->
-#### Features [^1]
-[^1]:   -   Features
-        -   Beautiful user interface
-        -   Add/remove/edit transactions
-        -   Custom categories
-        -   Advertisement free!
-        -   Sync across different devices
-        -   Back up data to cloud
-        -   Export data as csv, html, qif
-        -   Link personal bank accounts
-        -   Multiple accounts
-        -   Different currencies
-        -   Reports and charts
+#### Features
+*   Beautiful user interface
+*   Add/remove/edit transactions
+*   Custom categories
+*   Advertisement free!
+*   Sync across different devices
+*   Back up data to cloud
+*   Export data as csv, html, qif
+*   Link personal bank accounts
+*   Multiple accounts
+*   Different currencies
+*   Reports and charts
