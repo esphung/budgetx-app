@@ -40,8 +40,14 @@ var text = getFormattedDate(date);
 const dateString  = String(date)
 
 class DateLabelView extends Component {
+  constructor(props) {
+    super(props);
+    console.log(date)
+  
+    this.state = {};
+  }
   render() {
-    const dateString = getFormattedDate(new Date())
+    const dateString = getFormattedDate(date)
     return (
       <View style={styles.container}>
         <Text style={styles.date}>{ dateString }</Text>

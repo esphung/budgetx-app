@@ -23,9 +23,24 @@ import DateLabelView from  '../components/DateLabelView';
 
 import NoTransactionsView from '../components/NoTransactionsView';
 
+// test data
+data = {
+  date: null,
+  transactions: null
+}
+
 class Home extends Component {
   componentDidMount() {
-    if (global.data.transactions)
+    // check for date
+    if (data.date)
+          //show selected date
+          this.setState({dateLabelView: <DateLabelView date={data.date} />})
+    else
+      // use today's date as default
+      this.setState({dateLabelView: <DateLabelView />})
+
+    // check for transactions
+    if (data.transactions)
       console.log(data.transactions)
     else
       this.setState({transactionsView: <NoTransactionsView />})
@@ -41,7 +56,7 @@ class Home extends Component {
     return (
       <View style={styles.body}>
         <BalanceView />
-        <DateLabelView />
+        { this.state.dateLabelView }
         { this.state.transactionsView }
       </View>
     );
@@ -49,7 +64,7 @@ class Home extends Component {
 }
 
 
-export default Home;
+export default Home
 
 
 
