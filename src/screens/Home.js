@@ -19,14 +19,30 @@ import styles from '../styles/styles';
 
 import BalanceView from '../components/BalanceView';
 
-import DateLabel from  '../components/DateLabel';
+import DateLabelView from  '../components/DateLabelView';
+
+import NoTransactionsView from '../components/NoTransactionsView';
 
 class Home extends Component {
+  componentDidMount() {
+    if (global.data.transactions)
+      console.log(data.transactions)
+    else
+      this.setState({transactionsView: <NoTransactionsView />})
+  }
+
+  constructor(props) {
+    super(props);
+  
+    this.state = {};
+  }
+
   render() {
     return (
       <View style={styles.body}>
         <BalanceView />
-        <DateLabel />
+        <DateLabelView />
+        { this.state.transactionsView }
       </View>
     );
   }

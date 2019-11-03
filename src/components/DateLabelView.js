@@ -31,7 +31,7 @@ function getFormattedDate(today)
 
     //return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hour+':'+minu;
     return day + ', ' + monthNames[mm - 1] + ' ' + parseInt(dd, 10)
-    
+
 }
 
 var date = new Date();
@@ -39,7 +39,7 @@ var text = getFormattedDate(date);
 
 const dateString  = String(date)
 
-class DateLabel extends Component {
+class DateLabelView extends Component {
   render() {
     const dateString = getFormattedDate(new Date())
     return (
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default DateLabel;
+export default DateLabelView;

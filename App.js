@@ -5,6 +5,11 @@ AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
 
+// user app data
+global.data = {
+  transactions: null
+}
+
 // import global app variables
 require('./globals')
 
