@@ -27,6 +27,8 @@ import colors from '../../colors';
 // import global variables
 require('../../globals')
 
+import * as Font from 'expo-font';
+
 // home screen test data
 var data = {
   date:                 null,
@@ -37,7 +39,18 @@ var data = {
 }
 
 class Home extends Component {
-  componentDidMount() {
+  async componentWillMount() {
+
+  }
+
+  async componentDidMount() {
+    // load sf pro fonts
+    await Font.loadAsync({
+      'SFProDisplay-Regular': require('../../assets/fonts/SF-Pro-Display-Regular.otf'),
+      'SFProDisplay-Semibold': require('../../assets/fonts/SF-Pro-Display-Semibold.otf')
+    });
+    this.setState({ fontsAreLoaded: true })
+
     // DateLabelView
     if (data.date)
       // use selected date
@@ -55,16 +68,13 @@ class Home extends Component {
 
   }
 
-  constructor(props) {
-    super(props);
-  
-    this.state = {};
+  state = {
+    fontsAreLoaded: false
   }
 
-  render() {
-    console.log(data)
-    return (
-      <View style={styles.container}>
+  getView(){
+    if (this.state.fontsAreLoaded) {
+      return <View style={styles.container}>
         <BalanceView 
           currentBalanceValue=  {data.currentBalanceValue}
           currentSpentValue=    {data.currentSpentValue}
@@ -76,8 +86,18 @@ class Home extends Component {
         <ScrollingPillCategoriesView categories={data.categories} />
 
       </View>
+    }
+    else {
+      return <View />
+    }
+  }
+
+  render() {
+    console.log(data)
+
+    return this.getView() 
       
-    );
+  
   }
 }
 

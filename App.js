@@ -26,6 +26,16 @@ import {
   Text
 } from 'react-native';
 
+// import * as Font from 'expo-font';
+
+
+// // sf pro fonts
+// Font.loadAsync({
+//   'SFProDisplay-Regular': require('./assets/fonts/SF-Pro-Display-Regular.otf'),
+//   'SFProDisplay-Semibold': require('./assets/fonts/SF-Pro-Display-Semibold.otf'),
+// });
+
+
 // app navigation
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';

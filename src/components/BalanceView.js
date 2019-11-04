@@ -5,7 +5,8 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text
+  Text,
+  Platform
 } from 'react-native';
 
 // ui colors
@@ -15,45 +16,46 @@ import colors from '../../colors';
 require('../../globals')
 
 class BalanceView extends Component {
+
   render() {
     return (
       <View style={styles.balanceView}>
-                            <View style={styles.container}>
-                              <View style={{
-                                width: '50%',
-                                //height: '50%',
-                                alignItems: 'center',
-                              }}>
+        <View style={styles.container}>
+          <View style={{
+            width: '50%',
+            //height: '50%',
+            alignItems: 'center',
+          }}>
 
-                                <Text style={styles.currentBalanceTitle}>
-                                  Current Balance
-                                </Text>
+            <Text style={styles.currentBalanceTitle}>
+              Current Balance
+            </Text>
 
-                                <Text style={styles.currentBalanceValue}>
-                                  <Text style={{ color: "rgba(255, 255, 255, 0.5)", }}>$</Text>
-                                  <Text>{ this.props.currentBalanceValue }</Text>
-                                </Text>
-                              
-                              </View>
+            <Text style={styles.currentBalanceValue}>
+              <Text style={{ color: "rgba(255, 255, 255, 0.5)", }}>$</Text>
+              <Text>{ this.props.currentBalanceValue }</Text>
+            </Text>
+          
+          </View>
 
-                              <View style={{
-                                width: '50%',
-                                //height: '50%',
-                                alignItems: 'center',
-                              }}>
-                                <Text style={styles.currentSpentTitle}>
-                                  Spent This Month
-                                </Text>
+          <View style={{
+            width: '50%',
+            //height: '50%',
+            alignItems: 'center',
+          }}>
+            <Text style={styles.currentSpentTitle}>
+              Spent This Month
+            </Text>
 
-                                <Text style={styles.currentSpentValue}>
-                                  <Text style={{ color: "rgba(255, 255, 255, 0.5)", }}>$</Text>
-                                  <Text>{ this.props.currentSpentValue }</Text>
-                                </Text>
+            <Text style={styles.currentSpentValue}>
+              <Text style={{ color: "rgba(255, 255, 255, 0.5)", }}>$</Text>
+              <Text>{ this.props.currentSpentValue }</Text>
+            </Text>
 
-                              </View>
+          </View>
 
-                            </View>
-                          </View>
+        </View>
+      </View>
     );
   }
 }
@@ -93,7 +95,9 @@ const styles = StyleSheet.create({
     //width: 113,
     width: '100%',
     height: 20,
-    fontFamily: "SFProDisplay",
+    
+    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    
     fontSize: 15,
     fontWeight: "normal",
     fontStyle: "normal",
@@ -111,7 +115,9 @@ const styles = StyleSheet.create({
     //width: 113,
     width: '100%',
     height: 20,
-    fontFamily: "SFProDisplay",
+    
+    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    
     fontSize: 15,
     fontWeight: "normal",
     fontStyle: "normal",
@@ -128,7 +134,9 @@ const styles = StyleSheet.create({
     //width: 37,
     width: '100%',
     height: 30,
-    fontFamily: "SFProDisplay",
+    
+    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    
     fontSize: 25,
     fontWeight: "normal",
     fontStyle: "normal",
@@ -145,7 +153,9 @@ const styles = StyleSheet.create({
     //width: 37,
     width: '100%',
     height: 30,
-    fontFamily: "SFProDisplay",
+    
+    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    
     fontSize: 25,
     fontWeight: "normal",
     fontStyle: "normal",

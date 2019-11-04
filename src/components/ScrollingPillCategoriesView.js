@@ -7,7 +7,8 @@ import {
   View,
   SafeAreaView,
   ScrollView,
-  Text
+  Text,
+  TouchableOpacity
 } from 'react-native';
 
 // ui colors
@@ -29,15 +30,15 @@ class ScrollingPillCategoriesView extends Component {
         style={styles.scrollView}
       >
 
-        <Text style = { styles.item }>Afghanistan</Text>
+        <TouchableOpacity><Text style = { styles.item }>Afghanistan</Text></TouchableOpacity>
         <View style = { styles.separator }/>
-        <Text style = { styles.item }>Bangladesh</Text>
+        <TouchableOpacity><Text style = { styles.item }>Bangladesh</Text></TouchableOpacity>
         <View style = { styles.separator }/>
-        <Text style = { styles.item }>Canada</Text>
+        <TouchableOpacity><Text style = { styles.item }>Canada</Text></TouchableOpacity>
         <View style = { styles.separator }/>
-        <Text style = { styles.item }>Denmark</Text>
+        <TouchableOpacity><Text style = { styles.item }>Denmark</Text></TouchableOpacity>
         <View style = { styles.separator }/>
-        <Text style = { styles.item }>Egypt</Text>
+        <TouchableOpacity><Text style = { styles.item }>Egypt</Text></TouchableOpacity>
 
       </ScrollView>
     </SafeAreaView>
@@ -76,16 +77,15 @@ const styles = StyleSheet.create({
 
   item:{
     padding: 15,
-    color: 'black',
     fontSize: 18,
-
     color: 'white',
 
   },
 
   separator: {
-    width: global.borderWidth,//2,
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    width: 2,//2,
+    marginVertical: 10,
+    backgroundColor: 'white'//'rgba(0,0,0,0.5)'
   }
 
 });
