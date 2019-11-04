@@ -6,7 +6,7 @@ date:      Thu Oct 31 14:32:40 2019
 */
 
 // app debug mode
-global.isDebugModeOn = true
+//global.isDebugModeOn = true
 
 // ui colors
 import colors from './colors'
@@ -24,7 +24,7 @@ global.basicTextFontSize = 17
 global.smallTextFontSize = 15
 
 // debug borders
-global.borderWidth = 0
+global.borderWidth = 1
 
 if (global.isDebugModeOn != true) {
   // screen background

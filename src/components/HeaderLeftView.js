@@ -57,11 +57,7 @@ class HeaderLeftView extends Component {
         <View style={styles.userMessageView}>
           <Text style={
             {
-              flex: 1,
-              height: '100%',
-              width: '100%',
-
-              fontFamily: "SFProDisplay",
+              //fontFamily: "SFProDisplay-Regular",
               fontSize: global.smallTextFontSize,//15,
               fontStyle: "normal",
               letterSpacing: 0.12,
@@ -77,11 +73,7 @@ class HeaderLeftView extends Component {
           <TextInput 
             style={
               {
-                flex: 1,
-                height: '100%',
-                width: '100%',
-
-                fontFamily: "SFProDisplay",
+                //fontFamily: "SFProDisplay-Regular",
                 fontSize: global.smallTextFontSize,//15,
                 fontStyle: "normal",
                 letterSpacing: 0.12,
@@ -134,7 +126,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    marginLeft: 3,
+    //marginLeft: 3,
+
+    position: 'absolute',
+    left: 4,
+    top: 12,
     borderWidth: global.borderWidth,
   },
 

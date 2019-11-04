@@ -35,21 +35,22 @@ class DateLabelView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.05,
-    alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 31,
 
     width: '100%',//375,
     height: 31,
     opacity: 0.5,
-    backgroundColor: colors.dark
+    backgroundColor: colors.dark,
+
+    position: 'absolute',
+    left: 0,
+    top: 206,
   },
 
   date: {
     width: '100%',//131,
-    height: 20,
-    fontFamily: 'SFProDisplay',
+    //height: 20,
+    fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',

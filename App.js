@@ -5,14 +5,6 @@ AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
 
-// app.js test data
-var data = {
-  user: {
-    email: null,//'esphung@gmail.com',//null,
-    name: null,//'eric phung',//null
-  }
-}
-
 // import global app variables
 require('./globals')
 
@@ -26,16 +18,6 @@ import {
   Text
 } from 'react-native';
 
-// import * as Font from 'expo-font';
-
-
-// // sf pro fonts
-// Font.loadAsync({
-//   'SFProDisplay-Regular': require('./assets/fonts/SF-Pro-Display-Regular.otf'),
-//   'SFProDisplay-Semibold': require('./assets/fonts/SF-Pro-Display-Semibold.otf'),
-// });
-
-
 // app navigation
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
@@ -46,6 +28,20 @@ import Settings from './src/screens/Settings';
 // header components
 import HeaderLeftView from './src/components/HeaderLeftView'
 import HeaderRightView from './src/components/HeaderRightView'
+
+// test data
+data = {
+  user: {
+    email: null,//'esphung@gmail.com',//null,
+    name: null,//'eric phung',//null
+  },
+  
+  date:                 null,
+  transactions:         null,
+  currentBalanceValue:  0,
+  currentSpentValue:    0,
+  categories:           []
+}
 
 leftHeaderView = function(){
   if (data.user.name && data.user.email) {
@@ -69,21 +65,27 @@ leftHeaderView = function(){
 const StackNavigator = createStackNavigator({
   Home:  {
     screen: Home,
-    // navigationOptions : ({ navigation }) => {
-    //   return {
-    //     title: '',
+    navigationOptions : ({ navigation }) => {
+      return {
+        title: '',
+        headerTransparent: {
+          position: 'absolute',
+          backgroundColor: 'transparent',
+          zIndex: 100,
+          top: 0,
+          left: 0,
+          right: 0
+        },
 
-    //     headerStyle: styles.container,
+        headerLeft: leftHeaderView,
 
-    //     headerLeft: leftHeaderView,
+        headerRight: <HeaderRightView />,
 
-    //     headerRight: <HeaderRightView />,
+        //headerTintColor: 'white',
 
-    //     headerTintColor: 'white',
+      }
 
-    //   }
-
-    // }
+    }
 
   },
 

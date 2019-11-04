@@ -23,6 +23,7 @@ class ScrollingPillCategoriesView extends Component {
     <SafeAreaView style={styles.container}>
       <ScrollView
         horizontal= {true}
+        showsHorizontalScrollIndicator={false}
         // decelerationRate={0}
         // snapToInterval={200} //your element width
         // snapToAlignment={'center'}
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
 
     position: 'absolute',
     //left: ,//this.state.x,
-    top: global.screenHeight * 0.435, //350,//this.state.y
+    top: 460,//global.screenHeight * 0.435, //350,//this.state.y
 
   },
 

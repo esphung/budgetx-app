@@ -13,6 +13,8 @@ import {
   Keyboard
 } from 'react-native';
 
+import * as Font from 'expo-font';
+
 import BalanceView from '../components/BalanceView';
 
 import DateLabelView from  '../components/DateLabelView';
@@ -27,30 +29,27 @@ import colors from '../../colors';
 // import global variables
 require('../../globals')
 
-import * as Font from 'expo-font';
-
-// home screen test data
-var data = {
-  date:                 null,
-  transactions:         null,
-  currentBalanceValue:  0,
-  currentSpentValue:    0,
-  categories: []
-}
+// // test data
+// var data = {
+//   date:                 null,
+//   transactions:         null,
+//   currentBalanceValue:  0,
+//   currentSpentValue:    0,
+//   categories:           []
+// }
 
 class Home extends Component {
+
   async componentWillMount() {
-
-  }
-
-  async componentDidMount() {
     // load sf pro fonts
     await Font.loadAsync({
       'SFProDisplay-Regular': require('../../assets/fonts/SF-Pro-Display-Regular.otf'),
       'SFProDisplay-Semibold': require('../../assets/fonts/SF-Pro-Display-Semibold.otf')
     });
     this.setState({ fontsAreLoaded: true })
+  }
 
+  componentDidMount() {
     // DateLabelView
     if (data.date)
       // use selected date
@@ -68,8 +67,12 @@ class Home extends Component {
 
   }
 
-  state = {
-    fontsAreLoaded: false
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      fontsAreLoaded: false
+    }
   }
 
   getView(){
@@ -79,9 +82,10 @@ class Home extends Component {
           currentBalanceValue=  {data.currentBalanceValue}
           currentSpentValue=    {data.currentSpentValue}
         />
-{/*        { this.state.dateLabelView }
+
+        { this.state.dateLabelView }
         
-        { this.state.transactionsView }*/}
+        { this.state.transactionsView }
 
         <ScrollingPillCategoriesView categories={data.categories} />
 
@@ -93,7 +97,7 @@ class Home extends Component {
   }
 
   render() {
-    console.log(data)
+    console.log('Rendering Home View')
 
     return this.getView() 
       

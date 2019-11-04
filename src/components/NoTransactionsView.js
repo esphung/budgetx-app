@@ -22,9 +22,11 @@ class NoTransactionsView extends Component {
     return (
       <View style={
         {
-          marginTop: 21,
+          position: 'absolute',
+          left: 84,
+          top: 256,
 
-          width: 225,
+          width: 220,
           height: 84,
 
           borderWidth: global.borderWidth,
@@ -49,9 +51,9 @@ class NoTransactionsView extends Component {
 const styles = StyleSheet.create({
   header: {
     opacity: 0.6,
-    fontFamily: "SFProDisplay",
+    fontFamily: "SFProDisplay-Semibold",
     fontSize: 22,
-    fontWeight: "600",
+    //fontWeight: "600",
     fontStyle: "normal",
     lineHeight: 28,
     letterSpacing: 0.17,
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
 
   text: {
     opacity: 0.6,
-    fontFamily: "SFProDisplay",
+    fontFamily: "SFProDisplay-Regular",
     fontSize: 22,
     fontWeight: "normal",
     fontStyle: "normal",

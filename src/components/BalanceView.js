@@ -5,8 +5,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
-  Platform
+  Text
 } from 'react-native';
 
 // ui colors
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
 
     position: 'absolute',
     //left: ,//this.state.x,
-    top: 24,//global.screenHeight * 0.01, //350,//this.state.y
+    top: 110,//global.screenHeight * 0.01, //350,//this.state.y
   },
 
   currentBalanceTitle: {
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 20,
     
-    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 15,
     fontWeight: "normal",
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 20,
     
-    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 15,
     fontWeight: "normal",
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 30,
     
-    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 25,
     fontWeight: "normal",
@@ -154,7 +153,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 30,
     
-    fontFamily: Platform.OS === 'ios' ? 'SFProDisplay-Regular' :  'SFProDisplay-Regular',
+    fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 25,
     fontWeight: "normal",

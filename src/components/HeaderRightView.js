@@ -17,23 +17,49 @@ import {
 import { withNavigation } from 'react-navigation';
 
 class HeaderRightView extends Component {
+
+  constructor(props) {
+    super(props);
+  
+    this.state = {};
+
+    this.searchBtnPressed = this.searchBtnPressed.bind(this)
+
+    this.settingsBtnPressed = this.settingsBtnPressed.bind(this)
+  }
+
+  searchBtnPressed(){
+    console.log('Search Button Pressed!')
+  }
+
+  settingsBtnPressed(){
+    this.props.navigation.navigate('Settings')
+  }
+
   render() {
     return (
       <View style={
             {
-              flex: 1,
+              //flex: 1,
               flexDirection: 'row',
-              alignItems: 'center',
+              //alignItems: 'center',
 
-              justifyContent: 'center',
-              height: '100%',//global.screenHeight * 0.05,
+              //justifyContent: 'center',
+              //height: '100%',//global.screenHeight * 0.05,
               width: global.screenWidth * 0.25,
-              marginRight: global.screenWidth * 0.01,
+
+              position: 'relative',
+              //left: 0,
+              right: 3,
+              top: 8,
+
+
+              //marginRight: global.screenWidth * 0.01,
               borderWidth: global.borderWidth,
             }
           }>
             {/* Search Button */}
-            <TouchableOpacity onPress={''}
+            <TouchableOpacity onPress={this.searchBtnPressed}
               style={styles.searchBtnTouchableOpacity}>
 
             <Image
@@ -46,7 +72,7 @@ class HeaderRightView extends Component {
       
           {/* Settings Button */}
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('Settings')}
+              onPress={this.settingsBtnPressed}
               style={styles.settingsBtnTouchableOpacity}>
 
               <Image
