@@ -39,7 +39,7 @@ function getFakeTransactionsList (argument) {
   return list
 }
 
-data.transactions = getFakeTransactionsList()
+//data.transactions = getFakeTransactionsList()
 
 
 

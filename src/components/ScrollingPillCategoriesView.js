@@ -26,7 +26,7 @@ const pillMinWidth = 73
 
 class ScrollingPillCategoriesView extends Component {
   alertItemName = (item) => {
-    console.log(item.name)
+    alert(item.name)
   }
 
   getListItems = (items) => {
