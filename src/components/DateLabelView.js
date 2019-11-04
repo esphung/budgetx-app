@@ -22,7 +22,12 @@ import { getFormattedDate } from '../functions/getFormattedDate'
 
 class DateLabelView extends Component {
   render() {
-    const dateString = getFormattedDate(this.props.date)
+    const dateString = getFormattedDate(new Date())
+
+    // check for null
+    if (this.props.date) {
+      dateString = getFormattedDate(this.props.date)
+    }
     //console.log('Rendering Date Label Props:', this.props.date)
 
     return (

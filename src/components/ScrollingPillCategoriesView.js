@@ -17,19 +17,21 @@ import {
 // ui colors
 import colors from '../../colors';
 
-// import global variables
-require('../../globals')
+// default user categories
+import categories from '../../categories'
 
-// limits
+// size limits
 const pillMaxWidth = 156
 const pillMinWidth = 73
 
 class ScrollingPillCategoriesView extends Component {
   alertItemName = (item) => {
-    alert(item.name)
+    console.log(item.name)
   }
 
   getListItems = (items) => {
+    if (!items)
+      items = categories
     return items.map((item, index) => (
       <TouchableOpacity
         style={
@@ -50,7 +52,7 @@ class ScrollingPillCategoriesView extends Component {
             borderColor: item.color,
           }
         }
-
+        
         key = {item.id}
 
         onPress={() => this.alertItemName(item)}>
@@ -86,12 +88,9 @@ class ScrollingPillCategoriesView extends Component {
           decelerationRate={0}
           snapToInterval={pillMinWidth} //your element width
           snapToAlignment={'center'}
-        
+
           style={styles.scrollView}>
-
           { this.getListItems(categories) }
-
-
 
 {/*
           <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[0].name}</Text></TouchableOpacity>

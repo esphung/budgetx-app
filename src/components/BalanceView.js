@@ -43,8 +43,14 @@ class BalanceView extends Component {
   }
 
   render() {
-    const {currentBalanceValue} = this.props
-    const {currentSpentValue} = this.props
+    var {currentBalanceValue} = this.props
+    var {currentSpentValue} = this.props
+
+    if (!currentBalanceValue) 
+      currentBalanceValue = 0.00
+
+    if (!currentSpentValue)
+      currentSpentValue = 0.00
 
     return (
       <View style={styles.balanceView}>
