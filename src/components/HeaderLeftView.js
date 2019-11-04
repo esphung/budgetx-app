@@ -103,6 +103,8 @@ class HeaderLeftView extends Component {
 
             autoCapitalize={'none'}
 
+            autoCompleteType={'email'}
+
             maxLength={22}
 
             onSubmitEditing={this.submitBtnPressed}
@@ -111,7 +113,7 @@ class HeaderLeftView extends Component {
 
             editable={this.props.isInputEnabled}  
 
-            //value={this.state.text}
+            value={this.state.text}
           >
           </TextInput>
 
@@ -124,13 +126,13 @@ class HeaderLeftView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     flexDirection: 'row',
     //marginLeft: 3,
 
-    position: 'absolute',
-    left: 4,
-    top: 12,
+    //position: 'relative',
+    left: 14,
+    top: 9,
     borderWidth: global.borderWidth,
   },
 
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.darkGreyBlue,
 
     borderRadius: 50,
-    marginLeft: global.screenWidth * 0.025,
+    //marginLeft: global.screenWidth * 0.025,
     borderWidth:  global.borderWidth,
   },
 

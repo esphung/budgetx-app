@@ -17,7 +17,6 @@ import {
 import { withNavigation } from 'react-navigation';
 
 class HeaderRightView extends Component {
-
   constructor(props) {
     super(props);
   
@@ -42,7 +41,7 @@ class HeaderRightView extends Component {
             {
               //flex: 1,
               flexDirection: 'row',
-              //alignItems: 'center',
+              alignItems: 'center',
 
               //justifyContent: 'center',
               //height: '100%',//global.screenHeight * 0.05,

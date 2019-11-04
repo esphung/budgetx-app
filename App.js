@@ -5,11 +5,14 @@ AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
 
-// import global app variables
-require('./globals')
+// default categories
+import categories from './categories'
 
 // // ui colors
 // import colors from './colors';
+
+// import global app variables
+require('./globals')
 
 import React from 'react'
 import {
@@ -35,12 +38,11 @@ data = {
     email: null,//'esphung@gmail.com',//null,
     name: null,//'eric phung',//null
   },
-  
   date:                 null,
   transactions:         null,
   currentBalanceValue:  0,
   currentSpentValue:    0,
-  categories:           []
+  categories:           categories
 }
 
 leftHeaderView = function(){
@@ -94,16 +96,16 @@ const StackNavigator = createStackNavigator({
     navigationOptions : ({ navigation }) => {
       return {
         title: 'Settings',
-        headerStyle: styles.container,
-        headerLeft: 
-          <TouchableOpacity
-            onPress={() => navigation.goBack(null)}
-            style={{marginLeft: 20, borderWidth: global.borderWidth }}
-          >
-          <Text style={{color: 'white'}}>Home</Text>
-          </TouchableOpacity>,
+        // headerStyle: styles.container,
+        // headerLeft: 
+        //   <TouchableOpacity
+        //     onPress={() => navigation.goBack(null)}
+        //     style={{marginLeft: 20, borderWidth: global.borderWidth }}
+        //   >
+        //   <Text style={{color: 'white'}}>Home</Text>
+        //   </TouchableOpacity>,
 
-        headerTintColor: 'white',
+        // headerTintColor: 'white',
 
       }
 
@@ -113,13 +115,7 @@ const StackNavigator = createStackNavigator({
 
 })
 
-const styles = StyleSheet.create({
-  container: {
-    height:  global.screenHeight * 0.08,
-    backgroundColor: global.backgroundColor,
-    borderBottomWidth: global.borderWidth,
-  },
-});
+
 
 
 const AppContainer = createAppContainer(StackNavigator);

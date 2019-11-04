@@ -17,39 +17,38 @@ import colors from '../../colors';
 // import global variables
 require('../../globals')
 
+
 class ScrollingPillCategoriesView extends Component {
   render() {
+    console.log('Categories Loaded:',this.props.categories.length)
     return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        horizontal= {true}
-        showsHorizontalScrollIndicator={false}
-        // decelerationRate={0}
-        // snapToInterval={200} //your element width
-        // snapToAlignment={'center'}
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          horizontal= {true}
+          showsHorizontalScrollIndicator={false}
+          // decelerationRate={0}
+          // snapToInterval={200} //your element width
+          // snapToAlignment={'center'}
+          style={styles.scrollView}>
 
-        style={styles.scrollView}
-      >
+          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[0].name}</Text></TouchableOpacity>
+          {/*<View style = { styles.separator }/>*/}
+          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[1].name}</Text></TouchableOpacity>
+          {/*<View style = { styles.separator }/>*/}
+          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[2].name}</Text></TouchableOpacity>
+          {/*<View style = { styles.separator }/>*/}
+          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[3].name}</Text></TouchableOpacity>
+          {/*<View style = { styles.separator }/>*/}
+          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[4].name}</Text></TouchableOpacity>
 
-        <TouchableOpacity><Text style = { styles.item }>Afghanistan</Text></TouchableOpacity>
-        <View style = { styles.separator }/>
-        <TouchableOpacity><Text style = { styles.item }>Bangladesh</Text></TouchableOpacity>
-        <View style = { styles.separator }/>
-        <TouchableOpacity><Text style = { styles.item }>Canada</Text></TouchableOpacity>
-        <View style = { styles.separator }/>
-        <TouchableOpacity><Text style = { styles.item }>Denmark</Text></TouchableOpacity>
-        <View style = { styles.separator }/>
-        <TouchableOpacity><Text style = { styles.item }>Egypt</Text></TouchableOpacity>
-
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    //width: 375,
     width: '100%',
     height: 53,
     backgroundColor: colors.darkTwo,
@@ -65,26 +64,46 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderStyle: 'solid',
 
-    position: 'absolute',
+    //position: 'absolute',
     //left: ,//this.state.x,
-    top: 460,//global.screenHeight * 0.435, //350,//this.state.y
+    top: 462,//global.screenHeight * 0.435, //350,//this.state.y
 
   },
 
   scrollView: {
     //backgroundColor: 'pink',
-    //marginHorizontal: 20,
+    marginHorizontal: 15,
   },
 
-  item:{
-    padding: 15,
-    fontSize: 18,
+  pill: {
+    height: 32,
+    justifyContent: 'center',
+
+    marginHorizontal: 4,
+    marginVertical: 10,
+
+    borderRadius: 17,
+    borderWidth: 1,
+    borderStyle: 'solid',
+
+    borderColor: 'white',
+  },
+
+  text:{
+    paddingHorizontal: 15,
+    fontFamily: "SFProDisplay-Regular",
+    fontSize: 17,
+    fontWeight: "normal",
+    fontStyle: "normal",
+    letterSpacing: 0.12,
+
+    borderWidth: global.borderWidth,
     color: 'white',
 
   },
 
   separator: {
-    width: 2,//2,
+    width: 2,
     marginVertical: 10,
     backgroundColor: 'white'//'rgba(0,0,0,0.5)'
   }
