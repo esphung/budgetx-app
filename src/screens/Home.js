@@ -59,19 +59,25 @@ class Home extends Component {
   getView(){
     if (this.state.fontsAreLoaded) {
       return (
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        
         <View style={styles.container}>
+
           <BalanceView 
             currentBalanceValue={data.currentBalanceValue}
             currentSpentValue={data.currentSpentValue}/>
+          
           <DateLabelView date={data.date}/>  
+          
           <TransactionsView transactions={data.transactions}/>
+          
           <ScrollingPillCategoriesView categories={data.categories}/>
+          
           <AmountInputView
             amount={data.amount}
             isTextInputEnabled={false}/>
+
         </View>
-        </TouchableWithoutFeedback>
+       
       )
     }
     else {

@@ -85,8 +85,7 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-
-    textAlign:  'right',
+    
     width: '100%',
     height: 30,
     fontFamily: 'SFProDisplay-Regular',
@@ -104,8 +103,6 @@ const styles = StyleSheet.create({
 
   symbol:  {
     flex: 0.1,
-
-    textAlign:  'right',
     //textAlignVertical: 'center',
     width: '100%',
     height: 30,
