@@ -5,46 +5,62 @@ AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
 
+'use strict';
+
+// app global values
+import './globals'
 
 // load user/test data
-data = {
+global.data = {
   user: {
-    email: '',//'esphung@gmail.com',//null,
-    name: '',//'eric phung',//null
+    email: null,
+    name: null,
   },
   date:                 null,
-  transactions:         null,//['Hello', 'World'],
+  transactions:         null,
   currentBalanceValue:  null,
   currentSpentValue:    null,
-  categories:           null,//categories,
-  amount:               0.00,
+  categories:           null,
+  amount:               null,
 }
 
 
+// First View Screen
 
-Transaction = function(id) {
-  this.idNumber = (new Date()).getTime()
-  this.dateCreated = new Date()
-  this.iconImage = global.placeholder500x500
-  this.payeeName = 'Foo Bar Inc'
-  //console.log('New Transaction:', JSON.stringify(this))
+import React, { Component } from 'react';
+
+import StackNavigator from './StackNavigator';
+
+class App extends Component {
+  render() {
+    return (
+      <StackNavigator />
+    );
+  }
 }
 
+// RootStack defined here 
+export default App;
+
+
+
+
+
+
+import Transaction from './Transaction'
 function getFakeTransactionsList (argument) {
   let list = []
-  for (var i = 5; i >= 0; i--) {
+  for (var i = 0; i <= 5; i++) {
     var transaction = new Transaction()
     list.push(transaction)
+    console.log('New Transaction:',i)
   }
   return list
 }
 
-//data.transactions = getFakeTransactionsList()
+
+
+data.transactions = getFakeTransactionsList()
 
 
 
-
-// load initial view
-import Router from './Router'
-
-export default Router

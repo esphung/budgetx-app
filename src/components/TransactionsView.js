@@ -23,38 +23,6 @@ import { getFormattedDate } from '../functions/getFormattedDate'
 // ui colors
 import colors from '../../colors';
 
-// import global variables
-//require('../../globals')
-
-// (
-//       <View style={
-//         {
-//           position: 'absolute',
-//           left: 84,
-//           top: 256,
-
-//           width: 220,
-//           height: 84,
-
-//           borderWidth: global.borderWidth,
-//           borderColor: 'white',
-//           borderStyle: 'solid',
-//         }
-//       }>
-
-//         <Text style={styles.header}>
-//           No transactions yet.
-//         </Text>
-
-//         <Text style={styles.text}>
-//           Choose category and enter amount below
-//         </Text>
-
-//       </View>
-//     )
-
-
-
 class TransactionsView extends Component {
 
   getEmptyTransactionsView(){

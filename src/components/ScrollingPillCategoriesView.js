@@ -4,7 +4,9 @@
 // CREATED:   03/11/2019 10:43 PM
 
 'use strict';
+
 import React, { Component } from 'react';
+
 import {
   StyleSheet,
   View,
@@ -18,15 +20,15 @@ import {
 import colors from '../../colors';
 
 // default user categories
-import categories from '../../categories'
+import categories from '../data/categories'
 
-// size limits
+// arbitrary size limits
 const pillMaxWidth = 156
 const pillMinWidth = 73
 
 class ScrollingPillCategoriesView extends Component {
   alertItemName = (item) => {
-    alert(item.name)
+    //alert(item.name)
   }
 
   getListItems = (items) => {

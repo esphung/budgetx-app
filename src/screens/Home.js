@@ -6,7 +6,10 @@ CREATED:    Thu Oct 31 23:17:49 2019
             Sun Nov  3 05:40:29 2019
             04/11/2019 03:57 AM
 */
+'use strict';
+
 import React, { Component } from 'react';
+
 import {
   StyleSheet,
   View,
