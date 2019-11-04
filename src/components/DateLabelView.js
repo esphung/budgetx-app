@@ -23,11 +23,13 @@ import { getFormattedDate } from '../functions/getFormattedDate'
 class DateLabelView extends Component {
   render() {
     const dateString = getFormattedDate(this.props.date)
-    console.log('Rendering Date Label View:', this.props.date)
+    console.log('Rendering Date Label Props:', this.props.date)
 
     return (
       <View style={styles.container}>
-        <Text style={styles.date}>{ dateString }</Text>
+        <Text
+          //letterSpacing={0.13}
+          style={styles.date}>{ dateString }</Text>
       </View>
     );
   }

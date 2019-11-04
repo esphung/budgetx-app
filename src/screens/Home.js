@@ -10,7 +10,8 @@ import {
   StyleSheet,
   View,
   Text,
-  Keyboard
+  //Keyboard
+  ActivityIndicator,
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -26,45 +27,30 @@ import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesVi
 // ui colors
 import colors from '../../colors';
 
-// import global variables
-require('../../globals')
-
-// // test data
-// var data = {
-//   date:                 null,
-//   transactions:         null,
-//   currentBalanceValue:  0,
-//   currentSpentValue:    0,
-//   categories:           []
-// }
-
 class Home extends Component {
+   static navigationOptions = ({ navigation }) => {
+      return {
+        headerTransparent: {
+          //position: 'absolute',
+          //backgroundColor: 'transparent',
+        },
+
+        headerLeft: leftHeaderView,
+
+        headerRight: rightHeaderView,
+      }
+
+    }
 
   async componentWillMount() {
-    // load sf pro fonts
-    await Font.loadAsync({
+    //load sf pro fonts
+    await Font.loadAsync(
+    {
       'SFProDisplay-Regular': require('../../assets/fonts/SF-Pro-Display-Regular.otf'),
       'SFProDisplay-Semibold': require('../../assets/fonts/SF-Pro-Display-Semibold.otf')
-    });
+    })
+
     this.setState({ fontsAreLoaded: true })
-  }
-
-  componentDidMount() {
-    // DateLabelView
-    if (data.date)
-      // use selected date
-      this.setState({dateLabelView: <DateLabelView date={data.date} />})
-    else
-      // use today's date (default)
-      data.date = new Date()
-      this.setState({dateLabelView: <DateLabelView date={data.date} />})
-
-    // TransactionsView
-    if (data.transactions)
-      console.log(data.transactions)
-    else
-      this.setState({transactionsView: <NoTransactionsView />})
-
   }
 
   constructor(props) {
@@ -77,31 +63,36 @@ class Home extends Component {
 
   getView(){
     if (this.state.fontsAreLoaded) {
-      return <View style={styles.container}>
-        <BalanceView 
-          currentBalanceValue=  {data.currentBalanceValue}
-          currentSpentValue=    {data.currentSpentValue}
-        />
 
-        { this.state.dateLabelView }
-        
-        { this.state.transactionsView }
+      return (
+        <View style={styles.container}>
 
-        <ScrollingPillCategoriesView categories={data.categories} />
-
-      </View>
+          <BalanceView 
+            currentBalanceValue=  {data.currentBalanceValue}
+            currentSpentValue=    {data.currentSpentValue}
+          />
+  
+          <DateLabelView date={data.date} />
+          
+          <NoTransactionsView />
+  
+          <ScrollingPillCategoriesView categories={data.categories} />
+  
+        </View>
+      )
+    
     }
     else {
-      return <View />
+      return (
+        <View style={{flex: 1, justifyContent: 'center', backgroundColor: colors.darkTwo}}>
+          <ActivityIndicator size='large' color='#FFFFFF' />
+        </View>)
     }
   }
 
   render() {
-    console.log('Rendering Home View')
-
-    return this.getView() 
-      
-  
+    console.log('Rendered Home Screen')
+    return this.getView()
   }
 }
 
@@ -109,8 +100,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: global.backgroundColor,
-    borderWidth: global.borderWidth,
+    backgroundColor: colors.darkTwo,//global.backgroundColor,
   }
 });
 

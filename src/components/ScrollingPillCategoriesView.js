@@ -1,7 +1,10 @@
+// FILENAME:  ScrollingPillCategoriesView.js
+// PURPOSE:   Scrolling Pills
+// AUTHOR:    Eric Phung
+// CREATED:   03/11/2019 10:43 PM
+
 'use strict';
-
 import React, { Component } from 'react';
-
 import {
   StyleSheet,
   View,
@@ -17,29 +20,96 @@ import colors from '../../colors';
 // import global variables
 require('../../globals')
 
+// limits
+const pillMaxWidth = 156
+const pillMinWidth = 73
 
 class ScrollingPillCategoriesView extends Component {
+  componentDidMount() {
+    console.log('Scrolling Pill View Rendered')
+  }
+  constructor(props) {
+    super(props);
+  
+    this.state = {};
+  }
+
+  alertItemName = (item) => {
+    alert(item.name)
+  }
+
+  getListItems = (items) => {
+    return items.map((item, index) => (
+      <TouchableOpacity
+        style={{
+          maxHeight: 32,
+          minWidth: pillMinWidth,
+          maxWidth: pillMaxWidth,
+          alignItems: 'center',
+          justifyContent: 'center',
+
+          marginHorizontal: 4,
+          marginVertical: 10,
+
+          borderRadius: 17,
+          borderWidth: 1,
+          borderStyle: 'solid',
+
+          borderColor: item.color,
+        }}
+        key = {item.id}
+        onPress = {() => this.alertItemName(item)}>
+
+        <Text style = {
+          //styles.text
+          {
+            paddingHorizontal: 12,
+            paddingBottom: 1,
+
+            fontFamily: "SFProDisplay-Regular",
+            fontSize: 17,
+            fontWeight: "normal",
+            fontStyle: "normal",
+            letterSpacing: 0.12,
+
+            color: item.color,
+          }
+        }>
+          {item.name}
+        </Text>
+      </TouchableOpacity>
+    ))
+  }
+
   render() {
+    const categories = this.props.categories
     console.log('Categories Loaded:',this.props.categories.length)
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView
           horizontal= {true}
           showsHorizontalScrollIndicator={false}
-          // decelerationRate={0}
-          // snapToInterval={200} //your element width
-          // snapToAlignment={'center'}
+          decelerationRate={0}
+          snapToInterval={pillMinWidth} //your element width
+          snapToAlignment={'center'}
+        
           style={styles.scrollView}>
 
+          { this.getListItems(categories) }
+
+
+
+{/*
           <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[0].name}</Text></TouchableOpacity>
-          {/*<View style = { styles.separator }/>*/}
+          <View style = { styles.separator }/>
           <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[1].name}</Text></TouchableOpacity>
-          {/*<View style = { styles.separator }/>*/}
+          <View style = { styles.separator }/>
           <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[2].name}</Text></TouchableOpacity>
-          {/*<View style = { styles.separator }/>*/}
+          <View style = { styles.separator }/>
           <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[3].name}</Text></TouchableOpacity>
-          {/*<View style = { styles.separator }/>*/}
+          <View style = { styles.separator }/>
           <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[4].name}</Text></TouchableOpacity>
+*/}
 
         </ScrollView>
       </SafeAreaView>
@@ -72,34 +142,7 @@ const styles = StyleSheet.create({
 
   scrollView: {
     //backgroundColor: 'pink',
-    marginHorizontal: 15,
-  },
-
-  pill: {
-    height: 32,
-    justifyContent: 'center',
-
-    marginHorizontal: 4,
-    marginVertical: 10,
-
-    borderRadius: 17,
-    borderWidth: 1,
-    borderStyle: 'solid',
-
-    borderColor: 'white',
-  },
-
-  text:{
-    paddingHorizontal: 15,
-    fontFamily: "SFProDisplay-Regular",
-    fontSize: 17,
-    fontWeight: "normal",
-    fontStyle: "normal",
-    letterSpacing: 0.12,
-
-    borderWidth: global.borderWidth,
-    color: 'white',
-
+    marginHorizontal: 12,
   },
 
   separator: {

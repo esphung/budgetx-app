@@ -5,7 +5,8 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text
+  Text,
+  TouchableOpacity
 } from 'react-native';
 
 // ui colors
@@ -14,15 +15,43 @@ import colors from '../../colors';
 // import global variables
 require('../../globals')
 
+// // maximum number of digits displayed for balances
+// const maximumAmountOfDigits = 6
+
+// function truncateString(str, num) {
+//   if (str.length <= num) {
+//     return str
+//   }
+//   return str.slice(0, num) + '...'
+// }
+
 class BalanceView extends Component {
+  constructor(props) {
+    super(props)
+
+    this.currentBalanceBtnPressed = this.currentBalanceBtnPressed.bind(this)
+
+    this.currentSpentValueBtnPressed = this.currentSpentValueBtnPressed.bind(this)
+  }
+
+  currentBalanceBtnPressed(){
+    console.log('Current Balance:', this.props.currentBalanceValue)
+  }
+
+  currentSpentValueBtnPressed(){
+    console.log('Current Spent:', this.props.currentSpentValue)
+  }
 
   render() {
+    const {currentBalanceValue} = this.props
+    const {currentSpentValue} = this.props
+
     return (
       <View style={styles.balanceView}>
         <View style={styles.container}>
+
           <View style={{
             width: '50%',
-            //height: '50%',
             alignItems: 'center',
           }}>
 
@@ -30,10 +59,14 @@ class BalanceView extends Component {
               Current Balance
             </Text>
 
-            <Text style={styles.currentBalanceValue}>
-              <Text style={{ color: "rgba(255, 255, 255, 0.5)", }}>$</Text>
-              <Text>{ this.props.currentBalanceValue }</Text>
-            </Text>
+            <TouchableOpacity onPress={this.currentBalanceBtnPressed}>
+              <Text
+                //letterSpacing={0.1}
+                style={styles.currentBalanceValue}>
+                <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$</Text>
+                <Text>{ currentBalanceValue }</Text>
+              </Text>
+            </TouchableOpacity>
           
           </View>
 
@@ -46,10 +79,14 @@ class BalanceView extends Component {
               Spent This Month
             </Text>
 
-            <Text style={styles.currentSpentValue}>
-              <Text style={{ color: "rgba(255, 255, 255, 0.5)", }}>$</Text>
-              <Text>{ this.props.currentSpentValue }</Text>
+            <TouchableOpacity onPress={this.currentSpentValueBtnPressed}>
+            <Text
+              //letterSpacing={0.1}
+              style={styles.currentSpentValue}>
+              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$</Text>
+              <Text>{ currentSpentValue }</Text>
             </Text>
+            </TouchableOpacity>
 
           </View>
 
@@ -75,7 +112,7 @@ const styles = StyleSheet.create({
     height: 74,
     borderRadius: 9,
     backgroundColor: colors.dark,
-    shadowColor: "#0f1725",
+    shadowColor: '#0f1725',
     shadowOffset: {
       width: 5,
       height: 5
@@ -98,10 +135,10 @@ const styles = StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 15,
-    fontWeight: "normal",
-    fontStyle: "normal",
+    fontWeight: 'normal',
+    fontStyle: 'normal',
     letterSpacing: 0.1,
-    textAlign: "center",
+    textAlign: 'center',
     textAlignVertical: 'top',
     color: colors.shamrockGreen,
 
@@ -118,10 +155,10 @@ const styles = StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 15,
-    fontWeight: "normal",
-    fontStyle: "normal",
+    fontWeight: 'normal',
+    fontStyle: 'normal',
     letterSpacing: 0.1,
-    textAlign: "center",
+    textAlign: 'center',
     color: colors.pinkRed,
 
     borderWidth: global.borderWidth,
@@ -137,11 +174,11 @@ const styles = StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 25,
-    fontWeight: "normal",
-    fontStyle: "normal",
+    fontWeight: 'normal',
+    fontStyle: 'normal',
     letterSpacing: 0.29,
-    textAlign: "center",
-    color: "#ffffff",
+    textAlign: 'center',
+    color: '#ffffff',
 
     borderWidth: global.borderWidth,
     borderColor: 'white',
@@ -156,11 +193,11 @@ const styles = StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     
     fontSize: 25,
-    fontWeight: "normal",
-    fontStyle: "normal",
+    fontWeight: 'normal',
+    fontStyle: 'normal',
     letterSpacing: 0.29,
-    textAlign: "center",
-    color: "#ffffff",
+    textAlign: 'center',
+    color: '#ffffff',
 
     borderWidth: global.borderWidth,
     borderColor: 'white',

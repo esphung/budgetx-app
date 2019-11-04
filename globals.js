@@ -5,11 +5,13 @@ author:    eric phung
 date:      Thu Oct 31 14:32:40 2019
 */
 
+
+
 // app debug mode
 //global.isDebugModeOn = true
 
-// ui colors
-import colors from './colors'
+// // ui colors
+// import colors from './colors'
 
 // dimensions
 import { Dimensions } from "react-native";
@@ -17,26 +19,18 @@ import { Dimensions } from "react-native";
 global.screenWidth = Math.round(Dimensions.get('window').width);
 global.screenHeight = Math.round(Dimensions.get('window').height);
 
-// Basic Text
-global.basicTextFontSize = 17
+// //screen background
+// global.backgroundColor = colors.darkTwo
 
-// Small Text
-global.smallTextFontSize = 15
+// //remove borders
+// global.borderWidth = 0
 
-// debug borders
-global.borderWidth = 1
+// if (global.isDebugModeOn == true) {
+//   global.backgroundColor = 'transparent'
+//   // no debug borders
+//   global.borderWidth = 1
 
-if (global.isDebugModeOn != true) {
-  // screen background
-  global.backgroundColor = colors.darkTwo
-
-  // no debug borders
-  global.borderWidth = 0
-
-  // text colors
-  global.basicTextColor = 'white'
-
-}
+// }
 
 // placeholder images
 global.placeholderUserImage = require('./assets/user-placeholder-200x250.png')
