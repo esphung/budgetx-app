@@ -304,7 +304,7 @@ class TransactionsView extends Component {
             transactions
         }
 
-          keyExtractor={(item, index) => item.idNumber}
+          keyExtractor={(item, index) => item.id}
 
           renderItem={({item}) => this.getItemView(item)}
 
