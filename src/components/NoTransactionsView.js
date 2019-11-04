@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 // import global variables
-require('../../globals')
+//require('../../globals')
 
 class NoTransactionsView extends Component {
   render() {

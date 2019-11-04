@@ -13,7 +13,7 @@ import {
 import colors from '../../colors';
 
 // import global variables
-require('../../globals')
+//require('../../globals')
 
 // // maximum number of digits displayed for balances
 // const maximumAmountOfDigits = 6
@@ -70,6 +70,8 @@ class BalanceView extends Component {
           
           </View>
 
+          <View style = { styles.separator } />
+
           <View style={{
             width: '50%',
             //height: '50%',
@@ -105,6 +107,15 @@ const styles = StyleSheet.create({
     borderWidth: global.borderWidth,
     borderColor: 'white',
     borderStyle: 'solid',
+  },
+
+  separator: {
+    width: 1,
+    height: '70%',
+    marginVertical: 10,
+    backgroundColor: 'white',//'rgba(0,0,0,0.5)',
+    opacity:  0.1,
+
   },
 
   balanceView: {

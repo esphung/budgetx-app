@@ -68,8 +68,8 @@ class Home extends Component {
         <View style={styles.container}>
 
           <BalanceView 
-            currentBalanceValue=  {data.currentBalanceValue}
-            currentSpentValue=    {data.currentSpentValue}
+            currentBalanceValue =  {data.currentBalanceValue}
+            currentSpentValue =    {data.currentSpentValue}
           />
   
           <DateLabelView date={data.date} />
@@ -91,7 +91,6 @@ class Home extends Component {
   }
 
   render() {
-    console.log('Rendered Home Screen')
     return this.getView()
   }
 }

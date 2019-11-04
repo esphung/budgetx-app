@@ -151,7 +151,7 @@ class HeaderLeftView extends Component {
   }
 
   render() {
-    console.log('Rendered HeaderLeftView Fonts Are Loaded:', this.state.fontsAreLoaded)
+    //console.log('Rendered HeaderLeftView Fonts Are Loaded:', this.state.fontsAreLoaded)
     return (
       this.getView()
     )

@@ -4,7 +4,6 @@ import StackNavigator from './StackNavigator'
 
 class Router extends Component {
   render() {
-    console.log('Rendered Router')
     return (
       <StackNavigator />
     );

@@ -25,15 +25,6 @@ const pillMaxWidth = 156
 const pillMinWidth = 73
 
 class ScrollingPillCategoriesView extends Component {
-  componentDidMount() {
-    console.log('Scrolling Pill View Rendered')
-  }
-  constructor(props) {
-    super(props);
-  
-    this.state = {};
-  }
-
   alertItemName = (item) => {
     alert(item.name)
   }
@@ -41,27 +32,30 @@ class ScrollingPillCategoriesView extends Component {
   getListItems = (items) => {
     return items.map((item, index) => (
       <TouchableOpacity
-        style={{
-          maxHeight: 32,
-          minWidth: pillMinWidth,
-          maxWidth: pillMaxWidth,
-          alignItems: 'center',
-          justifyContent: 'center',
+        style={
+          {
+            maxHeight: 32,
+            minWidth: pillMinWidth,
+            maxWidth: pillMaxWidth,
+            alignItems: 'center',
+            justifyContent: 'center',
 
-          marginHorizontal: 4,
-          marginVertical: 10,
+            marginHorizontal: 4,
+            marginVertical: 10,
 
-          borderRadius: 17,
-          borderWidth: 1,
-          borderStyle: 'solid',
+            borderRadius: 17,
+            borderWidth: 1,
+            borderStyle: 'solid',
 
-          borderColor: item.color,
-        }}
+            borderColor: item.color,
+          }
+        }
+
         key = {item.id}
-        onPress = {() => this.alertItemName(item)}>
 
-        <Text style = {
-          //styles.text
+        onPress={() => this.alertItemName(item)}>
+
+        <Text style={
           {
             paddingHorizontal: 12,
             paddingBottom: 1,
@@ -75,6 +69,7 @@ class ScrollingPillCategoriesView extends Component {
             color: item.color,
           }
         }>
+
           {item.name}
         </Text>
       </TouchableOpacity>
@@ -83,7 +78,6 @@ class ScrollingPillCategoriesView extends Component {
 
   render() {
     const categories = this.props.categories
-    console.log('Categories Loaded:',this.props.categories.length)
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView

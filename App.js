@@ -16,8 +16,8 @@ data = {
     email: '',//'esphung@gmail.com',//null,
     name: '',//'eric phung',//null
   },
-  date:                 new Date(),
-  transactions:         null,
+  date:                 (new Date()),
+  transactions:         [],
   currentBalanceValue:  0,
   currentSpentValue:    0,
   categories:           categories
