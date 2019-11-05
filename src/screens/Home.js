@@ -66,7 +66,8 @@ class Home extends Component {
 
           <BalanceView
             currentBalanceValue={data.currentBalanceValue}
-            currentSpentValue={data.currentSpentValue}/>
+            currentSpentValue={data.currentSpentValue}
+          />
           
           <DateLabelView date={data.date}/>  
           
@@ -76,7 +77,8 @@ class Home extends Component {
           
           <AmountInputView
             amount={data.amount}
-            isTextInputEnabled={false}/>
+            //isTextInputEnabled={false}
+          />
 
           <KeypadView />
 
