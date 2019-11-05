@@ -7,9 +7,9 @@ import categories from '../data/categories'
 import { genRandomFloat } from '../functions/genRandomFloat'
 
 
-export function getFakeTransactionsList (argument) {
+export function getFakeTransactionsList (limit) {
   let list = []
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < limit; i++) {
     var amount = genRandomFloat(0, 10, 2)
 
     var transaction = new Transaction(

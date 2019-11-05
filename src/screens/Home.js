@@ -31,6 +31,8 @@ import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesVi
 
 import AmountInputView from '../components/AmountInputView'
 
+import KeypadView from '../components/KeypadView'
+
 // ui colors
 import colors from '../../colors';
 
@@ -75,6 +77,8 @@ class Home extends Component {
           <AmountInputView
             amount={data.amount}
             isTextInputEnabled={false}/>
+
+          <KeypadView />
 
         </View>
        

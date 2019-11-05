@@ -268,13 +268,16 @@ class TransactionsView extends Component {
     return (
       <ScrollView style={
         {
+          flex: 1,
           position: 'absolute',
+          
+
           top: 240,
 
 
 
           width: '100%',//220,
-          height: '100%',//84,
+          height: '65%',//84,
 
           //backgroundColor: 'lightblue',
 
