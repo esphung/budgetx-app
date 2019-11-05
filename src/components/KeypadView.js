@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
 
     top: 460,
 
-    paddingTop: 4,
+    padding: 4,
 
     width: '100%',
     //height:  Platform.OS === 'ios' ? '30%' : '18%',//252,

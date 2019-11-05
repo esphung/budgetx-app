@@ -105,6 +105,26 @@ class BalanceView extends Component {
 }
 
 const styles = StyleSheet.create({
+  balanceView: {
+    width: 346,
+    height: 74,
+    borderRadius: 9,
+    backgroundColor: colors.dark,
+    shadowColor: '#0f1725',
+    shadowOffset: {
+      width: 5,
+      height: 5
+    },
+    shadowRadius: 16,
+    shadowOpacity: 1,
+
+    //borderWidth: global.borderWidth,
+
+    position: 'absolute',
+    //left: ,//this.state.x,
+    top: 110,//global.screenHeight * 0.01, //350,//this.state.y
+  },
+
   container: {
     flex: 1,
     flexDirection: 'row',
@@ -122,26 +142,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',//'rgba(0,0,0,0.5)',
     opacity:  0.1,
 
-  },
-
-  balanceView: {
-    width: 346,
-    height: 74,
-    borderRadius: 9,
-    backgroundColor: colors.dark,
-    shadowColor: '#0f1725',
-    shadowOffset: {
-      width: 5,
-      height: 5
-    },
-    shadowRadius: 16,
-    shadowOpacity: 1,
-
-    borderWidth: global.borderWidth,
-
-    position: 'absolute',
-    //left: ,//this.state.x,
-    top: 110,//global.screenHeight * 0.01, //350,//this.state.y
   },
 
   currentBalanceTitle: {

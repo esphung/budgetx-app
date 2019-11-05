@@ -54,6 +54,7 @@ class AmountInputView extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    
     flexDirection: 'row',
     width: '100%',
     height: 46,
