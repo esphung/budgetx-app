@@ -42,6 +42,7 @@ class DateLabelView extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    //flex: 1,
     justifyContent: 'center',
 
     width: '100%',//375,
@@ -50,13 +51,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dark,
 
     position: 'absolute',
-    left: 0,
-    top: 206,
+
+    top: '25.5%' ,//206,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
   },
 
   date: {
     width: '100%',//131,
-    //height: 20,
+    height: 20,
     fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,
     fontWeight: 'normal',

@@ -115,7 +115,7 @@ class ScrollingPillCategoriesView extends Component {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 53,
+    height: '6.5%',//53,
     backgroundColor: colors.darkTwo,
     shadowColor: "#0a101b",
     shadowOffset: {
@@ -125,13 +125,12 @@ const styles = StyleSheet.create({
     shadowRadius: 26,
     shadowOpacity: 1,
 
-    borderWidth: global.borderWidth,//1,
-    borderColor: 'white',
-    borderStyle: 'solid',
+    position: 'absolute',
+    top: '57%',//462,
 
-    //position: 'absolute',
-    //left: ,//this.state.x,
-    top: 462,//global.screenHeight * 0.435, //350,//this.state.y
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
 
   },
 

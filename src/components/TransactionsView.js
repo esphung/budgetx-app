@@ -31,6 +31,10 @@ function getMinusSymbol(item){
     return '-'
 }
 
+
+let tableHeight = '30%'
+
+
 class TransactionsView extends Component {
   getEmptyTransactionsView(){
     return (
@@ -42,6 +46,10 @@ class TransactionsView extends Component {
 
           width: 220,
           height: 84,
+
+          // borderWidth: 1,
+          // borderColor: '1',
+          // borderStyle: 'dashed',
 
         }
       }>
@@ -221,6 +229,7 @@ class TransactionsView extends Component {
 
         marginHorizontal: 12,
 
+
       }}>
 
         {/*. item Symbol*/}
@@ -268,15 +277,15 @@ class TransactionsView extends Component {
     return (
       <ScrollView style={
         {
-          flex: 1,
+          //flex: 1,
           position: 'absolute',
           
-          top: 240,
+          top: '30%',//240,
 
           width: '100%',//220,
-          height: '65%',//84,
+          height: tableHeight,//84,
 
-          //backgroundColor: 'lightblue',
+          // backgroundColor: 'lightblue',
 
           // borderWidth: 1,
           // borderColor: 'white',

@@ -115,20 +115,21 @@ class KeypadView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: Platform.OS === 'ios' ? 0.3 : 0.2,
+    position: 'absolute',
 
-    top: 460,
+    top: '69%',//460,
 
-    padding: 4,
+    //paddingBottom: 16,
 
     width: '100%',
-    //height:  Platform.OS === 'ios' ? '30%' : '18%',//252,
+
+    height: '29%',//252,
     
     backgroundColor: colors.darkTwo,
 
     // borderWidth: 1,
     // borderColor: 'white',
-    // borderStyle: 'solid',
+    // borderStyle: 'dashed',
 
   }// container
 

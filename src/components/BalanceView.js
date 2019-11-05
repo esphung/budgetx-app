@@ -118,11 +118,12 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     shadowOpacity: 1,
 
-    //borderWidth: global.borderWidth,
-
+    top: '14%',//110,
     position: 'absolute',
-    //left: ,//this.state.x,
-    top: 110,//global.screenHeight * 0.01, //350,//this.state.y
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
   },
 
   container: {
@@ -130,9 +131,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
 
-    borderWidth: global.borderWidth,
-    borderColor: 'white',
-    borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
   },
 
   separator: {
@@ -159,9 +160,9 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     color: colors.shamrockGreen,
 
-    borderWidth: global.borderWidth,
-    borderColor: 'white',
-    borderStyle: 'solid',
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
 
   currentSpentTitle: {
@@ -178,9 +179,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.pinkRed,
 
-    borderWidth: global.borderWidth,
-    borderColor: 'white',
-    borderStyle: 'solid',
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
 
   currentBalanceValue: {
@@ -197,9 +198,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#ffffff',
 
-    borderWidth: global.borderWidth,
-    borderColor: 'white',
-    borderStyle: 'solid',
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
 
   currentSpentValue: {
@@ -216,9 +217,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#ffffff',
 
-    borderWidth: global.borderWidth,
-    borderColor: 'white',
-    borderStyle: 'solid',
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   }
 });
 

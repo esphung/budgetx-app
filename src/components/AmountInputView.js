@@ -54,13 +54,17 @@ class AmountInputView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    
+    position: 'absolute',
     flexDirection: 'row',
     width: '100%',
-    height: 46,
+    height: '7%',//46,
     backgroundColor: colors.dark,
 
-    top: 460,
+    top: '63%',//460,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
 
   },
 

@@ -64,7 +64,7 @@ class Home extends Component {
         
         <View style={styles.container}>
 
-          <BalanceView 
+          <BalanceView
             currentBalanceValue={data.currentBalanceValue}
             currentSpentValue={data.currentSpentValue}/>
           
@@ -102,7 +102,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+
     backgroundColor: colors.darkTwo,//global.backgroundColor,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   }
 });
 
