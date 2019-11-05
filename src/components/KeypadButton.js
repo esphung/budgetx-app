@@ -17,10 +17,12 @@ class KeypadButton extends Component {
   componentDidMount() {
     console.log('Set up keypad:', this.props.value)
   }
+
   render() {
     return (
       <TouchableOpacity
-        onPress={() => console.log(this.props.value)}
+       onPress={this.props.onPress}//console.log(this.props.value)}
+       
         style={
         {
           justifyContent: 'center',

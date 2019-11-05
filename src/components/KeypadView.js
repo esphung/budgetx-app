@@ -14,6 +14,16 @@ import colors from '../../colors';
 import KeypadButton from './KeypadButton'
 
 class KeypadView extends Component {
+
+  constructor(props) {
+    super(props);
+  
+    this.state = {};
+
+    // send value to Home view
+    this.handlePress  = this.props.handlePress
+  }
+
   render() {
     return (
 
@@ -35,9 +45,9 @@ class KeypadView extends Component {
             // borderStyle: 'dotted',
           }
         }>
-          <KeypadButton value={1} />
-          <KeypadButton value={2} />
-          <KeypadButton value={3} />
+          <KeypadButton value={1} onPress={() => this.handlePress(1)} />
+          <KeypadButton value={2} onPress={() => this.handlePress(2)} />
+          <KeypadButton value={3} onPress={() => this.handlePress(3)} />
         </View>
 
         {/*4,5,6*/}
@@ -56,9 +66,9 @@ class KeypadView extends Component {
             // borderStyle: 'dotted',
           }
         }>
-          <KeypadButton value={4} />
-          <KeypadButton value={5} />
-          <KeypadButton value={6} />
+          <KeypadButton value={4} onPress={() => this.handlePress(4)} />
+          <KeypadButton value={5} onPress={() => this.handlePress(5)} />
+          <KeypadButton value={6} onPress={() => this.handlePress(6)} />
         </View>
 
         {/*7,8,9*/}
@@ -77,9 +87,9 @@ class KeypadView extends Component {
             // borderStyle: 'dotted',
           }
         }>
-          <KeypadButton value={7} />
-          <KeypadButton value={8} />
-          <KeypadButton value={9} />
+          <KeypadButton value={7} onPress={() => this.handlePress(7)} />
+          <KeypadButton value={8} onPress={() => this.handlePress(8)} />
+          <KeypadButton value={9} onPress={() => this.handlePress(9)} />
         </View>
 
         {/*Add,0,[<]*/}
@@ -98,9 +108,9 @@ class KeypadView extends Component {
             // borderStyle: 'dotted',
           }
         }>
-          <KeypadButton value={'Add'} />
-          <KeypadButton value={0} />
-          <KeypadButton value={'<'} />
+          <KeypadButton value={'Add'} onPress={() => this.handlePress('Add')} />
+          <KeypadButton value={0} onPress={() => this.handlePress(0)} />
+          <KeypadButton value={'<'} onPress={() => this.handlePress('<')} />
 
         </View>
 

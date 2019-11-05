@@ -16,7 +16,8 @@ import {
   Text,
   Keyboard,
   ActivityIndicator,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  ScrollView
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -55,14 +56,36 @@ class Home extends Component {
     this.setState({ fontsAreLoaded: true })
   }
 
-  state = {
-    fontsAreLoaded: false
+  constructor(props) {
+    super(props);
+  
+    this.state = {
+      fontsAreLoaded: false,
+      value: 0
+    }
+
+    
   }
+
+  // button events
+  handlePress(value){
+    console.log('Pressed:', value)
+  }
+
+  // value changes
+  handleChange(value){
+    this.setState({value: value})
+    console.log('Value Changed:', this.state.value)
+  }
+
   getView(){
     if (this.state.fontsAreLoaded) {
       return (
         
-        <View style={styles.container}>
+        <ScrollView 
+          scrollEnabled={false}
+          contentContainerStyle={styles.container}
+        >
 
           <BalanceView
             currentBalanceValue={data.currentBalanceValue}
@@ -76,14 +99,18 @@ class Home extends Component {
           <ScrollingPillCategoriesView categories={data.categories}/>
           
           <AmountInputView
+            isEditable={true}
             //amount={data.amount}
-            amount={0}
-            isEditable={false}
+            value={this.state.value}
+
+
+            onChange={(value) => this.handleChange(value)}///console.log(value)}
+
           />
 
-          <KeypadView />
+          <KeypadView handlePress={this.handlePress} />
 
-        </View>
+        </ScrollView>
        
       )
     }

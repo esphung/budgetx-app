@@ -30,22 +30,27 @@ class AmountInputView extends Component {
   componentDidMount() {
     if (this.props.isEditable)
       this.setState({isEditable: this.props.isEditable})
-    if (this.props.amount)
-      this.setState({amount: this.props.amount})
+
+    if (this.props.value)
+      this.setState({value: this.props.value})
+    
+    if (this.props.value)
+      this.setState({value: this.props.value})
+
   }
 
   constructor(props) {
     super(props);
   
     this.state = {
-      amount: '',
+      value: this.props.value,
       isEditable: false
     };
   }
 
   handleValueChange(value){
-    console.log(value)
-    this.setState({amount: value})
+    this.setState({value: value})
+    this.props.onChange(value)
   }
 
   render() {
@@ -57,10 +62,11 @@ class AmountInputView extends Component {
 
 
 
+
         <CurrencyInput 
           onValueChange={(value) => this.handleValueChange(value)}
-          value={this.state.amount}
-          isEditable={true}//this.state.isEditable}
+          value={this.state.value}
+          isEditable={this.state.isEditable}
           style={
           {
 
@@ -97,7 +103,7 @@ class AmountInputView extends Component {
         {/* original text input */}
 {/*        <TextInput
           editable={this.state.isEditable}
-          placeholder={ String(this.state.amount) }
+          placeholder={ String(this.state.value) }
           placeholderTextColor={'white'}
           keyboardType={'decimal-pad'}
           style={styles.input}>
