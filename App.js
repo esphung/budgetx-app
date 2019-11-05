@@ -26,7 +26,7 @@ global.data = {
 // Test Fake Transactions
 import { getFakeTransactionsList } from './src/functions/getFakeTransactionsList'
 
-data.transactions = getFakeTransactionsList(20)
+data.transactions = getFakeTransactionsList(3)
 
 
 

@@ -76,8 +76,9 @@ class Home extends Component {
           <ScrollingPillCategoriesView categories={data.categories}/>
           
           <AmountInputView
-            amount={data.amount}
-            //isTextInputEnabled={false}
+            //amount={data.amount}
+            amount={0}
+            isEditable={false}
           />
 
           <KeypadView />

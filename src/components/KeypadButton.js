@@ -20,7 +20,7 @@ class KeypadButton extends Component {
   render() {
     return (
       <TouchableOpacity
-        onPress={() => alert(this.props.value)}
+        onPress={() => console.log(this.props.value)}
         style={
         {
           justifyContent: 'center',
