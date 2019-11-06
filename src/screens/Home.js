@@ -53,7 +53,10 @@ class Home extends Component {
       'SFProDisplay-Regular': require('../../assets/fonts/SF-Pro-Display-Regular.otf'),
       'SFProDisplay-Semibold': require('../../assets/fonts/SF-Pro-Display-Semibold.otf')
     })
+    
     this.setState({ fontsAreLoaded: true })
+
+    //if (this.props.amount) this.setState({amount: this.props.amount})
   }
 
   constructor(props) {
@@ -61,22 +64,46 @@ class Home extends Component {
   
     this.state = {
       fontsAreLoaded: false,
-      value: 0
+      amount: 0
     }
 
     
   }
 
-  // button events
+
+
+
+
+  // button event
   handlePress(value){
     console.log('Pressed:', value)
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // value changes
   handleChange(value){
-    this.setState({value: value})
-    console.log('Value Changed:', this.state.value)
+    //this.setState({amount: value})
+    this.state.amount = value
+    console.log('Current Amount Value:', this.state.amount)
   }
+
+
+
 
   getView(){
     if (this.state.fontsAreLoaded) {
@@ -100,8 +127,7 @@ class Home extends Component {
           
           <AmountInputView
             isEditable={true}
-            //amount={data.amount}
-            value={this.state.value}
+            value={this.state.amount}
 
 
             onChange={(value) => this.handleChange(value)}///console.log(value)}
