@@ -62,40 +62,58 @@ class Home extends Component {
   
     this.state = {
       fontsAreLoaded: false,
-      value: data.amount
+      value: null//data.amount
     }
 
-    this.handlePress = this.handlePress.bind(this)
+    this._handlePress = this._handlePress.bind(this)
 
     this.handleChange = this.handleChange.bind(this)
 
   }
 
   // button events
-  handlePress(value){
+  _handlePress(value){
     if (typeof(value) == 'number')
-      this.numberBtnPressed(value)
+      this._numberBtnPressed(value)
+    else if (value === 'Add')
+      this._addBtnPressed()
+    else if (value === '<')
+      this._backspaceBtnPressed()
     else
       console.log('Pressed:', value)
       //throw new Error('Button pressed is not a digit')
   }
 
-  numberBtnPressed(value){
+  _numberBtnPressed(value){
     // truncate single AND leading zeros; concatenate old + new values
     value = String(Math.trunc(Math.abs(this.state.value))) + String(value)
     this.handleChange(value)
   }
 
+  _addBtnPressed(){
+    console.log('Pressed Add Btn')
+  }
+
+  _backspaceBtnPressed(){
+    var strValue = String(this.state.value)
+    if (strValue !== '') {
+      // pop last char from string value
+      var newStr = strValue.substring(0, strValue.length - 1);
+      this.handleChange(newStr)
+    }
+  }
+
   // value changes
   handleChange(value){
     this.setState({value: value})
-    console.log('Value:', value)
+    this.state.value = value
+    console.log('Value:', this.state.value)
   }
+
 
   getView(){
     if (this.state.fontsAreLoaded) {
       return (
-        
         <ScrollView 
           scrollEnabled={false}
           contentContainerStyle={styles.container}>
@@ -112,16 +130,12 @@ class Home extends Component {
           <ScrollingPillCategoriesView categories={data.categories}/>
           
           <AmountInputView
-            isEditable={true}
+            isEditable={false}
             value={this.state.value}
-
             handleChange={this.handleChange}
-
-            state={this.state}
-
           />
 
-          <KeypadView handlePress={this.handlePress} />
+          <KeypadView handlePress={this._handlePress} />
 
         </ScrollView>
        

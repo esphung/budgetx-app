@@ -20,7 +20,7 @@ global.data = {
   currentBalanceValue:  null,
   currentSpentValue:    null,
   categories:           null,
-  amount:               0,
+  amount:               null,
 }
 
 // Test Fake Transactions

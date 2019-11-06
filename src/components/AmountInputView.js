@@ -61,26 +61,7 @@ class AmountInputView extends Component {
           value={this.props.value}
           isEditable={this.props.isEditable}
           style={
-          {
-
-            width: '100%',
-            height: 30,
-            fontFamily: 'SFProDisplay-Regular',
-            fontSize: 25,
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            letterSpacing: 0.29,
-            textAlign: 'right',
-            color: '#ffffff',
-
-            marginVertical: 8,
-            //paddingRight: 6,
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'dotted',
-
-          }
+          styles.input
 
         } />
 
@@ -142,9 +123,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    flex: 0.9,
-    
-    width: '100%',
+    width: 200,
     height: 30,
     fontFamily: 'SFProDisplay-Regular',
     fontSize: 25,

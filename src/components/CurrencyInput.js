@@ -19,12 +19,13 @@ const CurrencyInput: FC<Props> = ({
   isEditable
 }) => {
 
-  const valueAbsTrunc = Math.trunc(Math.abs(value));
+  // const valueAbsTrunc = Math.trunc(Math.abs(value));
 
-  if (value !== valueAbsTrunc || !Number.isFinite(value) || Number.isNaN(value)) {
-    console.log('Value:', value)
-    //throw new Error(`invalid value property`);
-  }
+  // if (value !== valueAbsTrunc || !Number.isFinite(value) || Number.isNaN(value)) {
+  //   console.log('Value:', value)
+  //   //throw new Error(`invalid value property`);
+
+  // }
   
   const [inputHeight, setInputHeight] = useState(0);
   
