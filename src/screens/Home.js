@@ -22,6 +22,10 @@ import {
 
 import * as Font from 'expo-font';
 
+// header components
+import HeaderLeftView from '../components/HeaderLeftView'
+import HeaderRightView from '../components/HeaderRightView'
+
 import BalanceView from '../components/BalanceView';
 
 import DateLabelView from  '../components/DateLabelView';
@@ -37,12 +41,22 @@ import KeypadView from '../components/KeypadView'
 // ui colors
 import colors from '../../colors';
 
+
 class Home extends Component {
+
   static navigationOptions = () => {
+    // set user name and email address for left header
+    var email = (data) ? data.user.email :  null
+    var name = (data) ? data.user.name : null
+
     return {
       headerTransparent: {},
-      headerLeft: leftHeaderView,
-      headerRight: rightHeaderView,
+
+      headerLeft: <HeaderLeftView
+                    boldMessage={name}
+                    normalMessage={email} />,//leftHeaderView,
+
+      headerRight: <HeaderRightView />,//rightHeaderView,
     }
   }
 
@@ -155,7 +169,12 @@ class Home extends Component {
   }
 
   render() {
-    return this.getView()
+    if (data)
+      return this.getView()
+    else
+      return <View />
+
+    
   }
 }
 

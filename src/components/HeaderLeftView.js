@@ -4,6 +4,17 @@ PURPOSE:    left side of header in home view
 AUTHOR:     eric phung
 DATE:       Sun Nov  3 13:47:40 2019
 */
+
+function isValidEmail(email) 
+{
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+  {
+    return (true)
+  }
+    //alert("You have entered an invalid email address!")
+    return (false)
+}
+
 'use strict';
 
 import React, { Component } from 'react';
@@ -47,7 +58,17 @@ class HeaderLeftView extends Component {
       fontsAreLoaded: false
     }
 
+    this.boldMessage = (this.props.boldMessage) ? this.props.boldMessage : 'Get cross-device sync'
+
+    this.normalMessage = (this.props.normalMessage) ? this.props.normalMessage : 'Enter your email'
+
+    // validate email and turn off email input
+    if (isValidEmail(this.normalMessage))
+      this.isInputEnabled = false
+
+
     this.handleTextChange = this.handleTextChange.bind(this)
+
     this.submitBtnPressed  = this.submitBtnPressed.bind(this)
   }
 
@@ -86,7 +107,9 @@ class HeaderLeftView extends Component {
       
       
                 }>
-                  {this.props.boldMessage}
+
+                  { this.boldMessage }
+
                 </Text>
       
                 <TextInput
@@ -102,7 +125,7 @@ class HeaderLeftView extends Component {
                     }
                   }
       
-                  placeholder={this.props.normalMessage}//{userMessageInfo}
+                  placeholder={this.normalMessage}//{userMessageInfo}
       
                   placeholderTextColor = {'#ffffff'}
       
@@ -128,7 +151,7 @@ class HeaderLeftView extends Component {
       
                   onChangeText={(text) => this.handleTextChange(text)}
       
-                  editable={this.props.isInputEnabled}  
+                  editable={this.isInputEnabled}  
       
                   value={this.state.text}>
       
@@ -151,6 +174,7 @@ class HeaderLeftView extends Component {
   }
 
   render() {
+    
     //console.log('Rendered HeaderLeftView Fonts Are Loaded:', this.state.fontsAreLoaded)
     return (
       this.getView()

@@ -14,35 +14,35 @@ import { createAppContainer } from 'react-navigation';
 import Home from './src/screens/Home';
 import Settings from './src/screens/Settings';
 
-// header components
-import HeaderLeftView from './src/components/HeaderLeftView'
-import HeaderRightView from './src/components/HeaderRightView'
+// // header components
+// import HeaderLeftView from './src/components/HeaderLeftView'
+// import HeaderRightView from './src/components/HeaderRightView'
 
-global.leftHeaderView = function() {
-  if (data.user.email) {
-    // user has email already
-    return <HeaderLeftView 
-              boldMessage={data.user.name}
-              normalMessage={data.user.email} 
-              isInputEnabled={false}
+// global.leftHeaderView = function() {
+//   if (data.user.email) {
+//     // user has email already
+//     return <HeaderLeftView 
+//               boldMessage={data.user.name}
+//               normalMessage={data.user.email} 
+//               isInputEnabled={false}
 
-          />
-  }
-  else {
-    // unknown user information
-    return <HeaderLeftView 
-              boldMessage={'Get cross-device sync'}
-              normalMessage={'Enter your email'} 
-              isInputEnabled={true}
-              fontsAreLoaded={true}
-          />
-  }
+//           />
+//   }
+//   else {
+//     // unknown user information
+//     return <HeaderLeftView 
+//               boldMessage={'Get cross-device sync'}
+//               normalMessage={'Enter your email'} 
+//               isInputEnabled={true}
+//               fontsAreLoaded={true}
+//           />
+//   }
 
-}
+// }
 
-global.rightHeaderView = function() {
-  return <HeaderRightView />
-}
+// global.rightHeaderView = function() {
+//   return <HeaderRightView />
+// }
 
 const StackNavigator = createStackNavigator({
   Home:  {

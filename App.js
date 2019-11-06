@@ -9,11 +9,12 @@ DATE:       Fri Nov  1 13:20:51 2019
 // app global values
 import './globals'
 
+
 // load user/test data
 global.data = {
   user: {
-    email: null,
-    name: null,
+    email: null,//'esphung@gmail.com',//null,
+    name: null,//'eric phung',//null,
   },
   date:                 null,
   transactions:         null,
