@@ -73,14 +73,22 @@ class Home extends Component {
 
   // button events
   handlePress(value){
-    console.log('Pressed:', value)
+    if (typeof(value) == 'number')
+      this.numberBtnPressed(value)
+    else
+      console.log('Pressed:', value)
+      //throw new Error('Button pressed is not a digit')
+  }
+
+  numberBtnPressed(value){
+    // truncate single AND leading zeros; concatenate old + new values
+    value = String(Math.trunc(Math.abs(this.state.value))) + String(value)
     this.handleChange(value)
   }
 
   // value changes
   handleChange(value){
     this.setState({value: value})
-    //this.state.value = value
     console.log('Value:', value)
   }
 
