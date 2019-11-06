@@ -26,31 +26,29 @@ import {
 import CurrencyInput from './CurrencyInput'
 
 class AmountInputView extends Component {
-
-  componentDidMount() {
-    if (this.props.isEditable)
-      this.setState({isEditable: this.props.isEditable})
-
-    if (this.props.value)
-      this.setState({value: this.props.value})
-    
-    if (this.props.value)
-      this.setState({value: this.props.value})
-
-  }
+  // componentDidMount() {
+  //   if (this.props.isEditable)
+  //     this.setState({isEditable: this.props.isEditable})
+  //   if (this.props.value)
+  //     this.setState({value: this.props.value})
+  // }
 
   constructor(props) {
     super(props);
   
-    this.state = {
-      value: this.props.value,
-      isEditable: false
-    };
+    // this.state = {
+    //   value: this.props.value,
+    //   isEditable: this.props.isEditable
+    // };
+
+    //this.state = this.props.state
+
+    this.handleValueChange = this.handleValueChange.bind(this)
   }
 
   handleValueChange(value){
     this.setState({value: value})
-    this.props.onChange(value)
+    this.props.handleChange(value)
   }
 
   render() {
@@ -58,15 +56,10 @@ class AmountInputView extends Component {
       <View style={styles.container}>
         <Text style={styles.label}>Amount Spent:</Text>
 
-
-
-
-
-
-        <CurrencyInput 
-          onValueChange={(value) => this.handleValueChange(value)}
-          value={this.state.value}
-          isEditable={this.state.isEditable}
+        <CurrencyInput
+          onValueChange={this.handleValueChange}
+          value={this.props.value}
+          isEditable={this.props.isEditable}
           style={
           {
 
@@ -91,15 +84,6 @@ class AmountInputView extends Component {
 
         } />
 
-
-
-
-
-
-
-
-
-
         {/* original text input */}
 {/*        <TextInput
           editable={this.state.isEditable}
@@ -111,7 +95,6 @@ class AmountInputView extends Component {
 
         <Text style={styles.symbol}>$</Text>
         
-      
       </View>
     );
   }

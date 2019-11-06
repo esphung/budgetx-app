@@ -53,10 +53,8 @@ class Home extends Component {
       'SFProDisplay-Regular': require('../../assets/fonts/SF-Pro-Display-Regular.otf'),
       'SFProDisplay-Semibold': require('../../assets/fonts/SF-Pro-Display-Semibold.otf')
     })
-    
-    this.setState({ fontsAreLoaded: true })
 
-    //if (this.props.amount) this.setState({amount: this.props.amount})
+    this.setState({ fontsAreLoaded: true })
   }
 
   constructor(props) {
@@ -64,46 +62,27 @@ class Home extends Component {
   
     this.state = {
       fontsAreLoaded: false,
-      amount: 0
+      value: data.amount
     }
 
-    
+    this.handlePress = this.handlePress.bind(this)
+
+    this.handleChange = this.handleChange.bind(this)
+
   }
 
-
-
-
-
-  // button event
+  // button events
   handlePress(value){
     console.log('Pressed:', value)
+    this.handleChange(value)
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // value changes
   handleChange(value){
-    //this.setState({amount: value})
-    this.state.amount = value
-    console.log('Current Amount Value:', this.state.amount)
+    this.setState({value: value})
+    //this.state.value = value
+    console.log('Value:', value)
   }
-
-
-
 
   getView(){
     if (this.state.fontsAreLoaded) {
@@ -111,8 +90,7 @@ class Home extends Component {
         
         <ScrollView 
           scrollEnabled={false}
-          contentContainerStyle={styles.container}
-        >
+          contentContainerStyle={styles.container}>
 
           <BalanceView
             currentBalanceValue={data.currentBalanceValue}
@@ -127,10 +105,11 @@ class Home extends Component {
           
           <AmountInputView
             isEditable={true}
-            value={this.state.amount}
+            value={this.state.value}
 
+            handleChange={this.handleChange}
 
-            onChange={(value) => this.handleChange(value)}///console.log(value)}
+            state={this.state}
 
           />
 

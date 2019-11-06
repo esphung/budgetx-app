@@ -20,13 +20,13 @@ global.data = {
   currentBalanceValue:  null,
   currentSpentValue:    null,
   categories:           null,
-  //amount:               null,
+  amount:               0,
 }
 
 // Test Fake Transactions
 import { getFakeTransactionsList } from './src/functions/getFakeTransactionsList'
 
-data.transactions = getFakeTransactionsList(3)
+//data.transactions = getFakeTransactionsList(3)
 
 
 

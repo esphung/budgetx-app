@@ -14,9 +14,9 @@ import {
 import colors from '../../colors';
 
 class KeypadButton extends Component {
-  componentDidMount() {
-    console.log('Set up keypad:', this.props.value)
-  }
+  // componentDidMount() {
+  //   console.log('Set up keypad:', this.props.value)
+  // }
 
   render() {
     return (
