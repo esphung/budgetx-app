@@ -95,8 +95,10 @@ class Home extends Component {
   }
 
   _backspaceBtnPressed(){
-    var strValue = String(this.state.value)
-    if (strValue !== '') {
+    //check for null, NaN, undefined, ''
+    if (this.state.value) {
+      var strValue = String(this.state.value)
+
       // pop last char from string value
       var newStr = strValue.substring(0, strValue.length - 1);
       this.handleChange(newStr)
@@ -105,9 +107,13 @@ class Home extends Component {
 
   // value changes
   handleChange(value){
-    this.setState({value: value})
-    this.state.value = value
-    console.log('Value:', this.state.value)
+    // check for limit of 11 digits
+    if (String(value).length > 10)
+      return
+    else
+      this.setState({value: value})
+      this.state.value = value
+      console.log('Value:', this.state.value)
   }
 
 
@@ -120,8 +126,7 @@ class Home extends Component {
 
           <BalanceView
             currentBalanceValue={data.currentBalanceValue}
-            currentSpentValue={data.currentSpentValue}
-          />
+            currentSpentValue={data.currentSpentValue} />
           
           <DateLabelView date={data.date}/>  
           
@@ -132,8 +137,7 @@ class Home extends Component {
           <AmountInputView
             isEditable={false}
             value={this.state.value}
-            handleChange={this.handleChange}
-          />
+            handleChange={this.handleChange} />
 
           <KeypadView handlePress={this._handlePress} />
 
