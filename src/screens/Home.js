@@ -66,50 +66,11 @@ class Home extends Component {
       'SFProDisplay-Regular': SFProDisplayRegularFont,
       'SFProDisplay-Semibold': SFProDisplaySemiboldFont
     });
-
-    this.setState({ fontsAreLoaded: true });
-
     const { navigation } = this.props;
 
-    this.setState({ data: navigation.getScreenProps('data') });
-  }
+    await this.setState({ fontsAreLoaded: true });
 
-  getView(fontsAreLoaded, data, value) {
-    let view = null;
-    if (fontsAreLoaded) {
-      view = (
-        <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
-
-          <BalanceView
-            currentBalanceValue={data.currentBalanceValue}
-            currentSpentValue={data.currentSpentValue}
-          />
-
-          <DateLabelView date={data.date} />
-
-          <TransactionsView transactions={data.transactions} />
-
-          <ScrollingPillCategoriesView categories={data.categories} />
-
-          <AmountInputView
-            isEditable={false}
-            value={value}
-            handleChange={this.handleChange}
-          />
-
-          <KeypadView handlePress={this.handlePress} />
-
-        </ScrollView>
-
-      );
-    } else {
-      view = (
-        <View style={{ flex: 1, justifyContent: 'center', backgroundColor: colors.darkTwo }}>
-          <ActivityIndicator size="large" color="#FFFFFF" />
-        </View>
-      );
-    }
-    return view;
+    await this.setState({ data: navigation.getScreenProps('data') });
   }
 
   addBtnPressed = () => {
@@ -162,9 +123,38 @@ class Home extends Component {
     const { fontsAreLoaded, value } = this.state;
 
     let view = <View />;
+    if ((fontsAreLoaded) && (data)) {
+      view = (
+        <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
-    if (data) {
-      view = this.getView(fontsAreLoaded, data, value);
+          <BalanceView
+            currentBalanceValue={data.currentBalanceValue}
+            currentSpentValue={data.currentSpentValue}
+          />
+
+          <DateLabelView date={data.date} />
+
+          <TransactionsView transactions={data.transactions} />
+
+          <ScrollingPillCategoriesView categories={data.categories} />
+
+          <AmountInputView
+            isEditable={false}
+            value={value}
+            handleChange={this.handleChange}
+          />
+
+          <KeypadView handlePress={this.handlePress} />
+
+        </ScrollView>
+
+      );
+    } else {
+      view = (
+        <View style={{ flex: 1, justifyContent: 'center', backgroundColor: colors.darkTwo }}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      );
     }
     return view;
   }
