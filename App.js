@@ -4,50 +4,33 @@ PURPOSE:    entry point for app
 AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
-'use strict';
-
-// app global values
-import './globals'
-
-
-// load user/test data
-global.data = {
-  user: {
-    email: null,//'esphung@gmail.com',//null,
-    name: null,//'eric phung',//null,
-  },
-  date:                 null,
-  transactions:         null,
-  currentBalanceValue:  null,
-  currentSpentValue:    null,
-  categories:           null,
-  amount:               null,
-}
-
-// Test Fake Transactions
-import { getFakeTransactionsList } from './src/functions/getFakeTransactionsList'
-
-//data.transactions = getFakeTransactionsList(3)
-
-
-
-// First View Screen
-
-import React, { Component } from 'react';
+import './globals';// global values
+// import { getFakeTransactionsList } from './src/functions/getFakeTransactionsList';
+// data.transactions = getFakeTransactionsList(3)
+import React from 'react';
 
 import StackNavigator from './StackNavigator';
 
-class App extends Component {
-  render() {
-    return (
-      <StackNavigator />
-    );
-  }
+// load test data
+const data = {
+  date: null,
+  transactions: null,
+  currentBalanceValue: null,
+  currentSpentValue: null,
+  categories: null,
+  amount: null,
+};
+
+// default user data
+const user = {
+  email: null, // 'esphung@gmail.com',
+  name: null, // 'eric phung'
+};
+
+function App() {
+  return (
+    <StackNavigator screenProps={{ data, user }} />
+  );
 }
 
-// RootStack defined here 
 export default App;
-
-
-
-

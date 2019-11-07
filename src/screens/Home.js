@@ -6,175 +6,167 @@ CREATED:    Thu Oct 31 23:17:49 2019
             Sun Nov  3 05:40:29 2019
             04/11/2019 03:57 AM
 */
-'use strict';
-
 import React, { Component } from 'react';
 
 import {
   StyleSheet,
   View,
-  Text,
-  Keyboard,
   ActivityIndicator,
-  TouchableWithoutFeedback,
   ScrollView
 } from 'react-native';
 
 import * as Font from 'expo-font';
 
 // header components
-import HeaderLeftView from '../components/HeaderLeftView'
-import HeaderRightView from '../components/HeaderRightView'
-
+import HeaderLeftView from '../components/HeaderLeftView';
+import HeaderRightView from '../components/HeaderRightView';
 import BalanceView from '../components/BalanceView';
-
-import DateLabelView from  '../components/DateLabelView';
-
+import DateLabelView from '../components/DateLabelView';
 import TransactionsView from '../components/TransactionsView';
-
 import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesView';
-
-import AmountInputView from '../components/AmountInputView'
-
-import KeypadView from '../components/KeypadView'
+import AmountInputView from '../components/AmountInputView';
+import KeypadView from '../components/KeypadView';
 
 // ui colors
 import colors from '../../colors';
 
+const SFProDisplayRegularFont = require('../../assets/fonts/SF-Pro-Display-Regular.otf');
+
+const SFProDisplaySemiboldFont = require('../../assets/fonts/SF-Pro-Display-Semibold.otf');
 
 class Home extends Component {
-
-  static navigationOptions = () => {
-    // set user name and email address for left header
-    var email = (data) ? data.user.email :  null
-    var name = (data) ? data.user.name : null
+  static navigationOptions = ({ navigation }) => {
+    // set up user email and user name
+    const props = navigation.getScreenProps('props');
 
     return {
       headerTransparent: {},
 
-      headerLeft: <HeaderLeftView
-                    boldMessage={name}
-                    normalMessage={email} />,//leftHeaderView,
+      headerLeft: <HeaderLeftView boldMessage={props.user.name} normalMessage={props.user.email} />,
 
-      headerRight: <HeaderRightView />,//rightHeaderView,
-    }
-  }
-
-  async componentWillMount() {
-    //load sf pro fonts
-    await Font.loadAsync(
-    {
-      'SFProDisplay-Regular': require('../../assets/fonts/SF-Pro-Display-Regular.otf'),
-      'SFProDisplay-Semibold': require('../../assets/fonts/SF-Pro-Display-Semibold.otf')
-    })
-
-    this.setState({ fontsAreLoaded: true })
+      headerRight: <HeaderRightView />,
+    };
   }
 
   constructor(props) {
     super(props);
-  
     this.state = {
       fontsAreLoaded: false,
-      value: null//data.amount
+      value: null,
+    };
+
+    this.handlePress = this.handlePress.bind(this);
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  async componentDidMount() {
+    // load sf pro fonts
+    await Font.loadAsync({
+      'SFProDisplay-Regular': SFProDisplayRegularFont,
+      'SFProDisplay-Semibold': SFProDisplaySemiboldFont
+    });
+
+    this.setState({ fontsAreLoaded: true });
+
+    const { navigation } = this.props;
+
+    this.setState({ data: navigation.getScreenProps('data') });
+  }
+
+  getView(fontsAreLoaded, data, value) {
+    let view = null;
+    if (fontsAreLoaded) {
+      view = (
+        <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+
+          <BalanceView
+            currentBalanceValue={data.currentBalanceValue}
+            currentSpentValue={data.currentSpentValue}
+          />
+
+          <DateLabelView date={data.date} />
+
+          <TransactionsView transactions={data.transactions} />
+
+          <ScrollingPillCategoriesView categories={data.categories} />
+
+          <AmountInputView
+            isEditable={false}
+            value={value}
+            handleChange={this.handleChange}
+          />
+
+          <KeypadView handlePress={this.handlePress} />
+
+        </ScrollView>
+
+      );
+    } else {
+      view = (
+        <View style={{ flex: 1, justifyContent: 'center', backgroundColor: colors.darkTwo }}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      );
     }
-
-    this._handlePress = this._handlePress.bind(this)
-
-    this.handleChange = this.handleChange.bind(this)
-
+    return view;
   }
 
-  // button events
-  _handlePress(value){
-    if (typeof(value) == 'number')
-      this._numberBtnPressed(value)
-    else if (value === 'Add')
-      this._addBtnPressed()
-    else if (value === '<')
-      this._backspaceBtnPressed()
-    else
-      console.log('Pressed:', value)
-      //throw new Error('Button pressed is not a digit')
+  addBtnPressed = () => {
   }
 
-  _numberBtnPressed(value){
+  numberBtnPressed(number) {
+    const { value } = this.state;
     // truncate single AND leading zeros; concatenate old + new values
-    value = String(Math.trunc(Math.abs(this.state.value))) + String(value)
-    this.handleChange(value)
+    const newValue = String(Math.trunc(Math.abs(value))) + String(number);
+    this.handleChange(newValue);
   }
 
-  _addBtnPressed(){
-    console.log('Pressed Add Btn')
+  handlePress(value) {
+    if (typeof (value) === 'number') {
+      this.numberBtnPressed(value);
+    } else if (value === 'Add') {
+      this.addBtnPressed();
+    } else if (value === '<') {
+      this.backspaceBtnPressed();
+    } else {
+      throw new Error('Pressed:', value);
+    }
   }
 
-  _backspaceBtnPressed(){
-    //check for null, NaN, undefined, ''
-    if (this.state.value) {
-      var strValue = String(this.state.value)
+  backspaceBtnPressed() {
+    const { value } = this.state;
+    // check for null, NaN, undefined, ''
+    if (value) {
+      const strValue = String(value);
 
       // pop last char from string value
-      var newStr = strValue.substring(0, strValue.length - 1);
-      this.handleChange(newStr)
+      const newStr = strValue.substring(0, strValue.length - 1);
+
+      this.handleChange(newStr);
     }
   }
 
   // value changes
-  handleChange(value){
+  handleChange(value) {
     // check for limit of 11 digits
-    if (String(value).length > 10)
-      return
-    else
-      this.setState({value: value})
-      this.state.value = value
-      console.log('Value:', this.state.value)
-  }
-
-
-  getView(){
-    if (this.state.fontsAreLoaded) {
-      return (
-        <ScrollView 
-          scrollEnabled={false}
-          contentContainerStyle={styles.container}>
-
-          <BalanceView
-            currentBalanceValue={data.currentBalanceValue}
-            currentSpentValue={data.currentSpentValue} />
-          
-          <DateLabelView date={data.date}/>  
-          
-          <TransactionsView transactions={data.transactions}/>
-          
-          <ScrollingPillCategoriesView categories={data.categories}/>
-          
-          <AmountInputView
-            isEditable={false}
-            value={this.state.value}
-            handleChange={this.handleChange} />
-
-          <KeypadView handlePress={this._handlePress} />
-
-        </ScrollView>
-       
-      )
+    if (String(value).length > 10) {
+      return;
     }
-    else {
-      return (
-        <View style={{flex: 1, justifyContent: 'center', backgroundColor: colors.darkTwo}}>
-          <ActivityIndicator size='large' color='#FFFFFF' />
-        </View>
-      )
-    }
+
+    this.setState({ value });
   }
 
   render() {
-    if (data)
-      return this.getView()
-    else
-      return <View />
+    const { data } = this.state;// this.props.navigation.getScreenProps();
+    const { fontsAreLoaded, value } = this.state;
 
-    
+    let view = <View />;
+
+    if (data) {
+      view = this.getView(fontsAreLoaded, data, value);
+    }
+    return view;
   }
 }
 
@@ -183,21 +175,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
 
-    backgroundColor: colors.darkTwo,//global.backgroundColor,
-
+    backgroundColor: colors.darkTwo,
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',
   }
 });
 
-export default Home
-
-
-
-
-
-
-
-
-
+export default Home;
