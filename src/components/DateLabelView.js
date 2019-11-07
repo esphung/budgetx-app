@@ -4,8 +4,6 @@ PURPOSE:    shows date to user
 AUTHOR:     eric phung
 DATE:       Sun Nov  3 05:41:52 2019
 */
-'use strict';
-
 import React, { Component } from 'react';
 
 import {
@@ -22,7 +20,7 @@ import { getFormattedDate } from '../functions/getFormattedDate'
 
 class DateLabelView extends Component {
   render() {
-    const dateString = getFormattedDate(new Date())
+    let dateString = getFormattedDate(new Date())
 
     // check for null
     if (this.props.date) {

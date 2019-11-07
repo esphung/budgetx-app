@@ -2,7 +2,6 @@
 // PURPOSE:   default categories
 // AUTHOR:    Eric Phung
 // CREATED:   03/11/2019 08:40 PM
-'use strict'
 const categories = [
   {
     id: 0,

@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component } from 'react';
 
 import {
@@ -12,8 +10,10 @@ import {
 // ui colors
 import colors from '../../colors';
 
+import getUSDFormattedString from '../functions/getUSDFormattedString';
+
 // import global variables
-//require('../../globals')
+// require('../../globals')
 
 // // maximum number of digits displayed for balances
 // const maximumAmountOfDigits = 6
@@ -27,30 +27,40 @@ import colors from '../../colors';
 
 class BalanceView extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-    this.currentBalanceBtnPressed = this.currentBalanceBtnPressed.bind(this)
+    this.state = {
+      symbol: '$'
+    };
 
-    this.currentSpentValueBtnPressed = this.currentSpentValueBtnPressed.bind(this)
+    this.currentBalanceBtnPressed = this.currentBalanceBtnPressed.bind(this);
+
+    this.currentSpentValueBtnPressed = this.currentSpentValueBtnPressed.bind(this);
   }
 
-  currentBalanceBtnPressed(){
-    console.log('Current Balance:', this.props.currentBalanceValue)
+  getCurrencySymbol() {
+    const { symbol } = this.state;
+    return `${symbol} `;
   }
 
-  currentSpentValueBtnPressed(){
-    console.log('Current Spent:', this.props.currentSpentValue)
+  currentBalanceBtnPressed = () => {
+    // console.log('Current Balance:', this.props.currentBalanceValue)
+  }
+
+  currentSpentValueBtnPressed = () => {
+    // console.log('Current Spent:', this.props.currentSpentValue)
   }
 
   render() {
-    var {currentBalanceValue} = this.props
-    var {currentSpentValue} = this.props
+    let { currentBalanceValue, currentSpentValue } = this.props;
 
-    if (!currentBalanceValue) 
-      currentBalanceValue = 0.00
+    if (!currentBalanceValue) {
+      currentBalanceValue = 0;
+    }
 
-    if (!currentSpentValue)
-      currentSpentValue = 0.00
+    if (!currentSpentValue) {
+      currentSpentValue = 0;
+    }
 
     return (
       <View style={styles.balanceView}>
@@ -59,7 +69,8 @@ class BalanceView extends Component {
           <View style={{
             width: '50%',
             alignItems: 'center',
-          }}>
+          }}
+          >
 
             <Text style={styles.currentBalanceTitle}>
               Current Balance
@@ -67,33 +78,32 @@ class BalanceView extends Component {
 
             <TouchableOpacity onPress={this.currentBalanceBtnPressed}>
               <Text
-                //letterSpacing={0.1}
-                style={styles.currentBalanceValue}>
-                <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$</Text>
-                <Text>{ currentBalanceValue }</Text>
+                style={styles.currentBalanceValue}
+              >
+                <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>{ this.getCurrencySymbol() }</Text>
+                <Text>{ getUSDFormattedString(currentBalanceValue) }</Text>
               </Text>
             </TouchableOpacity>
-          
+
           </View>
 
-          <View style = { styles.separator } />
+          <View style={styles.separator} />
 
           <View style={{
             width: '50%',
-            //height: '50%',
+            // height: '50%',
             alignItems: 'center',
-          }}>
+          }}
+          >
             <Text style={styles.currentSpentTitle}>
               Spent This Month
             </Text>
 
             <TouchableOpacity onPress={this.currentSpentValueBtnPressed}>
-            <Text
-              //letterSpacing={0.1}
-              style={styles.currentSpentValue}>
-              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$</Text>
-              <Text>{ currentSpentValue }</Text>
-            </Text>
+              <Text style={styles.currentSpentValue}>
+                <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>{ this.getCurrencySymbol() }</Text>
+                <Text>{ getUSDFormattedString(currentSpentValue) }</Text>
+              </Text>
             </TouchableOpacity>
 
           </View>
@@ -118,7 +128,7 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     shadowOpacity: 1,
 
-    top: '14%',//110,
+    top: '14%', // 110,
     position: 'absolute',
 
     // borderWidth: 1,
@@ -140,18 +150,17 @@ const styles = StyleSheet.create({
     width: 1,
     height: '70%',
     marginVertical: 10,
-    backgroundColor: 'white',//'rgba(0,0,0,0.5)',
-    opacity:  0.1,
-
+    backgroundColor: 'white', // 'rgba(0,0,0,0.5)',
+    opacity: 0.1,
   },
 
   currentBalanceTitle: {
-    //width: 113,
+    // width: 113,
     width: '100%',
     height: 20,
-    
+
     fontFamily: 'SFProDisplay-Regular',
-    
+
     fontSize: 15,
     fontWeight: 'normal',
     fontStyle: 'normal',
@@ -166,12 +175,12 @@ const styles = StyleSheet.create({
   },
 
   currentSpentTitle: {
-    //width: 113,
+    // width: 113,
     width: '100%',
     height: 20,
-    
+
     fontFamily: 'SFProDisplay-Regular',
-    
+
     fontSize: 15,
     fontWeight: 'normal',
     fontStyle: 'normal',
@@ -185,12 +194,12 @@ const styles = StyleSheet.create({
   },
 
   currentBalanceValue: {
-    //width: 37,
+    // width: 37,
     width: '100%',
     height: 30,
-    
+
     fontFamily: 'SFProDisplay-Regular',
-    
+
     fontSize: 25,
     fontWeight: 'normal',
     fontStyle: 'normal',
@@ -204,12 +213,12 @@ const styles = StyleSheet.create({
   },
 
   currentSpentValue: {
-    //width: 37,
+    // width: 37,
     width: '100%',
     height: 30,
-    
+
     fontFamily: 'SFProDisplay-Regular',
-    
+
     fontSize: 25,
     fontWeight: 'normal',
     fontStyle: 'normal',

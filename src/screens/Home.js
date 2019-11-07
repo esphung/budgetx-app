@@ -28,6 +28,10 @@ import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesVi
 import AmountInputView from '../components/AmountInputView';
 import KeypadView from '../components/KeypadView';
 
+import Transaction from '../models/Transaction';
+
+import getUSDFormattedString from '../functions/getUSDFormattedString';
+
 // ui colors
 import colors from '../../colors';
 
@@ -35,15 +39,18 @@ const SFProDisplayRegularFont = require('../../assets/fonts/SF-Pro-Display-Regul
 
 const SFProDisplaySemiboldFont = require('../../assets/fonts/SF-Pro-Display-Semibold.otf');
 
+
 class Home extends Component {
   static navigationOptions = ({ navigation }) => {
-    // set up user email and user name
+    // get user name and email from props
     const props = navigation.getScreenProps('props');
+
+    const { name, email } = props.user;
 
     return {
       headerTransparent: {},
 
-      headerLeft: <HeaderLeftView boldMessage={props.user.name} normalMessage={props.user.email} />,
+      headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
 
       headerRight: <HeaderRightView />,
     };
@@ -51,35 +58,80 @@ class Home extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       fontsAreLoaded: false,
-      value: null,
+      user: {},
+      data: {},
+      currentAmount: null,
+      currentDate: null,
+      currentCategory: null,
+      currentTransactions: null,
     };
 
     this.handlePress = this.handlePress.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
+
+    this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
   }
 
   async componentDidMount() {
-    // load sf pro fonts
+    // load fonts
     await Font.loadAsync({
       'SFProDisplay-Regular': SFProDisplayRegularFont,
       'SFProDisplay-Semibold': SFProDisplaySemiboldFont
     });
-    const { navigation } = this.props;
 
     await this.setState({ fontsAreLoaded: true });
 
+    // user and data
+    const { screenProps } = this.props;
+
+    const { user, data } = screenProps;
+
+    await this.setState({
+      user,
+      data,
+      currentTransactions: data.transactions
+    });
+    // console.log(this.state);
   }
 
   addBtnPressed = () => {
+    const {
+      currentTransactions,
+      currentAmount,
+      currentDate,
+      currentCategory
+    } = this.state;
+
+    if (currentCategory) {
+      const transaction = new Transaction(
+        currentTransactions.length + 1,
+        currentDate,
+        getUSDFormattedString(currentAmount),
+        'Eric Phung',
+        currentCategory
+      );
+
+      const list = [];
+
+      list.push(transaction);
+
+      this.setState({ currentTransactions: list });
+
+      console.log('Current Transactions:', list.length);
+    } else {
+
+      alert('Please choose a category');
+    }
   }
 
   numberBtnPressed(number) {
-    const { value } = this.state;
+    const { currentAmount } = this.state;
     // truncate single AND leading zeros; concatenate old + new values
-    const newValue = String(Math.trunc(Math.abs(value))) + String(number);
+    const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
     this.handleChange(newValue);
   }
 
@@ -96,10 +148,10 @@ class Home extends Component {
   }
 
   backspaceBtnPressed() {
-    const { value } = this.state;
+    const { currentAmount } = this.state;
     // check for null, NaN, undefined, ''
-    if (value) {
-      const strValue = String(value);
+    if (currentAmount) {
+      const strValue = String(currentAmount);
 
       // pop last char from string value
       const newStr = strValue.substring(0, strValue.length - 1);
@@ -115,15 +167,20 @@ class Home extends Component {
       return;
     }
 
-    this.setState({ value });
+    this.setState({ currentAmount: value });
+  }
+
+  categoryBtnPressed(category){
+    this.setState({ currentCategory: category })
+    // alert(category.name);
   }
 
   render() {
-    const { screenProps } = this.props;
+    // const { screenProps } = this.props;
 
-    const { data } = screenProps;
+    const { user, data } = this.state;
 
-    const { fontsAreLoaded, value } = this.state;
+    const { fontsAreLoaded, currentAmount, currentDate, currentTransactions } = this.state;
 
     let view = <View />;
     if ((fontsAreLoaded) && (data)) {
@@ -135,15 +192,18 @@ class Home extends Component {
             currentSpentValue={data.currentSpentValue}
           />
 
-          <DateLabelView date={data.date} />
+          <DateLabelView date={currentDate} />
 
-          <TransactionsView transactions={data.transactions} />
+          <TransactionsView transactions={currentTransactions} />
 
-          <ScrollingPillCategoriesView categories={data.categories} />
+          <ScrollingPillCategoriesView
+            categories={data.categories}
+            onPress={this.categoryBtnPressed}
+          />
 
           <AmountInputView
             isEditable={false}
-            value={value}
+            value={currentAmount}
             handleChange={this.handleChange}
           />
 

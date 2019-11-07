@@ -1,8 +1,9 @@
-// FILENAME:  Transaction.js
-// PURPOSE:   Transaction
-// AUTHOR:    Eric Phung
-// CREATED:   04/11/2019 02:37 PM
-'use strict';
+/*
+FILENAME:  Transaction.js
+PURPOSE:   Transaction
+AUTHOR:    Eric Phung
+CREATED:   04/11/2019 02:37 PM
+*/
 
 module.exports = class Transaction {
   constructor(id, date, amount, payee, category) {

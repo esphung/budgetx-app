@@ -23,8 +23,8 @@ const pillMaxWidth = 156;
 const pillMinWidth = 73;
 
 class ScrollingPillCategoriesView extends Component {
-  alertItemName = (item) => {
-    alert(item.name);
+  categoryBtnPressed(item) {
+    this.props.onPress(item)
   }
 
   getListItems = (items) => {
@@ -51,7 +51,7 @@ class ScrollingPillCategoriesView extends Component {
         
         key = {item.id}
 
-        onPress={() => this.alertItemName(item)}>
+        onPress={() => this.categoryBtnPressed(item)}>
 
         <Text style={
           {
