@@ -5,6 +5,8 @@ PURPOSE: user default settings local storage
 */
 import { AsyncStorage } from 'react-native';
 
+import categories from '../data/categories';
+
 const STORAGE_KEY = 'USERDEFAULTSETTINGS';
 
 export const saveSettings = (settings) => {
@@ -14,6 +16,8 @@ export const saveSettings = (settings) => {
 // LOAD VALUE USERDEFAULTSETTINGS
 const DEFAULT_USERDEFAULTSETTINGS = {
   // isTutorialModeOn: false
+  categories: categories,
+  
   user: {
     email: null,
     name: null
@@ -23,7 +27,6 @@ const DEFAULT_USERDEFAULTSETTINGS = {
     transactions: null,
     currentBalanceValue: null,
     currentSpentValue: null,
-    categories: [],
     amount: null,
   }
 };

@@ -16,22 +16,6 @@ import getRandomDate from './src/functions/getRandomDate';
 
 import categories from './src/data/categories';
 
-// // data
-// const data = {
-//   date: null,
-//   transactions: null, // getFakeTransactionsList(3),
-//   currentBalanceValue: null,
-//   currentSpentValue: null,
-//   categories: null,
-//   amount: null,
-// };
-
-// // user
-// const user = {
-//   email: null, // 'esphung@gmail.com',
-//   name: null, // 'eric phung'
-// };
-
 const testData = {
   user: {
     email: 'fbar@zmail.com',
@@ -40,7 +24,7 @@ const testData = {
   data: {
     date: getRandomDate(new Date(2012, 0, 1), new Date()),
     transactions: getFakeTransactionsList(2),
-    categories,
+    // categories: categories,
   }
 };
 

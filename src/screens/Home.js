@@ -203,7 +203,7 @@ class Home extends Component {
           <TransactionsView transactions={currentTransactions} />
 
           <ScrollingPillCategoriesView
-            categories={data.categories}
+            // categories={data.categories}
             onPress={this.categoryBtnPressed}
           />
 
