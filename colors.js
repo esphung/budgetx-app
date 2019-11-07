@@ -4,9 +4,6 @@ PURPOSE:    colors for ui scheme
 AUTHOR:     eric phung
 DATE:       Fri Nov  1 12:08:40 2019
 */
-
-'use strict';
-
 // UI Colors
 const colors = {
   darkGreyBlue: '#314054',
@@ -18,6 +15,6 @@ const colors = {
   shamrockGreen: '#00e157',
   dark: '#202e40',
   darkTwo: '#18202f'
-}
+};
 
-export default colors
+export default colors;

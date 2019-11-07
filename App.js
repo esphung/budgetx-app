@@ -5,16 +5,17 @@ AUTHOR:     eric phung
 DATE:       Fri Nov  1 13:20:51 2019
 */
 import './globals';// global values
+
+import React from 'react';
 // import { getFakeTransactionsList } from './src/functions/getFakeTransactionsList';
 // data.transactions = getFakeTransactionsList(3)
-import React from 'react';
 
 import StackNavigator from './StackNavigator';
 
 // load test data
 const data = {
   date: null,
-  transactions: null,
+  transactions: null, // getFakeTransactionsList(3),
   currentBalanceValue: null,
   currentSpentValue: null,
   categories: null,

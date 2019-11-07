@@ -21,7 +21,7 @@ export function getFakeTransactionsList (limit) {
     )
 
     list.push(transaction)
-    console.log('Created new Transaction:',list[i])
+    //console.log('Created new Transaction:',list[i])
   }
   return list
 }

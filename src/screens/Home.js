@@ -5,6 +5,7 @@ AUTHOR:     eric phung
 CREATED:    Thu Oct 31 23:17:49 2019
             Sun Nov  3 05:40:29 2019
             04/11/2019 03:57 AM
+            06/11/2019 06:54 PM (ESLinter)
 */
 import React, { Component } from 'react';
 
@@ -70,7 +71,6 @@ class Home extends Component {
 
     await this.setState({ fontsAreLoaded: true });
 
-    await this.setState({ data: navigation.getScreenProps('data') });
   }
 
   addBtnPressed = () => {
@@ -119,7 +119,10 @@ class Home extends Component {
   }
 
   render() {
-    const { data } = this.state;// this.props.navigation.getScreenProps();
+    const { screenProps } = this.props;
+
+    const { data } = screenProps;
+
     const { fontsAreLoaded, value } = this.state;
 
     let view = <View />;

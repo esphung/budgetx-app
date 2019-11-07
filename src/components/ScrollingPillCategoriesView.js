@@ -2,14 +2,10 @@
 // PURPOSE:   Scrolling Pills
 // AUTHOR:    Eric Phung
 // CREATED:   03/11/2019 10:43 PM
-
-'use strict';
-
 import React, { Component } from 'react';
 
 import {
   StyleSheet,
-  View,
   SafeAreaView,
   ScrollView,
   Text,
@@ -20,21 +16,19 @@ import {
 import colors from '../../colors';
 
 // default user categories
-import categories from '../data/categories'
+import categories from '../data/categories';
 
 // arbitrary size limits
-const pillMaxWidth = 156
-const pillMinWidth = 73
+const pillMaxWidth = 156;
+const pillMinWidth = 73;
 
 class ScrollingPillCategoriesView extends Component {
   alertItemName = (item) => {
-    //alert(item.name)
+    alert(item.name);
   }
 
   getListItems = (items) => {
-    if (!items)
-      items = categories
-    return items.map((item, index) => (
+    return categories.map((item, index) => (
       <TouchableOpacity
         style={
           {
@@ -93,19 +87,7 @@ class ScrollingPillCategoriesView extends Component {
 
           style={styles.scrollView}>
           { this.getListItems(categories) }
-
-{/*
-          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[0].name}</Text></TouchableOpacity>
-          <View style = { styles.separator }/>
-          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[1].name}</Text></TouchableOpacity>
-          <View style = { styles.separator }/>
-          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[2].name}</Text></TouchableOpacity>
-          <View style = { styles.separator }/>
-          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[3].name}</Text></TouchableOpacity>
-          <View style = { styles.separator }/>
-          <TouchableOpacity style={styles.pill}><Text style = { styles.text }>{this.props.categories[4].name}</Text></TouchableOpacity>
-*/}
-
+          
         </ScrollView>
       </SafeAreaView>
     );

@@ -3,25 +3,34 @@
 // eric phung
 //  settings screen for budget x app
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet, Text, View, TouchableOpacity
+} from 'react-native';
 
 // ui colors
 import colors from '../../colors';
 
 class Settings extends Component {
   static navigationOptions = ({ navigation }) => {
+    const props = navigation.getScreenProps('props');
+
     return {
-      title:  'Settings',
+      title: 'Settings',
 
       headerStyle: {
         backgroundColor: colors.dark,
       },
-
-        headerLeft: (<TouchableOpacity onPress={() => navigation.goBack(null)} style={styles.logOutBtnView}>
-          <Text style={styles.logOutBtnText}>Log Out</Text></TouchableOpacity>),
+      headerLeft: (
+        <TouchableOpacity
+          onPress={() => navigation.goBack(null)}
+          style={styles.logOutBtnView}
+        >
+          <Text style={styles.logOutBtnText}>Log Out</Text>
+        </TouchableOpacity>
+      ),
 
       headerTintColor: '#ffffff'
-    }
+    };
   }
 
   render() {
@@ -46,12 +55,12 @@ const styles = StyleSheet.create({
   logOutBtnText: {
     width: 58,
     height: 20,
-    fontFamily: "SFProDisplay-Regular",
+    fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,
-    fontWeight: "normal",
-    fontStyle: "normal",
+    fontWeight: 'normal',
+    fontStyle: 'normal',
     letterSpacing: 0.13,
-    textAlign: "right",
+    textAlign: 'right',
     color: colors.pinkRed,
   }
 });
