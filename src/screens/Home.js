@@ -28,6 +28,11 @@ import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesVi
 import AmountInputView from '../components/AmountInputView';
 import KeypadView from '../components/KeypadView';
 
+import {
+  loadSettings,
+  saveSettings
+} from '../storage/UserDefaultTransactions';
+
 import Transaction from '../models/Transaction';
 
 import getUSDFormattedString from '../functions/getUSDFormattedString';
@@ -66,7 +71,7 @@ class Home extends Component {
       currentAmount: null,
       currentDate: null,
       currentCategory: null,
-      currentTransactions: null,
+      currentTransactions: [],
       // currentPayee: null
     };
 
@@ -86,20 +91,27 @@ class Home extends Component {
 
     await this.setState({ fontsAreLoaded: true });
 
-    // user and data
-    const { screenProps } = this.props;
+    // // user and data
+    // const { screenProps } = this.props;
 
-    const {
-      // user,
-      data
-    } = screenProps;
+    // const {
+    //   // user,
+    //   data
+    // } = screenProps;
 
-    await this.setState({
-      // user,
-      data,
-      currentTransactions: data.transactions
-    });
+    // await this.setState({
+    //   // user,
+    //   data,
+    //   currentTransactions: data.transactions
+    // });
     // console.log(this.state);
+
+    // load default settings
+    const initialState = await loadSettings();
+    const { transactions } = initialState;
+    console.log(transactions)
+    await this.setState({ currentTransactions: transactions });
+
   }
 
   addBtnPressed = () => {
@@ -124,6 +136,11 @@ class Home extends Component {
       list.push(transaction);
 
       this.setState({ currentTransactions: list });
+      this.state.currentTransactions = list;
+
+      console.log(this.state.currentTransactions)
+
+      saveSettings({ transactions: this.state.currentTransactions });
 
       // console.log('Current Transactions:', list.length);
     }
@@ -203,7 +220,6 @@ class Home extends Component {
           <TransactionsView transactions={currentTransactions} />
 
           <ScrollingPillCategoriesView
-            // categories={data.categories}
             onPress={this.categoryBtnPressed}
           />
 

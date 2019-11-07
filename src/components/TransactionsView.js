@@ -327,7 +327,11 @@ class TransactionsView extends Component {
     const { transactions } = this.props
     //console.log('Rendered transactions:', transactions)
     if (transactions) {
-      return this.getListView(transactions)
+      if (transactions.length > 0) {
+        return this.getListView(transactions)
+      } else {
+        return this.getEmptyTransactionsView()
+      }
     }
     else {
       return this.getEmptyTransactionsView()

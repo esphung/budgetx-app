@@ -45,7 +45,8 @@ class ScrollingPillCategoriesView extends Component {
   }
 
   getListItems(items) {
-    return items.map((item) => (
+    if (items) {
+          return items.map((item) => (
       <TouchableOpacity
         style={
           {
@@ -91,6 +92,8 @@ class ScrollingPillCategoriesView extends Component {
         </Text>
       </TouchableOpacity>
     ));
+    }
+
   }
 
   categoryBtnPressed(item) {
@@ -100,6 +103,7 @@ class ScrollingPillCategoriesView extends Component {
 
   render() {
     const { categories } = this.state;
+    // console.log(categories)
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView

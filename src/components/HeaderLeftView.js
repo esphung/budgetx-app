@@ -15,8 +15,6 @@ function isValidEmail(email)
     return (false)
 }
 
-'use strict';
-
 import React, { Component } from 'react';
 
 import {
