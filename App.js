@@ -39,11 +39,8 @@ const testData = {
   },
   data: {
     date: getRandomDate(new Date(2012, 0, 1), new Date()),
-    transactions: getFakeTransactionsList(1),
-    currentBalanceValue: 34987,
-    currentSpentValue: 373463,
+    transactions: getFakeTransactionsList(2),
     categories,
-    amount: 76521,
   }
 };
 

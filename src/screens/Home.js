@@ -61,12 +61,13 @@ class Home extends Component {
 
     this.state = {
       fontsAreLoaded: false,
-      user: {},
+      // user: {},
       data: {},
       currentAmount: null,
       currentDate: null,
       currentCategory: null,
       currentTransactions: null,
+      // currentPayee: null
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -88,10 +89,13 @@ class Home extends Component {
     // user and data
     const { screenProps } = this.props;
 
-    const { user, data } = screenProps;
+    const {
+      // user,
+      data
+    } = screenProps;
 
     await this.setState({
-      user,
+      // user,
       data,
       currentTransactions: data.transactions
     });
@@ -121,10 +125,7 @@ class Home extends Component {
 
       this.setState({ currentTransactions: list });
 
-      console.log('Current Transactions:', list.length);
-    } else {
-
-      alert('Please choose a category');
+      // console.log('Current Transactions:', list.length);
     }
   }
 
@@ -170,17 +171,22 @@ class Home extends Component {
     this.setState({ currentAmount: value });
   }
 
-  categoryBtnPressed(category){
-    this.setState({ currentCategory: category })
+  categoryBtnPressed(category) {
+    this.setState({ currentCategory: category });
     // alert(category.name);
   }
 
   render() {
     // const { screenProps } = this.props;
 
-    const { user, data } = this.state;
+    const { data } = this.state;
 
-    const { fontsAreLoaded, currentAmount, currentDate, currentTransactions } = this.state;
+    const {
+      fontsAreLoaded,
+      currentAmount,
+      currentDate,
+      currentTransactions
+    } = this.state;
 
     let view = <View />;
     if ((fontsAreLoaded) && (data)) {
