@@ -7,7 +7,7 @@ import { AsyncStorage } from 'react-native';
 
 import categories from '../data/categories';
 
-const STORAGE_KEY = '5';
+const STORAGE_KEY = 'USERDEFAULTSETTINGS';
 
 export const saveSettings = (settings) => {
   AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings));

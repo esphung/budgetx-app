@@ -29,8 +29,8 @@ import AmountInputView from '../components/AmountInputView';
 import KeypadView from '../components/KeypadView';
 
 import {
-  loadSettings,
-  saveSettings
+  loadTransactionsObject,
+  saveTransactionsObject
 } from '../storage/UserDefaultTransactions';
 
 import Transaction from '../models/Transaction';
@@ -46,11 +46,11 @@ const SFProDisplaySemiboldFont = require('../../assets/fonts/SF-Pro-Display-Semi
 
 
 class Home extends Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = ({ screenProps }) => {
     // get user name and email from props
-    const props = navigation.getScreenProps('props');
+    // console.log(screenProps);
 
-    const { name, email } = props.user;
+    const { name, email } = screenProps.user;
 
     return {
       headerTransparent: {},
@@ -67,9 +67,9 @@ class Home extends Component {
     this.state = {
       fontsAreLoaded: false,
       // user: {},
-      data: {},
+      // data: {},
       currentAmount: null,
-      currentDate: null,
+      currentDate: new Date(),
       currentCategory: null,
       currentTransactions: [],
       // currentPayee: null
@@ -107,11 +107,10 @@ class Home extends Component {
     // console.log(this.state);
 
     // load default settings
-    const initialState = await loadSettings();
+    const initialState = await loadTransactionsObject();
     const { transactions } = initialState;
-    console.log(transactions)
+    // console.log(transactions);
     await this.setState({ currentTransactions: transactions });
-
   }
 
   addBtnPressed = () => {
@@ -122,28 +121,33 @@ class Home extends Component {
       currentCategory
     } = this.state;
 
-    if (currentCategory) {
+    // check if category is select and amount is given
+    if ((currentCategory) && (currentAmount > 0)) {
       const transaction = new Transaction(
-        currentTransactions.length + 1,
+        currentTransactions.length,
         currentDate,
         getUSDFormattedString(currentAmount),
         'Eric Phung',
         currentCategory
       );
 
-      const list = [];
-
-      list.push(transaction);
-
-      this.setState({ currentTransactions: list });
-      this.state.currentTransactions = list;
-
-      console.log(this.state.currentTransactions)
-
-      saveSettings({ transactions: this.state.currentTransactions });
-
-      // console.log('Current Transactions:', list.length);
+      this.storeNewTransaction(transaction); // add new transaction to existing storage
     }
+  }
+
+  async storeNewTransaction(transaction) {
+    const storageObj = await loadTransactionsObject(); // load storage object
+
+    const { transactions } = storageObj; // get transactions from storage object
+
+    transactions.push(transaction); // add new transaction to transactions
+
+    // console.log(storageObj); // debug console
+
+    saveTransactionsObject(storageObj); // save updated storage object
+
+    // update current transactions list view with storage object
+    await this.setState({ currentTransactions: transactions });
   }
 
   numberBtnPressed(number) {
@@ -194,25 +198,23 @@ class Home extends Component {
   }
 
   render() {
-    // const { screenProps } = this.props;
-
-    const { data } = this.state;
-
     const {
       fontsAreLoaded,
       currentAmount,
+      currentBalanceValue,
+      currentSpentValue,
       currentDate,
       currentTransactions
     } = this.state;
 
     let view = <View />;
-    if ((fontsAreLoaded) && (data)) {
+    if (fontsAreLoaded) {
       view = (
         <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
           <BalanceView
-            currentBalanceValue={data.currentBalanceValue}
-            currentSpentValue={data.currentSpentValue}
+            currentBalanceValue={currentBalanceValue}
+            currentSpentValue={currentSpentValue}
           />
 
           <DateLabelView date={currentDate} />

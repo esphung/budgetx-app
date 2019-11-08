@@ -1,31 +1,34 @@
 /*
 FILE: UserTransactions.js
 DATE: Thu Oct 24 03:27:46 2019
-PURPOSE: user default settings local storage
+PURPOSE: user default transactions local storage
 */
 import { AsyncStorage } from 'react-native';
 
-import categories from '../data/categories';
+const STORAGE_KEY = 'TRANSACTIONS';
 
-const STORAGE_KEY = '2';
+// AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
 
-export const saveSettings = (settings) => {
-  AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+export const saveTransactionsObject = (transactions) => {
+  // console.log(transactions);
+  AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 };
 
-// LOAD VALUE USERDEFAULTTRANSACTIONS
-const DEFAULT_USERDEFAULTTRANSACTIONS = {
+// LOAD VALUE TRANSACTIONS
+const DEFAULT_TRANSACTIONS = {
   transactions: [],
 };
 
-export const loadSettings = async () => {
+export const loadTransactionsObject = async () => {
   try {
-    const settings = await AsyncStorage.getItem(STORAGE_KEY);
+    const storageObject = await AsyncStorage.getItem(STORAGE_KEY);
 
-    if (settings === null) { return DEFAULT_USERDEFAULTTRANSACTIONS; }
+    if (storageObject === null) { return DEFAULT_TRANSACTIONS; }
 
-    return JSON.parse(settings);
+    // console.log(JSON.parse(storageObject));
+
+    return JSON.parse(storageObject);
   } catch (error) {
-    throw new Error('Error loading settings', error);
+    throw new Error('Error loading transactions', error);
   }
 };

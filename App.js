@@ -10,25 +10,28 @@ import React from 'react';
 
 import StackNavigator from './StackNavigator';
 
+// import getRandomDate from './src/functions/getRandomDate';
+
 // testing
-import getFakeTransactionsList from './src/functions/getFakeTransactionsList';
-import getRandomDate from './src/functions/getRandomDate';
+// import getFakeTransactionsList from './src/functions/getFakeTransactionsList';
 
 const testData = {
   user: {
-    email: 'fbar@zmail.com',
-    name: 'Foo Bar'
+    email: null, // 'fbar@zmail.com',
+    name: null, // 'Foo Bar'
   },
-  data: {
-    date: getRandomDate(new Date(2012, 0, 1), new Date()),
-    transactions: getFakeTransactionsList(2),
-  }
+  // data: {
+  //   date: getRandomDate(new Date(2012, 0, 1), new Date()),
+  //   transactions: getFakeTransactionsList(2),
+  // }
 };
 
 function App() {
   return (
     // <StackNavigator screenProps={{ data, user }} />
-    <StackNavigator screenProps={testData} />
+    <StackNavigator
+      screenProps={testData}
+    />
   );
 }
 
