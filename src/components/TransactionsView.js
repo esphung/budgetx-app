@@ -16,6 +16,8 @@ import {
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 
+import CustomSwipeCell from './CustomSwipeCell';
+
 // ui colors
 import colors from '../../colors';
 
@@ -30,6 +32,13 @@ function getMinusSymbol(item) {
 const TABLE_HEIGHT = '30%';
 
 class TransactionsView extends Component {
+  constructor(props) {
+    super(props);
+  
+    // this.state = {};
+
+    this.deleteBtnPressed = this.deleteBtnPressed.bind(this);
+  }
   getEmptyTransactionsView = () => {
     const emptyView = (
       <View style={
@@ -283,27 +292,32 @@ class TransactionsView extends Component {
     );
   }
 
-  getListView(transactions) {
-    // make a list view for transactions
-    return (
+  deleteBtnPressed(transaction) {
+    const { deleteBtnPressed } = this.props;
+    deleteBtnPressed(transaction);
+  }
 
+  render() {
+    const { transactions } = this.props;
+
+    let view = (
       <ScrollView style={
-        {
-          // flex: 1,
-          position: 'absolute',
-          top: '30%', // 240,
+          {
+            // flex: 1,
+            position: 'absolute',
+            top: '30%', // 240,
 
-          width: '100%', // 220,
-          height: TABLE_HEIGHT, // 84,
+            width: '100%', // 220,
+            height: TABLE_HEIGHT, // 84,
 
-          // backgroundColor: 'lightblue',
+            // backgroundColor: 'lightblue',
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
 
+          }
         }
-      }
       >
 
         <SwipeListView
@@ -322,29 +336,7 @@ class TransactionsView extends Component {
               }}
               />
               <View style={styles.rowBack}>
-
-                <TouchableOpacity onPress={() => console.log(String(item.id))}>
-                  <Text style={{
-                    width: '100%',
-                    // width: 47,
-                    height: 20,
-                    fontFamily: 'SFProDisplay-Regular',
-                    fontSize: 17,
-                    fontWeight: 'normal',
-                    fontStyle: 'normal',
-                    letterSpacing: 0.13,
-                    color: '#ffffff',
-
-                    marginRight: 12,
-
-                    // borderWidth: 1,
-                    // borderColor: 'white',
-                    // borderStyle: 'solid',
-                  }}
-                  >
-                    Delete
-                  </Text>
-                </TouchableOpacity>
+                <CustomSwipeCell onDeleteBtnPress={() => this.deleteBtnPressed(item)} />
               </View>
             </View>
           )}
@@ -353,21 +345,10 @@ class TransactionsView extends Component {
         />
 
 
-      </ScrollView>
-    );
-  }
-
-  render() {
-    const { transactions } = this.props;
-
-    let view = <View />;
+      </ScrollView>);
     // console.log('Rendered transactions:', transactions);
-    if (transactions) {
-      if (transactions.length > 0) {
-        view = this.getListView(transactions);
-      } else {
-        view = this.getEmptyTransactionsView();
-      }
+    if (transactions.length < 1) {
+      view = this.getEmptyTransactionsView();
     }
     return view;
   }

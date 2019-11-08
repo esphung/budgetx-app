@@ -83,6 +83,8 @@ class Home extends Component {
     this.handleChange = this.handleChange.bind(this);
 
     this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
+
+    this.deleteBtnPressed =  this.deleteBtnPressed.bind(this);
   }
 
   async componentDidMount() {
@@ -163,6 +165,37 @@ class Home extends Component {
     // alert(category.name);
   }
 
+  deleteBtnPressed(transaction) {
+    this.removeTransaction(transaction);
+  }
+
+  async removeTransaction(transaction) {
+    const storageObject = await loadTransactionsObject();
+
+    const { transactions } = storageObject;
+
+    console.log(transactions)
+
+    // remove transaction by id
+    var array = transactions
+    console.log(array.length)
+    for(var i = array.length - 1; i >= 0; i--) {
+        if(array[i].id === transaction.id) {
+           array.splice(i, 1);
+        }
+    }
+    // array = [2, 9]
+    console.log(storageObject.transactions.length);
+
+    await saveTransactionsObject(storageObject);
+
+    await this.setState({ currentTransactions: transactions });
+
+    
+
+
+  }
+
   handlePress(value) {
     if (typeof (value) === 'number') {
       this.numberBtnPressed(value);
@@ -220,7 +253,7 @@ class Home extends Component {
 
           <DateLabelView date={currentDate} />
 
-          <TransactionsView transactions={currentTransactions} />
+          <TransactionsView deleteBtnPressed={this.deleteBtnPressed} transactions={currentTransactions} />
 
           <ScrollingPillCategoriesView
             onPress={this.categoryBtnPressed}
