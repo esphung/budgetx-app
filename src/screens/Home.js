@@ -31,7 +31,7 @@ import KeypadView from '../components/KeypadView';
 import {
   loadTransactionsObject,
   saveTransactionsObject
-} from '../storage/UserDefaultTransactions';
+} from '../storage/TransactionsStorage';
 
 import Transaction from '../models/Transaction';
 
@@ -91,24 +91,9 @@ class Home extends Component {
 
     await this.setState({ fontsAreLoaded: true });
 
-    // // user and data
-    // const { screenProps } = this.props;
-
-    // const {
-    //   // user,
-    //   data
-    // } = screenProps;
-
-    // await this.setState({
-    //   // user,
-    //   data,
-    //   currentTransactions: data.transactions
-    // });
-    // console.log(this.state);
-
     // load default settings
-    const initialState = await loadTransactionsObject();
-    const { transactions } = initialState;
+    const object = await loadTransactionsObject();
+    const { transactions } = object;
     // console.log(transactions);
     await this.setState({ currentTransactions: transactions });
   }

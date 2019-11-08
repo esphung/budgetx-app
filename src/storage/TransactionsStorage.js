@@ -1,8 +1,8 @@
 /*
-FILE: UserDefaultTransactions.js
+FILE: TransactionsStorage.js
 AUTHOR:  eric phung
-UPDATED: Thu Oct 24 03:27:46 2019
-08/11/2019 01:56 AM
+UPDATED:  Thu Oct 24 03:27:46 2019
+          08/11/2019 01:56 AM
 PURPOSE: user default transactions local storage
 */
 import { AsyncStorage } from 'react-native';

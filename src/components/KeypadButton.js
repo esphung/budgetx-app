@@ -1,10 +1,6 @@
-'use strict';
-
 import React, { Component } from 'react';
 
 import {
-  StyleSheet,
-  View,
   TouchableOpacity,
   Platform,
   Text
@@ -14,41 +10,41 @@ import {
 import colors from '../../colors';
 
 class KeypadButton extends Component {
-
   constructor(props) {
     super(props);
-  
+
     this.state = {};
 
-    this.btnTextColor
-    this.btnBorderWidth
-    this.btnBorderColor
+    // this.btnTextColor
+    // this.btnBorderWidth
+    // this.btnBorderColor
 
-    if (this.props.value === 'Add') {
-      //console.log(this.props.value)
-      this.btnTextColor = colors.shamrockGreen
-      this.btnBorderWidth = 1
-      this.btnBorderColor = colors.shamrockGreen
-    }
-    else {
-      this.btnTextColor = '#ffffff'
-      this.btnBorderWidth = 0
-      this.btnBorderColor = '#ffffff'
+    const { value } = this.props;
+
+    if (value === 'Add') {
+      // console.log(this.props.value)
+      this.btnTextColor = colors.shamrockGreen;
+      this.btnBorderWidth = 1;
+      this.btnBorderColor = colors.shamrockGreen;
+    } else {
+      this.btnTextColor = '#ffffff';
+      this.btnBorderWidth = 0;
+      this.btnBorderColor = '#ffffff';
     }
   }
+
   render() {
-
-
+    const { onPress, value } = this.props;
     return (
       <TouchableOpacity
-        onPress={this.props.onPress}
+        onPress={onPress}
         style={
           {
             justifyContent: 'center',
             alignItems: 'center',
 
-            width: '30%',//117,
-            //height: 46,
+            width: '30%', // 117,
+            // height: 46,
             height: '100%',
             borderRadius: 5,
             backgroundColor: colors.dark,
@@ -62,19 +58,19 @@ class KeypadButton extends Component {
 
             borderWidth: this.btnBorderWidth,
             borderColor: this.btnBorderColor,
-            
+
             // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'dashed',
 
           }
 
-        }>
-          <Text 
-          
+        }
+      >
+        <Text
           style={{
 
-            width: '100%',//117,
+            width: '100%', // 117,
             height: 30,
             fontFamily: 'SFProDisplay-Regular',
             fontSize: Platform.OS === 'ios' ? 25 : 20,
@@ -88,9 +84,10 @@ class KeypadButton extends Component {
             // borderColor: 'white',
             // borderStyle: 'solid',
 
-          }}>
-            {this.props.value}
-          </Text>
+          }}
+        >
+          {value}
+        </Text>
 
       </TouchableOpacity>
 
@@ -98,10 +95,5 @@ class KeypadButton extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-
-});
-
 
 export default KeypadButton;
