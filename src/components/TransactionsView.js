@@ -312,7 +312,7 @@ class TransactionsView extends Component {
           renderItem={({ item }) => (
             <View style={styles.rowFront}>{this.getItemView(item)}</View>
           )}
-          renderHiddenItem={() => (
+          renderHiddenItem={({ item }) => (
             <View style={{ flexDirection: 'row', }}>
               <View style={{
                 flex: 1,
@@ -323,7 +323,7 @@ class TransactionsView extends Component {
               />
               <View style={styles.rowBack}>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => console.log(String(item.id))}>
                   <Text style={{
                     width: '100%',
                     // width: 47,
