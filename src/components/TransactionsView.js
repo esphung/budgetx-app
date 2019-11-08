@@ -1,11 +1,9 @@
 /*
 FILENAME:   TransactionsView.js
 PURPOSE:    shows if app has no transaction data
-AUTHOR:     eric phung 
+AUTHOR:     eric phung
 DATE:       Sun Nov  3 05:41:17 2019
 */
-'use strict';
-
 import React, { Component } from 'react';
 
 import {
@@ -20,41 +18,43 @@ import {
 // import { ListItem } from 'react-native-elements'
 
 // date formatting
-import { getFormattedDate } from '../functions/getFormattedDate'
+// import { getFormattedDate } from '../functions/getFormattedDate';
 
 // ui colors
-import colors from '../../colors';
+// import colors from '../../colors';
 
 
-function getMinusSymbol(item){
-  if(item.category.type.includes('expense'))
-    return '-'
+function getMinusSymbol(item) {
+  let symbol = '';
+  if (item.category.type.includes('expense')) {
+    symbol = '-';
+  }
+  return symbol;
 }
 
-
-let tableHeight = '30%'
-
+const TABLE_HEIGHT = '30%';
 
 class TransactionsView extends Component {
-  getEmptyTransactionsView(){
-    return (
+  getEmptyTransactionsView = () => {
+    const emptyView = (
       <View style={
-        {
-          position: 'absolute',
-          //left: 84,
-          top: 256,
+            {
+              position: 'absolute',
+              // left: 84,
+              top: 256,
 
-          width: 220,
-          height: 84,
+              width: 220,
+              height: 84,
 
-          // borderWidth: 1,
-          // borderColor: '1',
-          // borderStyle: 'dashed',
+              // borderWidth: 1,
+              // borderColor: '1',
+              // borderStyle: 'dashed',
 
-        }
-      }>
+            }
+          }
+      >
         <Text style={styles.header}>
-          No transactions yet.
+            No transactions yet.
         </Text>
 
         <Text style={styles.text}>
@@ -62,11 +62,13 @@ class TransactionsView extends Component {
         </Text>
 
       </View>
-    )
+    );
+
+    return emptyView;
   }
 
-  getItemSymbol(item){
-    return (
+  getItemSymbol = (item) => {
+    const view = (
       <Text style={{
         flex: 0.05,
 
@@ -75,19 +77,21 @@ class TransactionsView extends Component {
         // borderWidth: 1,
         // borderColor: 'black',
         // borderStyle: 'solid',
-      }}>
+      }}
+      >
         o
       </Text>
-      )
+    );
+    return view;
   }
 
-  getItemCategory(item){
-    return (
+  getItemCategory = (item) => {
+    const textView = (
       <Text style={
         {
           flex: 1,
 
-          //width: 'auto',
+          // width: 'auto',
           fontFamily: 'SFProDisplay-Regular',
           fontSize: 17,
           fontWeight: 'normal',
@@ -96,30 +100,30 @@ class TransactionsView extends Component {
 
           marginHorizontal: 10,
 
-          color: '#ffffff7f',//'rgba(255, 255, 255, 0.5)',
+          color: '#ffffff7f', // 'rgba(255, 255, 255, 0.5)',
 
-
-
-          //backgroundColor: colors.darkTwo,
+          // backgroundColor: colors.darkTwo,
 
           // borderWidth: 1,
           // borderColor: 'black',
           // borderStyle: 'solid',
         }
-      }>
+      }
+      >
 
         {item.category.name}
 
       </Text>
-      )
-    }
+    );
+    return textView;
+  }
 
-    getItemPayee(item){
-      return (
-        <Text style={
+  getItemPayee = (item) => {
+    const textView = (
+      <Text style={
           {
             flex: 1,
-            //width: 'auto',
+            // width: 'auto',
             fontFamily: 'SFProDisplay-Regular',
             fontSize: 17,
             fontWeight: 'normal',
@@ -128,44 +132,44 @@ class TransactionsView extends Component {
 
             marginHorizontal: 10,
 
-            //color: 'rgba(255, 255, 255, 0.5)',
+            // color: 'rgba(255, 255, 255, 0.5)',
 
-
-
-            //backgroundColor: colors.darkTwo,
+            // backgroundColor: colors.darkTwo,
 
             // borderWidth: 1,
             // borderColor: 'black',
             // borderStyle: 'solid',
           }
-        }>
+        }
+      >
 
         {item.payee}
 
-        </Text>
-      )
-    }
+      </Text>
+    );
+    return textView;
+  }
 
-  getItemAmount(item){
-    return (
+  getItemAmount = (item) => {
+    const view = (
       <View style={{
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        //width: '100%',
-
-
+        // width: '100%',
 
         // borderWidth: 1,
         // borderColor: 'black',
         // borderStyle: 'solid',
-      }}>
+      }}
+      >
 
-      <Text>
+        <Text>
 
           <Text style={{
             flex: 1,
-            //textAlignVertical: 'center',
+
+            // textAlignVertical: 'center',
             width: '100%',
             height: 20,
             fontFamily: 'SFProDisplay-Regular',
@@ -173,9 +177,11 @@ class TransactionsView extends Component {
             fontWeight: 'normal',
             fontStyle: 'normal',
             letterSpacing: 0.29,
-   
             color: '#ffffff7f',
-          }}>{getMinusSymbol(item)}</Text>
+          }}
+          >
+            {getMinusSymbol(item)}
+          </Text>
 
           <Text style={{
             flex: 1,
@@ -190,36 +196,41 @@ class TransactionsView extends Component {
 
             color: '#ffffff',
 
-          }}>{item.amount}</Text>
-          
+          }}
+          >
+            {item.amount}
+          </Text>
+
 
           <Text style={{
-                flex: 0.1,
-                //textAlignVertical: 'center',
-                width: '100%',
-                height: 20,
-                fontFamily: 'SFProDisplay-Regular',
-                fontSize: 17,
-                fontWeight: 'normal',
-                fontStyle: 'normal',
-                letterSpacing: 0.29,
-             
-                color: '#ffffff7f',
+            flex: 0.1,
+            // textAlignVertical: 'center',
+            width: '100%',
+            height: 20,
+            fontFamily: 'SFProDisplay-Regular',
+            fontSize: 17,
+            fontWeight: 'normal',
+            fontStyle: 'normal',
+            letterSpacing: 0.29,
 
-                marginVertical: 8,
-                paddingRight:  12,
-          }}>$
+            color: '#ffffff7f',
+
+            marginVertical: 8,
+            paddingRight: 12,
+          }}
+          >
+            $
           </Text>
 
         </Text>
 
       </View>
-    )
-
+    );
+    return view;
   }
 
-  getItemText(item){
-    return (
+  getItemText = (item) => {
+    const view = (
 
       <View style={{
         flex: 1,
@@ -230,9 +241,10 @@ class TransactionsView extends Component {
         marginHorizontal: 12,
 
 
-      }}>
+      }}
+      >
 
-        {/*. item Symbol*/}
+        {/* item Symbol */}
         {this.getItemSymbol(item)}
 
 
@@ -241,7 +253,7 @@ class TransactionsView extends Component {
 
         {/* item payee */}
         {
-          //this.getItemPayee(item)
+          // this.getItemPayee(item)
         }
 
 
@@ -249,41 +261,42 @@ class TransactionsView extends Component {
         {this.getItemAmount(item)}
 
 
-        </View>
+      </View>
 
-    )
+    );
+    return view;
   }
 
-  getItemView(item){
+  getItemView(item) {
     return (
       <TouchableOpacity
-      onPress={() => alert(item.amount)}
-      style={
-        {
-          height: 37,
+        onPress={() => console.log(item.amount)}
+        style={
+          {
+            height: 37,
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-      }}>
-       { this.getItemText(item) }
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        }
+      >
+        { this.getItemText(item) }
       </TouchableOpacity>
-    )
-
+    );
   }
 
-  getListView(transactions){
+  getListView(transactions) {
     // make a list view for transactions
     return (
       <ScrollView style={
         {
-          //flex: 1,
+          // flex: 1,
           position: 'absolute',
-          
-          top: '30%',//240,
+          top: '30%', // 240,
 
-          width: '100%',//220,
-          height: tableHeight,//84,
+          width: '100%', // 220,
+          height: TABLE_HEIGHT, // 84,
 
           // backgroundColor: 'lightblue',
 
@@ -292,9 +305,8 @@ class TransactionsView extends Component {
           // borderStyle: 'solid',
 
         }
-      }>
-
-
+      }
+      >
 
         <FlatList
           data={
@@ -313,29 +325,27 @@ class TransactionsView extends Component {
             transactions
         }
 
-          keyExtractor={(item, index) => item.id}
+          keyExtractor={(item) => item.id}
 
-          renderItem={({item}) => this.getItemView(item)}
+          renderItem={({ item }) => this.getItemView(item)}
 
         />
 
       </ScrollView>
-    )
+    );
   }
 
   render() {
-    const { transactions } = this.props
-    //console.log('Rendered transactions:', transactions)
+    const { transactions } = this.props;
+
+    let view = this.getEmptyTransactionsView();
+    // console.log('Rendered transactions:', transactions)
     if (transactions) {
       if (transactions.length > 0) {
-        return this.getListView(transactions)
-      } else {
-        return this.getEmptyTransactionsView()
+        view = this.getListView(transactions);
       }
     }
-    else {
-      return this.getEmptyTransactionsView()
-    }
+    return view;
   }
 }
 
@@ -344,7 +354,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     fontFamily: 'SFProDisplay-Semibold',
     fontSize: 22,
-    //fontWeight: '600',
+    // fontWeight: '600',
     fontStyle: 'normal',
     lineHeight: 28,
     letterSpacing: 0.17,
