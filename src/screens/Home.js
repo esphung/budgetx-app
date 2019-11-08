@@ -6,6 +6,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             Sun Nov  3 05:40:29 2019
             04/11/2019 03:57 AM
             06/11/2019 06:54 PM (ESLinter)
+            08/11/2019 03:01 AM (AsyncStorage -> Transactions, Categories)
 */
 import React, { Component } from 'react';
 
@@ -34,6 +35,8 @@ import {
 } from '../storage/TransactionsStorage';
 
 import Transaction from '../models/Transaction';
+
+// import sortArrayDesc from '../functions/sortArrayDesc';
 
 import getUSDFormattedString from '../functions/getUSDFormattedString';
 
@@ -95,6 +98,8 @@ class Home extends Component {
     const object = await loadTransactionsObject();
     const { transactions } = object;
     // console.log(transactions);
+
+    // set transactions
     await this.setState({ currentTransactions: transactions });
   }
 
@@ -117,7 +122,15 @@ class Home extends Component {
       );
 
       this.storeNewTransaction(transaction); // add new transaction to existing storage
+
+      // clear input values
+      this.clearCurrentInputs();
     }
+  }
+
+  clearCurrentInputs() {
+    this.setState({ currentAmount: 0 });
+    this.setState({ currentCategory: null });
   }
 
   async storeNewTransaction(transaction) {
@@ -125,7 +138,7 @@ class Home extends Component {
 
     const { transactions } = storageObj; // get transactions from storage object
 
-    transactions.push(transaction); // add new transaction to transactions
+    transactions.unshift(transaction); // add new transaction to transactions
 
     // console.log(storageObj); // debug console
 
@@ -140,6 +153,14 @@ class Home extends Component {
     // truncate single AND leading zeros; concatenate old + new values
     const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
     this.handleChange(newValue);
+  }
+
+  categoryBtnPressed(category) {
+    // change category pill style
+
+    // set as current category
+    this.setState({ currentCategory: category });
+    // alert(category.name);
   }
 
   handlePress(value) {
@@ -175,11 +196,6 @@ class Home extends Component {
     }
 
     this.setState({ currentAmount: value });
-  }
-
-  categoryBtnPressed(category) {
-    this.setState({ currentCategory: category });
-    // alert(category.name);
   }
 
   render() {

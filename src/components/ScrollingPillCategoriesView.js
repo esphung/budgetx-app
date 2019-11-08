@@ -2,6 +2,7 @@
 // PURPOSE:   Scrolling Pills
 // AUTHOR:    Eric Phung
 // CREATED:   03/11/2019 10:43 PM
+// UPDATED:   08/11/2019 03:00 AM
 import React, { Component } from 'react';
 
 import {
@@ -15,9 +16,6 @@ import {
 
 // ui colors
 import colors from '../../colors';
-
-// default user categories
-// import categories from '../data/categories';
 
 import {
   loadCategories,
@@ -40,8 +38,8 @@ class ScrollingPillCategoriesView extends Component {
 
   async componentDidMount() {
     // load default settings
-    const initialState = await loadCategories();
-    const { categories } = initialState;
+    const storage = await loadCategories();
+    const { categories } = storage;
     await this.setState({ categories });
     // console.log('State Categories Set:', categories.length);
   }

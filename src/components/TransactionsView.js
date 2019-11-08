@@ -11,9 +11,13 @@ import {
   View,
   Text,
   ScrollView,
-  FlatList,
   TouchableOpacity
 } from 'react-native';
+
+import { SwipeListView } from 'react-native-swipe-list-view';
+
+// ui colors
+import colors from '../../colors';
 
 function getMinusSymbol(item) {
   let symbol = '$ ';
@@ -263,7 +267,7 @@ class TransactionsView extends Component {
   getItemView(item) {
     return (
       <TouchableOpacity
-        onPress={() => console.log(item.amount)}
+        onPress={() => console.log(item)}
         style={
           {
             height: 37,
@@ -282,6 +286,7 @@ class TransactionsView extends Component {
   getListView(transactions) {
     // make a list view for transactions
     return (
+
       <ScrollView style={
         {
           // flex: 1,
@@ -301,28 +306,52 @@ class TransactionsView extends Component {
       }
       >
 
-        <FlatList
-          data={
-            // [
-            //   {key: 'Devin'},
-            //   {key: 'Dan'},
-            //   {key: 'Dominic'},
-            //   {key: 'Jackson'},
-            //   {key: 'James'},
-            //   {key: 'Joel'},
-            //   {key: 'John'},
-            //   {key: 'Jillian'},
-            //   {key: 'Jimmy'},
-            //   {key: 'Julie'},
-            // ]
-            transactions
-        }
-
+        <SwipeListView
+          data={transactions}
           keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.rowFront}>{this.getItemView(item)}</View>
+          )}
+          renderHiddenItem={() => (
+            <View style={{ flexDirection: 'row', }}>
+              <View style={{
+                flex: 1,
+                // borderWidth: 1,
+                // borderColor: 'white',
+                // borderStyle: 'solid',
+              }}
+              />
+              <View style={styles.rowBack}>
 
-          renderItem={({ item }) => this.getItemView(item)}
+                <TouchableOpacity>
+                  <Text style={{
+                    width: '100%',
+                    // width: 47,
+                    height: 20,
+                    fontFamily: 'SFProDisplay-Regular',
+                    fontSize: 17,
+                    fontWeight: 'normal',
+                    fontStyle: 'normal',
+                    letterSpacing: 0.13,
+                    color: '#ffffff',
 
+                    marginRight: 12,
+
+                    // borderWidth: 1,
+                    // borderColor: 'white',
+                    // borderStyle: 'solid',
+                  }}
+                  >
+                    Delete
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+          leftOpenValue={0}
+          rightOpenValue={-75}
         />
+
 
       </ScrollView>
     );
@@ -331,11 +360,13 @@ class TransactionsView extends Component {
   render() {
     const { transactions } = this.props;
 
-    let view = this.getEmptyTransactionsView();
-    // console.log('Rendered transactions:', transactions)
+    let view = <View />;
+    // console.log('Rendered transactions:', transactions);
     if (transactions) {
       if (transactions.length > 0) {
         view = this.getListView(transactions);
+      } else {
+        view = this.getEmptyTransactionsView();
       }
     }
     return view;
@@ -343,6 +374,25 @@ class TransactionsView extends Component {
 }
 
 const styles = StyleSheet.create({
+  rowFront: {
+    backgroundColor: colors.darkTwo,
+
+  },
+  rowBack: {
+    flex: 1,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+
+    width: '50%',
+    // left: '500%',
+    height: 37,
+
+    backgroundColor: colors.pinkRed,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
+  },
   header: {
     opacity: 0.6,
     fontFamily: 'SFProDisplay-Semibold',
