@@ -15,19 +15,10 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-// import { ListItem } from 'react-native-elements'
-
-// date formatting
-// import { getFormattedDate } from '../functions/getFormattedDate';
-
-// ui colors
-// import colors from '../../colors';
-
-
 function getMinusSymbol(item) {
-  let symbol = '';
+  let symbol = '$ ';
   if (item.category.type.includes('expense')) {
-    symbol = '-';
+    symbol = '- $ ';
   }
   return symbol;
 }
@@ -202,6 +193,7 @@ class TransactionsView extends Component {
           </Text>
 
 
+          {/*
           <Text style={{
             flex: 0.1,
             // textAlignVertical: 'center',
@@ -221,6 +213,7 @@ class TransactionsView extends Component {
           >
             $
           </Text>
+          */}
 
         </Text>
 
