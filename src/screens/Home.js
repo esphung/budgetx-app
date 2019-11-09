@@ -158,11 +158,14 @@ class Home extends Component {
   }
 
   categoryBtnPressed(category) {
-    // change category pill style
-
-    // set as current category
-    this.setState({ currentCategory: category });
-    // alert(category.name);
+    // toggle current category selected
+    const { currentCategory } = this.state;
+    if (currentCategory == category) {
+      this.setState({ currentCategory: null });
+    } else {
+      // set as current category
+      this.setState({ currentCategory: category });
+    }
   }
 
   deleteBtnPressed(transaction) {
@@ -236,7 +239,8 @@ class Home extends Component {
       currentBalanceValue,
       currentSpentValue,
       currentDate,
-      currentTransactions
+      currentTransactions,
+      currentCategory
     } = this.state;
 
     let view = <View />;
@@ -258,6 +262,7 @@ class Home extends Component {
 
           <ScrollingPillCategoriesView
             onPress={this.categoryBtnPressed}
+            currentCategory={currentCategory}
           />
 
           <AmountInputView

@@ -9,23 +9,20 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 
 // ui colors
 import colors from '../../colors';
 
+import CategoryPill from './CategoryPill';
+
 import {
   loadCategories,
   // saveCategories
 } from '../storage/CategoriesStorage';
 
-// arbitrary size limits
-const MAX_PILL_WIDTH = 156;
-const MIN_PILL_WIDTH = 73;
-const MAX_PILL_HEIGHT = 32;
+// const MIN_PILL_WIDTH = 73;
 
 class ScrollingPillCategoriesView extends Component {
   constructor(props) {
@@ -34,6 +31,8 @@ class ScrollingPillCategoriesView extends Component {
     this.state = {
       categories: []
     };
+
+    // this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
   }
 
   async componentDidMount() {
@@ -44,55 +43,32 @@ class ScrollingPillCategoriesView extends Component {
     // console.log('State Categories Set:', categories.length);
   }
 
-  getItemCells(items) {
+  isCurrentCategory(category) {
+    const { currentCategory } = this.props;
+    if (!currentCategory) {
+      return false;
+    }
+    if (currentCategory == category) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getCategoryPill(items) {
     let view = <View />;
     if (items) {
       view = items.map((item) => (
-        <TouchableOpacity
-          style={
-            {
-              maxHeight: MAX_PILL_HEIGHT,
-              minWidth: MIN_PILL_WIDTH,
-              maxWidth: MAX_PILL_WIDTH,
-
-              alignItems: 'center',
-              justifyContent: 'center',
-
-              marginHorizontal: 4,
-              marginVertical: 10,
-
-              borderRadius: 17,
-              borderWidth: 1,
-              borderStyle: 'solid',
-
-              borderColor: item.color,
-            }
-          }
-
+        <CategoryPill
+          item={item}
+          id={item.id}
+          name={item.name}
+          color={item.color}
+          textColor={item.color}
           key={item.id}
-
           onPress={() => this.categoryBtnPressed(item)}
-        >
-
-          <Text style={
-            {
-              paddingHorizontal: 12,
-              paddingBottom: 1,
-
-              fontFamily: 'SFProDisplay-Regular',
-              fontSize: 17,
-              fontWeight: 'normal',
-              fontStyle: 'normal',
-              letterSpacing: 0.12,
-
-              color: item.color,
-            }
-          }
-          >
-
-            {item.name}
-          </Text>
-        </TouchableOpacity>
+          isSelected={this.isCurrentCategory(item)}
+        />
       ));
     }
     return view;
@@ -112,12 +88,12 @@ class ScrollingPillCategoriesView extends Component {
           horizontal
           showsHorizontalScrollIndicator={false}
           decelerationRate={0}
-          snapToInterval={MIN_PILL_WIDTH} // your element width
+          // snapToInterval={MIN_PILL_WIDTH} // your element width
           snapToAlignment="center"
 
           style={styles.scrollView}
         >
-          { this.getItemCells(categories) }
+          { this.getCategoryPill(categories) }
 
         </ScrollView>
       </SafeAreaView>
