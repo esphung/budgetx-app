@@ -160,7 +160,7 @@ class Home extends Component {
   categoryBtnPressed(category) {
     // toggle current category selected
     const { currentCategory } = this.state;
-    if (currentCategory == category) {
+    if (currentCategory === category) {
       this.setState({ currentCategory: null });
     } else {
       // set as current category

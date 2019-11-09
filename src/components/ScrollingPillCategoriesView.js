@@ -43,18 +43,6 @@ class ScrollingPillCategoriesView extends Component {
     // console.log('State Categories Set:', categories.length);
   }
 
-  isCurrentCategory(category) {
-    const { currentCategory } = this.props;
-    if (!currentCategory) {
-      return false;
-    }
-    if (currentCategory == category) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   getCategoryPill(items) {
     let view = <View />;
     if (items) {
@@ -72,6 +60,17 @@ class ScrollingPillCategoriesView extends Component {
       ));
     }
     return view;
+  }
+
+  isCurrentCategory(category) {
+    const { currentCategory } = this.props;
+    if (!currentCategory) {
+      return false;
+    }
+    if (currentCategory === category) {
+      return true;
+    }
+    return false;
   }
 
   categoryBtnPressed(item) {

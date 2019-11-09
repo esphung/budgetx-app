@@ -13,29 +13,19 @@ const MAX_PILL_HEIGHT = 32;
 
 export default function CategoryPill(props) {
   const {
-    // item,
-    // id,
     color,
     name,
-    textColor,
-    // onPress
-    isSelected
+    isSelected,
+    onPress
   } = props;
-  // console.log(id)
 
-  this.textColor = color
+  let textColor = color;
 
-  this.backgroundColor = 'transparent';
+  let backgroundColor = 'transparent';
 
   if (isSelected) {
-    this.textColor = 'white';
-    this.backgroundColor = color;
-  }
-
-  function onPress(){
-    const { onPress } = props;
-
-    onPress();
+    textColor = 'white';
+    backgroundColor = color;
   }
 
   return (
@@ -58,7 +48,7 @@ export default function CategoryPill(props) {
 
           borderColor: color,
 
-          backgroundColor: this.backgroundColor,
+          backgroundColor,
         }
       }
 
@@ -78,7 +68,7 @@ export default function CategoryPill(props) {
           fontStyle: 'normal',
           letterSpacing: 0.12,
 
-          color: this.textColor,
+          color: textColor,
         }
       }
       >
