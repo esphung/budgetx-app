@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   TouchableOpacity,
@@ -9,91 +9,76 @@ import {
 // ui colors
 import colors from '../../colors';
 
-class KeypadButton extends Component {
-  constructor(props) {
-    super(props);
+export default function KeypadButton(props) {
+  const { onPress, value } = props;
 
-    this.state = {};
+  let btnTextColor = '#ffffff';
+  let btnBorderWidth = 0;
+  let btnBorderColor = '#ffffff';
 
-    // this.btnTextColor
-    // this.btnBorderWidth
-    // this.btnBorderColor
-
-    const { value } = this.props;
-
-    if (value === 'Add') {
-      // console.log(this.props.value)
-      this.btnTextColor = colors.shamrockGreen;
-      this.btnBorderWidth = 1;
-      this.btnBorderColor = colors.shamrockGreen;
-    } else {
-      this.btnTextColor = '#ffffff';
-      this.btnBorderWidth = 0;
-      this.btnBorderColor = '#ffffff';
-    }
+  if (value === 'Add') {
+    // console.log(this.props.value)
+    btnTextColor = colors.shamrockGreen;
+    btnBorderWidth = 1;
+    btnBorderColor = colors.shamrockGreen;
   }
 
-  render() {
-    const { onPress, value } = this.props;
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        style={
-          {
-            justifyContent: 'center',
-            alignItems: 'center',
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={
+        {
+          justifyContent: 'center',
+          alignItems: 'center',
 
-            width: '30%', // 117,
-            // height: 46,
-            height: '100%',
-            borderRadius: 5,
-            backgroundColor: colors.dark,
-            shadowColor: '#0c1422',
-            shadowOffset: {
-              width: 0,
-              height: 1
-            },
-            shadowRadius: 0,
-            shadowOpacity: 1,
+          width: '30%', // 117,
+          // height: 46,
+          height: '100%',
+          borderRadius: 5,
+          backgroundColor: colors.dark,
+          shadowColor: '#0c1422',
+          shadowOffset: {
+            width: 0,
+            height: 1
+          },
+          shadowRadius: 0,
+          shadowOpacity: 1,
 
-            borderWidth: this.btnBorderWidth,
-            borderColor: this.btnBorderColor,
+          borderWidth: btnBorderWidth,
+          borderColor: btnBorderColor,
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'dashed',
-
-          }
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'dashed',
 
         }
+
+      }
+    >
+      <Text
+        style={{
+
+          width: '100%', // 117,
+          height: 30,
+          fontFamily: 'SFProDisplay-Regular',
+          fontSize: Platform.OS === 'ios' ? 25 : 20,
+          fontWeight: 'normal',
+          fontStyle: 'normal',
+          letterSpacing: 0.29,
+          textAlign: 'center',
+          color: btnTextColor,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+
+        }}
       >
-        <Text
-          style={{
+        {value}
+      </Text>
 
-            width: '100%', // 117,
-            height: 30,
-            fontFamily: 'SFProDisplay-Regular',
-            fontSize: Platform.OS === 'ios' ? 25 : 20,
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            letterSpacing: 0.29,
-            textAlign: 'center',
-            color: this.btnTextColor,
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-
-          }}
-        >
-          {value}
-        </Text>
-
-      </TouchableOpacity>
+    </TouchableOpacity>
 
 
-    );
-  }
+  );
 }
-
-export default KeypadButton;
