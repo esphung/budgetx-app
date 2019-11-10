@@ -66,6 +66,7 @@ export default function KeypadButton(props) {
           fontStyle: 'normal',
           letterSpacing: 0.29,
           textAlign: 'center',
+          
           color: btnTextColor,
 
           // borderWidth: 1,

@@ -10,21 +10,6 @@ import {
 // ui colors
 import colors from '../../colors';
 
-import getUSDFormattedString from '../functions/getUSDFormattedString';
-
-// import global variables
-// require('../../globals')
-
-// // maximum number of digits displayed for balances
-// const maximumAmountOfDigits = 6
-
-// function truncateString(str, num) {
-//   if (str.length <= num) {
-//     return str
-//   }
-//   return str.slice(0, num) + '...'
-// }
-
 class BalanceView extends Component {
   constructor(props) {
     super(props);
@@ -52,15 +37,15 @@ class BalanceView extends Component {
   }
 
   render() {
-    let { currentBalanceValue, currentSpentValue } = this.props;
+    const { currentBalanceValue, currentSpentValue } = this.props;
 
-    if (!currentBalanceValue) {
-      currentBalanceValue = 0;
-    }
+    // if (!currentBalanceValue) {
+    //   currentBalanceValue = 0;
+    // }
 
-    if (!currentSpentValue) {
-      currentSpentValue = 0;
-    }
+    // if (!currentSpentValue) {
+    //   currentSpentValue = 0;
+    // }
 
     return (
       <View style={styles.balanceView}>
@@ -81,7 +66,7 @@ class BalanceView extends Component {
                 style={styles.currentBalanceValue}
               >
                 <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>{ this.getCurrencySymbol() }</Text>
-                <Text>{ getUSDFormattedString(currentBalanceValue) }</Text>
+                <Text>{ currentBalanceValue }</Text>
               </Text>
             </TouchableOpacity>
 
@@ -102,7 +87,7 @@ class BalanceView extends Component {
             <TouchableOpacity onPress={this.currentSpentValueBtnPressed}>
               <Text style={styles.currentSpentValue}>
                 <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>{ this.getCurrencySymbol() }</Text>
-                <Text>{ getUSDFormattedString(currentSpentValue) }</Text>
+                <Text>{ currentSpentValue }</Text>
               </Text>
             </TouchableOpacity>
 

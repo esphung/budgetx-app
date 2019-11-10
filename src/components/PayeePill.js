@@ -5,13 +5,13 @@ import {
   Text
 } from 'react-native';
 
-// arbitrary size limits
+// ui colors
+import colors from '../../colors';
+
 const MAX_PILL_WIDTH = 156;
-const MIN_PILL_WIDTH = 73;
-// const MAX_PILL_HEIGHT = 32;
+const MIN_PILL_WIDTH = 33;
 
-
-export default function CategoryPill(props) {
+export default function PayeePill(props) {
   const {
     color,
     name,
@@ -24,7 +24,7 @@ export default function CategoryPill(props) {
   let backgroundColor = 'transparent';
 
   if (isSelected) {
-    textColor = 'white';
+    textColor = colors.darkTwo;
     backgroundColor = color;
   }
 
@@ -78,5 +78,6 @@ export default function CategoryPill(props) {
         { name }
       </Text>
     </TouchableOpacity>
+
   );
 }

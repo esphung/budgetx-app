@@ -1,86 +1,81 @@
-// FILENAME:  ScrollingPillCategoriesView.js
-// PURPOSE:   Scrolling Pills
+// FILENAME:  ScrollingPayeePillsView.js
+// PURPOSE:   shows payee pills
 // AUTHOR:    Eric Phung
-// CREATED:   03/11/2019 10:43 PM
-// UPDATED:   08/11/2019 03:00 AM
+// CREATED:   10/11/2019 01:07 PM
 import React, { Component } from 'react';
 
 import {
   StyleSheet,
-  SafeAreaView,
   ScrollView,
+  SafeAreaView,
   View
 } from 'react-native';
 
-// ui colors
-import colors from '../../colors';
+import colors from '../../colors'; // ui colors
 
-import CategoryPill from './CategoryPill';
+import PayeePill from './PayeePill';
 
 import {
-  loadCategories,
-  // saveCategories
-} from '../storage/CategoriesStorage';
+  loadPayees,
+  // savePayees
+} from '../storage/PayeesStorage';
 
-// const MIN_PILL_WIDTH = 73;
-
-class ScrollingPillCategoriesView extends Component {
+class ScrollingPayeePillsView extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      categories: []
+      payees: []
     };
-
-    // this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
   }
 
   async componentDidMount() {
     // load default settings
-    const storage = await loadCategories();
-    const { categories } = storage;
-    await this.setState({ categories });
-    // console.log('State Categories Set:', categories.length);
+    const storage = await loadPayees();
+    const { payees } = storage;
+    await this.setState({ payees });
+    // console.log('State Payees Set:', payees.length);
   }
 
-  getCategoryPill(items) {
+  getPayeePill(items) {
     let view = <View />;
     if (items) {
       view = items.map((item) => (
-        <CategoryPill
+        <PayeePill
           item={item}
           id={item.id}
           name={item.name}
           color={item.color}
           textColor={item.color}
           key={item.id}
-          onPress={() => this.categoryBtnPressed(item)}
-          isSelected={this.isCurrentCategory(item)}
+          onPress={() => this.payeeBtnPressed(item)}
+          isSelected={this.isCurrentPayee(item)}
         />
       ));
     }
     return view;
   }
 
-  isCurrentCategory(category) {
-    const { currentCategory } = this.props;
-    if (!currentCategory) {
+
+  isCurrentPayee(payee) {
+    const { currentPayee } = this.props;
+    if (!currentPayee) {
       return false;
     }
-    if (currentCategory === category) {
+    if (currentPayee === payee) {
       return true;
     }
     return false;
   }
 
-  categoryBtnPressed(item) {
+
+  payeeBtnPressed(payee) {
     const { onPress } = this.props;
-    onPress(item);
+    onPress(payee);
   }
 
   render() {
-    const { categories } = this.state;
-    // console.log(categories)
+    const { payees } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView
@@ -95,7 +90,9 @@ class ScrollingPillCategoriesView extends Component {
 
           style={styles.scrollView}
         >
-          { this.getCategoryPill(categories) }
+          {
+            this.getPayeePill(payees)
+          }
 
         </ScrollView>
       </SafeAreaView>
@@ -117,19 +114,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
 
     position: 'absolute',
-    top: '57%', // '57%', // 462,
+    top: '51%', // '57%', // 462,
 
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'dashed',
   },
-  separator: {
-    width: 2,
-    marginVertical: 10,
-    backgroundColor: 'white' // 'rgba(0,0,0,0.5)'
-  }
-
 });
 
 
-export default ScrollingPillCategoriesView;
+export default ScrollingPayeePillsView;

@@ -1,7 +1,7 @@
 // FILENAME:  categories.js
 // PURPOSE:   default categories
 // AUTHOR:    Eric Phung
-// CREATED:   03/11/2019 08:40 PM
+// CREATED:   10/11/2019 02:07 PM
 const categories = [
   {
     id: 0,

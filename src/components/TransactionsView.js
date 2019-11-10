@@ -202,7 +202,9 @@ class TransactionsView extends Component {
 
           }}
           >
-            {item.amount}
+            {
+              (Math.abs(item.amount))
+            }
           </Text>
 
 

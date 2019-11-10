@@ -19,7 +19,7 @@ import {
 
 import * as Font from 'expo-font';
 
-// header components
+// import my custom view components
 import HeaderLeftView from '../components/HeaderLeftView';
 import HeaderRightView from '../components/HeaderRightView';
 import BalanceView from '../components/BalanceView';
@@ -28,6 +28,7 @@ import TransactionsView from '../components/TransactionsView';
 import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInputView';
 import KeypadView from '../components/KeypadView';
+import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
 
 import {
   loadTransactionsObject,
@@ -38,7 +39,7 @@ import Transaction from '../models/Transaction';
 
 // import sortArrayDesc from '../functions/sortArrayDesc';
 
-import getUSDFormattedString from '../functions/getUSDFormattedString';
+// import getUSDFormattedString from '../functions/getUSDFormattedString';
 
 // ui colors
 import colors from '../../colors';
@@ -52,9 +53,7 @@ class Home extends Component {
   static navigationOptions = ({ screenProps }) => {
     // get user name and email from props
     // console.log(screenProps);
-
     const { name, email } = screenProps.user;
-
     return {
       headerTransparent: {},
 
@@ -69,13 +68,14 @@ class Home extends Component {
 
     this.state = {
       fontsAreLoaded: false,
-      // user: {},
-      // data: {},
       currentAmount: null,
-      currentDate: new Date(),
+      currentDate: null,
       currentCategory: null,
       currentTransactions: [],
-      // currentPayee: null
+      currentPayee: null,
+      currentType: null,
+      currentBalanceValue: 0,
+      currentSpentValue: 0
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -85,32 +85,40 @@ class Home extends Component {
     this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
 
     this.deleteBtnPressed = this.deleteBtnPressed.bind(this);
+
+    this.payeeBtnPressed = this.payeeBtnPressed.bind(this);
+
+    this.typeBtnPressed = this.typeBtnPressed.bind(this);
   }
 
   async componentDidMount() {
+    // load default transactions
+    const transactionsObject = loadTransactionsObject();
+    // console.log(transactions);
+
     // load fonts
     await Font.loadAsync({
       'SFProDisplay-Regular': SFProDisplayRegularFont,
       'SFProDisplay-Semibold': SFProDisplaySemiboldFont
     });
 
-    await this.setState({ fontsAreLoaded: true });
+    // set fonts  are loaded
+    this.setState({ fontsAreLoaded: true });
 
-    // load default settings
-    const object = await loadTransactionsObject();
-    const { transactions } = object;
-    // console.log(transactions);
+    const { transactions } = await transactionsObject;
 
     // set transactions
-    await this.setState({ currentTransactions: transactions });
+    this.setState({ currentTransactions: transactions });
   }
 
-  addBtnPressed = () => {
+  addBtnPressed() {
     const {
       currentTransactions,
       currentAmount,
       currentDate,
-      currentCategory
+      currentCategory,
+      currentPayee,
+      currentType
     } = this.state;
 
     // check if category is select and amount is given
@@ -118,12 +126,15 @@ class Home extends Component {
       const transaction = new Transaction(
         currentTransactions.length,
         currentDate,
-        getUSDFormattedString(currentAmount),
-        'Eric Phung',
-        currentCategory
+        currentAmount,
+        currentPayee,
+        currentCategory,
+        currentCategory.type
       );
 
       this.storeNewTransaction(transaction); // add new transaction to existing storage
+
+      // console.log(transaction);
 
       // clear input values
       this.clearCurrentInputs();
@@ -133,6 +144,7 @@ class Home extends Component {
   clearCurrentInputs() {
     this.setState({ currentAmount: 0 });
     this.setState({ currentCategory: null });
+    this.setState({ currentPayee: null });
   }
 
   async storeNewTransaction(transaction) {
@@ -163,13 +175,31 @@ class Home extends Component {
     if (currentCategory === category) {
       this.setState({ currentCategory: null });
     } else {
-      // set as current category
+      // set new current category
       this.setState({ currentCategory: category });
     }
   }
 
   deleteBtnPressed(transaction) {
     this.removeTransaction(transaction);
+  }
+
+  payeeBtnPressed(payee) {
+    // toggle current payee selected
+    const { currentPayee } = this.state;
+    if (currentPayee === payee) {
+      this.setState({ currentPayee: null });
+    } else {
+      // set new current payee
+      this.setState({ currentPayee: payee });
+    }
+
+    // console.log(payee);
+  }
+
+  typeBtnPressed(type) {
+    // console.log(type);
+    this.setState({ currentType: type });
   }
 
   async removeTransaction(transaction) {
@@ -189,8 +219,6 @@ class Home extends Component {
         array.splice(i, 1);
       }
     }
-    // array = [2, 9]
-    // console.log(storageObject.transactions.length);
 
     await saveTransactionsObject(storageObject);
 
@@ -240,7 +268,8 @@ class Home extends Component {
       currentSpentValue,
       currentDate,
       currentTransactions,
-      currentCategory
+      currentCategory,
+      currentPayee
     } = this.state;
 
     let view = <View />;
@@ -251,6 +280,8 @@ class Home extends Component {
           <BalanceView
             currentBalanceValue={currentBalanceValue}
             currentSpentValue={currentSpentValue}
+            // currentBalanceBtnPressed={() => alert()}
+            // currentSpentBtnPressed={() => alert()}
           />
 
           <DateLabelView date={currentDate} />
@@ -258,6 +289,12 @@ class Home extends Component {
           <TransactionsView
             deleteBtnPressed={this.deleteBtnPressed}
             transactions={currentTransactions}
+          />
+
+          {/* Scrolling Payees */}
+          <ScrollingPayeePillsView
+            onPress={this.payeeBtnPressed}
+            currentPayee={currentPayee}
           />
 
           <ScrollingPillCategoriesView
