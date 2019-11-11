@@ -1,6 +1,6 @@
 // Payee prototype
 
-function Payee(id, name, color) {
+export default function Payee(id, name, color) {
   this.id = id;
   this.name = name;
   this.date = new Date();

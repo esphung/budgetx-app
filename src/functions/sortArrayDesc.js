@@ -1,8 +1,8 @@
 export default function sortArrayDesc(array, key) {
   return array.sort(function (a,b) {
-    console.info(b.date)
-    return b.date < a.date ? -1
-         : b.date > a.date ? 1
+    // console.info(b.id)
+    return b.id > a.id ? -1
+         : b.id < a.id ? 1
          : 0
   })
 }

@@ -8,8 +8,15 @@ import {
 // ui colors
 import colors from '../../../colors';
 
+import TypeView from '../TypeView';
+
 function SlideUpViews(props) {
-  const { bounceValue } = props;
+  const {
+    bounceValue,
+    // currentType,
+    // onPress
+  } = props;
+
   return (
     <Animated.View
       style={[styles.container,
@@ -23,7 +30,6 @@ function SlideUpViews(props) {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     position: 'absolute',
     bottom: 0,
     left: 0,

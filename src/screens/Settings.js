@@ -4,7 +4,10 @@
 //  settings screen for budget x app
 import React, { Component } from 'react';
 import {
-  StyleSheet, Text, View, TouchableOpacity
+  StyleSheet, Text, View, TouchableOpacity,
+
+  Button,
+  AsyncStorage
 } from 'react-native';
 
 // ui colors
@@ -33,9 +36,16 @@ class Settings extends Component {
     };
   }
 
+  clearAll() {
+    AsyncStorage.clear()
+    this.props.navigation.goBack(null);
+  }
+
   render() {
     return (
-      <View style={styles.container} />
+      <View style={styles.container}>
+        <Button title={'Reset'} onPress={() => this.clearAll()} />
+      </View>
     );
   }
 }

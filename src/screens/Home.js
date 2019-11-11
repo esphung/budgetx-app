@@ -20,7 +20,6 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 
-
 import * as Font from 'expo-font';
 
 // import my custom view components
@@ -41,7 +40,14 @@ import {
   saveTransactionsObject
 } from '../storage/TransactionsStorage';
 
+import {
+  loadPayees,
+  savePayees
+} from '../storage/PayeesStorage';
+
 import Transaction from '../models/Transaction';
+
+import Payee from '../models/Payee';
 
 // import sortArrayDesc from '../functions/sortArrayDesc';
 
@@ -53,7 +59,20 @@ import Transaction from '../models/Transaction';
 import colors from '../../colors';
 
 const SFProDisplayRegularFont = require('../../assets/fonts/SF-Pro-Display-Regular.otf');
+
 const SFProDisplaySemiboldFont = require('../../assets/fonts/SF-Pro-Display-Semibold.otf');
+
+function search(nameKey, myArray) {
+  let obj = null;
+  let i = 0;
+  for (i; i < myArray.length; i += 1) {
+    if (myArray[i].name === nameKey) {
+      obj = myArray[i];
+    }
+  }
+  return obj;
+}
+
 
 class Home extends Component {
   static navigationOptions = ({ screenProps }) => {
@@ -83,6 +102,7 @@ class Home extends Component {
       currentBalanceValue: 0.00,
       currentSpentValue: 0.00,
       isSlideUpHidden: true,
+      // enableCategoryPills: true,
       bounceValue: new Animated.Value(300), // This is the initial position of the subview
     };
 
@@ -121,7 +141,7 @@ class Home extends Component {
     this.setState({ currentTransactions: transactions });
   }
 
-  addBtnPressed() {
+  addTransactionBtnPressed() {
     const {
       currentTransactions,
       currentAmount,
@@ -191,7 +211,7 @@ class Home extends Component {
     }
 
     // toggle slide view
-    this.toggleSlideView();
+    // this.toggleSlideView();
   }
 
   toggleSlideView() {
@@ -228,9 +248,47 @@ class Home extends Component {
     this.removeTransaction(transaction);
   }
 
+  // async removeItemValue(key) {
+  //   try {
+  //     await AsyncStorage.removeItem(key);
+  //     return true;
+  //   }
+  //   catch(exception) {
+  //     return false;
+  //   }
+  // }
+
+  async addNewPayee() {
+    // add new payee to currentPayees (with textinput)
+    const storage = await loadPayees();
+
+    const { payees } = storage;
+
+    const payee = new Payee(payees.length, 'New', colors.white);
+
+    const resultObject = search(payee.name, payees);
+
+    console.log(resultObject);
+
+    if (!resultObject) {
+      payees.unshift(payee);
+
+      savePayees(storage);
+
+      this.setState({ currentPayee: payee });
+
+      // console.log(sortArrayDesc(payees));
+    }
+  }
+
   payeeBtnPressed(payee) {
+    if (payee.name === '+') {
+      this.addNewPayee();
+      return;
+    }
     // toggle current payee selected
     const { currentPayee } = this.state;
+
     if (currentPayee === payee) {
       this.setState({ currentPayee: null });
     } else {
@@ -277,7 +335,7 @@ class Home extends Component {
     if (typeof (value) === 'number') {
       this.numberBtnPressed(value);
     } else if (value === 'Add') {
-      this.addBtnPressed();
+      this.addTransactionBtnPressed();
     } else if (value === '<') {
       this.backspaceBtnPressed();
     } else {
@@ -328,7 +386,8 @@ class Home extends Component {
       currentPayee,
       currentType,
       bounceValue,
-      isSlideUpHidden
+      // isSlideUpHidden,
+      // enableCategoryPills
     } = this.state;
 
     let view = <View />;
@@ -352,8 +411,6 @@ class Home extends Component {
             />
 
             <TypeView
-              // incomeBtnPressed={this.incomeBtnPressed}
-              // expenseBtnPressed={this.expenseBtnPressed}
               onPress={this.typeBtnPressed}
               currentType={currentType}
             />
@@ -366,7 +423,7 @@ class Home extends Component {
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}
-              isEnabled={!isSlideUpHidden}
+              // isEnabled={enableCategoryPills}
             />
 
             <AmountInputView
@@ -380,6 +437,8 @@ class Home extends Component {
             <SlideUp
               toggleSlideView={this.toggleSlideView}
               bounceValue={bounceValue}
+              // onPress={this.typeBtnPressed}
+              // currentType={currentType}
             />
 
           </ScrollView>

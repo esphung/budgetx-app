@@ -6,10 +6,11 @@ import colors from '../../colors';
 
 const ItemPayee = (props) => {
   const { item } = props;
+
   return (
     <Text style={
       {
-        flex: 0.5,
+        flex: 0.8,
         // width: 'auto',
         fontFamily: 'SFProDisplay-Regular',
         fontSize: 17,
@@ -20,7 +21,7 @@ const ItemPayee = (props) => {
         // marginHorizontal: 10,
         paddingRight: 10,
 
-        textAlign: 'right',
+        textAlign: 'left',
 
         // color: item.category.color +  '7f',
 

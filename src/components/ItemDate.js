@@ -19,7 +19,7 @@ const ItemDate = (props) => {
 
   return (
   <View style={{
-    flex: 0.5,
+    flex: 0.7,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -36,7 +36,7 @@ const ItemDate = (props) => {
 
     <Text style={
       {
-        flex: 1,
+        // flex: 1,
         // width: 'auto',
         fontFamily: 'SFProDisplay-Regular',
         fontSize: 17,
