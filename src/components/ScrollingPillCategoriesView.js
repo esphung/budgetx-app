@@ -44,6 +44,8 @@ class ScrollingPillCategoriesView extends Component {
   }
 
   getCategoryPill(items) {
+    const { isEnabled } = this.props;
+    // console.log(isEnabled)
     let view = <View />;
     if (items) {
       view = items.map((item) => (
@@ -56,6 +58,7 @@ class ScrollingPillCategoriesView extends Component {
           key={item.id}
           onPress={() => this.categoryBtnPressed(item)}
           isSelected={this.isCurrentCategory(item)}
+          isEnabled={isEnabled}
         />
       ));
     }

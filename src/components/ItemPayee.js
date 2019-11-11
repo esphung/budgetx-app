@@ -9,7 +9,7 @@ const ItemPayee = (props) => {
   return (
     <Text style={
       {
-        flex: 1,
+        flex: 0.5,
         // width: 'auto',
         fontFamily: 'SFProDisplay-Regular',
         fontSize: 17,
@@ -18,7 +18,9 @@ const ItemPayee = (props) => {
         letterSpacing: 0.13,
 
         // marginHorizontal: 10,
-        paddingHorizontal: 10,
+        paddingRight: 10,
+
+        textAlign: 'right',
 
         // color: item.category.color +  '7f',
 

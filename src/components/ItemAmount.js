@@ -15,7 +15,7 @@ const ItemAmount = (props) => {
       justifyContent: 'flex-end',
       // width: '100%',
 
-      paddingHorizontal: 4,
+      paddingRight: 4,
 
       // borderWidth: 1,
       // borderColor: 'white',

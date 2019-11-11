@@ -16,8 +16,10 @@ export default function CategoryPill(props) {
     color,
     name,
     isSelected,
-    onPress
+    onPress,
   } = props;
+
+  let { isEnabled } = props;
 
   let textColor = color;
 
@@ -26,10 +28,12 @@ export default function CategoryPill(props) {
   if (isSelected) {
     textColor = 'white';
     backgroundColor = color;
+    isEnabled = !isEnabled;
   }
 
   return (
     <TouchableOpacity
+      disabled={isEnabled}
       style={
         {
           // maxHeight: MAX_PILL_HEIGHT,

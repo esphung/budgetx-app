@@ -8,6 +8,15 @@ import getShortDate from '../functions/getShortDate';
 
 const ItemDate = (props) => {
   const { item } = props;
+
+
+  let date = (item.date);
+  if (new Date(date).getDate() === (new Date()).getDate()) {
+    date = 'Today';
+  }  else {
+    getShortDate(date);
+  }
+
   return (
   <View style={{
     flex: 0.5,
@@ -16,6 +25,8 @@ const ItemDate = (props) => {
     alignItems: 'center',
 
     // width: '100%',
+
+    paddingHorizontal: 4,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -33,9 +44,9 @@ const ItemDate = (props) => {
         fontStyle: 'normal',
         letterSpacing: 0.13,
 
-        textAlign: 'center',
+        textAlign: 'right',
 
-        paddingHorizontal: 4,
+        
 
         // color: item.category.color,
 
@@ -50,7 +61,10 @@ const ItemDate = (props) => {
     }
     >
 
-      { getShortDate(item.date) }
+      {
+
+        date
+      }
 
     </Text>
   </View>

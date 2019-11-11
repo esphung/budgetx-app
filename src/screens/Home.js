@@ -14,8 +14,12 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
+  Animated,
+  Keyboard,
+  TouchableWithoutFeedback
 } from 'react-native';
+
 
 import * as Font from 'expo-font';
 
@@ -30,6 +34,7 @@ import AmountInputView from '../components/AmountInputView';
 import KeypadView from '../components/KeypadView';
 import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
 import TypeView from '../components/TypeView';
+import SlideUp from '../components/SlideUp/SlideUp';
 
 import {
   loadTransactionsObject,
@@ -76,7 +81,9 @@ class Home extends Component {
       currentPayee: null,
       currentType: null,
       currentBalanceValue: 0.00,
-      currentSpentValue: 0.00
+      currentSpentValue: 0.00,
+      isSlideUpHidden: true,
+      bounceValue: new Animated.Value(300), // This is the initial position of the subview
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -90,6 +97,8 @@ class Home extends Component {
     this.payeeBtnPressed = this.payeeBtnPressed.bind(this);
 
     this.typeBtnPressed = this.typeBtnPressed.bind(this);
+
+    this.toggleSlideView = this.toggleSlideView.bind(this);
   }
 
   async componentDidMount() {
@@ -180,6 +189,39 @@ class Home extends Component {
       // set new current category
       this.setState({ currentCategory: category });
     }
+
+    // toggle slide view
+    this.toggleSlideView();
+  }
+
+  toggleSlideView() {
+    let { isSlideUpHidden } = this.state;
+    const { bounceValue } = this.state;
+
+    let toValue = 300;
+
+    if (isSlideUpHidden) {
+      toValue = 0;
+    }
+
+    // This will animate the translateY of the subview between 0 & 300
+    // depending on its current state
+    // 300 comes from the style below, which is the height of the subview.
+    Animated.spring(
+      bounceValue,
+      {
+        toValue,
+        velocity: 3,
+        tension: 2,
+        friction: 8,
+      }
+    ).start();
+
+    isSlideUpHidden = !isSlideUpHidden;
+
+    this.setState({ isSlideUpHidden });
+
+    // console.log(isSlideUpHidden);
   }
 
   deleteBtnPressed(transaction) {
@@ -284,54 +326,64 @@ class Home extends Component {
       currentTransactions,
       currentCategory,
       currentPayee,
-      currentType
+      currentType,
+      bounceValue,
+      isSlideUpHidden
     } = this.state;
 
     let view = <View />;
     if (fontsAreLoaded) {
       view = (
-        <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
-          <BalanceView
-            currentBalanceValue={currentBalanceValue}
-            currentSpentValue={currentSpentValue}
-            // currentBalanceBtnPressed={() => alert()}
-            // currentSpentBtnPressed={() => alert()}
-          />
+            <BalanceView
+              currentBalanceValue={currentBalanceValue}
+              currentSpentValue={currentSpentValue}
+              // currentBalanceBtnPressed={() => alert()}
+              // currentSpentBtnPressed={() => alert()}
+            />
 
-          <DateLabelView date={currentDate} />
+            <DateLabelView date={currentDate} />
 
-          <TransactionsView
-            deleteBtnPressed={this.deleteBtnPressed}
-            transactions={currentTransactions}
-          />
+            <TransactionsView
+              deleteBtnPressed={this.deleteBtnPressed}
+              transactions={currentTransactions}
+            />
 
-          <TypeView
-            // incomeBtnPressed={this.incomeBtnPressed}
-            // expenseBtnPressed={this.expenseBtnPressed}
-            onPress={this.typeBtnPressed}
-            currentType={currentType}
-          />
+            <TypeView
+              // incomeBtnPressed={this.incomeBtnPressed}
+              // expenseBtnPressed={this.expenseBtnPressed}
+              onPress={this.typeBtnPressed}
+              currentType={currentType}
+            />
 
-          <ScrollingPayeePillsView
-            onPress={this.payeeBtnPressed}
-            currentPayee={currentPayee}
-          />
+            <ScrollingPayeePillsView
+              onPress={this.payeeBtnPressed}
+              currentPayee={currentPayee}
+            />
 
-          <ScrollingPillCategoriesView
-            onPress={this.categoryBtnPressed}
-            currentCategory={currentCategory}
-          />
+            <ScrollingPillCategoriesView
+              onPress={this.categoryBtnPressed}
+              currentCategory={currentCategory}
+              isEnabled={!isSlideUpHidden}
+            />
 
-          <AmountInputView
-            isEditable={false}
-            value={currentAmount}
-            handleChange={this.handleChange}
-          />
+            <AmountInputView
+              isEditable={false}
+              value={currentAmount}
+              handleChange={this.handleChange}
+            />
 
-          <KeypadView handlePress={this.handlePress} />
+            <KeypadView handlePress={this.handlePress} />
 
-        </ScrollView>
+            <SlideUp
+              toggleSlideView={this.toggleSlideView}
+              bounceValue={bounceValue}
+            />
+
+          </ScrollView>
+        </TouchableWithoutFeedback>
 
       );
     } else {
