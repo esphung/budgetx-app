@@ -9,8 +9,6 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
-  Text
 } from 'react-native';
 
 import colors from '../../colors'; // ui colors
@@ -21,31 +19,24 @@ const types = [
   {
     id: 0,
     name: 'income',
-    color: colors.offWhite,
+    color: colors.white,
   },
   {
     id: 1,
     name: 'expense',
-    color: colors.offWhite,
+    color: colors.white,
   }
 ];
 
 export default function PayeePill(props) {
-  const {
-    incomeBtnPressed,
-    expenseBtnPressed,
-    currentType,
-    //isCurrentType
-  } = props;
+  const { onPress } = props;
 
-  // console.log(incomeBtnPressed)
+  // function typeBtnPressed(type) {
+  //   const { onPress } = props;
+  //   onPress(type);
+  // }
 
-  typeBtnPressed = (type) => {
-    const { onPress } = props;
-    onPress(type);
-  }
-
-  isCurrentType = (type) => {
+  const isCurrentType = (type) => {
     const { currentType } = props;
     if (!currentType) {
       return false;
@@ -54,26 +45,26 @@ export default function PayeePill(props) {
       return true;
     }
     return false;
-  }
+  };
 
-  getTypePill = (items, index) => {
+  const getTypePill = (items) => {
     let view = <View />;
 
     if (items) {
       view = items.map((item) => (
         <TypePill
-        key={item.id}
-        // item={item}
-        color={item.color}
-        name={item.name}
-        onPress={() => this.typeBtnPressed(item)}
-        isSelected={this.isCurrentType(item.name)}
+          key={item.id}
+          // item={item}
+          color={item.color}
+          name={item.name}
+          onPress={() => onPress(item)}
+          isSelected={isCurrentType(item.name)}
         />
-      ))
+      ));
     }
 
     return view;
-  }
+  };
 
   // isCurrentType = (type) => {
   //   //const { currentType } = this.props;
@@ -89,7 +80,7 @@ export default function PayeePill(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-       <ScrollView
+      <ScrollView
         scrollEnabled={false}
         contentContainerStyle={{
           alignItems: 'center',
@@ -103,7 +94,7 @@ export default function PayeePill(props) {
         style={styles.scrollView}
       >
         {
-          this.getTypePill(types)
+          getTypePill(types)
         }
 
       </ScrollView>

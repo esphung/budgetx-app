@@ -8,6 +8,13 @@ import {
 // ui colors
 import colors from '../../colors';
 
+const getCapitalizedString = (string) => {
+  const lower = string; // 'this is an entirely lowercase string';
+  const upper = lower.charAt(0).toUpperCase() + lower.substring(1);
+
+  return upper;
+}
+
 const MAX_PILL_WIDTH = 156;
 const MIN_PILL_WIDTH = 133;
 
@@ -75,7 +82,9 @@ export default function TypePill(props) {
       }
       >
 
-        { name }
+        {
+          getCapitalizedString(name)
+        }
       </Text>
     </TouchableOpacity>
 

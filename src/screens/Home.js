@@ -42,13 +42,13 @@ import Transaction from '../models/Transaction';
 
 // import getUSDFormattedString from '../functions/getUSDFormattedString';
 
+// import { colorConsole } from '../functions/colorConsole';
+
 // ui colors
 import colors from '../../colors';
 
 const SFProDisplayRegularFont = require('../../assets/fonts/SF-Pro-Display-Regular.otf');
-
 const SFProDisplaySemiboldFont = require('../../assets/fonts/SF-Pro-Display-Semibold.otf');
-
 
 class Home extends Component {
   static navigationOptions = ({ screenProps }) => {
@@ -75,8 +75,8 @@ class Home extends Component {
       currentTransactions: [],
       currentPayee: null,
       currentType: null,
-      currentBalanceValue: 0,
-      currentSpentValue: 0
+      currentBalanceValue: 0.00,
+      currentSpentValue: 0.00
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -135,15 +135,15 @@ class Home extends Component {
 
       this.storeNewTransaction(transaction); // add new transaction to existing storage
 
-      // clear input values
-      this.clearCurrentInputs();
+      this.clearCurrentInputs(); // clear input values
 
       console.log(transaction);
+      // colorConsole(JSON.stringify(transaction));
     }
   }
 
   clearCurrentInputs() {
-    this.setState({ currentAmount: 0 });
+    this.setState({ currentAmount: 0.00 });
     this.setState({ currentCategory: null });
     this.setState({ currentPayee: null });
     this.setState({ currentType: null });
@@ -206,8 +206,6 @@ class Home extends Component {
     } else {
       this.setState({ currentType: type.name });
     }
-    // console.log(type);
-    //this.setState({ currentType: type.name });
   }
 
   async removeTransaction(transaction) {
