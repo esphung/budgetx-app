@@ -23,7 +23,7 @@ import colors from '../../colors';
 
 function getMinusSymbol(item) {
   let symbol = '$ ';
-  if (item.category.type.includes('expense')) {
+  if (item.type === 'expense') {
     symbol = '- $ ';
   }
   return symbol;

@@ -79,6 +79,7 @@ class ScrollingPayeePillsView extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView
+          scrollEnabled={false}
           contentContainerStyle={{
             alignItems: 'center',
           }}
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
 
     position: 'absolute',
-    top: '51%', // '57%', // 462,
+    top: '45%', // '57%', // 462,
 
     // borderWidth: 1,
     // borderColor: 'white',

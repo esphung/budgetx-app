@@ -29,6 +29,7 @@ import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesVi
 import AmountInputView from '../components/AmountInputView';
 import KeypadView from '../components/KeypadView';
 import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
+import TypeView from '../components/TypeView';
 
 import {
   loadTransactionsObject,
@@ -69,7 +70,7 @@ class Home extends Component {
     this.state = {
       fontsAreLoaded: false,
       currentAmount: null,
-      currentDate: null,
+      currentDate: new Date(),
       currentCategory: null,
       currentTransactions: [],
       currentPayee: null,
@@ -122,22 +123,22 @@ class Home extends Component {
     } = this.state;
 
     // check if category is select and amount is given
-    if ((currentCategory) && (currentAmount > 0)) {
+    if ((currentCategory) && (currentAmount > 0) && (currentType)) {
       const transaction = new Transaction(
         currentTransactions.length,
         currentDate,
         currentAmount,
         currentPayee,
         currentCategory,
-        currentCategory.type
+        currentType
       );
 
       this.storeNewTransaction(transaction); // add new transaction to existing storage
 
-      // console.log(transaction);
-
       // clear input values
       this.clearCurrentInputs();
+
+      console.log(transaction);
     }
   }
 
@@ -145,6 +146,7 @@ class Home extends Component {
     this.setState({ currentAmount: 0 });
     this.setState({ currentCategory: null });
     this.setState({ currentPayee: null });
+    this.setState({ currentType: null });
   }
 
   async storeNewTransaction(transaction) {
@@ -198,8 +200,14 @@ class Home extends Component {
   }
 
   typeBtnPressed(type) {
+    const { currentType } = this.state;
+    if (currentType === type.name) {
+      this.setState({ currentType: null });
+    } else {
+      this.setState({ currentType: type.name });
+    }
     // console.log(type);
-    this.setState({ currentType: type });
+    //this.setState({ currentType: type.name });
   }
 
   async removeTransaction(transaction) {
@@ -250,6 +258,14 @@ class Home extends Component {
     }
   }
 
+  // incomeBtnPressed() {
+  //   this.setState({ currentType: 'income' });
+  // }
+
+  // expenseBtnPressed() {
+  //   this.setState({ currentType: 'expense' });
+  // }
+
   // value changes
   handleChange(value) {
     // check for limit of 11 digits
@@ -269,7 +285,8 @@ class Home extends Component {
       currentDate,
       currentTransactions,
       currentCategory,
-      currentPayee
+      currentPayee,
+      currentType
     } = this.state;
 
     let view = <View />;
@@ -291,7 +308,13 @@ class Home extends Component {
             transactions={currentTransactions}
           />
 
-          {/* Scrolling Payees */}
+          <TypeView
+            // incomeBtnPressed={this.incomeBtnPressed}
+            // expenseBtnPressed={this.expenseBtnPressed}
+            onPress={this.typeBtnPressed}
+            currentType={currentType}
+          />
+
           <ScrollingPayeePillsView
             onPress={this.payeeBtnPressed}
             currentPayee={currentPayee}

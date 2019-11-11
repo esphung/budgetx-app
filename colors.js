@@ -17,7 +17,8 @@ const colors = {
   dark: '#202e40',
   darkTwo: '#18202f',
 
-  offWhite: '#ffffff7f'
+  offWhite: '#ffffff7f',
+  white: '#ffffff',
 };
 
 export default colors;
