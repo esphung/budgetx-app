@@ -4,10 +4,11 @@ PURPOSE:    home screen for budget x app
 AUTHOR:     eric phung
 CREATED:    Thu Oct 31 23:17:49 2019
             Sun Nov  3 05:40:29 2019
-            04/11/2019 03:57 AM
-            06/11/2019 06:54 PM (ESLinter)
-            08/11/2019 03:01 AM (AsyncStorage -> Transactions, Categories)
-            12/11/2019 05:03 AM
+            11/04/2019 03:57 AM
+            11/06/2019 06:54 PM (ESLinter)
+            11/08/2019 03:01 AM (AsyncStorage -> Transactions, Categories)
+            11/12/2019 05:03 AM
+            11/12/2019 02:36 PM
 */
 import React, { Component } from 'react';
 

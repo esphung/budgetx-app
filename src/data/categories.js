@@ -5,9 +5,9 @@
 const categories = [
   {
     id: 0,
-    name: 'Food',
-    color: '#ff9200',
-    type: 'expense',
+    name: 'Income',
+    color: '#00e157',
+    type: 'income',
   },
   {
     id: 1,
@@ -29,28 +29,28 @@ const categories = [
   },
   {
     id: 4,
-    name: 'Salary',
-    color: '#00e157',
-    type: 'income',
+    name: 'Food',
+    color: '#ff9200',
+    type: 'expense',
   },
   {
     id: 5,
-    name: 'Other Income',
-    color: '#94e100',
-    type: 'income',
-  },
-  {
-    id: 6,
     name: 'Health',
     color: '#f26363',
     type: 'expense',
   },
   {
-    id: 7,
+    id: 6,
     name: 'Entertainment',
     color: '#8400ff',
     type: 'expense',
   }
+  // {
+  //   id: 7,
+  //   name: 'Other Income',
+  //   color: '#94e100',
+  //   type: 'income',
+  // },
 ];
 
 

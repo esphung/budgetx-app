@@ -50,7 +50,6 @@ class HeaderLeftView extends Component {
 
     // console.log(this.isInputEnabled)
 
-
     this.handleTextChange = this.handleTextChange.bind(this);
 
     this.submitBtnPressed = this.submitBtnPressed.bind(this);
@@ -137,7 +136,7 @@ class HeaderLeftView extends Component {
 
               onSubmitEditing={this.submitBtnPressed}
 
-              onChangeText={() => this.handleTextChange(text)}
+              onChangeText={(text) => this.handleTextChange(text)}
 
               editable={this.isInputEnabled}
 
