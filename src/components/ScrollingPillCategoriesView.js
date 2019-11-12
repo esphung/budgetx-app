@@ -58,7 +58,7 @@ class ScrollingPillCategoriesView extends Component {
           key={item.id}
           onPress={() => this.categoryBtnPressed(item)}
           isSelected={this.isCurrentCategory(item)}
-          // isEnabled={isEnabled}
+          isEnabled={isEnabled}
         />
       ));
     }

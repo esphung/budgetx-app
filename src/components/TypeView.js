@@ -9,6 +9,7 @@ import {
   View,
   StyleSheet,
   ScrollView,
+  Animated
 } from 'react-native';
 
 import colors from '../../colors'; // ui colors
@@ -29,7 +30,7 @@ const types = [
 ];
 
 export default function PayeePill(props) {
-  const { onPress } = props;
+  const { onPress, bounceValue } = props;
 
   // function typeBtnPressed(type) {
   //   const { onPress } = props;
@@ -80,6 +81,10 @@ export default function PayeePill(props) {
 
   return (
     <SafeAreaView style={styles.container}>
+        <Animated.View
+      style={
+        { transform: [{ translateY: bounceValue }] }}
+    >
       <ScrollView
         scrollEnabled={false}
         contentContainerStyle={{
@@ -98,6 +103,7 @@ export default function PayeePill(props) {
         }
 
       </ScrollView>
+      </Animated.View>
     </SafeAreaView>
   );
 }

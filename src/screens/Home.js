@@ -94,7 +94,8 @@ class Home extends Component {
       currentBalanceValue: 0.00,
       currentSpentValue: 0.00,
       isSlideUpHidden: true,
-      // enableCategoryPills: true,
+      isTypeViewHidden: true,
+      enableCategoryPills: true,
       bounceValue: new Animated.Value(300), // This is the initial position of the subview
     };
 
@@ -111,6 +112,8 @@ class Home extends Component {
     this.typeBtnPressed = this.typeBtnPressed.bind(this);
 
     this.toggleSlideView = this.toggleSlideView.bind(this);
+
+    this.toggleTypeView = this.toggleTypeView.bind(this);
   }
 
   async componentDidMount() {
@@ -138,6 +141,15 @@ class Home extends Component {
     this.setState({ currentCategory: null });
     this.setState({ currentPayee: null });
     this.setState({ currentType: null });
+
+    const { isTypeViewHidden, enableCategoryPills } = this.state;
+    if (isTypeViewHidden == false) {
+      this.toggleTypeView();
+    }
+
+    if (enableCategoryPills != true) {
+      this.setState({ enableCategoryPills: true });
+    }
   }
 
   async storeNewTransaction(transaction) {
@@ -167,14 +179,53 @@ class Home extends Component {
     const { currentCategory } = this.state;
     if (currentCategory === category) {
       this.setState({ currentCategory: null });
+      this.setState({ enableCategoryPills: true });
+      
     } else {
       // set new current category
       this.setState({ currentCategory: category });
+      this.setState({ enableCategoryPills: false });
+
+      if (category.type) {
+        this.setState({ currentType: category.type})
+      }
     }
 
     // toggle slide view
     // this.toggleSlideView();
+
+    // toggle transaction Type view
+    this.toggleTypeView();
   }
+
+  toggleTypeView() {
+    let { isTypeViewHidden } = this.state;
+    const { bounceValue } = this.state;
+
+    let toValue = 300;
+
+    if (isTypeViewHidden) {
+      toValue = 0;
+    }
+
+    // This will animate the translateY of the subview between 0 & 300
+    // depending on its current state
+    // 300 comes from the style below, which is the height of the subview.
+    Animated.spring(
+      bounceValue,
+      {
+        toValue,
+        velocity: 3,
+        tension: 2,
+        friction: 8,
+      }
+    ).start();
+
+    isTypeViewHidden = !isTypeViewHidden;
+
+    this.setState({ isTypeViewHidden });
+  }
+
 
   toggleSlideView() {
     let { isSlideUpHidden } = this.state;
@@ -362,7 +413,6 @@ class Home extends Component {
       this.clearCurrentInputs(); // clear input values
 
       console.log(transaction);
-      // colorConsole(JSON.stringify(transaction));
     }
   }
 
@@ -379,7 +429,7 @@ class Home extends Component {
       currentType,
       bounceValue,
       // isSlideUpHidden,
-      // enableCategoryPills
+      enableCategoryPills
     } = this.state;
 
     let view = <View />;
@@ -402,9 +452,11 @@ class Home extends Component {
               transactions={currentTransactions}
             />
 
-<TypeView
+            <TypeView
               onPress={this.typeBtnPressed}
               currentType={currentType}
+              toggleView={this.toggleTypeView}
+              bounceValue={bounceValue}
             />
 
 {/*            
@@ -416,7 +468,7 @@ class Home extends Component {
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}
-              // isEnabled={enableCategoryPills}
+              isEnabled={enableCategoryPills}
             />
 
             <AmountInputView
@@ -427,12 +479,12 @@ class Home extends Component {
 
             <KeypadView handlePress={this.handlePress} />
 
-            <SlideUp
+{/*            <SlideUp
               toggleSlideView={this.toggleSlideView}
               bounceValue={bounceValue}
               // onPress={this.typeBtnPressed}
               // currentType={currentType}
-            />
+            />*/}
 
           </ScrollView>
         </TouchableWithoutFeedback>

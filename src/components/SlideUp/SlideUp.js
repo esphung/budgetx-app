@@ -19,10 +19,8 @@ function SlideUpViews(props) {
 
   return (
     <Animated.View
-      style={[styles.container,
-        { transform: [{ translateY: bounceValue }] }]}
+      style={[styles.container, { transform: [{ translateY: bounceValue }] }]}
     >
-
     </Animated.View>
 
   );
