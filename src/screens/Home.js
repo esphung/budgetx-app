@@ -122,7 +122,8 @@ function calculateBalance(array) {
   let balance = 0.00;
   let i = array.length - 1;
   for (i; i >= 0; i -= 1) {
-    balance += array[i].amount;
+    balance = Number(balance.toFixed(2)) + array[i].amount;
+    // console.log(array[i].amount, '+', balance.toFixed(2))//  String(Math.trunc(Math.abs(balance))))
   }
   return balance;
 }
@@ -137,7 +138,7 @@ function calculateSpent(array) {
   for (i; i >= 0; i -= 1) {
     if (dates.compare(array[i].date, date) > 0) {
       if (array[i].type === 'expense') {
-        balance += array[i].amount;
+        balance = Number(balance.toFixed(2)) + array[i].amount;
       }
     };
   }
