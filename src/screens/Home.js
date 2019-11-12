@@ -31,40 +31,118 @@ import TransactionsView from '../components/TransactionsView';
 import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInputView';
 import KeypadView from '../components/KeypadView';
-import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
+// import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
 import TypeView from '../components/TypeView';
-import SlideUp from '../components/SlideUp/SlideUp';
+// import SlideUp from '../components/SlideUp/SlideUp';
 
 import {
   loadTransactionsObject,
   saveTransactionsObject
 } from '../storage/TransactionsStorage';
 
-import {
-  loadPayees,
-  savePayees
-} from '../storage/PayeesStorage';
+// import {
+//   loadPayees,
+//   savePayees
+// } from '../storage/PayeesStorage';
 
 import Transaction from '../models/Transaction';
 
-import Payee from '../models/Payee';
+// import Payee from '../models/Payee';
 
 // import sortArrayDesc from '../functions/sortArrayDesc';
 
 // ui colors
 import colors from '../../colors';
 
-function search(nameKey, myArray) {
-  let obj = null;
-  let i = 0;
-  for (i; i < myArray.length; i += 1) {
-    if (myArray[i].name === nameKey) {
-      obj = myArray[i];
-    }
+// function search(nameKey, myArray) {
+//   let obj = null;
+//   let i = 0;
+//   for (i; i < myArray.length; i += 1) {
+//     if (myArray[i].name === nameKey) {
+//       obj = myArray[i];
+//     }
+//   }
+//   return obj;
+// }
+
+// Source: http://stackoverflow.com/questions/497790
+const dates = {
+  convert: function convert(d) {
+    // Converts the date in d to a date-object. The input can be:
+    //   a date object: returned without modification
+    //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
+    //   a number     : Interpreted as number of milliseconds
+    //                  since 1 Jan 1970 (a timestamp)
+    //   a string     : Any format supported by the javascript engine, like
+    //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+    //  an object     : Interpreted as an object with year, month and date
+    //                  attributes.  **NOTE** month is 0-11.
+    return (
+      d.constructor === Date ? d :
+      d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+      d.constructor === Number ? new Date(d) :
+      d.constructor === String ? new Date(d) :
+      typeof d === "object" ? new Date(d.year,d.month,d.date) :
+      NaN
+    );
+  },
+  compare:function(a,b) {
+    // Compare two dates (could be of any type supported by the convert
+    // function above) and returns:
+    //  -1 : if a < b
+    //   0 : if a = b
+    //   1 : if a > b
+    // NaN : if a or b is an illegal date
+    // NOTE: The code inside isFinite does an assignment (=).
+    return (
+      isFinite(a=this.convert(a).valueOf()) &&
+      isFinite(b=this.convert(b).valueOf()) ?
+      (a>b)-(a<b) :
+      NaN
+    );
+  },
+  inRange:function(d,start,end) {
+    // Checks if date in d is between dates in start and end.
+    // Returns a boolean or NaN:
+    //    true  : if d is between start and end (inclusive)
+    //    false : if d is before start or after end
+    //    NaN   : if one or more of the dates is illegal.
+    // NOTE: The code inside isFinite does an assignment (=).
+    return (
+      isFinite(d=this.convert(d).valueOf()) &&
+      isFinite(start=this.convert(start).valueOf()) &&
+      isFinite(end=this.convert(end).valueOf()) ?
+      start <= d && d <= end :
+      NaN
+    );
   }
-  return obj;
 }
 
+function calculateBalance(array) {
+  let balance = 0.00;
+  let i = array.length - 1;
+  for (i; i >= 0; i -= 1) {
+    balance += array[i].amount;
+  }
+  return balance;
+}
+
+function calculateSpent(array) {
+  //  get date 30 days ago
+  const date = new Date();
+  date.setDate(date.getDate() - 30);
+
+  let balance = 0.00;
+  let i = array.length - 1;
+  for (i; i >= 0; i -= 1) {
+    if (dates.compare(array[i].date, date) > 0) {
+      if (array[i].type === 'expense') {
+        balance += array[i].amount;
+      }
+    };
+  }
+  return balance;
+}
 
 class Home extends Component {
   static navigationOptions = ({ screenProps }) => {
@@ -107,7 +185,7 @@ class Home extends Component {
 
     this.deleteBtnPressed = this.deleteBtnPressed.bind(this);
 
-    this.payeeBtnPressed = this.payeeBtnPressed.bind(this);
+    // this.payeeBtnPressed = this.payeeBtnPressed.bind(this);
 
     this.typeBtnPressed = this.typeBtnPressed.bind(this);
 
@@ -134,6 +212,14 @@ class Home extends Component {
 
     // set transactions
     this.setState({ currentTransactions: transactions });
+
+    // update current balance
+    const balance = calculateBalance(transactions);
+    this.setState({ currentBalanceValue: balance });
+
+    // update current spent
+    const spent = calculateSpent(transactions);
+    this.setState({ currentSpentValue: spent });
   }
 
   clearCurrentInputs() {
@@ -143,11 +229,11 @@ class Home extends Component {
     this.setState({ currentType: null });
 
     const { isTypeViewHidden, enableCategoryPills } = this.state;
-    if (isTypeViewHidden == false) {
+    if (isTypeViewHidden === false) {
       this.toggleTypeView();
     }
 
-    if (enableCategoryPills != true) {
+    if (enableCategoryPills !== true) {
       this.setState({ enableCategoryPills: true });
     }
   }
@@ -165,6 +251,17 @@ class Home extends Component {
 
     // update current transactions list view with storage object
     await this.setState({ currentTransactions: transactions });
+
+    
+    const { currentTransactions } = this.state;
+
+    // update current balance
+    const balance = calculateBalance(currentTransactions);
+    this.setState({ currentBalanceValue: balance });
+
+    // update current spent this month
+    const spent = calculateSpent(currentTransactions);
+    this.setState({ currentSpentValue: spent });
   }
 
   numberBtnPressed(number) {
@@ -180,14 +277,13 @@ class Home extends Component {
     if (currentCategory === category) {
       this.setState({ currentCategory: null });
       this.setState({ enableCategoryPills: true });
-      
     } else {
       // set new current category
       this.setState({ currentCategory: category });
       this.setState({ enableCategoryPills: false });
 
       if (category.type) {
-        this.setState({ currentType: category.type})
+        this.setState({ currentType: category.type });
       }
     }
 
@@ -271,46 +367,46 @@ class Home extends Component {
   //   }
   // }
 
-  async addNewPayee() {
-    // add new payee to currentPayees (with textinput)
-    const storage = await loadPayees();
+  // async addNewPayee() {
+  //   // add new payee to currentPayees (with textinput)
+  //   const storage = await loadPayees();
 
-    const { payees } = storage;
+  //   const { payees } = storage;
 
-    const payee = new Payee(payees.length, 'New', colors.white);
+  //   const payee = new Payee(payees.length, 'New', colors.white);
 
-    const resultObject = search(payee.name, payees);
+  //   const resultObject = search(payee.name, payees);
 
-    console.log(resultObject);
+  //   // console.log(resultObject);
 
-    if (!resultObject) {
-      payees.unshift(payee);
+  //   if (!resultObject) {
+  //     payees.unshift(payee);
 
-      savePayees(storage);
+  //     savePayees(storage);
 
-      this.setState({ currentPayee: payee });
+  //     this.setState({ currentPayee: payee });
 
-      // console.log(sortArrayDesc(payees));
-    }
-  }
+  //     // console.log(sortArrayDesc(payees));
+  //   }
+  // }
 
-  payeeBtnPressed(payee) {
-    if (payee.name === '+') {
-      this.addNewPayee();
-      return;
-    }
-    // toggle current payee selected
-    const { currentPayee } = this.state;
+  // payeeBtnPressed(payee) {
+  //   if (payee.name === '+') {
+  //     this.addNewPayee();
+  //     return;
+  //   }
+  //   // toggle current payee selected
+  //   const { currentPayee } = this.state;
 
-    if (currentPayee === payee) {
-      this.setState({ currentPayee: null });
-    } else {
-      // set new current payee
-      this.setState({ currentPayee: payee });
-    }
+  //   if (currentPayee === payee) {
+  //     this.setState({ currentPayee: null });
+  //   } else {
+  //     // set new current payee
+  //     this.setState({ currentPayee: payee });
+  //   }
 
-    // console.log(payee);
-  }
+  //   // console.log(payee);
+  // }
 
   typeBtnPressed(type) {
     const { currentType } = this.state;
@@ -342,6 +438,16 @@ class Home extends Component {
     await saveTransactionsObject(storageObject);
 
     await this.setState({ currentTransactions: transactions });
+
+    const { currentTransactions } = this.state;
+
+    // update current balance
+    const balance = calculateBalance(currentTransactions);
+    this.setState({ currentBalanceValue: balance });
+
+    // update current spent this month
+    const spent = calculateSpent(currentTransactions);
+    this.setState({ currentSpentValue: spent });
   }
 
   handlePress(value) {
@@ -368,14 +474,6 @@ class Home extends Component {
       this.handleChange(newStr);
     }
   }
-
-  // incomeBtnPressed() {
-  //   this.setState({ currentType: 'income' });
-  // }
-
-  // expenseBtnPressed() {
-  //   this.setState({ currentType: 'expense' });
-  // }
 
   // value changes
   handleChange(value) {
@@ -425,7 +523,7 @@ class Home extends Component {
       currentDate,
       currentTransactions,
       currentCategory,
-      currentPayee,
+      // currentPayee,
       currentType,
       bounceValue,
       // isSlideUpHidden,
