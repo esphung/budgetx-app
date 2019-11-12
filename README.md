@@ -28,17 +28,6 @@
         "react-navigation": "^4.0.10",
         "react-navigation-stack": "^1.10.3"
     },
-s
-#### Developer Packages ####
-    "devDependencies": {
-        "babel-eslint": "^10.0.3",
-        "babel-preset-expo": "^7.1.0",
-        "eslint": "^6.6.0",
-        "eslint-config-airbnb": "^18.0.1",
-        "eslint-plugin-import": "^2.18.2",
-        "eslint-plugin-jsx-a11y": "^6.2.3",
-        "eslint-plugin-react": "^7.16.0"
-    },
 
 <hr>
 
@@ -53,6 +42,7 @@ Sun Nov  3 04:53:21 2019
 
 #### Updated ####
 06/11/2019 02:57 PM
+12/11/2019 05:03 AM
 
 #### Category ####
 Finance
