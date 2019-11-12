@@ -9,7 +9,7 @@ export default function Transaction(id, date, amount, payee, category, type) {
   this.id = String(id);
   this.date = date;
   this.amount = (type === 'income') ? (Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) : ((Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) * (-1));
-  this.payee = payee;
+  this.payee = (payee) ? payee : {};
   this.category = category;
   this.type = type;
 

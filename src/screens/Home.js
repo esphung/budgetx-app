@@ -133,36 +133,6 @@ class Home extends Component {
     this.setState({ currentTransactions: transactions });
   }
 
-  addTransactionBtnPressed() {
-    const {
-      currentTransactions,
-      currentAmount,
-      currentDate,
-      currentCategory,
-      currentPayee,
-      currentType
-    } = this.state;
-
-    // check if category is select and amount is given
-    if ((currentCategory) && (currentAmount > 0) && (currentType)) {
-      const transaction = new Transaction(
-        currentTransactions.length,
-        currentDate,
-        currentAmount,
-        currentPayee,
-        currentCategory,
-        currentType
-      );
-
-      this.storeNewTransaction(transaction); // add new transaction to existing storage
-
-      this.clearCurrentInputs(); // clear input values
-
-      console.log(transaction);
-      // colorConsole(JSON.stringify(transaction));
-    }
-  }
-
   clearCurrentInputs() {
     this.setState({ currentAmount: 0.00 });
     this.setState({ currentCategory: null });
@@ -366,6 +336,36 @@ class Home extends Component {
     this.setState({ currentAmount: value });
   }
 
+  addTransactionBtnPressed() {
+    const {
+      currentTransactions,
+      currentAmount,
+      currentDate,
+      currentCategory,
+      currentPayee,
+      currentType
+    } = this.state;
+
+    // check if category is select and amount is given
+    if ((currentCategory) && (currentAmount > 0) && (currentType)) {
+      const transaction = new Transaction(
+        currentTransactions.length,
+        currentDate,
+        currentAmount,
+        currentPayee,
+        currentCategory,
+        currentType
+      );
+
+      this.storeNewTransaction(transaction); // add new transaction to existing storage
+
+      this.clearCurrentInputs(); // clear input values
+
+      console.log(transaction);
+      // colorConsole(JSON.stringify(transaction));
+    }
+  }
+
   render() {
     const {
       fontsAreLoaded,
@@ -402,16 +402,17 @@ class Home extends Component {
               transactions={currentTransactions}
             />
 
-            <TypeView
+<TypeView
               onPress={this.typeBtnPressed}
               currentType={currentType}
             />
 
+{/*            
             <ScrollingPayeePillsView
               onPress={this.payeeBtnPressed}
               currentPayee={currentPayee}
             />
-
+*/}
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}
