@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '6%', // 53,
-    backgroundColor: colors.darkTwo,
+    backgroundColor: 'transparent', // colors.darkTwo,
     shadowColor: '#0a101b',
     shadowOffset: {
       width: 1,
