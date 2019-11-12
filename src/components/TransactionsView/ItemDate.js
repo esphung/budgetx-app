@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
-import getShortDate from '../functions/getShortDate';
+import getShortDate from '../../functions/getShortDate';
 
 const ItemDate = (props) => {
   const { item } = props;

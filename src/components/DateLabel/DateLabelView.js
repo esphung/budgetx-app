@@ -4,7 +4,7 @@ PURPOSE:    shows date to user
 AUTHOR:     eric phung
 DATE:       Sun Nov  3 05:41:52 2019
 */
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   StyleSheet,
@@ -13,44 +13,45 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 // date formatting
-import { getFormattedDate } from '../functions/getFormattedDate'
+import { getFormattedDate } from '../../functions/getFormattedDate';
 
-class DateLabelView extends Component {
-  render() {
-    let dateString = getFormattedDate(new Date())
+const DateLabelView = (props) => {
+  const { date } = props;
+  let dateString = getFormattedDate(new Date());
 
-    // check for null
-    if (this.props.date) {
-      dateString = getFormattedDate(this.props.date)
-    }
-    //console.log('Rendering Date Label Props:', this.props.date)
-
-    return (
-      <View style={styles.container}>
-        <Text
-          //letterSpacing={0.13}
-          style={styles.date}>{ dateString }</Text>
-      </View>
-    );
+  // check for null
+  if (date) {
+    dateString = getFormattedDate(date);
   }
-}
+
+  const view = (
+    <View style={styles.container}>
+      <Text
+        style={styles.date}
+      >
+        { dateString }
+      </Text>
+    </View>
+  );
+  return view;
+};
 
 const styles = StyleSheet.create({
   container: {
-    //flex: 1,
+    // flex: 1,
     justifyContent: 'center',
 
-    width: '100%',//375,
+    width: '100%', // 375,
     height: 31,
     opacity: 0.5,
     backgroundColor: colors.dark,
 
     position: 'absolute',
 
-    top: '25.5%' ,//206,
+    top: '25.5%', // 206,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
   },
 
   date: {
-    width: '100%',//131,
+    width: '100%', // 131,
     height: 20,
     fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,

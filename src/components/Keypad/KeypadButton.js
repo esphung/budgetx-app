@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 export default function KeypadButton(props) {
   const { onPress, value } = props;

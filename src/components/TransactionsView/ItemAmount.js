@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import getMinusSymbol from '../functions/getMinusSymbol';
+import getMinusSymbol from '../../functions/getMinusSymbol';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 const ItemAmount = (props) => {
   const { item } = props;

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 import CurrencyInput from './CurrencyInput';
 

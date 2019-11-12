@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 class BalanceView extends Component {
   constructor(props) {

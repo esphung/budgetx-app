@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 const ItemPayee = (props) => {
   const { item } = props;

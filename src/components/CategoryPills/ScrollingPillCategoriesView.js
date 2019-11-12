@@ -13,14 +13,14 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 import CategoryPill from './CategoryPill';
 
 import {
   loadCategories,
   // saveCategories
-} from '../storage/CategoriesStorage';
+} from '../../storage/CategoriesStorage';
 
 // const MIN_PILL_WIDTH = 73;
 

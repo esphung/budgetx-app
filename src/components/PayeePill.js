@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 const MAX_PILL_WIDTH = 156;
 const MIN_PILL_WIDTH = 33;

@@ -27,12 +27,12 @@ import * as Font from 'expo-font';
 // import my custom view components
 import HeaderLeftView from '../components/Header/HeaderLeftView';
 import HeaderRightView from '../components/Header/HeaderRightView';
-import BalanceView from '../components/BalanceView';
-import DateLabelView from '../components/DateLabelView';
-import TransactionsView from '../components/TransactionsView';
-import ScrollingPillCategoriesView from '../components/ScrollingPillCategoriesView';
-import AmountInputView from '../components/AmountInputView';
-import KeypadView from '../components/KeypadView';
+import BalanceView from '../components/Balances/BalanceView';
+import DateLabelView from '../components/DateLabel/DateLabelView';
+import TransactionsView from '../components/TransactionsView/TransactionsView';
+import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
+import AmountInputView from '../components/AmountInput/AmountInputView';
+import KeypadView from '../components/Keypad/KeypadView';
 // import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
 import TypeView from '../components/TypeView';
 // import SlideUp from '../components/SlideUp/SlideUp';

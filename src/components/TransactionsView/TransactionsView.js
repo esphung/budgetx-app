@@ -19,7 +19,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import CustomSwipeCell from './CustomSwipeCell';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 import ItemSymbol from './ItemSymbol';
 import ItemCategory from './ItemCategory';

@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../colors';
+import colors from '../../../colors';
 
 import KeypadButton from './KeypadButton';
 
