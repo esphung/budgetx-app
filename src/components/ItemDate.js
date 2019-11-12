@@ -9,67 +9,65 @@ import getShortDate from '../functions/getShortDate';
 const ItemDate = (props) => {
   const { item } = props;
 
-  let date = (item.date);
+  let { date } = item;
   if (new Date(date).getDate() === (new Date()).getDate()) {
     date = '';
-  }  else {
+  } else {
     date = getShortDate(date);
   }
 
   return (
-  <View style={{
-    flex: 1,
+    <View style={{
+      flex: 1,
 
-    // flexDirection: 'row',
+      // flexDirection: 'row',
 
-    justifyContent: 'center',
+      justifyContent: 'center',
 
-    // alignItems: 'center',
+      // alignItems: 'center',
 
-    // width: '100%',
+      // width: '100%',
 
-    // paddingHorizontal: 4,
+      // paddingHorizontal: 4,
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  }}
-  >
-
-    <Text style={
-      {
-        // flex: 1,
-        // width: 'auto',
-        fontFamily: 'SFProDisplay-Regular',
-        fontSize: 17,
-        fontWeight: 'normal',
-        fontStyle: 'normal',
-        letterSpacing: 0.13,
-
-        // textAlign: 'right',
-
-        
-
-        // color: item.category.color,
-
-        color: colors.offWhite,
-
-        // backgroundColor: colors.darkTwo,
-
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dotted',
-      }
-    }
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
+    }}
     >
 
-      {
+      <Text style={
+        {
+          // flex: 1,
+          // width: 'auto',
+          fontFamily: 'SFProDisplay-Regular',
+          fontSize: 17,
+          fontWeight: 'normal',
+          fontStyle: 'normal',
+          letterSpacing: 0.13,
 
-        date
+          // textAlign: 'right',
+
+          // color: item.category.color,
+
+          color: colors.offWhite,
+
+          // backgroundColor: colors.darkTwo,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'dotted',
+        }
       }
+      >
 
-    </Text>
-  </View>
+        {
+
+          date
+        }
+
+      </Text>
+    </View>
   );
 };
 

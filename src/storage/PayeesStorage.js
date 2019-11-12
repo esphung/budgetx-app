@@ -26,7 +26,7 @@ export const loadPayees = async () => {
 
     if (storageObject === null) { return DEFAULT_USERDEFAULTPAYEES; }
 
-    console.log(storageObject.payees)
+    // console.log(storageObject.payees)
 
     return JSON.parse(storageObject);
   } catch (error) {

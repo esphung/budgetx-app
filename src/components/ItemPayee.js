@@ -19,7 +19,8 @@ const ItemPayee = (props) => {
       // borderWidth: 1,
       // borderColor: 'white',
       // borderStyle: 'dotted',
-    }}>
+    }}
+    >
       <Text style={
         {
           // width: 'auto',

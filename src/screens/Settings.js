@@ -4,7 +4,8 @@
 //  settings screen for budget x app
 import React, { Component } from 'react';
 import {
-  StyleSheet, Text, View, TouchableOpacity,
+  StyleSheet,
+  View,
 
   Button,
   AsyncStorage
@@ -15,36 +16,33 @@ import colors from '../../colors';
 
 class Settings extends Component {
   static navigationOptions = ({ navigation }) => {
-    const props = navigation.getScreenProps('props');
-
-    return {
+    const obj = {
       title: 'Settings',
 
       headerStyle: {
         backgroundColor: colors.dark,
       },
       headerLeft: (
-        <TouchableOpacity
-          onPress={() => navigation.goBack(null)}
-          style={styles.logOutBtnView}
-        >
-          <Text style={styles.logOutBtnText}>Log Out</Text>
-        </TouchableOpacity>
+        <Button title="Back" onPress={() => navigation.goBack(null)} />
       ),
 
-      headerTintColor: '#ffffff'
+      headerTintColor: colors.white
     };
+    // const props = navigation.getScreenProps('props');
+
+    return obj;
   }
 
   clearAll() {
-    AsyncStorage.clear()
-    this.props.navigation.goBack(null);
+    const { navigation } = this.props;
+    AsyncStorage.clear();
+    navigation.goBack(null);
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Button title={'Reset'} onPress={() => this.clearAll()} />
+        <Button title="Reset" onPress={() => this.clearAll()} />
       </View>
     );
   }

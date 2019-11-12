@@ -16,7 +16,7 @@ const getCapitalizedString = (string) => {
 }
 
 const MAX_PILL_WIDTH = 156;
-const MIN_PILL_WIDTH = 133;
+const MIN_PILL_WIDTH = 83;
 
 export default function TypePill(props) {
   const {

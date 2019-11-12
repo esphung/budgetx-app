@@ -7,6 +7,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             04/11/2019 03:57 AM
             06/11/2019 06:54 PM (ESLinter)
             08/11/2019 03:01 AM (AsyncStorage -> Transactions, Categories)
+            12/11/2019 05:03 AM
 */
 import React, { Component } from 'react';
 
@@ -65,67 +66,15 @@ import colors from '../../colors';
 //   return obj;
 // }
 
-// Source: http://stackoverflow.com/questions/497790
-const dates = {
-  convert: function convert(d) {
-    // Converts the date in d to a date-object. The input can be:
-    //   a date object: returned without modification
-    //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
-    //   a number     : Interpreted as number of milliseconds
-    //                  since 1 Jan 1970 (a timestamp)
-    //   a string     : Any format supported by the javascript engine, like
-    //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
-    //  an object     : Interpreted as an object with year, month and date
-    //                  attributes.  **NOTE** month is 0-11.
-    return (
-      d.constructor === Date ? d :
-      d.constructor === Array ? new Date(d[0],d[1],d[2]) :
-      d.constructor === Number ? new Date(d) :
-      d.constructor === String ? new Date(d) :
-      typeof d === "object" ? new Date(d.year,d.month,d.date) :
-      NaN
-    );
-  },
-  compare:function(a,b) {
-    // Compare two dates (could be of any type supported by the convert
-    // function above) and returns:
-    //  -1 : if a < b
-    //   0 : if a = b
-    //   1 : if a > b
-    // NaN : if a or b is an illegal date
-    // NOTE: The code inside isFinite does an assignment (=).
-    return (
-      isFinite(a=this.convert(a).valueOf()) &&
-      isFinite(b=this.convert(b).valueOf()) ?
-      (a>b)-(a<b) :
-      NaN
-    );
-  },
-  inRange:function(d,start,end) {
-    // Checks if date in d is between dates in start and end.
-    // Returns a boolean or NaN:
-    //    true  : if d is between start and end (inclusive)
-    //    false : if d is before start or after end
-    //    NaN   : if one or more of the dates is illegal.
-    // NOTE: The code inside isFinite does an assignment (=).
-    return (
-      isFinite(d=this.convert(d).valueOf()) &&
-      isFinite(start=this.convert(start).valueOf()) &&
-      isFinite(end=this.convert(end).valueOf()) ?
-      start <= d && d <= end :
-      NaN
-    );
-  }
-}
+import { dates } from '../functions/dates';
 
 function calculateBalance(array) {
   let balance = 0.00;
   let i = array.length - 1;
   for (i; i >= 0; i -= 1) {
-    balance = Number(balance.toFixed(2)) + array[i].amount;
-    // console.log(array[i].amount, '+', balance.toFixed(2))//  String(Math.trunc(Math.abs(balance))))
+    balance += array[i].amount;
   }
-  return balance;
+  return Number(balance.toFixed(2));
 }
 
 function calculateSpent(array) {
@@ -138,11 +87,11 @@ function calculateSpent(array) {
   for (i; i >= 0; i -= 1) {
     if (dates.compare(array[i].date, date) > 0) {
       if (array[i].type === 'expense') {
-        balance = Number(balance.toFixed(2)) + array[i].amount;
+        balance += array[i].amount;
       }
-    };
+    }
   }
-  return balance;
+  return Number(balance.toFixed(2));
 }
 
 class Home extends Component {
@@ -190,9 +139,11 @@ class Home extends Component {
 
     this.typeBtnPressed = this.typeBtnPressed.bind(this);
 
-    this.toggleSlideView = this.toggleSlideView.bind(this);
+    //  this.toggleSlideView = this.toggleSlideView.bind(this);
 
     this.toggleTypeView = this.toggleTypeView.bind(this);
+
+    this.transactionPressed = this.transactionPressed.bind(this);
   }
 
   async componentDidMount() {
@@ -223,46 +174,8 @@ class Home extends Component {
     this.setState({ currentSpentValue: spent });
   }
 
-  clearCurrentInputs() {
-    this.setState({ currentAmount: 0.00 });
-    this.setState({ currentCategory: null });
-    this.setState({ currentPayee: null });
-    this.setState({ currentType: null });
-
-    const { isTypeViewHidden, enableCategoryPills } = this.state;
-    if (isTypeViewHidden === false) {
-      this.toggleTypeView();
-    }
-
-    if (enableCategoryPills !== true) {
-      this.setState({ enableCategoryPills: true });
-    }
-  }
-
-  async storeNewTransaction(transaction) {
-    const storageObj = await loadTransactionsObject(); // load storage object
-
-    const { transactions } = storageObj; // get transactions from storage object
-
-    transactions.unshift(transaction); // add new transaction to transactions
-
-    // console.log(storageObj); // debug console
-
-    saveTransactionsObject(storageObj); // save updated storage object
-
-    // update current transactions list view with storage object
-    await this.setState({ currentTransactions: transactions });
-
-    
-    const { currentTransactions } = this.state;
-
-    // update current balance
-    const balance = calculateBalance(currentTransactions);
-    this.setState({ currentBalanceValue: balance });
-
-    // update current spent this month
-    const spent = calculateSpent(currentTransactions);
-    this.setState({ currentSpentValue: spent });
+  transactionPressed = (transaction) => {
+    // console.log(transaction);
   }
 
   numberBtnPressed(number) {
@@ -295,6 +208,48 @@ class Home extends Component {
     this.toggleTypeView();
   }
 
+  async storeNewTransaction(transaction) {
+    const storageObj = await loadTransactionsObject(); // load storage object
+
+    const { transactions } = storageObj; // get transactions from storage object
+
+    transactions.unshift(transaction); // add new transaction to transactions
+
+    // console.log(storageObj); // debug console
+
+    saveTransactionsObject(storageObj); // save updated storage object
+
+    // update current transactions list view with storage object
+    await this.setState({ currentTransactions: transactions });
+
+    const { currentTransactions } = this.state;
+
+    // update current balance
+    const balance = calculateBalance(currentTransactions);
+    this.setState({ currentBalanceValue: balance });
+
+    // update current spent this month
+    const spent = calculateSpent(currentTransactions);
+    this.setState({ currentSpentValue: spent });
+  }
+
+
+  clearCurrentInputs() {
+    this.setState({ currentAmount: 0.00 });
+    this.setState({ currentCategory: null });
+    this.setState({ currentPayee: null });
+    this.setState({ currentType: null });
+
+    const { isTypeViewHidden, enableCategoryPills } = this.state;
+    if (isTypeViewHidden === false) {
+      this.toggleTypeView();
+    }
+
+    if (enableCategoryPills !== true) {
+      this.setState({ enableCategoryPills: true });
+    }
+  }
+
   toggleTypeView() {
     let { isTypeViewHidden } = this.state;
     const { bounceValue } = this.state;
@@ -312,7 +267,7 @@ class Home extends Component {
       bounceValue,
       {
         toValue,
-        velocity: 3,
+        velocity: 30,
         tension: 2,
         friction: 8,
       }
@@ -341,7 +296,7 @@ class Home extends Component {
       bounceValue,
       {
         toValue,
-        velocity: 3,
+        velocity: 30,
         tension: 2,
         friction: 8,
       }
@@ -436,9 +391,9 @@ class Home extends Component {
       }
     }
 
-    await saveTransactionsObject(storageObject);
+    saveTransactionsObject(storageObject);
 
-    await this.setState({ currentTransactions: transactions });
+    this.setState({ currentTransactions: transactions });
 
     const { currentTransactions } = this.state;
 
@@ -511,7 +466,7 @@ class Home extends Component {
 
       this.clearCurrentInputs(); // clear input values
 
-      console.log(transaction);
+      // console.log(transaction);
     }
   }
 
@@ -549,6 +504,7 @@ class Home extends Component {
             <TransactionsView
               deleteBtnPressed={this.deleteBtnPressed}
               transactions={currentTransactions}
+              onPress={this.transactionPressed}
             />
 
             <TypeView
@@ -558,12 +514,6 @@ class Home extends Component {
               bounceValue={bounceValue}
             />
 
-{/*            
-            <ScrollingPayeePillsView
-              onPress={this.payeeBtnPressed}
-              currentPayee={currentPayee}
-            />
-*/}
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}
@@ -578,12 +528,13 @@ class Home extends Component {
 
             <KeypadView handlePress={this.handlePress} />
 
-{/*            <SlideUp
+            {/*            <SlideUp
               toggleSlideView={this.toggleSlideView}
               bounceValue={bounceValue}
               // onPress={this.typeBtnPressed}
               // currentType={currentType}
-            />*/}
+            />
+            */}
 
           </ScrollView>
         </TouchableWithoutFeedback>

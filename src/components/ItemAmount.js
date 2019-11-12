@@ -11,11 +11,11 @@ const ItemAmount = (props) => {
   return (
     <View style={{
       flex: 1,
-      
+
       flexDirection: 'row',
-      
+
       justifyContent: 'flex-end',
-      
+
       // width: '100%',
 
       marginRight: 4,

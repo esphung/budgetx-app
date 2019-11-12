@@ -62,7 +62,6 @@ function getEmptyTransactionsView() {
 const TABLE_HEIGHT = '30%';
 
 class TransactionsView extends Component {
-
   getItemText = (item) => {
     const view = (
 
@@ -94,9 +93,11 @@ class TransactionsView extends Component {
   }
 
   getItemView(item) {
+    const { onPress } = this.props;
+
     return (
       <TouchableOpacity
-        onPress={() => console.log(item)}
+        onPress={() => onPress(item)}
         style={
           {
             height: 37,
@@ -145,7 +146,11 @@ class TransactionsView extends Component {
           data={transactions}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={styles.rowFront}>{this.getItemView(item)}</View>
+            <View style={styles.rowFront}>
+              {
+                this.getItemView(item)
+              }
+            </View>
           )}
           renderHiddenItem={({ item }) => (
             <View style={{ flexDirection: 'row', }}>

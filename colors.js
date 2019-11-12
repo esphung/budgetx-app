@@ -21,7 +21,6 @@ const colors = {
   // custom colors
   offWhite: '#ffffff7f',
   white: '#ffffff',
-  
 };
 
 export default colors;

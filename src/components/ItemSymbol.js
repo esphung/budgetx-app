@@ -14,7 +14,8 @@ const ItemSymbol = (props) => {
       // borderWidth: 1,
       // borderColor: 'white',
       // borderStyle: 'dotted',
-    }}>
+    }}
+    >
       <Text style={{
         // flex: 0.1,
         color: item.category.color,

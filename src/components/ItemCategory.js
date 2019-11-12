@@ -7,14 +7,15 @@ const ItemCategory = (props) => {
     <View style={{
       flex: 1,
 
-      //alignItems: 'flex-start',
+      // alignItems: 'flex-start',
 
       justifyContent: 'flex-start',
 
       // borderWidth: 1,
       // borderColor: 'white',
       // borderStyle: 'solid',
-    }}>
+    }}
+    >
       <Text style={
         {
           // width: 'auto',
@@ -37,7 +38,7 @@ const ItemCategory = (props) => {
       }
       >
 
-        { item.category.name.replace(/^(.{1}[^\s]*).*/, "$1") }
+        { item.category.name.replace(/^(.{1}[^\s]*).*/, '$1') }
 
       </Text>
     </View>

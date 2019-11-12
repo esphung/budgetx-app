@@ -83,10 +83,12 @@ class ScrollingPillCategoriesView extends Component {
 
   render() {
     const { categories } = this.state;
+    const { isEnabled } = this.props;
     // console.log(categories)
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView
+          scrollEnabled={isEnabled}
           contentContainerStyle={{
             alignItems: 'center',
           }}

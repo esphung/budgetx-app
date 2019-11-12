@@ -81,28 +81,27 @@ export default function PayeePill(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-        <Animated.View
-      style={
-        { transform: [{ translateY: bounceValue }] }}
-    >
-      <ScrollView
-        scrollEnabled={false}
-        contentContainerStyle={{
-          alignItems: 'center',
-        }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        decelerationRate={0}
-        // snapToInterval={MIN_PILL_WIDTH}
-        snapToAlignment="center"
-
-        style={styles.scrollView}
+      <Animated.View
+        style={{ transform: [{ translateY: bounceValue }] }}
       >
-        {
-          getTypePill(types)
-        }
+        <ScrollView
+          scrollEnabled={false}
+          contentContainerStyle={{
+            alignItems: 'center',
+          }}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          decelerationRate={0}
+          // snapToInterval={MIN_PILL_WIDTH}
+          snapToAlignment="center"
 
-      </ScrollView>
+          style={styles.scrollView}
+        >
+          {
+            getTypePill(types)
+          }
+
+        </ScrollView>
       </Animated.View>
     </SafeAreaView>
   );
