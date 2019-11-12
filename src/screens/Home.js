@@ -23,8 +23,8 @@ import {
 import * as Font from 'expo-font';
 
 // import my custom view components
-import HeaderLeftView from '../components/HeaderLeftView';
-import HeaderRightView from '../components/HeaderRightView';
+import HeaderLeftView from '../components/Header/HeaderLeftView';
+import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/BalanceView';
 import DateLabelView from '../components/DateLabelView';
 import TransactionsView from '../components/TransactionsView';
@@ -51,16 +51,8 @@ import Payee from '../models/Payee';
 
 // import sortArrayDesc from '../functions/sortArrayDesc';
 
-// import getUSDFormattedString from '../functions/getUSDFormattedString';
-
-// import { colorConsole } from '../functions/colorConsole';
-
 // ui colors
 import colors from '../../colors';
-
-const SFProDisplayRegularFont = require('../../assets/fonts/SF-Pro-Display-Regular.otf');
-
-const SFProDisplaySemiboldFont = require('../../assets/fonts/SF-Pro-Display-Semibold.otf');
 
 function search(nameKey, myArray) {
   let obj = null;
@@ -128,8 +120,8 @@ class Home extends Component {
 
     // load fonts
     await Font.loadAsync({
-      'SFProDisplay-Regular': SFProDisplayRegularFont,
-      'SFProDisplay-Semibold': SFProDisplaySemiboldFont
+      'SFProDisplay-Regular': global.SFProDisplayRegularFont,
+      'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
     });
 
     // set fonts  are loaded

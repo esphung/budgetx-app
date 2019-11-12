@@ -9,24 +9,26 @@ import getShortDate from '../functions/getShortDate';
 const ItemDate = (props) => {
   const { item } = props;
 
-
   let date = (item.date);
   if (new Date(date).getDate() === (new Date()).getDate()) {
-    date = 'Today';
+    date = '';
   }  else {
-    getShortDate(date);
+    date = getShortDate(date);
   }
 
   return (
   <View style={{
-    flex: 0.7,
-    flexDirection: 'row',
+    flex: 1,
+
+    // flexDirection: 'row',
+
     justifyContent: 'center',
-    alignItems: 'center',
+
+    // alignItems: 'center',
 
     // width: '100%',
 
-    paddingHorizontal: 4,
+    // paddingHorizontal: 4,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -44,7 +46,7 @@ const ItemDate = (props) => {
         fontStyle: 'normal',
         letterSpacing: 0.13,
 
-        textAlign: 'right',
+        // textAlign: 'right',
 
         
 

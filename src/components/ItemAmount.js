@@ -11,11 +11,14 @@ const ItemAmount = (props) => {
   return (
     <View style={{
       flex: 1,
+      
       flexDirection: 'row',
+      
       justifyContent: 'flex-end',
+      
       // width: '100%',
 
-      paddingRight: 4,
+      marginRight: 4,
 
       // borderWidth: 1,
       // borderColor: 'white',
@@ -26,7 +29,7 @@ const ItemAmount = (props) => {
       <Text>
 
         <Text style={{
-          flex: 1,
+          // flex: 1,
 
           // textAlignVertical: 'center',
           width: '100%',
@@ -44,7 +47,7 @@ const ItemAmount = (props) => {
         </Text>
 
         <Text style={{
-          flex: 1,
+          // flex: 1,
 
           width: '100%',
           height: 20,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 // ui colors
 import colors from '../../colors';
@@ -8,37 +8,45 @@ const ItemPayee = (props) => {
   const { item } = props;
 
   return (
-    <Text style={
-      {
-        flex: 0.8,
-        // width: 'auto',
-        fontFamily: 'SFProDisplay-Regular',
-        fontSize: 17,
-        fontWeight: 'normal',
-        fontStyle: 'normal',
-        letterSpacing: 0.13,
+    <View style={{
+      flex: 1,
 
-        // marginHorizontal: 10,
-        paddingRight: 10,
+      // flexDirection: 'row',
 
-        textAlign: 'left',
+      justifyContent: 'center',
 
-        // color: item.category.color +  '7f',
 
-        color: colors.white,
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'dotted',
+    }}>
+      <Text style={
+        {
+          // width: 'auto',
+          fontFamily: 'SFProDisplay-Semibold',
+          fontSize: 17,
+          fontWeight: 'normal',
+          fontStyle: 'normal',
+          letterSpacing: 0.13,
 
-        // backgroundColor: colors.darkTwo,
+          // marginHorizontal: 10,
+          // paddingRight: 10,
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dotted',
+          // color: item.category.color +  '7f',
+
+          color: colors.white,
+
+          // backgroundColor: colors.darkTwo,
+
+
+        }
       }
-    }
-    >
+      >
 
-      {item.payee.name}
+        { item.payee.name }
 
-    </Text>
+      </Text>
+    </View>
   );
 };
 

@@ -1,7 +1,11 @@
-// dimensions
-import { Dimensions } from 'react-native';
+// // dimensions
+// import { Dimensions } from 'react-native';
 
-global.screenWidth = Math.round(Dimensions.get('window').width);
+// global.screenWidth = Math.round(Dimensions.get('window').width);
+
+global.SFProDisplayRegularFont = require('./assets/fonts/SF-Pro-Display-Regular.otf');
+
+global.SFProDisplaySemiboldFont = require('./assets/fonts/SF-Pro-Display-Semibold.otf');
 
 // placeholder images
 global.placeholderUserImage = require('./assets/user-placeholder-200x250.png');

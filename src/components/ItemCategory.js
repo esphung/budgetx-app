@@ -1,36 +1,46 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 const ItemCategory = (props) => {
   const { item } = props;
   return (
-    <Text style={
-      {
-        flex: 1,
+    <View style={{
+      flex: 1,
 
-        // width: 'auto',
-        fontFamily: 'SFProDisplay-Regular',
-        fontSize: 17,
-        fontWeight: 'normal',
-        fontStyle: 'normal',
-        letterSpacing: 0.13,
+      //alignItems: 'flex-start',
 
-        paddingHorizontal: 10,
+      justifyContent: 'flex-start',
 
-        color: '#ffffff7f', // 'rgba(255, 255, 255, 0.5)',
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
+    }}>
+      <Text style={
+        {
+          // width: 'auto',
+          fontFamily: 'SFProDisplay-Regular',
+          fontSize: 17,
+          fontWeight: 'normal',
+          fontStyle: 'normal',
+          letterSpacing: 0.13,
 
-        // backgroundColor: colors.darkTwo,
+          // marginLeft: 10,
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dotted',
+          color: '#ffffff7f', // 'rgba(255, 255, 255, 0.5)',
+
+          // backgroundColor: colors.darkTwo,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'dotted',
+        }
       }
-    }
-    >
+      >
 
-      { item.category.name }
+        { item.category.name.replace(/^(.{1}[^\s]*).*/, "$1") }
 
-    </Text>
+      </Text>
+    </View>
   );
 };
 
