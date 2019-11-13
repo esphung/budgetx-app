@@ -20,13 +20,13 @@ import {
   Animated,
   Keyboard,
   TouchableWithoutFeedback,
-  AsyncStorage
+  // AsyncStorage
 } from 'react-native';
 
 import * as Font from 'expo-font';
 
 // import my custom view components
-import HeaderLeftView from '../components/Header/HeaderLeftView';
+// import HeaderLeftView from '../components/Header/HeaderLeftView';
 import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/Balances/BalanceView';
 import DateLabelView from '../components/DateLabel/DateLabelView';
@@ -35,7 +35,7 @@ import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPi
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
 // import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
-import TypeView from '../components/TypeView';
+// import TypeView from '../components/TypeView';
 import SlideUp from '../components/SlideUp/SlideUp';
 
 import {
@@ -61,44 +61,21 @@ import colors from '../../colors';
 
 import { dates } from '../functions/dates';
 
-function calculateBalance(array) {
-  let balance = 0.00;
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    balance += array[i].amount;
-  }
-  return Number(balance.toFixed(2));
-}
-
-function calculateSpent(array) {
-  //  get date 30 days ago
-  const date = new Date();
-  date.setDate(date.getDate() - 30);
-
-  let balance = 0.00;
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    if (dates.compare(array[i].date, date) > 0) {
-      if (array[i].type === 'expense') {
-        balance += array[i].amount;
-      }
-    }
-  }
-  return Number(balance.toFixed(2));
-}
-
 class Home extends Component {
-  static navigationOptions = ({ screenProps }) => {
+  static navigationOptions = () => {
+    // { screenProps }
     // get user name and email from props
     // console.log(screenProps);
-    const { name, email } = screenProps.user;
-    return {
+    // const { name, email } = screenProps.user;
+    const header = {
       headerTransparent: {},
 
-      headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
+      // headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
 
       headerRight: <HeaderRightView />,
     };
+
+    return header;
   }
 
   constructor(props) {
@@ -115,12 +92,12 @@ class Home extends Component {
       currentBalanceValue: 0.00,
       currentSpentValue: 0.00,
       isSlideViewHidden: true,
-      isTypeViewHidden: true,
+      // isTypeViewHidden: true,
       enableCategoryPills: true,
-      typeViewBounceValue: new Animated.Value(100), // initial position of the type view
+      // typeViewBounceValue: new Animated.Value(100), // initial position of the type view
       slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
       currentTransaction: null,
-      isTableEnabled: false
+      isTableEnabled: true
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -131,11 +108,11 @@ class Home extends Component {
 
     this.deleteBtnPressed = this.deleteBtnPressed.bind(this);
 
-    this.typeBtnPressed = this.typeBtnPressed.bind(this);
+    // this.typeBtnPressed = this.typeBtnPressed.bind(this);
 
     this.toggleSlideView = this.toggleSlideView.bind(this);
 
-    this.toggleTypeView = this.toggleTypeView.bind(this);
+    // this.toggleTypeView = this.toggleTypeView.bind(this);
 
     this.transactionBtnPressed = this.transactionBtnPressed.bind(this);
   }
@@ -160,11 +137,11 @@ class Home extends Component {
     this.setState({ currentTransactions: transactions });
 
     // update current balance
-    const balance = calculateBalance(transactions);
+    const balance = this.calculateBalance(transactions);
     this.setState({ currentBalanceValue: balance });
 
     // update current spent
-    const spent = calculateSpent(transactions);
+    const spent = this.calculateSpent(transactions);
     this.setState({ currentSpentValue: spent });
   }
 
@@ -201,12 +178,12 @@ class Home extends Component {
     // this.setState({ currentCategory: transaction.category });
   }
 
-  async clearStorageSync() {
-    const asyncStorageKeys = await AsyncStorage.getAllKeys();
-    if (asyncStorageKeys.length > 0) {
-      AsyncStorage.clear();
-    }
-  }
+  // async clearStorageSync() {
+  //   const asyncStorageKeys = await AsyncStorage.getAllKeys();
+  //   if (asyncStorageKeys.length > 0) {
+  //     AsyncStorage.clear();
+  //   }
+  // }
 
   numberBtnPressed(number) {
     const { currentAmount } = this.state;
@@ -217,25 +194,25 @@ class Home extends Component {
 
   categoryBtnPressed(category) {
     // toggle current category selected
-    const { currentCategory, isTypeViewHidden } = this.state;
+    const { currentCategory } = this.state;
 
     if (currentCategory === category) {
       this.setState({ currentCategory: null });
-      if (isTypeViewHidden !== true) {
-        this.toggleTypeView();
-      }
+      // if (isTypeViewHidden !== true) {
+      //   this.toggleTypeView();
+      // }
     } else if (currentCategory !== category) {
       this.setState({ currentCategory: category });
-      if (isTypeViewHidden === true) {
-        this.toggleTypeView();
-      }
+      // if (isTypeViewHidden === true) {
+      //   this.toggleTypeView();
+      // }
     } else {
       // set new current category
       this.setState({ currentCategory: category });
 
-      if (isTypeViewHidden === true) {
-        this.toggleTypeView();
-      }
+      // if (isTypeViewHidden === true) {
+      //   this.toggleTypeView();
+      // }
     }
     if (category.type) {
       this.setState({ currentType: category.type });
@@ -259,11 +236,11 @@ class Home extends Component {
     const { currentTransactions } = this.state;
 
     // update current balance
-    const balance = calculateBalance(currentTransactions);
+    const balance = this.calculateBalance(currentTransactions);
     this.setState({ currentBalanceValue: balance });
 
     // update current spent this month
-    const spent = calculateSpent(currentTransactions);
+    const spent = this.calculateSpent(currentTransactions);
     this.setState({ currentSpentValue: spent });
   }
 
@@ -274,10 +251,15 @@ class Home extends Component {
     this.setState({ currentPayee: null });
     this.setState({ currentType: null });
 
-    const { isTypeViewHidden, enableCategoryPills, isSlideViewHidden } = this.state;
-    if (isTypeViewHidden === false) {
-      this.toggleTypeView();
-    }
+    const {
+      // isTypeViewHidden,
+      enableCategoryPills,
+      isSlideViewHidden
+    } = this.state;
+
+    // if (isTypeViewHidden === false) {
+    //   this.toggleTypeView();
+    // }
 
     if (isSlideViewHidden === false) {
       this.toggleSlideView();
@@ -288,33 +270,33 @@ class Home extends Component {
     }
   }
 
-  toggleTypeView() {
-    let { isTypeViewHidden } = this.state;
-    const { typeViewBounceValue } = this.state;
+  // toggleTypeView() {
+  //   let { isTypeViewHidden } = this.state;
+  //   const { typeViewBounceValue } = this.state;
 
-    let toValue = 100;
+  //   let toValue = 100;
 
-    if (isTypeViewHidden) {
-      toValue = 0;
-    }
+  //   if (isTypeViewHidden) {
+  //     toValue = 0;
+  //   }
 
-    // This will animate the translateY of the subview between 0 & 300
-    // depending on its current state
-    // 300 comes from the style below, which is the height of the subview.
-    Animated.spring(
-      typeViewBounceValue,
-      {
-        toValue,
-        velocity: 30,
-        tension: 2,
-        friction: 8,
-      }
-    ).start();
+  //   // This will animate the translateY of the subview between 0 & 300
+  //   // depending on its current state
+  //   // 300 comes from the style below, which is the height of the subview.
+  //   Animated.spring(
+  //     typeViewBounceValue,
+  //     {
+  //       toValue,
+  //       velocity: 30,
+  //       tension: 2,
+  //       friction: 8,
+  //     }
+  //   ).start();
 
-    isTypeViewHidden = !isTypeViewHidden;
+  //   isTypeViewHidden = !isTypeViewHidden;
 
-    this.setState({ isTypeViewHidden });
-  }
+  //   this.setState({ isTypeViewHidden });
+  // }
 
 
   toggleSlideView() {
@@ -402,14 +384,14 @@ class Home extends Component {
   //   // console.log(payee);
   // }
 
-  typeBtnPressed(type) {
-    const { currentType } = this.state;
-    if (currentType === type.name) {
-      this.setState({ currentType: null });
-    } else {
-      this.setState({ currentType: type.name });
-    }
-  }
+  // typeBtnPressed(type) {
+  //   const { currentType } = this.state;
+  //   if (currentType === type.name) {
+  //     this.setState({ currentType: null });
+  //   } else {
+  //     this.setState({ currentType: type.name });
+  //   }
+  // }
 
   async removeTransaction(transaction) {
     const storageObject = await loadTransactionsObject();
@@ -436,11 +418,11 @@ class Home extends Component {
     const { currentTransactions } = this.state;
 
     // update current balance
-    const balance = calculateBalance(currentTransactions);
+    const balance = this.calculateBalance(currentTransactions);
     this.setState({ currentBalanceValue: balance });
 
     // update current spent this month
-    const spent = calculateSpent(currentTransactions);
+    const spent = this.calculateSpent(currentTransactions);
     this.setState({ currentSpentValue: spent });
   }
 
@@ -526,8 +508,8 @@ class Home extends Component {
       currentTransactions,
       currentCategory,
       // currentPayee,
-      currentType,
-      typeViewBounceValue,
+      // currentType,
+      // typeViewBounceValue,
       slideViewBounceValue,
       enableCategoryPills,
       currentTransaction,
@@ -558,13 +540,14 @@ class Home extends Component {
 
             />
 
-{/*            <TypeView
+            {/*
+            <TypeView
               onPress={this.typeBtnPressed}
               currentType={currentType}
               toggleView={this.toggleTypeView}
               typeViewBounceValue={typeViewBounceValue}
             />
-*/}
+            */}
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}
@@ -614,3 +597,29 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
+
+Home.prototype.calculateBalance = (array) => {
+  let balance = 0.00;
+  let i = array.length - 1;
+  for (i; i >= 0; i -= 1) {
+    balance += array[i].amount;
+  }
+  return Number(balance.toFixed(2));
+};
+
+Home.prototype.calculateSpent = (array) => {
+  //  get date 30 days ago
+  const date = new Date();
+  date.setDate(date.getDate() - 30);
+
+  let balance = 0.00;
+  let i = array.length - 1;
+  for (i; i >= 0; i -= 1) {
+    if (dates.compare(array[i].date, date) > 0) {
+      if (array[i].type === 'expense') {
+        balance += array[i].amount;
+      }
+    }
+  }
+  return Number(balance.toFixed(2));
+};

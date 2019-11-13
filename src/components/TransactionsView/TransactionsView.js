@@ -111,7 +111,7 @@ function TransactionsView(props) {
 
           <ItemNameInput item={item} />
 
-          <ItemDate item={item} />
+          {/*<ItemDate item={item} />*/}
 
           <ItemAmount item={item} />
 

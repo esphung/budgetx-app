@@ -8,6 +8,7 @@ import { createAppContainer } from 'react-navigation';
 
 import Home from './src/screens/Home';
 import Settings from './src/screens/Settings';
+import Search from './src/screens/Search';
 
 const StackNavigator = createStackNavigator({
   Home: {
@@ -22,6 +23,10 @@ const StackNavigator = createStackNavigator({
   Settings: {
     screen: Settings,
   },
+
+  Search: {
+    screen: Search,
+  }
 });
 
 const AppContainer = createAppContainer(StackNavigator);

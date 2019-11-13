@@ -8,18 +8,16 @@
 <img src="budgetX-designs/Financely-Search.png" alt="Financely Search Screen" width="100"/>
 <img src="budgetX-designs/Financely-Settings.png" alt="Financely Settings Screen" width="100"/>
 <hr>
-
+#### Updated ####
     11/11/2019 09:09 AM
     11/12/2019 02:17 PM
+    11/13/2019 05:22 AM
 
 #### Extra Packages ####
     Expo Font
-    Expo AV
+    <!-- Expo AV -->
     Jest
     Detox
-
-#### Purpose ####
-React native mobile app for keeping track of personal accounts and transactions
 
 #### Author ####
 Eric Phung
@@ -28,22 +26,6 @@ Eric Phung
 Sun Nov  3 04:53:21 2019
 
 #### Updated ####
-06/11/2019 02:57 PM
-12/11/2019 05:03 AM
-
-#### Category ####
-Finance
-<!-- ![Budget X Icon](assets/icon.png "Budget X Icon")
- -->
-#### Features
-*   Beautiful user interface
-*   Add/remove/edit transactions
-*   Custom categories
-*   Advertisement free!
-*   Sync across different devices
-*   Back up data to cloud
-*   Export data as csv, html, qif
-*   Link personal bank accounts
-*   Multiple accounts
-*   Different currencies
-*   Reports and charts
+11/06/2019 02:57 PM
+11/12/2019 05:03 AM
+11/13/2019 05:22 AM

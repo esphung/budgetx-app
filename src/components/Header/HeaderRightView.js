@@ -18,14 +18,17 @@ import {
 import { withNavigation } from 'react-navigation';
 
 function HeaderRightView(props) {
-  let { isSearchModeOn } = props;
+  // let { isSearchModeOn } = props;
 
   const searchBtnPressed = () => {
     // isSearchModeOn = !isSearchModeOn;
+    const { navigation } = props;
+    navigation.navigate('Search');
   };
 
   const settingsBtnPressed = () => {
-    // navigation.navigate('Settings');
+    const { navigation } = props;
+    navigation.navigate('Settings');
   };
   return (
     <View style={

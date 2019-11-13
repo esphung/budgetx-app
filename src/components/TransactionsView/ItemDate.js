@@ -21,7 +21,7 @@ const ItemDate = (props) => {
 
       // width: '100%',
 
-      // paddingHorizontal: 4,
+      // marginRight: 1,
 
       // borderWidth: 1,
       // borderColor: 'white',
