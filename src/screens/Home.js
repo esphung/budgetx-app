@@ -34,7 +34,7 @@ import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPi
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
 // import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
-import TypeView from '../components/TypeView';
+// import TypeView from '../components/TypeView';
 import SlideUp from '../components/SlideUp/SlideUp';
 
 import {
@@ -109,16 +109,16 @@ class Home extends Component {
       currentDate: new Date(),
       currentCategory: null,
       currentTransactions: [],
-      currentPayee: {},
+      currentPayee: null,
       currentType: null,
       currentBalanceValue: 0.00,
       currentSpentValue: 0.00,
       isSlideViewHidden: true,
       isTypeViewHidden: true,
       enableCategoryPills: true,
-      typeViewBounceValue: new Animated.Value(100), //initial position of the type view
+      typeViewBounceValue: new Animated.Value(100), // initial position of the type view
       slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
-      currentTransaction: {}
+      currentTransaction: null
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -135,7 +135,7 @@ class Home extends Component {
 
     this.toggleTypeView = this.toggleTypeView.bind(this);
 
-    this.transactionPressed = this.transactionPressed.bind(this);
+    this.transactionBtnPressed = this.transactionBtnPressed.bind(this);
   }
 
   async componentDidMount() {
@@ -147,7 +147,7 @@ class Home extends Component {
     await Font.loadAsync({
       'SFProDisplay-Regular': global.SFProDisplayRegularFont,
       'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-    })
+    });
 
     // set fonts  are loaded
     this.setState({ fontsAreLoaded: true });
@@ -166,13 +166,42 @@ class Home extends Component {
     this.setState({ currentSpentValue: spent });
   }
 
-  transactionPressed = (transaction) => {
+  transactionBtnPressed = (transaction) => {
     // console.log(transaction);
-    // set current transaction
-    this.setState({ currentTransaction: transaction });
+    const { currentTransaction, isSlideViewHidden } = this.state;
 
-    // show slide view
-    this.toggleSlideView();
+    if (currentTransaction === transaction) {
+      // empty transaction
+      this.setState({ currentTransaction: {} });
+      if (isSlideViewHidden !== true) {
+        // hide slide view
+        this.toggleSlideView();
+      }
+    } else if (currentTransaction !== transaction) {
+      // not same transaction
+      this.setState({ currentTransaction: transaction });
+      // this.setState({ enableCategoryPills: true });
+      if (isSlideViewHidden === true) {
+        this.toggleSlideView();
+      }
+    } else {
+      // set current transaction
+      this.setState({ currentTransaction: transaction });
+      if (isSlideViewHidden === true) {
+        // show slide view
+        this.toggleSlideView();
+      }
+    }
+
+    // // set current category, too?
+    // let { currentCategory } = this.state;
+    // if (currentCategory !== transaction.category) {
+    //   currentCategory = transaction.category;
+    //   this.setState({ currentCategory: transaction.category });
+    //   this.categoryBtnPressed(transaction.category)
+    // }
+
+    // disable other transactions ???
   }
 
   numberBtnPressed(number) {
@@ -184,22 +213,32 @@ class Home extends Component {
 
   categoryBtnPressed(category) {
     // toggle current category selected
-    const { currentCategory } = this.state;
+    const { currentCategory, isTypeViewHidden } = this.state;
+
     if (currentCategory === category) {
-      this.setState({ currentCategory: null });
-      this.setState({ enableCategoryPills: true });
+      this.setState({ currentCategory: {} });
+      // this.setState({ enableCategoryPills: true });
+      if (isTypeViewHidden !== true) {
+        this.toggleTypeView();
+      }
+    } else if (currentCategory !== category) {
+      this.setState({ currentCategory: category });
+      // this.setState({ enableCategoryPills: true });
+      if (isTypeViewHidden === true) {
+        this.toggleTypeView();
+      }
     } else {
       // set new current category
       this.setState({ currentCategory: category });
-      this.setState({ enableCategoryPills: false });
+      // this.setState({ enableCategoryPills: false });
 
-      if (category.type) {
-        this.setState({ currentType: category.type });
+      if (isTypeViewHidden === true) {
+        this.toggleTypeView();
       }
     }
-
-    // toggle transaction Type view
-    this.toggleTypeView();
+    if (category.type) {
+      this.setState({ currentType: category.type });
+    }
   }
 
   async storeNewTransaction(transaction) {
@@ -234,9 +273,13 @@ class Home extends Component {
     this.setState({ currentPayee: null });
     this.setState({ currentType: null });
 
-    const { isTypeViewHidden, enableCategoryPills } = this.state;
+    const { isTypeViewHidden, enableCategoryPills, isSlideViewHidden } = this.state;
     if (isTypeViewHidden === false) {
       this.toggleTypeView();
+    }
+
+    if (isSlideViewHidden === false) {
+      this.toggleSlideView();
     }
 
     if (enableCategoryPills !== true) {
@@ -274,7 +317,6 @@ class Home extends Component {
 
 
   toggleSlideView() {
-    console.log('Toggling Slide')
     let { isSlideViewHidden } = this.state;
     const { slideViewBounceValue } = this.state;
 
@@ -446,7 +488,7 @@ class Home extends Component {
       currentType
     } = this.state;
 
-    let transaction = {}
+    let transaction = {};
 
     // check if category is select and amount is given
     if ((currentCategory) && (currentAmount > 0)) {
@@ -482,17 +524,17 @@ class Home extends Component {
       currentTransactions,
       currentCategory,
       // currentPayee,
-      currentType,
-      typeViewBounceValue,
+      // currentType,
+      // typeViewBounceValue,
       slideViewBounceValue,
-      isSlideViewHidden,
-      enableCategoryPills
+      enableCategoryPills,
+      currentTransaction
     } = this.state;
 
     let view = <View />;
     if (fontsAreLoaded) {
       view = (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <TouchableWithoutFeedback testID="test" onPress={Keyboard.dismiss} accessible={false}>
           <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
             <BalanceView
@@ -507,15 +549,18 @@ class Home extends Component {
             <TransactionsView
               deleteBtnPressed={this.deleteBtnPressed}
               transactions={currentTransactions}
-              onPress={this.transactionPressed}
+              onPress={this.transactionBtnPressed}
+              currentTransaction={currentTransaction}
             />
 
+            {/*
             <TypeView
               onPress={this.typeBtnPressed}
               currentType={currentType}
               toggleView={this.toggleTypeView}
               typeViewBounceValue={typeViewBounceValue}
             />
+            */}
 
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
@@ -554,9 +599,11 @@ class Home extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     alignItems: 'center',
 
     backgroundColor: colors.darkTwo,
+
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',

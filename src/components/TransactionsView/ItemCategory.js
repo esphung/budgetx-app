@@ -2,7 +2,13 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 const ItemCategory = (props) => {
-  const { item } = props;
+  const { item, isCurrentTransaction } = props;
+
+  let textColor = '#ffffff7f';
+
+  if (isCurrentTransaction) {
+    textColor = item.category.color;
+  }
   return (
     <View style={{
       flex: 1,
@@ -27,7 +33,7 @@ const ItemCategory = (props) => {
 
           // marginLeft: 10,
 
-          color: '#ffffff7f', // 'rgba(255, 255, 255, 0.5)',
+          color: textColor, // 'rgba(255, 255, 255, 0.5)',
 
           // backgroundColor: colors.darkTwo,
 

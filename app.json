@@ -5,7 +5,8 @@
     ],
     "icon": "./assets/icon.png",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ericphung.budgetx-app"
     },
     "name": "Budget X",
     "orientation": "portrait",

@@ -1,14 +1,16 @@
 const { reloadApp } = require('detox-expo-helpers');
+// const { device } = require('detox');
 
-describe('Example', () => {
+describe('Home', () => {
   beforeEach(async () => {
-    // await device.reloadReactNative();
+    //await device.reloadReactNative();
     await reloadApp();
   });
 
-  it('should have welcome screen', async () => {
-    await expect(element(by.id('userImageBtn'))).toBeVisible();
-    console.log('Hello')
+  it('user can see screen', async () => {
+    // await element(by.id('emailTextInput')).tap();
+    await expect(element(by.id('test'))).toBeVisible();
+
   });
 
   // it('should show hello screen after tap', async () => {

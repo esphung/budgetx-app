@@ -25,7 +25,7 @@ function HeaderRightView(props) {
   };
 
   const settingsBtnPressed = () => {
-    navigation.navigate('Settings');
+    // navigation.navigate('Settings');
   };
   return (
     <View style={

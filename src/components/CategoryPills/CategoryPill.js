@@ -28,7 +28,7 @@ export default function CategoryPill(props) {
   if (isSelected) {
     textColor = 'white';
     backgroundColor = color;
-    isEnabled = !isEnabled;
+    // isEnabled = !isEnabled;  // disable current category pill
   }
 
   return (

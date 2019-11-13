@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   StyleSheet,
@@ -10,93 +10,65 @@ import {
 // ui colors
 import colors from '../../../colors';
 
-class BalanceView extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      symbol: '$'
-    };
-
-    this.currentBalanceBtnPressed = this.currentBalanceBtnPressed.bind(this);
-
-    this.currentSpentValueBtnPressed = this.currentSpentValueBtnPressed.bind(this);
-  }
-
-  getCurrencySymbol() {
-    const { symbol } = this.state;
-    return `${symbol} `;
-  }
-
-  currentBalanceBtnPressed = () => {
+function BalanceView(props) {
+  const currentBalanceBtnPressed = () => {
     // console.log('Current Balance:', this.props.currentBalanceValue)
-  }
+  };
 
-  currentSpentValueBtnPressed = () => {
+  const currentSpentValueBtnPressed = () => {
     // console.log('Current Spent:', this.props.currentSpentValue)
-  }
+  };
 
-  render() {
-    const { currentBalanceValue, currentSpentValue } = this.props;
+  const { currentBalanceValue, currentSpentValue } = props;
+  return (
+    <View style={styles.balanceView}>
+      <View style={styles.container}>
 
-    // if (!currentBalanceValue) {
-    //   currentBalanceValue = 0;
-    // }
+        <View style={{
+          width: '50%',
+          alignItems: 'center',
+        }}
+        >
 
-    // if (!currentSpentValue) {
-    //   currentSpentValue = 0;
-    // }
+          <Text style={styles.currentBalanceTitle}>
+            Current Balance
+          </Text>
 
-    return (
-      <View style={styles.balanceView}>
-        <View style={styles.container}>
-
-          <View style={{
-            width: '50%',
-            alignItems: 'center',
-          }}
-          >
-
-            <Text style={styles.currentBalanceTitle}>
-              Current Balance
+          <TouchableOpacity onPress={() => currentBalanceBtnPressed}>
+            <Text
+              style={styles.currentBalanceValue}
+            >
+              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$ </Text>
+              <Text>{ currentBalanceValue }</Text>
             </Text>
-
-            <TouchableOpacity onPress={this.currentBalanceBtnPressed}>
-              <Text
-                style={styles.currentBalanceValue}
-              >
-                <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>{ this.getCurrencySymbol() }</Text>
-                <Text>{ currentBalanceValue }</Text>
-              </Text>
-            </TouchableOpacity>
-
-          </View>
-
-          <View style={styles.separator} />
-
-          <View style={{
-            width: '50%',
-            // height: '50%',
-            alignItems: 'center',
-          }}
-          >
-            <Text style={styles.currentSpentTitle}>
-              Spent This Month
-            </Text>
-
-            <TouchableOpacity onPress={this.currentSpentValueBtnPressed}>
-              <Text style={styles.currentSpentValue}>
-                <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>{ this.getCurrencySymbol() }</Text>
-                <Text>{ currentSpentValue }</Text>
-              </Text>
-            </TouchableOpacity>
-
-          </View>
+          </TouchableOpacity>
 
         </View>
+
+        <View style={styles.separator} />
+
+        <View style={{
+          width: '50%',
+          // height: '50%',
+          alignItems: 'center',
+        }}
+        >
+          <Text style={styles.currentSpentTitle}>
+            Spent This Month
+          </Text>
+
+          <TouchableOpacity onPress={() => currentSpentValueBtnPressed}>
+            <Text style={styles.currentSpentValue}>
+              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$ </Text>
+              <Text>{ currentSpentValue }</Text>
+            </Text>
+          </TouchableOpacity>
+
+        </View>
+
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

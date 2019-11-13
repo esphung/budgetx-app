@@ -3,8 +3,9 @@ FILENAME:   TransactionsView.js
 PURPOSE:    shows if app has no transaction data
 AUTHOR:     eric phung
 DATE:       Sun Nov  3 05:41:17 2019
+            11/12/2019 09:12 PM
 */
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   StyleSheet,
@@ -61,124 +62,122 @@ function getEmptyTransactionsView() {
 
 const TABLE_HEIGHT = '30%';
 
-class TransactionsView extends Component {
-  getItemText = (item) => {
-    const view = (
+function TransactionsView(props) {
+  const getItemView = (item) => {
+    const { onPress, currentTransaction } = props;
 
-      <View style={{
-        flex: 1,
-        flexDirection: 'row',
+    let isCurrentTransaction = false;
 
-        paddingVertical: 8,
+    if (currentTransaction === item) {
+      isCurrentTransaction = true;
+    }
 
-        marginHorizontal: 12,
-      }}
-      >
+    // let borderWidth = 0;
+    const backgroundColor = 'transparent';
 
-        <ItemSymbol item={item} />
-
-        <ItemCategory item={item} />
-
-        <ItemPayee item={item} />
-
-        <ItemDate item={item} />
-
-        <ItemAmount item={item} />
-
-
-      </View>
-
-    );
-    return view;
-  }
-
-  getItemView(item) {
-    const { onPress } = this.props;
+    // if (isCurrentTransaction) {
+    //   // borderWidth = 1;
+    //   backgroundColor = `${item.category.color}${'0f'}`; // item.category.color + '0f';
+    // }
 
     return (
       <TouchableOpacity
         onPress={() => onPress(item)}
         style={
           {
-            height: 37,
-
-            // borderWidth: 1,
-            // borderColor: 'white',
+            // borderWidth: borderWidth,
+            // borderColor: '#ffffff0f',
             // borderStyle: 'solid',
+
+            backgroundColor
           }
         }
       >
-        { this.getItemText(item) }
+        <View style={{
+          flex: 1,
+          flexDirection: 'row',
+
+          paddingVertical: 8,
+
+          marginHorizontal: 12,
+        }}
+        >
+
+          <ItemSymbol item={item} />
+
+          <ItemCategory item={item} isCurrentTransaction={isCurrentTransaction} />
+
+          <ItemPayee item={item} />
+
+          <ItemDate item={item} />
+
+          <ItemAmount item={item} />
+
+
+        </View>
       </TouchableOpacity>
     );
-  }
+  };
 
-  deleteBtnPressed(transaction) {
-    const { deleteBtnPressed } = this.props;
-    deleteBtnPressed(transaction);
-  }
+  const { transactions, deleteBtnPressed } = props;
 
-  render() {
-    const { transactions } = this.props;
+  let view = (
+    <ScrollView
+      style={
+        {
+          // flex: 1,
+          position: 'absolute',
+          top: '30%', // 240,
 
-    let view = (
-      <ScrollView
-        style={
-          {
-            // flex: 1,
-            position: 'absolute',
-            top: '30%', // 240,
+          width: '100%', // 220,
+          height: TABLE_HEIGHT, // 84,
 
-            width: '100%', // 220,
-            height: TABLE_HEIGHT, // 84,
+          // backgroundColor: 'lightblue',
 
-            // backgroundColor: 'lightblue',
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-
-          }
         }
-      >
+      }
+    >
 
-        <SwipeListView
-          data={transactions}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.rowFront}>
-              {
-                this.getItemView(item)
-              }
+      <SwipeListView
+        data={transactions}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.rowFront}>
+            { getItemView(item) }
+          </View>
+        )}
+
+        renderHiddenItem={({ item }) => (
+          <View style={{ flexDirection: 'row', }}>
+            <View style={{
+              flex: 1,
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }}
+            />
+            <View style={styles.rowBack}>
+              <CustomSwipeCell onDeleteBtnPress={() => deleteBtnPressed(item)} />
             </View>
-          )}
-          renderHiddenItem={({ item }) => (
-            <View style={{ flexDirection: 'row', }}>
-              <View style={{
-                flex: 1,
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
-              }}
-              />
-              <View style={styles.rowBack}>
-                <CustomSwipeCell onDeleteBtnPress={() => this.deleteBtnPressed(item)} />
-              </View>
-            </View>
-          )}
-          leftOpenValue={0}
-          rightOpenValue={-75}
-        />
+          </View>
+        )}
+
+        leftOpenValue={0}
+        rightOpenValue={-75}
+      />
 
 
-      </ScrollView>
-    );
-    // console.log('Rendered transactions:', transactions);
-    if (transactions.length < 1) {
-      view = getEmptyTransactionsView();
-    }
-    return view;
+    </ScrollView>
+  );
+  // console.log('Rendered transactions:', transactions);
+  if (transactions.length < 1) {
+    view = getEmptyTransactionsView();
   }
+  return view;
 }
 
 const styles = StyleSheet.create({

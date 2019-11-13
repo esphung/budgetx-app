@@ -27,6 +27,8 @@ import colors from '../../../colors';
 
 // import isValidEmail from '../../functions/isValidEmail';
 
+const isValidEmail = require('../../functions/isValidEmail');
+
 class HeaderLeftView extends Component {
   constructor(props) {
     super(props);
@@ -68,11 +70,13 @@ class HeaderLeftView extends Component {
   getView() {
     const { fontsAreLoaded, text } = this.state;
 
-    let view = (
+    const spinnerView = (
       <View style={{ marginLeft: 15, marginTop: 20, backgroundColor: colors.darkTwo }}>
         <ActivityIndicator size="large" color="#ffffff7f" />
       </View>
     );
+
+    let view = spinnerView;
 
     if (fontsAreLoaded) {
       view = (
@@ -90,7 +94,7 @@ class HeaderLeftView extends Component {
             <Text style={
               {
                 fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
-                fontSize: 15,
+                fontSize: 17,
                 fontStyle: 'normal',
                 letterSpacing: 0.12,
                 color: '#ffffff',
@@ -105,6 +109,8 @@ class HeaderLeftView extends Component {
             </Text>
 
             <TextInput
+              testID="emailTextInput"
+
               style={
                 {
                   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
@@ -135,13 +141,23 @@ class HeaderLeftView extends Component {
 
               maxLength={22}
 
-              onSubmitEditing={this.submitBtnPressed}
+              onSubmitEditing={() => this.submitBtnPressed(text)}
 
-              onChangeText={(text) => this.handleTextChange(text)}
+              onChangeText={this.handleTextChange}
 
               editable={this.isInputEnabled}
 
               value={text}
+
+              onEndEditing={() => {
+                if (isValidEmail(text) === true) {
+                  // send email ??
+                } else {
+                  // clear text field
+                  this.setState({ text: '' });
+                  // console.log('Ended:', text);
+                }
+              }}
             />
 
           </View>
@@ -160,7 +176,7 @@ class HeaderLeftView extends Component {
 
   submitBtnPressed(text) {
     this.setState({ text });
-    // console.log(text);
+    // console.log('Submit:', text);
   }
 
 

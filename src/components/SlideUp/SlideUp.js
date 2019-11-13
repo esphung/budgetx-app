@@ -3,7 +3,7 @@ import React from 'react';
 import {
   StyleSheet,
   Animated,
-  Text
+  // Text
 } from 'react-native';
 
 // ui colors
@@ -12,17 +12,17 @@ import colors from '../../../colors';
 function SlideUpViews(props) {
   const {
     slideViewBounceValue,
-    toggleSlideView
+    // toggleSlideView
     // currentType,
     // onPress
   } = props;
 
-  let view = (
+  const view = (
     <Animated.View
       style={[styles.container, { transform: [{ translateY: slideViewBounceValue }] }]}
     >
     </Animated.View>
-  )
+  );
 
   return view;
 }
