@@ -64,7 +64,7 @@ const TABLE_HEIGHT = '30%';
 
 function TransactionsView(props) {
   const getItemView = (item) => {
-    const { onPress, currentTransaction } = props;
+    const { onPress, currentTransaction, isEnabled } = props;
 
     let isCurrentTransaction = false;
 
@@ -82,6 +82,7 @@ function TransactionsView(props) {
 
     return (
       <TouchableOpacity
+        disabled={!isEnabled}
         onPress={() => onPress(item)}
         style={
           {
@@ -143,6 +144,7 @@ function TransactionsView(props) {
     >
 
       <SwipeListView
+
         data={transactions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (

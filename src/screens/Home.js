@@ -35,7 +35,7 @@ import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPi
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
 // import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
-// import TypeView from '../components/TypeView';
+import TypeView from '../components/TypeView';
 import SlideUp from '../components/SlideUp/SlideUp';
 
 import {
@@ -95,9 +95,9 @@ class Home extends Component {
     return {
       headerTransparent: {},
 
-      // headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
+      headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
 
-      // headerRight: <HeaderRightView />,
+      headerRight: <HeaderRightView />,
     };
   }
 
@@ -119,7 +119,8 @@ class Home extends Component {
       enableCategoryPills: true,
       typeViewBounceValue: new Animated.Value(100), // initial position of the type view
       slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
-      currentTransaction: null
+      currentTransaction: null,
+      isTableEnabled: true
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -168,6 +169,8 @@ class Home extends Component {
   }
 
   transactionBtnPressed = (transaction) => {
+    this.clearCurrentInputs();
+
     // console.log(transaction);
     const { currentTransaction, isSlideViewHidden } = this.state;
 
@@ -196,6 +199,8 @@ class Home extends Component {
         this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     }
+
+    // this.setState({ currentCategory: transaction.category });
   }
 
   async clearStorageSync() {
@@ -522,11 +527,12 @@ class Home extends Component {
       currentTransactions,
       currentCategory,
       // currentPayee,
-      // currentType,
-      // typeViewBounceValue,
+      currentType,
+      typeViewBounceValue,
       slideViewBounceValue,
       enableCategoryPills,
-      currentTransaction
+      currentTransaction,
+      isTableEnabled
     } = this.state;
 
     let view = <View />;
@@ -549,16 +555,16 @@ class Home extends Component {
               transactions={currentTransactions}
               onPress={this.transactionBtnPressed}
               currentTransaction={currentTransaction}
+              isEnabled={isTableEnabled}
+
             />
 
-            {/*
             <TypeView
               onPress={this.typeBtnPressed}
               currentType={currentType}
               toggleView={this.toggleTypeView}
               typeViewBounceValue={typeViewBounceValue}
             />
-            */}
 
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}

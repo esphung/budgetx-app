@@ -9,13 +9,6 @@ import getShortDate from '../../functions/getShortDate';
 const ItemDate = (props) => {
   const { item } = props;
 
-  let { date } = item;
-  if (new Date(date).getDate() === (new Date()).getDate()) {
-    date = '';
-  } else {
-    date = getShortDate(date);
-  }
-
   return (
     <View style={{
       flex: 1,
@@ -46,7 +39,7 @@ const ItemDate = (props) => {
           fontStyle: 'normal',
           letterSpacing: 0.13,
 
-          // textAlign: 'right',
+          textAlign: 'right',
 
           // color: item.category.color,
 
@@ -63,7 +56,7 @@ const ItemDate = (props) => {
 
         {
 
-          date
+          getShortDate(item.date)
         }
 
       </Text>

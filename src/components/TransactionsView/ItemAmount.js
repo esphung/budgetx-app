@@ -16,6 +16,8 @@ const ItemAmount = (props) => {
 
       justifyContent: 'flex-end',
 
+      alignItems: 'center',
+
       // width: '100%',
 
       marginRight: 4,
