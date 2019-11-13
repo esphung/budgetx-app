@@ -25,8 +25,6 @@ import * as Font from 'expo-font';
 // ui colors
 import colors from '../../../colors';
 
-// import isValidEmail from '../../functions/isValidEmail';
-
 const isValidEmail = require('../../functions/isValidEmail');
 
 class HeaderLeftView extends Component {

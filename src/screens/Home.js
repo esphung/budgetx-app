@@ -19,7 +19,8 @@ import {
   ScrollView,
   Animated,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  AsyncStorage
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -100,6 +101,13 @@ class Home extends Component {
     };
   }
 
+  async clearStorageSync() {
+    const asyncStorageKeys = await AsyncStorage.getAllKeys();
+    if (asyncStorageKeys.length > 0) {
+      AsyncStorage.clear();
+    }
+  }
+
   constructor(props) {
     super(props);
 
@@ -176,6 +184,7 @@ class Home extends Component {
       if (isSlideViewHidden !== true) {
         // hide slide view
         this.toggleSlideView();
+        this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     } else if (currentTransaction !== transaction) {
       // not same transaction
@@ -183,6 +192,7 @@ class Home extends Component {
       // this.setState({ enableCategoryPills: true });
       if (isSlideViewHidden === true) {
         this.toggleSlideView();
+        this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     } else {
       // set current transaction
@@ -190,8 +200,11 @@ class Home extends Component {
       if (isSlideViewHidden === true) {
         // show slide view
         this.toggleSlideView();
+        this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     }
+
+
 
     // // set current category, too?
     // let { currentCategory } = this.state;

@@ -3,60 +3,53 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Platform
+  // Platform,
+  // ActivityIndicator
 } from 'react-native';
 
-import { Audio } from 'expo-av';
+// import SpinnerMask from '../SpinnerMask'
 
 // ui colors
 import colors from '../../../colors';
 
 import KeypadButton from './KeypadButton';
 
-const soundObject = new Audio.Sound();
+// import { Audio } from 'expo-av';
+
+// const soundObject = new Audio.Sound();
 
 class KeypadView extends Component {
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    this.state = {
-      isSoundLoaded: false
-    };
-  }
+  //   this.state = {
+  //     isSoundLoaded: false
+  //   };
+  // }
 
-  async componentDidMount() {
-    try {
-      await soundObject.loadAsync(global.clickSound);
-      // console.log(soundObject)
-      // await soundObject.playAsync();
-      // Your sound is playing!
-      this.setState({ isSoundLoaded: true });
-      // setInterval(() => {
-      //   console.log('Loading sound')
-      // }, 3000)
-    } catch (error) {
-      // An error occurred!
-      console.log('Could not load sound for', Platform.OS);
-    }
-  }
-
-  async playClickSound() {
-    const { isSoundLoaded } = this.state;
-    if (isSoundLoaded) {
-      soundObject.playAsync();
-      // console.log('Played sound')
-    }
-  }
+  // async playClickSound() {
+  //   try {
+  //     await soundObject.loadAsync(global.clickSound);
+  //     // console.log(soundObject)
+  //     await soundObject.playAsync();
+  //     // Your sound is playing!
+  //   } catch (error) {
+  //     // An error occurred!
+  //     // console.log('Could not play sound for', Platform.OS);
+  //   }
+  // }
 
   btnPressed(value) {
     const { handlePress } = this.props;
     // console.log(value);
-    this.playClickSound();
+    // this.playClickSound();
     handlePress(value);
   }
 
   render() {
-    return (
+    // const spinnerView = <SpinnerMask />
+
+    const keypadView = (
       <View style={styles.container}>
         <View style={
           {
@@ -143,8 +136,13 @@ class KeypadView extends Component {
 
         </View>
       </View>
-
     );
+
+    // let view = spinnerView;
+
+    const view = keypadView;
+
+    return view;
   }
 }
 
