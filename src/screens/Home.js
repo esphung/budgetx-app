@@ -169,8 +169,6 @@ class Home extends Component {
   }
 
   transactionBtnPressed = (transaction) => {
-    this.clearCurrentInputs();
-
     // console.log(transaction);
     const { currentTransaction, isSlideViewHidden } = this.state;
 
@@ -494,7 +492,7 @@ class Home extends Component {
     let transaction = null;
 
     // check if category is select and amount is given
-    if ((currentCategory) && (currentAmount > 0)) {
+    if ((currentCategory) && (currentAmount > 0) && currentType) {
       transaction = new Transaction(
         currentTransactions.length, // id
         currentDate, // current date
