@@ -70,14 +70,15 @@ class HeaderLeftView extends Component {
 
     let view = (
       <View style={{ marginLeft: 15, marginTop: 20, backgroundColor: colors.darkTwo }}>
-        <ActivityIndicator size="large" color="#ffffff" />
+        <ActivityIndicator size="large" color="#ffffff7f" />
       </View>
     );
 
     if (fontsAreLoaded) {
       view = (
         <SafeAreaView style={styles.container}>
-          <TouchableOpacity style={styles.userImageMaskView}>
+
+          <TouchableOpacity testID="userImageBtn" style={styles.userImageMaskView}>
             <Image
               resizeMode="contain"
               style={styles.userImage}

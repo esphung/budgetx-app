@@ -35,23 +35,14 @@ import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
 // import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
 import TypeView from '../components/TypeView';
-// import SlideUp from '../components/SlideUp/SlideUp';
+import SlideUp from '../components/SlideUp/SlideUp';
 
 import {
   loadTransactionsObject,
   saveTransactionsObject
 } from '../storage/TransactionsStorage';
 
-// import {
-//   loadPayees,
-//   savePayees
-// } from '../storage/PayeesStorage';
-
 import Transaction from '../models/Transaction';
-
-// import Payee from '../models/Payee';
-
-// import sortArrayDesc from '../functions/sortArrayDesc';
 
 // ui colors
 import colors from '../../colors';
@@ -118,14 +109,16 @@ class Home extends Component {
       currentDate: new Date(),
       currentCategory: null,
       currentTransactions: [],
-      currentPayee: null,
+      currentPayee: {},
       currentType: null,
       currentBalanceValue: 0.00,
       currentSpentValue: 0.00,
-      isSlideUpHidden: true,
+      isSlideViewHidden: true,
       isTypeViewHidden: true,
       enableCategoryPills: true,
-      bounceValue: new Animated.Value(300), // This is the initial position of the subview
+      typeViewBounceValue: new Animated.Value(100), //initial position of the type view
+      slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
+      currentTransaction: {}
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -136,11 +129,9 @@ class Home extends Component {
 
     this.deleteBtnPressed = this.deleteBtnPressed.bind(this);
 
-    // this.payeeBtnPressed = this.payeeBtnPressed.bind(this);
-
     this.typeBtnPressed = this.typeBtnPressed.bind(this);
 
-    //  this.toggleSlideView = this.toggleSlideView.bind(this);
+    this.toggleSlideView = this.toggleSlideView.bind(this);
 
     this.toggleTypeView = this.toggleTypeView.bind(this);
 
@@ -156,7 +147,7 @@ class Home extends Component {
     await Font.loadAsync({
       'SFProDisplay-Regular': global.SFProDisplayRegularFont,
       'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-    });
+    })
 
     // set fonts  are loaded
     this.setState({ fontsAreLoaded: true });
@@ -177,6 +168,11 @@ class Home extends Component {
 
   transactionPressed = (transaction) => {
     // console.log(transaction);
+    // set current transaction
+    this.setState({ currentTransaction: transaction });
+
+    // show slide view
+    this.toggleSlideView();
   }
 
   numberBtnPressed(number) {
@@ -201,9 +197,6 @@ class Home extends Component {
         this.setState({ currentType: category.type });
       }
     }
-
-    // toggle slide view
-    // this.toggleSlideView();
 
     // toggle transaction Type view
     this.toggleTypeView();
@@ -253,9 +246,9 @@ class Home extends Component {
 
   toggleTypeView() {
     let { isTypeViewHidden } = this.state;
-    const { bounceValue } = this.state;
+    const { typeViewBounceValue } = this.state;
 
-    let toValue = 300;
+    let toValue = 100;
 
     if (isTypeViewHidden) {
       toValue = 0;
@@ -265,7 +258,7 @@ class Home extends Component {
     // depending on its current state
     // 300 comes from the style below, which is the height of the subview.
     Animated.spring(
-      bounceValue,
+      typeViewBounceValue,
       {
         toValue,
         velocity: 30,
@@ -281,12 +274,13 @@ class Home extends Component {
 
 
   toggleSlideView() {
-    let { isSlideUpHidden } = this.state;
-    const { bounceValue } = this.state;
+    console.log('Toggling Slide')
+    let { isSlideViewHidden } = this.state;
+    const { slideViewBounceValue } = this.state;
 
     let toValue = 300;
 
-    if (isSlideUpHidden) {
+    if (isSlideViewHidden) {
       toValue = 0;
     }
 
@@ -294,7 +288,7 @@ class Home extends Component {
     // depending on its current state
     // 300 comes from the style below, which is the height of the subview.
     Animated.spring(
-      bounceValue,
+      slideViewBounceValue,
       {
         toValue,
         velocity: 30,
@@ -303,11 +297,11 @@ class Home extends Component {
       }
     ).start();
 
-    isSlideUpHidden = !isSlideUpHidden;
+    isSlideViewHidden = !isSlideViewHidden;
 
-    this.setState({ isSlideUpHidden });
+    this.setState({ isSlideViewHidden });
 
-    // console.log(isSlideUpHidden);
+    // console.log(isSlideViewHidden);
   }
 
   deleteBtnPressed(transaction) {
@@ -442,33 +436,40 @@ class Home extends Component {
     this.setState({ currentAmount: value });
   }
 
-  addTransactionBtnPressed() {
+  createNewTransaction() {
     const {
       currentTransactions,
-      currentAmount,
       currentDate,
-      currentCategory,
+      currentAmount,
       currentPayee,
+      currentCategory,
       currentType
     } = this.state;
 
+    let transaction = {}
+
     // check if category is select and amount is given
-    if ((currentCategory) && (currentAmount > 0) && (currentType)) {
-      const transaction = new Transaction(
-        currentTransactions.length,
-        currentDate,
-        currentAmount,
-        currentPayee,
-        currentCategory,
-        currentType
+    if ((currentCategory) && (currentAmount > 0)) {
+      transaction = new Transaction(
+        currentTransactions.length, // id
+        currentDate, // current date
+        currentAmount, // current camount
+        currentPayee, // payee obj
+        currentCategory, // category object
+        currentType // type
       );
-
-      this.storeNewTransaction(transaction); // add new transaction to existing storage
-
-      this.clearCurrentInputs(); // clear input values
-
-      // console.log(transaction);
     }
+    return transaction;
+  }
+
+  addTransactionBtnPressed() {
+    const transaction = this.createNewTransaction();
+
+    this.storeNewTransaction(transaction); // add new transaction to existing storage
+
+    this.clearCurrentInputs(); // clear input values
+
+    // console.log(transaction);
   }
 
   render() {
@@ -482,8 +483,9 @@ class Home extends Component {
       currentCategory,
       // currentPayee,
       currentType,
-      bounceValue,
-      // isSlideUpHidden,
+      typeViewBounceValue,
+      slideViewBounceValue,
+      isSlideViewHidden,
       enableCategoryPills
     } = this.state;
 
@@ -512,7 +514,7 @@ class Home extends Component {
               onPress={this.typeBtnPressed}
               currentType={currentType}
               toggleView={this.toggleTypeView}
-              bounceValue={bounceValue}
+              typeViewBounceValue={typeViewBounceValue}
             />
 
             <ScrollingPillCategoriesView
@@ -529,13 +531,10 @@ class Home extends Component {
 
             <KeypadView handlePress={this.handlePress} />
 
-            {/*            <SlideUp
-              toggleSlideView={this.toggleSlideView}
-              bounceValue={bounceValue}
-              // onPress={this.typeBtnPressed}
-              // currentType={currentType}
+            <SlideUp
+              toggleSlideView={() => this.toggleSlideView()}
+              slideViewBounceValue={slideViewBounceValue}
             />
-            */}
 
           </ScrollView>
         </TouchableWithoutFeedback>

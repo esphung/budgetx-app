@@ -12,30 +12,12 @@ import {
   Animated
 } from 'react-native';
 
-import colors from '../../colors'; // ui colors
-
 import TypePill from './TypePill';
 
-const types = [
-  {
-    id: 0,
-    name: 'income',
-    color: colors.white,
-  },
-  {
-    id: 1,
-    name: 'expense',
-    color: colors.white,
-  }
-];
+import types from '../data/types'; // default types
 
 export default function PayeePill(props) {
-  const { onPress, bounceValue } = props;
-
-  // function typeBtnPressed(type) {
-  //   const { onPress } = props;
-  //   onPress(type);
-  // }
+  const { onPress, typeViewBounceValue } = props;
 
   const isCurrentType = (type) => {
     const { currentType } = props;
@@ -82,7 +64,7 @@ export default function PayeePill(props) {
   return (
     <SafeAreaView style={styles.container}>
       <Animated.View
-        style={{ transform: [{ translateY: bounceValue }] }}
+        style={{ transform: [{ translateY: typeViewBounceValue }] }}
       >
         <ScrollView
           scrollEnabled={false}

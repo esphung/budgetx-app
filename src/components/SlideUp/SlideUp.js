@@ -2,28 +2,29 @@ import React from 'react';
 
 import {
   StyleSheet,
-  Animated
+  Animated,
+  Text
 } from 'react-native';
 
 // ui colors
 import colors from '../../../colors';
 
-import TypeView from '../TypeView';
-
 function SlideUpViews(props) {
   const {
-    bounceValue,
+    slideViewBounceValue,
+    toggleSlideView
     // currentType,
     // onPress
   } = props;
 
-  return (
+  let view = (
     <Animated.View
-      style={[styles.container, { transform: [{ translateY: bounceValue }] }]}
+      style={[styles.container, { transform: [{ translateY: slideViewBounceValue }] }]}
     >
     </Animated.View>
+  )
 
-  );
+  return view;
 }
 
 const styles = StyleSheet.create({
