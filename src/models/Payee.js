@@ -1,10 +1,10 @@
 // Payee prototype
 
-export default function Payee(id, name, color) {
+export default function Payee(id, name) {
   this.id = id;
   this.name = name;
   this.date = new Date();
-  this.color = color;
+  // this.color = '#ffffff'
   // this.category = category;
 
 }

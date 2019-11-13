@@ -24,7 +24,8 @@ import colors from '../../../colors';
 
 import ItemSymbol from './ItemSymbol';
 import ItemCategory from './ItemCategory';
-import ItemPayee from './ItemPayee';
+// import ItemPayee from './ItemPayee';
+import ItemNameInput from './ItemNameInput';
 import ItemDate from './ItemDate';
 import ItemAmount from './ItemAmount';
 
@@ -108,7 +109,7 @@ function TransactionsView(props) {
 
           <ItemCategory item={item} isCurrentTransaction={isCurrentTransaction} />
 
-          <ItemPayee item={item} />
+          <ItemNameInput item={item} />
 
           <ItemDate item={item} />
 

@@ -17,9 +17,9 @@ const ItemCategory = (props) => {
 
       justifyContent: 'flex-start',
 
-      // borderWidth: 1,
-      // borderColor: 'white',
-      // borderStyle: 'solid',
+      borderWidth: 1,
+      borderColor: 'white',
+      borderStyle: 'solid',
     }}
     >
       <Text style={
@@ -45,7 +45,7 @@ const ItemCategory = (props) => {
       >
 
         { 
-          item.category.name//.replace(/^(.{1}[^\s]*).*/, '$1')
+          item.category.name.replace(/^(.{1}[^\s]*).*/, '$1')
         }
 
       </Text>

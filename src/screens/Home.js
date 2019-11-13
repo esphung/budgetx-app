@@ -120,7 +120,7 @@ class Home extends Component {
       typeViewBounceValue: new Animated.Value(100), // initial position of the type view
       slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
       currentTransaction: null,
-      isTableEnabled: true
+      isTableEnabled: false
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -557,13 +557,13 @@ class Home extends Component {
 
             />
 
-            <TypeView
+{/*            <TypeView
               onPress={this.typeBtnPressed}
               currentType={currentType}
               toggleView={this.toggleTypeView}
               typeViewBounceValue={typeViewBounceValue}
             />
-
+*/}
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}

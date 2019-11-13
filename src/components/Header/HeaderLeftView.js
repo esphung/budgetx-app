@@ -107,8 +107,6 @@ class HeaderLeftView extends Component {
             </Text>
 
             <TextInput
-              testID="emailTextInput"
-
               style={
                 {
                   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',

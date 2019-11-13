@@ -10,31 +10,31 @@ const payees = [
     id: 0,
     name: '+',
     date: new Date(),
-    color: colors.offWhite,
+    // color: colors.offWhite,
   },
   {
     id: 1,
     name: 'Apple',
     date: new Date(),
-    color: colors.white,
+    // color: colors.white,
   },
   {
     id: 2,
     name: 'AT&T',
     date: new Date(),
-    color: colors.white,
+    // color: colors.white,
   },
   {
     id: 3,
     name: 'Netflix',
     date: new Date(),
-    color: colors.white,
+    // color: colors.white,
   },
   {
     id: 4,
     name: 'Kroger',
     date: new Date(),
-    color: colors.white,
+    // color: colors.white,
   }
 ]
 
