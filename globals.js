@@ -19,3 +19,5 @@ global.settingsIcon = require('./assets/settings-icon.png');
 global.clickSound = require('./assets/sounds/test.mp3');
 
 // global.isSearchModeOn = false;
+
+global.maxAmountLength = 6;

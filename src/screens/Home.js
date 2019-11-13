@@ -95,17 +95,10 @@ class Home extends Component {
     return {
       headerTransparent: {},
 
-      headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
+      // headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
 
-      headerRight: <HeaderRightView />,
+      // headerRight: <HeaderRightView />,
     };
-  }
-
-  async clearStorageSync() {
-    const asyncStorageKeys = await AsyncStorage.getAllKeys();
-    if (asyncStorageKeys.length > 0) {
-      AsyncStorage.clear();
-    }
   }
 
   constructor(props) {
@@ -180,7 +173,7 @@ class Home extends Component {
 
     if (currentTransaction === transaction) {
       // empty transaction
-      this.setState({ currentTransaction: {} });
+      this.setState({ currentTransaction: null });
       if (isSlideViewHidden !== true) {
         // hide slide view
         this.toggleSlideView();
@@ -203,18 +196,13 @@ class Home extends Component {
         this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     }
+  }
 
-
-
-    // // set current category, too?
-    // let { currentCategory } = this.state;
-    // if (currentCategory !== transaction.category) {
-    //   currentCategory = transaction.category;
-    //   this.setState({ currentCategory: transaction.category });
-    //   this.categoryBtnPressed(transaction.category)
-    // }
-
-    // disable other transactions ???
+  async clearStorageSync() {
+    const asyncStorageKeys = await AsyncStorage.getAllKeys();
+    if (asyncStorageKeys.length > 0) {
+      AsyncStorage.clear();
+    }
   }
 
   numberBtnPressed(number) {
@@ -229,21 +217,18 @@ class Home extends Component {
     const { currentCategory, isTypeViewHidden } = this.state;
 
     if (currentCategory === category) {
-      this.setState({ currentCategory: {} });
-      // this.setState({ enableCategoryPills: true });
+      this.setState({ currentCategory: null });
       if (isTypeViewHidden !== true) {
         this.toggleTypeView();
       }
     } else if (currentCategory !== category) {
       this.setState({ currentCategory: category });
-      // this.setState({ enableCategoryPills: true });
       if (isTypeViewHidden === true) {
         this.toggleTypeView();
       }
     } else {
       // set new current category
       this.setState({ currentCategory: category });
-      // this.setState({ enableCategoryPills: false });
 
       if (isTypeViewHidden === true) {
         this.toggleTypeView();
@@ -484,7 +469,7 @@ class Home extends Component {
   // value changes
   handleChange(value) {
     // check for limit of 11 digits
-    if (String(value).length > 10) {
+    if (String(value).length > global.maxAmountLength) {
       return;
     }
 

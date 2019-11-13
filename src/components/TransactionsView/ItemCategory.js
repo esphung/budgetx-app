@@ -44,7 +44,9 @@ const ItemCategory = (props) => {
       }
       >
 
-        { item.category.name.replace(/^(.{1}[^\s]*).*/, '$1') }
+        { 
+          item.category.name//.replace(/^(.{1}[^\s]*).*/, '$1')
+        }
 
       </Text>
     </View>
