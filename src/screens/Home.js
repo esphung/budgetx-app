@@ -516,6 +516,7 @@ class Home extends Component {
   }
 
   render() {
+    // this.clearStorageSync()
     const {
       fontsAreLoaded,
       currentAmount,

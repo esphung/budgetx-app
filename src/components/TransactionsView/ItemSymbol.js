@@ -11,9 +11,9 @@ const ItemSymbol = (props) => {
 
       alignItems: 'center',
 
-      borderWidth: 1,
-      borderColor: 'white',
-      borderStyle: 'dotted',
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'dotted',
     }}
     >
       <Text style={{

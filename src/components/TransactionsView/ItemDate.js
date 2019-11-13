@@ -23,9 +23,9 @@ const ItemDate = (props) => {
 
       // paddingHorizontal: 4,
 
-      borderWidth: 1,
-      borderColor: 'white',
-      borderStyle: 'solid',
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
     }}
     >
 

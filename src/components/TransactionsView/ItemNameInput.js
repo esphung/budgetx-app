@@ -91,9 +91,11 @@ class ItemNameInput extends Component {
 
           // save transactions list
           saveTransactionsObject(transactionsObj);
+
+          // return from here
+          return;
         }
       }
-      // return from here
     } else {
       // clean scrub name
 
@@ -123,6 +125,9 @@ class ItemNameInput extends Component {
 
           // save transactions list
           saveTransactionsObject(transactionsObj);
+
+          // return from here
+          return;
         }
       }
     }
@@ -144,9 +149,9 @@ class ItemNameInput extends Component {
 
             justifyContent: 'center',
 
-            borderWidth: 1,
-            borderColor: 'white',
-            borderStyle: 'solid',
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
           }
         }
       >

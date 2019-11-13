@@ -17,9 +17,9 @@ const ItemCategory = (props) => {
 
       justifyContent: 'flex-start',
 
-      borderWidth: 1,
-      borderColor: 'white',
-      borderStyle: 'solid',
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
     }}
     >
       <Text style={
