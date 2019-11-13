@@ -488,7 +488,7 @@ class Home extends Component {
       currentType
     } = this.state;
 
-    let transaction = {};
+    let transaction = null;
 
     // check if category is select and amount is given
     if ((currentCategory) && (currentAmount > 0)) {
@@ -507,10 +507,10 @@ class Home extends Component {
   addTransactionBtnPressed() {
     const transaction = this.createNewTransaction();
 
-    this.storeNewTransaction(transaction); // add new transaction to existing storage
-
-    this.clearCurrentInputs(); // clear input values
-
+    if (transaction) {
+      this.storeNewTransaction(transaction); // add new transaction to existing storage
+      this.clearCurrentInputs(); // clear input values
+    }
     // console.log(transaction);
   }
 

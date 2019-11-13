@@ -10,7 +10,7 @@ import defaultCategories from '../data/categories';
 
 const STORAGE_KEY = 'CATEGORIES';
 
-// AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
+AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
 
 export const saveCategories = (categories) => {
   AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(categories));

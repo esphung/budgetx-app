@@ -14,6 +14,9 @@
 
 #### Extra Packages ####
     Expo Font
+    Expo AV
+    Jest
+    Detox
 
 #### Purpose ####
 React native mobile app for keeping track of personal accounts and transactions

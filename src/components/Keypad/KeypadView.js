@@ -2,27 +2,61 @@ import React, { Component } from 'react';
 
 import {
   StyleSheet,
-  View
+  View,
+  Platform
 } from 'react-native';
+
+import { Audio } from 'expo-av';
 
 // ui colors
 import colors from '../../../colors';
 
 import KeypadButton from './KeypadButton';
 
+const soundObject = new Audio.Sound();
+
 class KeypadView extends Component {
   constructor(props) {
     super(props);
 
-    // send value to Home view
-    const { handlePress } = this.props;
+    this.state = {
+      isSoundLoaded: false
+    };
+  }
 
-    this.handlePress = handlePress;
+  async componentDidMount() {
+    try {
+      await soundObject.loadAsync(global.clickSound);
+      // console.log(soundObject)
+      // await soundObject.playAsync();
+      // Your sound is playing!
+      this.setState({ isSoundLoaded: true });
+      // setInterval(() => {
+      //   console.log('Loading sound')
+      // }, 3000)
+    } catch (error) {
+      // An error occurred!
+      console.log('Could not load sound for', Platform.OS);
+    }
+  }
+
+  async playClickSound() {
+    const { isSoundLoaded } = this.state;
+    if (isSoundLoaded) {
+      soundObject.playAsync();
+      // console.log('Played sound')
+    }
+  }
+
+  btnPressed(value) {
+    const { handlePress } = this.props;
+    // console.log(value);
+    this.playClickSound();
+    handlePress(value);
   }
 
   render() {
     return (
-
       <View style={styles.container}>
         <View style={
           {
@@ -40,9 +74,9 @@ class KeypadView extends Component {
           }
         }
         >
-          <KeypadButton value={1} onPress={() => this.handlePress(1)} />
-          <KeypadButton value={2} onPress={() => this.handlePress(2)} />
-          <KeypadButton value={3} onPress={() => this.handlePress(3)} />
+          <KeypadButton value={1} onPress={() => this.btnPressed(1)} />
+          <KeypadButton value={2} onPress={() => this.btnPressed(2)} />
+          <KeypadButton value={3} onPress={() => this.btnPressed(3)} />
         </View>
 
         <View style={
@@ -61,9 +95,9 @@ class KeypadView extends Component {
           }
         }
         >
-          <KeypadButton value={4} onPress={() => this.handlePress(4)} />
-          <KeypadButton value={5} onPress={() => this.handlePress(5)} />
-          <KeypadButton value={6} onPress={() => this.handlePress(6)} />
+          <KeypadButton value={4} onPress={() => this.btnPressed(4)} />
+          <KeypadButton value={5} onPress={() => this.btnPressed(5)} />
+          <KeypadButton value={6} onPress={() => this.btnPressed(6)} />
         </View>
 
         <View style={
@@ -82,9 +116,9 @@ class KeypadView extends Component {
           }
         }
         >
-          <KeypadButton value={7} onPress={() => this.handlePress(7)} />
-          <KeypadButton value={8} onPress={() => this.handlePress(8)} />
-          <KeypadButton value={9} onPress={() => this.handlePress(9)} />
+          <KeypadButton value={7} onPress={() => this.btnPressed(7)} />
+          <KeypadButton value={8} onPress={() => this.btnPressed(8)} />
+          <KeypadButton value={9} onPress={() => this.btnPressed(9)} />
         </View>
 
         <View style={
@@ -103,9 +137,9 @@ class KeypadView extends Component {
           }
         }
         >
-          <KeypadButton value="Add" onPress={() => this.handlePress('Add')} />
-          <KeypadButton value={0} onPress={() => this.handlePress(0)} />
-          <KeypadButton value={'<'} onPress={() => this.handlePress('<')} />
+          <KeypadButton value="Add" onPress={() => this.btnPressed('Add')} />
+          <KeypadButton value={0} onPress={() => this.btnPressed(0)} />
+          <KeypadButton value={'<'} onPress={() => this.btnPressed('<')} />
 
         </View>
       </View>

@@ -94,7 +94,7 @@ class HeaderLeftView extends Component {
             <Text style={
               {
                 fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
-                fontSize: 17,
+                fontSize: 15,
                 fontStyle: 'normal',
                 letterSpacing: 0.12,
                 color: '#ffffff',
