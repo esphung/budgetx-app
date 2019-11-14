@@ -84,10 +84,28 @@ class ScrollingPillCategoriesView extends Component {
 
   render() {
     const { categories } = this.state;
-    const { isEnabled } = this.props;
+    const { isEnabled, topPosition } = this.props;
     // console.log(categories)
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={{
+        width: '100%',
+        height: '6%', // 53,
+        backgroundColor: colors.darkTwo,
+        shadowColor: '#0a101b',
+        shadowOffset: {
+          width: 1,
+          height: 1
+        },
+        shadowRadius: 26,
+        shadowOpacity: 1,
+
+        position: 'absolute',
+        top: topPosition, // '57%', // 462,
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'dashed',
+      }}>
         <ScrollView
           scrollEnabled={isEnabled}
           contentContainerStyle={{

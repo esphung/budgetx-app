@@ -10,9 +10,11 @@ import StackNavigator from './navigation';
 
 import './globals'; // global values
 
+global.debugModeOn = true;
+
 // UNIT TEST TRANSACTIONS
-// global.testTransactions = require('./testing/test');
-// console.log(testTransactions)
+global.testTransactions = require('./testing/test');
+console.log(testTransactions)
 
 // const userData = {
 //   user: {

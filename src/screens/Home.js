@@ -37,6 +37,7 @@ import KeypadView from '../components/Keypad/KeypadView';
 // import ScrollingPayeePillsView from '../components/ScrollingPayeePillsView';
 // import TypeView from '../components/TypeView';
 import SlideUp from '../components/SlideUp/SlideUp';
+import SpinnerMask from '../components/SpinnerMask';
 
 import {
   loadTransactionsObject,
@@ -134,7 +135,7 @@ class Home extends Component {
     let { transactions } = await transactionsObject;
     // =========================================== TEST
     // this.clearStorageSync();
-    if (global.testTransactions) {
+    if (global.debugModeOn) {
       transactions = testTransactions;
     }
 
@@ -448,7 +449,6 @@ class Home extends Component {
     // check for null, NaN, undefined, ''
     if (currentAmount) {
       const strValue = String(currentAmount);
-
       // pop last char from string value
       const newStr = strValue.substring(0, strValue.length - 1);
 
@@ -462,7 +462,6 @@ class Home extends Component {
     if (String(value).length > global.maxAmountLength) {
       return;
     }
-
     this.setState({ currentAmount: value });
   }
 
@@ -557,6 +556,7 @@ class Home extends Component {
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}
               isEnabled={enableCategoryPills}
+              topPosition="57%"
             />
 
             <AmountInputView
@@ -578,8 +578,8 @@ class Home extends Component {
       );
     } else {
       view = (
-        <View style={{ flex: 1, justifyContent: 'center', backgroundColor: colors.darkTwo }}>
-          <ActivityIndicator size="large" color="#FFFFFF" />
+        <View style={styles.container}>
+          <SpinnerMask />
         </View>
       );
     }

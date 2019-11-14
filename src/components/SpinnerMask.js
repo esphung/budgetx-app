@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    opacity: 0.1
+    opacity: 0.8, // 0.1
 }
 });
 
