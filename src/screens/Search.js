@@ -34,6 +34,7 @@ import * as Font from 'expo-font';
 // components
 import SpinnerMask from '../components/SpinnerMask';
 import DateLabelView from '../components/DateLabel/DateLabelView';
+import TransactionsView from '../components/TransactionsView/TransactionsView';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import SlideUp from '../components/SlideUp/SlideUp';
 
@@ -87,7 +88,7 @@ class Search extends Component {
 
   constructor(props) {
     super(props);
-  
+
     this.state = {
       fontsAreLoaded: false,
       currentDate: new Date(),
@@ -122,11 +123,11 @@ class Search extends Component {
     this.setState({ fontsAreLoaded: true });
 
     let { transactions } = await transactionsObject;
-    
+
     // =========================== TEST TRANSACTIONS
     // this.clearStorageSync();
     if (global.debugModeOn) {
-      transactions = testTransactions;
+      transactions = global.testTransactions;
     }
 
     // set transactions
@@ -135,11 +136,35 @@ class Search extends Component {
 
   transactionBtnPressed = (transaction) => {
     // console.log(transaction);
-    const { currentTransaction, isSlideViewHidden } = this.state;
+    const {
+      currentTransaction,
+      isSlideViewHidden
+    } = this.state;
 
-    if (currentTransaction !== transaction) {
-      // set transaction as current transaction
+    if (currentTransaction === transaction) {
+      // empty transaction
+      this.setState({ currentTransaction: null });
+      if (isSlideViewHidden !== true) {
+        // hide slide view
+        // this.toggleSlideView();
+        // this.setState({ enableCategoryPills: !isSlideViewHidden });
+      }
+    } else if (currentTransaction !== transaction) {
+      // not same transaction
       this.setState({ currentTransaction: transaction });
+      // this.setState({ enableCategoryPills: true });
+      if (isSlideViewHidden === true) {
+        // this.toggleSlideView();
+        // this.setState({ enableCategoryPills: !isSlideViewHidden });
+      }
+    } else {
+      // set current transaction
+      this.setState({ currentTransaction: transaction });
+      if (isSlideViewHidden === true) {
+        // show slide view
+        // this.toggleSlideView();
+        // this.setState({ enableCategoryPills: !isSlideViewHidden });
+      }
     }
   }
 
@@ -183,7 +208,7 @@ class Search extends Component {
     const { transactions } = storageObj; // get transactions from storage object
 
     // check if transaction already exists
-    const previous = search(transaction.id, transactions);
+    const previous = searchByID(transaction.id, transactions);
     if (previous) {
       return;
     }
@@ -278,7 +303,10 @@ class Search extends Component {
     const {
       fontsAreLoaded,
       currentCategory,
-      enableCategoryPills
+      enableCategoryPills,
+      currentTransactions,
+      currentTransaction,
+      isTableEnabled
     } = this.state;
 
     // font loading spinner
@@ -286,7 +314,7 @@ class Search extends Component {
       <View style={styles.container}>
         <SpinnerMask />
       </View>
-    )
+    );
 
     // page body view
     let view = (
@@ -310,10 +338,22 @@ class Search extends Component {
 
         {/* date input | resetDateBtn */}
 
+
         {/* transaction table with section headers */}
+        <TransactionsView
+          deleteBtnPressed={this.deleteBtnPressed}
+          transactions={currentTransactions}
+          onPress={this.transactionBtnPressed}
+          currentTransaction={currentTransaction}
+          isEnabled={isTableEnabled}
+
+          // table css
+          tableHeight="70%"
+        />
+
 
       </View>
-    )
+    );
 
     // which page to show; loading vs body
     if (!fontsAreLoaded) {
@@ -350,10 +390,10 @@ const line = {
 };
 
 const datePickerBox = {
-  width: 375,
-  height: 196,
+  width: '100%',
+  height: '24%', // 196,
   backgroundColor: colors.darkTwo,
-  shadowColor: "#0a101b",
+  shadowColor: '#0a101b',
   shadowOffset: {
     width: 1,
     height: 1

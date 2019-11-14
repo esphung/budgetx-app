@@ -14,7 +14,7 @@ global.debugModeOn = true;
 
 // UNIT TEST TRANSACTIONS
 global.testTransactions = require('./testing/test');
-console.log(testTransactions)
+// console.log(testTransactions)
 
 // const userData = {
 //   user: {

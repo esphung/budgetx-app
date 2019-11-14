@@ -542,6 +542,8 @@ class Home extends Component {
               currentTransaction={currentTransaction}
               isEnabled={isTableEnabled}
 
+              tableHeight="65%"
+
             />
 
             {/*
