@@ -41,7 +41,7 @@ class Search extends Component {
     const header = {
       headerTransparent: {},
       
-      headerTintColor: 'white',
+      headerTintColor: colors.white,
 
       title: 'Filter by Category',
 

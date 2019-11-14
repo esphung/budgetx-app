@@ -13,10 +13,13 @@ rm -rf node_modules
 # yarn cache clean
 # yarn
 npm cache clean
+
 npm install
 
 # Kill any other instance of the packager
 lsof -ti:8081 | xargs kill
 
 # Restart the thing
-npm start --reset-cache
+# npm start --reset-cache
+
+expo r -c
