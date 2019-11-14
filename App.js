@@ -11,22 +11,21 @@ import StackNavigator from './navigation';
 import './globals'; // global values
 
 // UNIT TEST TRANSACTIONS
-global.testTransactions = require('./testing/test');
+// global.testTransactions = require('./testing/test');
 // console.log(testTransactions)
 
-const userData = {
-  user: {
-    email: null, // 'fbar@zmail.com',
-    name: null, // 'Foo Bar'
-  },
-};
-
+// const userData = {
+//   user: {
+//     email: null, // 'fbar@zmail.com',
+//     name: null, // 'Foo Bar'
+//   },
+// };
 
 function App() {
   return (
-    <StackNavigator
-      screenProps={userData}
-    />
+    <StackNavigator />
+    // screenProps={userData}
+
   );
 }
 

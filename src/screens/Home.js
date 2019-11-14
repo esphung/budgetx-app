@@ -97,7 +97,7 @@ class Home extends Component {
       // typeViewBounceValue: new Animated.Value(100), // initial position of the type view
       slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
       currentTransaction: null,
-      isTableEnabled: true
+      isTableEnabled: false
     };
 
     this.handlePress = this.handlePress.bind(this);
