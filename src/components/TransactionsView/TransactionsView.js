@@ -10,9 +10,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  Text,
-  ScrollView,
-  TouchableOpacity
+  ScrollView
 } from 'react-native';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -22,46 +20,19 @@ import CustomSwipeCell from './CustomSwipeCell';
 // ui colors
 import colors from '../../../colors';
 
-// import ItemSymbol from './ItemSymbol';
-// import ItemCategory from './ItemCategory';
-// // import ItemPayee from './ItemPayee';
-// import ItemNameInput from './ItemNameInput';
-// // import ItemDate from './ItemDate';
-// import ItemAmount from './ItemAmount';
+import { dates } from '../../functions/dates';
+
+import EmptyListView from './EmptyListView';
 
 import TransactionItem from './TransactionItem';
 
-function getEmptyTransactionsView() {
-  const emptyView = (
-    <View style={
-          {
-            position: 'absolute',
-            // left: 84,
-            top: '32%', // 256,
+function separateTransactionsByDate (array) {
+  // separate array into lists by date
+  console.log(array)
 
-            width: '60%', // 220,
-            height: '10%', // 84,
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'dashed',
-
-          }
-        }
-    >
-      <Text style={styles.header}>
-          No transactions yet.
-      </Text>
-
-      <Text style={styles.text}>
-        Choose category and enter amount below
-      </Text>
-
-    </View>
-  );
-
-  return emptyView;
+  // insert header for date label view
 }
+
 
 function TransactionsView(props) {
   const {
@@ -73,14 +44,30 @@ function TransactionsView(props) {
     isEnabled
   } = props;
 
-  let view = (
+  if (transactions.length < 1) {
+    return <EmptyListView />;
+  }
+
+  // separate into lists by date
+  const transactionLists = separateTransactionsByDate(transactions);
+  console.log(transactionLists);
+
+
+  const view = (
     <ScrollView
+      // pagingEnabled={true}
+      removeClippedSubviews={true}
+      showsVerticalScrollIndicator={false}
+      // stickyHeaderIndices={[0]}
+      
       style={
         {
           position: 'absolute',
+
           top: '30%', // 240,
 
           width: '100%', // 220,
+
           height: tableHeight, // 84,
 
           // backgroundColor: 'lightblue',
@@ -93,9 +80,11 @@ function TransactionsView(props) {
     >
 
       <SwipeListView
+        // initialNumToRender={17}
 
         data={transactions}
         keyExtractor={(item) => item.id}
+        // ListEmptyComponent={<EmptyListView />}
         renderItem={({ item }) => (
           <View style={styles.rowFront}>
             <TransactionItem
@@ -104,7 +93,6 @@ function TransactionsView(props) {
               currentTransaction={currentTransaction}
               isEnabled={isEnabled}
             />
-
           </View>
         )}
 
@@ -124,16 +112,12 @@ function TransactionsView(props) {
         )}
 
         leftOpenValue={0}
+
         rightOpenValue={-75}
       />
 
-
     </ScrollView>
   );
-  // console.log('Rendered transactions:', transactions);
-  if (transactions.length < 1) {
-    view = getEmptyTransactionsView();
-  }
   return view;
 }
 
@@ -156,29 +140,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'dotted',
-  },
-  header: {
-    opacity: 0.6,
-    fontFamily: 'SFProDisplay-Semibold',
-    fontSize: 22,
-    // fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 28,
-    letterSpacing: 0.17,
-    textAlign: 'center',
-    color: 'rgba(255, 255, 255, 0.5)',
-  },
-
-  text: {
-    opacity: 0.6,
-    fontFamily: 'SFProDisplay-Regular',
-    fontSize: 22,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    lineHeight: 28,
-    letterSpacing: 0.17,
-    textAlign: 'center',
-    color: 'rgba(255, 255, 255, 0.5)',
   }
 });
 

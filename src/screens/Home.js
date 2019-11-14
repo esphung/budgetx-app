@@ -49,17 +49,6 @@ import Transaction from '../models/Transaction';
 // ui colors
 import colors from '../../colors';
 
-// function search(nameKey, myArray) {
-//   let obj = null;
-//   let i = 0;
-//   for (i; i < myArray.length; i += 1) {
-//     if (myArray[i].name === nameKey) {
-//       obj = myArray[i];
-//     }
-//   }
-//   return obj;
-// }
-
 import { dates } from '../functions/dates';
 
 class Home extends Component {
@@ -75,7 +64,6 @@ class Home extends Component {
 
       headerRight: <HeaderRightView />,
     };
-
     return header;
   }
 
@@ -121,7 +109,6 @@ class Home extends Component {
   async componentDidMount() {
     // load default transactions
     const transactionsObject = loadTransactionsObject();
-    // console.log(transactions);
 
     // load fonts
     await Font.loadAsync({
@@ -133,6 +120,8 @@ class Home extends Component {
     this.setState({ fontsAreLoaded: true });
 
     let { transactions } = await transactionsObject;
+    console.log(transactions);
+
     // =========================================== TEST
     // this.clearStorageSync();
     if (global.debugModeOn) {

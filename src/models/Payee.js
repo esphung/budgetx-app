@@ -1,9 +1,9 @@
 // Payee prototype
 
 export default function Payee(id, name) {
-  this.id = id;
+  this.id = String((new Date()).getTime());
   this.name = name;
-  this.date = new Date();
+  this.created = new Date();
   // this.color = '#ffffff'
   // this.category = category;
 
