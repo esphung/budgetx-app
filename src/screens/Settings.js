@@ -3,14 +3,14 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Button
+  // Button
 } from 'react-native';
 
 // ui colors
 import colors from '../../colors';
 
 class Settings extends Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     const obj = {
       title: 'Settings',
 

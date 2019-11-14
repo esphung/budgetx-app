@@ -20,7 +20,7 @@ import {
   Animated,
   Keyboard,
   TouchableWithoutFeedback,
-  // AsyncStorage
+  AsyncStorage
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -131,7 +131,12 @@ class Home extends Component {
     // set fonts  are loaded
     this.setState({ fontsAreLoaded: true });
 
-    const { transactions } = await transactionsObject;
+    let { transactions } = await transactionsObject;
+    // =========================================== TEST
+    // this.clearStorageSync();
+    if (global.testTransactions) {
+      transactions = testTransactions;
+    }
 
     // set transactions
     this.setState({ currentTransactions: transactions });
@@ -154,36 +159,36 @@ class Home extends Component {
       this.setState({ currentTransaction: null });
       if (isSlideViewHidden !== true) {
         // hide slide view
-        this.toggleSlideView();
-        this.setState({ enableCategoryPills: !isSlideViewHidden });
+        // this.toggleSlideView();
+        // this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     } else if (currentTransaction !== transaction) {
       // not same transaction
       this.setState({ currentTransaction: transaction });
       // this.setState({ enableCategoryPills: true });
       if (isSlideViewHidden === true) {
-        this.toggleSlideView();
-        this.setState({ enableCategoryPills: !isSlideViewHidden });
+        // this.toggleSlideView();
+        // this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     } else {
       // set current transaction
       this.setState({ currentTransaction: transaction });
       if (isSlideViewHidden === true) {
         // show slide view
-        this.toggleSlideView();
-        this.setState({ enableCategoryPills: !isSlideViewHidden });
+        // this.toggleSlideView();
+        // this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     }
 
     // this.setState({ currentCategory: transaction.category });
   }
 
-  // async clearStorageSync() {
-  //   const asyncStorageKeys = await AsyncStorage.getAllKeys();
-  //   if (asyncStorageKeys.length > 0) {
-  //     AsyncStorage.clear();
-  //   }
-  // }
+  async clearStorageSync() {
+    const asyncStorageKeys = await AsyncStorage.getAllKeys();
+    if (asyncStorageKeys.length > 0) {
+      AsyncStorage.clear();
+    }
+  }
 
   numberBtnPressed(number) {
     const { currentAmount } = this.state;

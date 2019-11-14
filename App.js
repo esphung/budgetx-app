@@ -6,10 +6,13 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             11/12/2019 02:22 PM
 */
 import React from 'react';
-
 import StackNavigator from './navigation';
 
 import './globals'; // global values
+
+// UNIT TEST TRANSACTIONS
+global.testTransactions = require('./testing/test');
+// console.log(testTransactions)
 
 const userData = {
   user: {
@@ -17,6 +20,7 @@ const userData = {
     name: null, // 'Foo Bar'
   },
 };
+
 
 function App() {
   return (

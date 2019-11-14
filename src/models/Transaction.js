@@ -6,7 +6,7 @@ CREATED:   04/11/2019 02:37 PM
 */
 
 export default function Transaction(id, date, amount, payee, category, type) {
-  this.id = String(id);
+  this.id = String((new Date()).getTime());
   this.date = date;
   this.amount = (type === 'income') ? (Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) : ((Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) * (-1));
   this.payee = {};
