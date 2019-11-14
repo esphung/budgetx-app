@@ -80,7 +80,7 @@ class Search extends Component {
       headerTransparent: {},
       headerTintColor: colors.white,
       title: 'Filter by Category',
-      headerRight,
+      // headerRight,
     };
     return header;
   }
@@ -297,8 +297,15 @@ class Search extends Component {
           onPress={this.categoryBtnPressed}
           currentCategory={currentCategory}
           isEnabled={enableCategoryPills}
-          topPosition="11%"
+          topPosition="12%"
+          zIndex={1}
         />
+
+        {/* separator line */}
+        <View style={line} />
+
+        {/* Date Picker Box */}
+        <View style={datePickerBox} />
 
 
         {/* date input | resetDateBtn */}
@@ -327,5 +334,32 @@ const styles = StyleSheet.create({
     // borderStyle: 'dashed',
   }
 });
+
+// separator line style
+const line = {
+  width: '100%',
+  height: 0.1,
+  opacity: 0.1,
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: colors.white,
+
+  top: '19%',
+
+  zIndex: 1, // display ontop of datepickerbox
+};
+
+const datePickerBox = {
+  width: 375,
+  height: 196,
+  backgroundColor: colors.darkTwo,
+  shadowColor: "#0a101b",
+  shadowOffset: {
+    width: 1,
+    height: 1
+  },
+  shadowRadius: 26,
+  shadowOpacity: 1
+};
 
 export default Search;

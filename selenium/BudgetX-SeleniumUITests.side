@@ -293,6 +293,93 @@
       "targets": [],
       "value": "521.48"
     }]
+  }, {
+    "id": "0f95b8cb-3255-44bc-8866-32ce66f2f212",
+    "name": "OpenSearchPage",
+    "commands": [{
+      "id": "f1893a0e-8379-413f-8545-d0cd8b3e0417",
+      "comment": "",
+      "command": "open",
+      "target": "http://192.168.1.67:19006/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9dbdb91a-176d-4701-a9e4-c25b8f4e9c65",
+      "comment": "",
+      "command": "assertTitle",
+      "target": "Budget X",
+      "targets": [],
+      "value": "3000"
+    }, {
+      "id": "76a29dd1-1e4c-4a6c-8fe3-96befab089e5",
+      "comment": "",
+      "command": "click",
+      "target": "//*[@id=\"root\"]/div/div/div/div/div[2]/div/div/div/div/div[2]/div/div[1]/div/img",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0489c69c-dd50-4ca1-bd52-ea7a370b19d0",
+      "comment": "",
+      "command": "assertElementPresent",
+      "target": "//*[@id=\"root\"]/div/div/div/div/div[2]/div/div/div/div[2]/div[1]/h1",
+      "targets": [],
+      "value": "3000"
+    }, {
+      "id": "2339a40f-9a4b-46b0-8c60-cffa765b6d0f",
+      "comment": "",
+      "command": "click",
+      "target": "//*[@id=\"root\"]/div/div/div/div/div[1]/div[2]/div/div/div/div/div/div[1]/div",
+      "targets": [
+        ["css=.r-height-jtu0ib > .r-color-jwli3a", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/div/div[2]/div/div/div/div/div/div[5]/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div/div/div/div[5]/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "0320e9a4-7b10-4012-98c0-9aa26e1c437e",
+      "comment": "",
+      "command": "click",
+      "target": "//*[@id=\"root\"]/div/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div",
+      "targets": [
+        ["css=.r-bottom-1p0dtai > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n:nth-child(6)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/div/div[2]/div/div/div/div/div/div[6]", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div/div/div/div[6]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9c3e8a17-bebb-4c51-86be-ac5c9cbaa936",
+      "comment": "",
+      "command": "click",
+      "target": "//*[@id=\"root\"]/div/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div",
+      "targets": [
+        ["css=.r-height-jtu0ib > .r-color-jwli3a", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/div/div[2]/div/div/div/div/div/div[7]/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div/div/div/div[7]/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3ea2a1aa-947d-4279-ba7b-52e05e8509cc",
+      "comment": "",
+      "command": "click",
+      "target": "//*[@id=\"root\"]/div/div/div/div/div[1]/div[2]/div/div/div/div/div/div[4]/div",
+      "targets": [
+        ["css=.r-bottom-1p0dtai > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n > .css-view-1dbjc4n:nth-child(7)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/div/div[2]/div/div/div/div/div/div[7]", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div/div/div/div[7]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "8f60b3c0-d82c-418e-9e2b-889f9ee25d73",
+      "comment": "",
+      "command": "click",
+      "target": "//*[@id=\"root\"]/div/div/div/div/div[1]/div[2]/div/div/div/div/div/div[5]/div",
+      "targets": [
+        ["css=.r-height-jtu0ib > .r-color-jwli3a", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/div/div[2]/div/div/div/div/div/div[6]/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div/div/div/div[6]/div", "xpath:position"]
+      ],
+      "value": ""
+    }]
   }],
   "suites": [{
     "id": "c019c407-cf1c-4416-9991-7618daa58405",

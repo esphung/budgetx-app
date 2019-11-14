@@ -557,6 +557,12 @@ class Home extends Component {
               currentCategory={currentCategory}
               isEnabled={enableCategoryPills}
               topPosition="57%"
+              shadowOffset={{
+                width: 1,
+                height: 1
+              }}
+              shadowRadius={26}
+              shadowOpacity={1}
             />
 
             <AmountInputView

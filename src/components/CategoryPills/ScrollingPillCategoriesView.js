@@ -84,28 +84,45 @@ class ScrollingPillCategoriesView extends Component {
 
   render() {
     const { categories } = this.state;
-    const { isEnabled, topPosition } = this.props;
+    const {
+      isEnabled,
+      topPosition,
+      shadowOffset,
+      shadowRadius,
+      shadowOpacity,
+      zIndex
+    } = this.props;
     // console.log(categories)
     return (
-      <SafeAreaView style={{
-        width: '100%',
-        height: '6%', // 53,
-        backgroundColor: colors.darkTwo,
-        shadowColor: '#0a101b',
-        shadowOffset: {
-          width: 1,
-          height: 1
-        },
-        shadowRadius: 26,
-        shadowOpacity: 1,
+      <SafeAreaView style={
+        {
+          width: '100%',
+          height: '6%', // 53,
 
-        position: 'absolute',
-        top: topPosition, // '57%', // 462,
+          backgroundColor: colors.darkTwo,
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dashed',
-      }}>
+          shadowColor: '#0a101b',
+
+          shadowOffset: shadowOffset,
+          // shadowOffset: {
+          //   width: 1,
+          //   height: 1
+          // },
+          shadowRadius: shadowRadius,
+          shadowOpacity: shadowOpacity,
+
+          position: 'absolute',
+
+          top: topPosition, // '57%', // 462,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'dashed',
+
+          zIndex: zIndex, // display ontop of datepickerbox
+        }
+      }
+      >
         <ScrollView
           scrollEnabled={isEnabled}
           contentContainerStyle={{
