@@ -120,7 +120,7 @@ class Home extends Component {
     this.setState({ fontsAreLoaded: true });
 
     let { transactions } = await transactionsObject;
-    console.log(transactions);
+    // console.log(transactions);
 
     // =========================================== TEST
     // this.clearStorageSync();

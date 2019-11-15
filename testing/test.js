@@ -1,4 +1,6 @@
 
+const LIMIT = 6;
+
 
 // ================================
 // get random date
@@ -35,14 +37,18 @@ function generateRandomCategory () {
 // GENERATE FAKE TRANSACTIONS
 let Transaction = require('./Transaction');
 
-
-const LIMIT = 9;
-
 let TRANSACTIONS  = [];
 
 let i = 0;
-while (i < LIMIT) {
+while (i <= LIMIT) {
+  if (i == 0) {
+    
+  }
+
+
   // id, date, amount, payee, category, type
+  const id = i;
+
   const date = generateRandomDate();
 
   const payee = generateRandomName();
@@ -52,7 +58,7 @@ while (i < LIMIT) {
   const category = generateRandomCategory();
 
   const transaction = new Transaction(
-    date.getTime(), // i,
+    id, // i,
     date,
     amount,
     payee,
@@ -156,20 +162,19 @@ function create2DArrayByDate(list) {
     } 
   }
 
-  // Loop to display the elements of 2D array.
-  for (var g = 0; g < array.length; g++) {
-    console.log("<ItemListHeader />");
-    for (var h = 0; h < array.length; h++) {
-      if (array[g][h]) {
-        console.log(
-          '$ ' + array[g][h].amount + ' | ' +
-          getShortDate(array[g][h].date)
-        );
-      }
-    }
-  }
-
-  // return array;
+  // // Loop to display the elements of 2D array.
+  // for (var g = 0; g < array.length; g++) {
+  //   console.log("<ItemListHeader />");
+  //   for (var h = 0; h < array.length; h++) {
+  //     if (array[g][h]) {
+  //       console.log(
+  //         '$ ' + array[g][h].amount + ' | ' +
+  //         getShortDate(array[g][h].date)
+  //       );
+  //     }
+  //   }
+  // }
+  return array;
 }
 
 
@@ -177,7 +182,7 @@ function create2DArrayByDate(list) {
 
 // console.log(create2DArray(TRANSACTIONS));
 
-create2DArrayByDate(TRANSACTIONS)
+// console.log(create2DArrayByDate(TRANSACTIONS))
 
 
 
