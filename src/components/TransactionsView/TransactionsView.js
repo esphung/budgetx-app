@@ -5,7 +5,7 @@ AUTHOR:     eric phung
 DATE:       Sun Nov  3 05:41:17 2019
             11/12/2019 09:12 PM
 */
-import React from 'react';
+import React, { Component } from 'react';
 
 import {
   StyleSheet,
@@ -75,7 +75,6 @@ function create2DArrayByDate(list) {
       }
     }
   }
-
   // // Loop to display the elements of 2D array.
   // for (var g = 0; g < array.length; g++) {
   //   console.log("<ItemListHeader />");
@@ -90,7 +89,6 @@ function create2DArrayByDate(list) {
   // }
   return array;
 }
-
 
 function getShortDate(date) {
   const dateObj = new Date(date);
@@ -124,7 +122,7 @@ function getDifferentDates(argument) {
   return count;
 }
 
-const renderFlatListStickyHeader = () => {
+function renderFlatListStickyHeader() {
   const stickHeaderView = (
 
     <View style={styles.header_style}>
@@ -134,131 +132,135 @@ const renderFlatListStickyHeader = () => {
     </View>
   );
   return stickHeaderView;
-};
+}
 
-function getListView(list, props) {
-  const {
-    onPress,
-    currentTransaction,
-    isEnabled,
-    deleteBtnPressed
-  } = props;
-  return (
-    <SwipeListView
-      // initialNumToRender={17}
-      data={list}
-      ListHeaderComponent={renderFlatListStickyHeader}
-      stickyHeaderIndices={[0]}
+function get2DTransactionsList(array) {
+  let newArray = [];
+  newArray = create2DArrayByDate(array);
+  return newArray;
+}
 
-      keyExtractor={(item) => item.id}
-      // ListEmptyComponent={<EmptyListView />}
-      renderItem={({ item }) => {
-        if (item.id) {
-          return (
-            <View style={styles.rowFront}>
-              <TransactionItem
-                item={item}
-                onPress={onPress}
-                currentTransaction={currentTransaction}
-                isEnabled={isEnabled}
-              />
-            </View>
-          );
-        } else {
-          return renderFlatListStickyHeader();
-        }
+// table view for transactions
+class TransactionsView extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+
+    const {
+      onPress,
+      currentTransaction,
+      isEnabled,
+      deleteBtnPressed
+    } = props;
+
+    this.onPress = onPress;
+    this.currentTransaction = currentTransaction;
+    this.isEnabled = isEnabled;
+    this.deleteBtnPressed = deleteBtnPressed;
+  }
+
+  getListView(list) {
+    return (
+      <SwipeListView
+        // initialNumToRender={17}
+        data={list}
+        ListHeaderComponent={() => renderFlatListStickyHeader()}
+        stickyHeaderIndices={[0]}
+
+        keyExtractor={(item) => item.id}
+        // ListEmptyComponent={<EmptyListView />}
+        renderItem={
+          ({ item }) => {
+            let view = <View />;
+            if (item.id) {
+              view = (
+                <View style={styles.rowFront}>
+                  <TransactionItem
+                    item={item}
+                    onPress={this.onPress}
+                    currentTransaction={this.currentTransaction}
+                    isEnabled={this.isEnabled}
+                  />
+                </View>
+              );
+            }
+            return view;
+          }
       }
+        renderHiddenItem={({ item }) => (
+          <View style={{ flexDirection: 'row', }}>
+            <View style={{
+              flex: 1,
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }}
+            />
+            <View style={styles.rowBack}>
+              <CustomSwipeCell onDeleteBtnPress={() => this.deleteBtnPressed(item)} />
+            </View>
+          </View>
+        )}
+        leftOpenValue={0}
+        rightOpenValue={-75}
+      />
+    );
+  }
+
+  render() {
+    // properties
+    const {
+      tableHeight,
+      // deleteBtnPressed,
+      // onPress,
+      // currentTransaction,
+      // isEnabled
+      transactions
+    } = this.props;
+
+    const transactionsMatrix = get2DTransactionsList(transactions);
+
+    // no transactions to show
+    if (transactionsMatrix.length < 1) {
+      return <EmptyListView />;
     }
-      renderHiddenItem={({ item }) => (
-        <View style={{ flexDirection: 'row', }}>
-          <View style={{
-            flex: 1,
+
+    let tableView = (
+      <ScrollView
+        // pagingEnabled={true}
+        // removeClippedSubviews={true}
+        showsVerticalScrollIndicator={false}
+
+        style={
+          {
+            position: 'absolute',
+
+            top: '30%', // 240,
+
+            width: '100%', // 220,
+
+            height: tableHeight, // 84,
+
+            // backgroundColor: 'lightblue',
+
             // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'solid',
-          }}
-          />
-          <View style={styles.rowBack}>
-            <CustomSwipeCell onDeleteBtnPress={() => deleteBtnPressed(item)} />
-          </View>
-        </View>
-      )}
-
-      leftOpenValue={0}
-
-      rightOpenValue={-75}
-    />
-  );
-}
-
-function TransactionsView(props) {
-  const {
-    tableHeight,
-    // deleteBtnPressed,
-    // onPress,
-    // currentTransaction,
-    // isEnabled
-  } = props;
-
-  let { transactions } = props;
-
-  if (transactions.length < 1) {
-    return <EmptyListView />;
-  }
-
-  // console.log(create2DArrayByDate(transactions))
-
-  if (global.debugModeOn) {
-    transactions = create2DArrayByDate(transactions);
-  }
-
-  // console.log(transactions)
-
-  // function getStickyHeaders(transactions) {
-  //   let count = getDifferentDates(transactions);
-  //   let list = []
-  //   for (var i = 0; i < transactions.length; i += 1) {
-  //     list.push(i);
-  //     console.log(i)
-  //   }
-  //   return list;
-  // }
-
-  // console.log(getStickyHeaders(transactions))
-
-  const view = (
-    <ScrollView
-      // pagingEnabled={true}
-      // removeClippedSubviews={true}
-      showsVerticalScrollIndicator={false}
-
-      style={
-        {
-          position: 'absolute',
-
-          top: '30%', // 240,
-
-          width: '100%', // 220,
-
-          height: tableHeight, // 84,
-
-          // backgroundColor: 'lightblue',
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
+          }
         }
-      }
-    >
-      {/* TEST LIST VIEWS */}
-      { getListView(transactions[0], props) }
-      { getListView(transactions[1], props) }
-      { getListView(transactions[2], props) }
+      >
+        {/* TEST LIST VIEWS */}
+        { this.getListView(transactionsMatrix[0]) }
+        { this.getListView(transactionsMatrix[1]) }
+        { this.getListView(transactionsMatrix[2]) }
 
 
-    </ScrollView>
-  );
-  return view;
+      </ScrollView>
+    );
+    //  return view
+    return tableView;
+  }
 }
 
 const styles = StyleSheet.create({

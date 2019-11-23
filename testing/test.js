@@ -76,38 +76,37 @@ while (i <= LIMIT) {
 
 module.exports = TEST_TRANSACTIONS;
 
-// // let dates = require('./dates');
-// function getShortDate(date) {
-//   const dateObj = new Date(date);
+// let dates = require('./dates');
+function getShortDate(date) {
+  const dateObj = new Date(date);
 
-//   const dd = dateObj.getDate();
-//   const mm = dateObj.getMonth() + 1; // January is 0!
-//   const yyyy = dateObj.getFullYear();
+  const dd = dateObj.getDate();
+  const mm = dateObj.getMonth() + 1; // January is 0!
+  const yyyy = dateObj.getFullYear();
 
-//   // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
-//   return `${mm}/${parseInt(dd, 10)}/${yyyy}`;
-// }
+  // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
+  return `${mm}/${parseInt(dd, 10)}/${yyyy}`;
+}
 
-// function getDifferentDates(array) {
-//   let count = 0;
-//   let h = array.length - 1;
-//   for (h; h >= 0; h -= 1) {
-//     const previous = getShortDate(array[h].date);
-//     // console.log(previous)
-//     const j = h + 1;
-//     if ((j) <= (array.length - 1)) {
-//       if (previous !== getShortDate(array[j].date)) {
-//         count += 1;
-//         // console.log(j, array[j].date);
-//         // console.log(count)
-//       }
-//     }
-//   }
-//   if (count === 0) {
-//     return 1;
-//   }
-//   return count;
-// }
+function getDifferentDates(argument) {
+  let count = 0;
+  for (var i = argument.length - 1; i >= 0; i--) {
+    let previous = getShortDate(argument[i].date)
+    // console.log(previous)
+    let j = i + 1;
+    if ((j) <= (argument.length - 1)) {
+      if (previous !== getShortDate(argument[j].date)) {
+        count += 1;
+        // console.log(j, argument[j].date);
+        // console.log(count)
+      }
+    }
+  }
+  if (count === 0) {
+    return 1;
+  }
+  return count;
+}
 
 // function create2DArrayByDate(list) {
 //   const differentDates = getDifferentDates(list);
@@ -118,7 +117,7 @@ module.exports = TEST_TRANSACTIONS;
 
 // // Loop to create 2D array using 1D array
 // // (a new list for each item)
-// console.log("Creating 2D array");
+// console.log("Creating 2D array"); 
 // let i = 0;
 // for (i; i < array.length; i += 1) {
 //   array[i] = [];
@@ -126,16 +125,16 @@ module.exports = TEST_TRANSACTIONS;
 
 // var h = 0;
 
-// var s = list;
-
-// // Loop to initilize 2D array elements.
-// for (var b = 0; b < differentDates; b++) {
+// var s = list; 
+  
+// // Loop to initilize 2D array elements. 
+// for (var b = 0; b < differentDates; b++) { 
 //   for (var j = 0; j < array.length; j++) {
-
+    
 //     if (s[h]) {
 //       let previousDate = getShortDate(s[j].date);
 //       // console.log(previousDate)
-
+      
 //       if (s[h + 1]) {
 //         // next date exists
 //         let nextDate = getShortDate(s[h + 1].date)
@@ -153,7 +152,7 @@ module.exports = TEST_TRANSACTIONS;
 //         }
 //       }
 //     }
-//   }
+//   } 
 // }
 
 // // Loop to display the elements of 2D array.
@@ -171,6 +170,13 @@ module.exports = TEST_TRANSACTIONS;
 //   return array;
 // }
 
+
+
+
 // console.log(create2DArray(TEST_TRANSACTIONS));
 
 // console.log(create2DArrayByDate(TEST_TRANSACTIONS))
+
+
+
+
