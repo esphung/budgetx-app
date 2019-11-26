@@ -1,14 +1,13 @@
 
-const LIMIT = 16; // test transactions limit
-
+const LIMIT = 26; // test transactions limit
 
 // ================================
 // get random transaction date
 function generateRandomDate() {
   // return new Date() // same dates
   return new Date(
-    (new Date(2019, 0, 0)).getTime()
-    + Math.random() * ((new Date()).getTime() - (new Date(2019, 0, 0)).getTime())
+    (new Date(2019, 1, 3)).getTime()
+    + Math.random() * ((new Date()).getTime() - (new Date(2019, 0, 1)).getTime())
   );
 }
 // console.log(generateRandomDate());
@@ -36,19 +35,14 @@ function generateRandomCategory() {
 // console.log(generateRandomCategory());
 
 // ================================
-// GENERATE FAKE TEST_TRANSACTIONS LIST
+// GENERATE FAKE testTransactions LIST
 const Transaction = require('./Transaction');
-
-const TEST_TRANSACTIONS = [];
+const testTransactions = [];
 
 let i = 0;
-while (i <= LIMIT) {
-  // if (i === 0) {
+while (i < LIMIT) {
 
-  // }
-
-  // id, date, amount, payee, category, type
-  const id = i;
+  // date, amount, payee, category, type
 
   const date = generateRandomDate();
 
@@ -59,7 +53,6 @@ while (i <= LIMIT) {
   const category = generateRandomCategory();
 
   const transaction = new Transaction(
-    id, // i,
     date,
     amount,
     payee,
@@ -68,115 +61,16 @@ while (i <= LIMIT) {
   );
   i += 1;
 
-  TEST_TRANSACTIONS.push(transaction);
+  testTransactions.push(transaction);
 }
 
+// console.log(testTransactions);
 
-// console.log(TEST_TRANSACTIONS);
-
-module.exports = TEST_TRANSACTIONS;
-
-// let dates = require('./dates');
-function getShortDate(date) {
-  const dateObj = new Date(date);
-
-  const dd = dateObj.getDate();
-  const mm = dateObj.getMonth() + 1; // January is 0!
-  const yyyy = dateObj.getFullYear();
-
-  // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
-  return `${mm}/${parseInt(dd, 10)}/${yyyy}`;
-}
-
-function getDifferentDates(argument) {
-  let count = 0;
-  for (var i = argument.length - 1; i >= 0; i--) {
-    let previous = getShortDate(argument[i].date)
-    // console.log(previous)
-    let j = i + 1;
-    if ((j) <= (argument.length - 1)) {
-      if (previous !== getShortDate(argument[j].date)) {
-        count += 1;
-        // console.log(j, argument[j].date);
-        // console.log(count)
-      }
-    }
-  }
-  if (count === 0) {
-    return 1;
-  }
-  return count;
-}
-
-// function create2DArrayByDate(list) {
-//   const differentDates = getDifferentDates(list);
-//   console.log('Different Dates:', differentDates);
-
-//   // Create one dimensional array
-//   var array = new Array(list.length);
-
-// // Loop to create 2D array using 1D array
-// // (a new list for each item)
-// console.log("Creating 2D array"); 
-// let i = 0;
-// for (i; i < array.length; i += 1) {
-//   array[i] = [];
-// }
-
-// var h = 0;
-
-// var s = list; 
-  
-// // Loop to initilize 2D array elements. 
-// for (var b = 0; b < differentDates; b++) { 
-//   for (var j = 0; j < array.length; j++) {
-    
-//     if (s[h]) {
-//       let previousDate = getShortDate(s[j].date);
-//       // console.log(previousDate)
-      
-//       if (s[h + 1]) {
-//         // next date exists
-//         let nextDate = getShortDate(s[h + 1].date)
-//         //  compare next date to previous
-//         // console.log(nextDate + ' === ' + previousDate)
-//         // console.log(nextDate === previousDate)
-
-//         if (nextDate !== previousDate) {
-//           // add then go to next list
-//           array[b][j] = s[h++];
-//           break
-//         } else {
-//           // add to list
-//           array[b][j] = s[h++];
-//         }
-//       }
-//     }
-//   } 
-// }
-
-// // Loop to display the elements of 2D array.
-// for (var g = 0; g < array.length; g++) {
-//   console.log("<ItemListHeader />");
-//   for (var h = 0; h < array.length; h++) {
-//     if (array[g][h]) {
-//       console.log(
-//         '$ ' + array[g][h].amount + ' | ' +
-//         getShortDate(array[g][h].date)
-//       );
-//     }
-//   }
-// }
-//   return array;
-// }
+module.exports = testTransactions;
 
 
-
-
-// console.log(create2DArray(TEST_TRANSACTIONS));
-
-// console.log(create2DArrayByDate(TEST_TRANSACTIONS))
-
-
-
+// const numbers = [1, 2, 3, 4, 5];
+// const doubled = numbers.map((number) => number * 2);
+// console.log(numbers);
+// console.log(doubled);
 
