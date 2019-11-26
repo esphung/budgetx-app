@@ -9,6 +9,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             11/08/2019 03:01 AM (AsyncStorage -> Transactions, Categories)
             11/12/2019 05:03 AM
             11/12/2019 02:36 PM
+            11/26/2019 04:27 AM Added new Flatlist Sticky Table
 */
 import React, { Component } from 'react';
 
@@ -29,8 +30,8 @@ import * as Font from 'expo-font';
 // import HeaderLeftView from '../components/Header/HeaderLeftView';
 import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/Balances/BalanceView';
-// import DateLabelView from '../components/DateLabel/DateLabelView';
-// import TransactionsView from '../components/TransactionsView/TransactionsView';
+import DateLabelView from '../components/DateLabel/DateLabelView';
+import TransactionsView from '../components/TransactionsView/TransactionsView';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
@@ -38,6 +39,8 @@ import KeypadView from '../components/Keypad/KeypadView';
 // import TypeView from '../components/TypeView';
 import SlideUp from '../components/SlideUp/SlideUp';
 import SpinnerMask from '../components/SpinnerMask';
+
+import MyStickyTable from '../components/TransactionsView/MyStickyTable';
 
 import {
   loadTransactionsObject,
@@ -51,24 +54,17 @@ import colors from '../../colors';
 
 import { dates } from '../functions/dates';
 
-// async function clearStorageSync() {
-//   const asyncStorageKeys = await AsyncStorage.getAllKeys();
-//   if (asyncStorageKeys.length > 0) {
-//     AsyncStorage.clear();
-//   }
-// }
+
+
+
 
 class Home extends Component {
   static navigationOptions = () => {
-    // { screenProps }
-    // get user name and email from props
-    // console.log(screenProps);
-    // const { name, email } = screenProps.user;
+    // console.log(screenProps)
+    // this.setState({ screenProps: screenProps });
     const header = {
       headerTransparent: {},
-
       // headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
-
       headerRight: <HeaderRightView />,
     };
     return header;
@@ -76,6 +72,9 @@ class Home extends Component {
 
   constructor(props) {
     super(props);
+
+    // const { transactions } = props.screenProps;
+    // console.log(transactions)
 
     this.state = {
       fontsAreLoaded: false,
@@ -128,12 +127,7 @@ class Home extends Component {
 
     let { transactions } = await transactionsObject;
     // console.log(transactions);
-
-    // =========================================== TEST
-    if (global.debugModeOn) {
-      transactions = global.testTransactions;
-    }
-
+  
     // set transactions
     this.setState({ currentTransactions: transactions });
 
@@ -177,6 +171,34 @@ class Home extends Component {
     }
 
     // this.setState({ currentCategory: transaction.category });
+  }
+
+  calculateBalance() {
+    const { currentTransactions } = this.state;
+    let balance = 0.00;
+    let i = currentTransactions.length - 1;
+    for (i; i >= 0; i -= 1) {
+      balance += currentTransactions[i].amount;
+    }
+    return (balance.toFixed(2));
+  }
+
+  calculateSpent() {
+    const { currentTransactions } = this.state;
+    //  get date 30 days ago
+    const date = new Date();
+    date.setDate(date.getDate() - 30);
+
+    let balance = 0.00;
+    let i = currentTransactions.length - 1;
+    for (i; i >= 0; i -= 1) {
+      if (dates.compare(currentTransactions[i].date, date) > 0) {
+        if (currentTransactions[i].type === 'expense') {
+          balance += currentTransactions[i].amount;
+        }
+      }
+    }
+    return (balance.toFixed(2));
   }
 
   numberBtnPressed(number) {
@@ -225,7 +247,7 @@ class Home extends Component {
     saveTransactionsObject(storageObj); // save updated storage object
 
     // update current transactions list view with storage object
-    await this.setState({ currentTransactions: transactions });
+    this.setState({ currentTransactions: transactions });
 
     const { currentTransactions } = this.state;
 
@@ -245,23 +267,23 @@ class Home extends Component {
     this.setState({ currentPayee: null });
     this.setState({ currentType: null });
 
-    const {
-      // isTypeViewHidden,
-      enableCategoryPills,
-      isSlideViewHidden
-    } = this.state;
+    // const {
+    //   // isTypeViewHidden,
+    //   enableCategoryPills,
+    //   isSlideViewHidden
+    // } = this.state;
 
-    // if (isTypeViewHidden === false) {
-    //   this.toggleTypeView();
+    // // if (isTypeViewHidden === false) {
+    // //   this.toggleTypeView();
+    // // }
+
+    // if (isSlideViewHidden === false) {
+    //   this.toggleSlideView();
     // }
 
-    if (isSlideViewHidden === false) {
-      this.toggleSlideView();
-    }
-
-    if (enableCategoryPills !== true) {
-      this.setState({ enableCategoryPills: true });
-    }
+    // if (enableCategoryPills !== true) {
+    //   this.setState({ enableCategoryPills: true });
+    // }
   }
 
   // toggleTypeView() {
@@ -319,73 +341,11 @@ class Home extends Component {
     isSlideViewHidden = !isSlideViewHidden;
 
     this.setState({ isSlideViewHidden });
-
-    // console.log(isSlideViewHidden);
   }
 
   deleteBtnPressed(transaction) {
     this.removeTransaction(transaction);
   }
-
-  // async removeItemValue(key) {
-  //   try {
-  //     await AsyncStorage.removeItem(key);
-  //     return true;
-  //   }
-  //   catch(exception) {
-  //     return false;
-  //   }
-  // }
-
-  // async addNewPayee() {
-  //   // add new payee to currentPayees (with textinput)
-  //   const storage = await loadPayees();
-
-  //   const { payees } = storage;
-
-  //   const payee = new Payee(payees.length, 'New', colors.white);
-
-  //   const resultObject = search(payee.name, payees);
-
-  //   // console.log(resultObject);
-
-  //   if (!resultObject) {
-  //     payees.unshift(payee);
-
-  //     savePayees(storage);
-
-  //     this.setState({ currentPayee: payee });
-
-  //     // console.log(sortArrayDesc(payees));
-  //   }
-  // }
-
-  // payeeBtnPressed(payee) {
-  //   if (payee.name === '+') {
-  //     this.addNewPayee();
-  //     return;
-  //   }
-  //   // toggle current payee selected
-  //   const { currentPayee } = this.state;
-
-  //   if (currentPayee === payee) {
-  //     this.setState({ currentPayee: null });
-  //   } else {
-  //     // set new current payee
-  //     this.setState({ currentPayee: payee });
-  //   }
-
-  //   // console.log(payee);
-  // }
-
-  // typeBtnPressed(type) {
-  //   const { currentType } = this.state;
-  //   if (currentType === type.name) {
-  //     this.setState({ currentType: null });
-  //   } else {
-  //     this.setState({ currentType: type.name });
-  //   }
-  // }
 
   async removeTransaction(transaction) {
     const storageObject = await loadTransactionsObject();
@@ -453,6 +413,11 @@ class Home extends Component {
     this.setState({ currentAmount: value });
   }
 
+  formatAmount(amount) {
+    let formattedAmount = (this.state.currentType === 'income') ? (Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) : (Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) * (-1);
+    return formattedAmount;
+  }
+
   createNewTransaction() {
     const {
       currentTransactions,
@@ -463,14 +428,18 @@ class Home extends Component {
       currentType
     } = this.state;
 
-    let transaction = null;
+    //  ====================================================== VARIABLES
+    let transaction = new Transaction();
+
+    const formattedAmount = this.formatAmount(currentAmount)
+    // console.log('formattedAmount:', formattedAmount)
+
 
     // check if category is select and amount is given
-    if ((currentCategory) && (currentAmount > 0) && currentType) {
+    if ((currentCategory) && (currentAmount > 0.00) && (currentType)) {
       transaction = new Transaction(
-        currentTransactions.length, // id
         currentDate, // current date
-        currentAmount, // current camount
+        formattedAmount, // current formatted amount
         currentPayee, // payee obj
         currentCategory, // category object
         currentType // type
@@ -486,7 +455,6 @@ class Home extends Component {
       this.storeNewTransaction(transaction); // add new transaction to existing storage
       this.clearCurrentInputs(); // clear input values
     }
-    // console.log(transaction);
   }
 
   render() {
@@ -496,22 +464,31 @@ class Home extends Component {
       currentAmount,
       currentBalanceValue,
       currentSpentValue,
-      // currentDate,
-      // currentTransactions,
+      currentDate,
+      currentTransactions,
       currentCategory,
-      // currentPayee,
-      // currentType,
+      currentPayee,
+      currentType,
       // typeViewBounceValue,
       slideViewBounceValue,
       enableCategoryPills,
-      // currentTransaction,
-      // isTableEnabled
+      currentTransaction,
+      isTableEnabled
     } = this.state;
+
+
+    // // ========== pull thru transactions testing
+    // let test = currentTransactions
+    // o = new Transaction()
+    // o.setAmount(2349.322)
+    // o.setCategory(currentCategory)
+    // test.push(o)
+
+    // console.log('currentTransactions:', currentTransactions.length);
 
     let view = <View />;
     if (fontsAreLoaded) {
       view = (
-        <TouchableWithoutFeedback testID="test" onPress={Keyboard.dismiss} accessible={false}>
           <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
             <BalanceView
@@ -521,11 +498,17 @@ class Home extends Component {
               // currentSpentBtnPressed={() => alert()}
             />
 
-            {/*
-            <DateLabelView date={currentDate} />
-            */}
-            {/*
-            <TransactionsView
+            
+            {/*<DateLabelView date={currentDate} />*/}
+
+
+            <MyStickyTable
+              transactions={currentTransactions}
+              tableHeight="25%"
+            />
+
+            
+{/*            <TransactionsView
               deleteBtnPressed={this.deleteBtnPressed}
               transactions={currentTransactions}
               onPress={this.transactionBtnPressed}
@@ -533,8 +516,8 @@ class Home extends Component {
               isEnabled={isTableEnabled}
 
               tableHeight="65%"
-            />
-            */}
+            />*/}
+            
 
             {/*
             <TypeView
@@ -572,8 +555,6 @@ class Home extends Component {
             />
 
           </ScrollView>
-        </TouchableWithoutFeedback>
-
       );
     } else {
       view = (
@@ -601,29 +582,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
-Home.prototype.calculateBalance = (array) => {
-  let balance = 0.00;
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    balance += array[i].amount;
-  }
-  return Number(balance.toFixed(2));
-};
-
-Home.prototype.calculateSpent = (array) => {
-  //  get date 30 days ago
-  const date = new Date();
-  date.setDate(date.getDate() - 30);
-
-  let balance = 0.00;
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    if (dates.compare(array[i].date, date) > 0) {
-      if (array[i].type === 'expense') {
-        balance += array[i].amount;
-      }
-    }
-  }
-  return Number(balance.toFixed(2));
-};

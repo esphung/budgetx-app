@@ -1,5 +1,5 @@
 
-const LIMIT = 26; // test transactions limit
+const LIMIT = 2; // test transactions limit
 
 // ================================
 // get random transaction date

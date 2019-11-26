@@ -21,3 +21,6 @@ global.clickSound = require('./assets/sounds/test.mp3');
 // global.isSearchModeOn = false;
 
 global.maxAmountLength = 6;
+
+// UNIT TEST TRANSACTIONS
+// global.testTransactions = require('./testing/test');
