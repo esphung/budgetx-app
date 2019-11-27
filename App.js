@@ -10,11 +10,11 @@ import StackNavigator from './navigation';
 
 import './globals'; // global values
 
-import Transaction from './src/models/Transaction';
-
 // global.debugModeOn = true;
 
-// console.log(global.testTransactions)
+// // UNIT TEST TRANSACTIONS
+// global.testTransactions = require('./testing/test');
+// // console.log(testTransactions)
 
 import {
   AsyncStorage
@@ -29,25 +29,17 @@ async function clearStorageSync() {
 
 // clearStorageSync();
 
-
-// // TESTING
-// const test = {
-//   transactions: []
+// const userData = {
+//   user: {
+//     email: null, // 'fbar@zmail.com',
+//     name: null, // 'Foo Bar'
+//   },
 // };
-
-// const o = new Transaction()
-// o.setAmount(3782.434)
-
-// // console.log(o)
-
-// test.transactions.push(o)
-
 
 function App() {
   return (
-    <StackNavigator
-    // screenProps={test}
-    />
+    <StackNavigator />
+    // screenProps={userData}
 
   );
 }

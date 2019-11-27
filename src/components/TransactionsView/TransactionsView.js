@@ -212,8 +212,8 @@ function TransactionsView(props) {
 
         //stickyHeaderIndices={getStickyHeaders(transactions)}
 
-        //ListHeaderComponent={Render_FlatList_Sticky_header}
-        //stickyHeaderIndices={[0]}
+        ListHeaderComponent={Render_FlatList_Sticky_header}
+        stickyHeaderIndices={[0]}
 
         keyExtractor={(item) => item.id}
         // ListEmptyComponent={<EmptyListView />}
