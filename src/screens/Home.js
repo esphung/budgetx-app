@@ -20,7 +20,7 @@ import {
   Animated,
   Keyboard,
   TouchableWithoutFeedback,
-  // AsyncStorage
+  AsyncStorage
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -29,8 +29,8 @@ import * as Font from 'expo-font';
 // import HeaderLeftView from '../components/Header/HeaderLeftView';
 import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/Balances/BalanceView';
-// import DateLabelView from '../components/DateLabel/DateLabelView';
-// import TransactionsView from '../components/TransactionsView/TransactionsView';
+import DateLabelView from '../components/DateLabel/DateLabelView';
+import TransactionsView from '../components/TransactionsView/TransactionsView';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
@@ -51,12 +51,12 @@ import colors from '../../colors';
 
 import { dates } from '../functions/dates';
 
-// async function clearStorageSync() {
-//   const asyncStorageKeys = await AsyncStorage.getAllKeys();
-//   if (asyncStorageKeys.length > 0) {
-//     AsyncStorage.clear();
-//   }
-// }
+async function clearStorageSync() {
+  const asyncStorageKeys = await AsyncStorage.getAllKeys();
+  if (asyncStorageKeys.length > 0) {
+    AsyncStorage.clear();
+  }
+}
 
 class Home extends Component {
   static navigationOptions = () => {
@@ -93,7 +93,7 @@ class Home extends Component {
       // typeViewBounceValue: new Animated.Value(100), // initial position of the type view
       slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
       currentTransaction: null,
-      // isTableEnabled: false
+      isTableEnabled: false
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -130,6 +130,8 @@ class Home extends Component {
     // console.log(transactions);
 
     // =========================================== TEST
+    // clearStorageSync();
+
     if (global.debugModeOn) {
       transactions = global.testTransactions;
     }
@@ -496,16 +498,16 @@ class Home extends Component {
       currentAmount,
       currentBalanceValue,
       currentSpentValue,
-      // currentDate,
-      // currentTransactions,
+      currentDate,
+      currentTransactions,
       currentCategory,
       // currentPayee,
       // currentType,
       // typeViewBounceValue,
       slideViewBounceValue,
       enableCategoryPills,
-      // currentTransaction,
-      // isTableEnabled
+      currentTransaction,
+      isTableEnabled
     } = this.state;
 
     let view = <View />;
@@ -521,10 +523,8 @@ class Home extends Component {
               // currentSpentBtnPressed={() => alert()}
             />
 
-            {/*
             <DateLabelView date={currentDate} />
-            */}
-            {/*
+
             <TransactionsView
               deleteBtnPressed={this.deleteBtnPressed}
               transactions={currentTransactions}
@@ -534,7 +534,6 @@ class Home extends Component {
 
               tableHeight="65%"
             />
-            */}
 
             {/*
             <TypeView

@@ -12,22 +12,9 @@ import './globals'; // global values
 
 // global.debugModeOn = true;
 
-// // UNIT TEST TRANSACTIONS
-// global.testTransactions = require('./testing/test');
-// // console.log(testTransactions)
-
-import {
-  AsyncStorage
-} from 'react-native';
-
-async function clearStorageSync() {
-  const asyncStorageKeys = await AsyncStorage.getAllKeys();
-  if (asyncStorageKeys.length > 0) {
-    AsyncStorage.clear();
-  }
-}
-
-// clearStorageSync();
+// UNIT TEST TRANSACTIONS
+global.testTransactions = require('./testing/test');
+// console.log(testTransactions)
 
 // const userData = {
 //   user: {
