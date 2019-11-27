@@ -16,12 +16,12 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  ActivityIndicator,
+  // ActivityIndicator,
   ScrollView,
   Animated,
-  Keyboard,
-  TouchableWithoutFeedback,
-  AsyncStorage
+  // Keyboard,
+  // TouchableWithoutFeedback,
+  // AsyncStorage
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -30,8 +30,8 @@ import * as Font from 'expo-font';
 // import HeaderLeftView from '../components/Header/HeaderLeftView';
 import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/Balances/BalanceView';
-import DateLabelView from '../components/DateLabel/DateLabelView';
-import TransactionsView from '../components/TransactionsView/TransactionsView';
+// import DateLabelView from '../components/DateLabel/DateLabelView';
+// import TransactionsView from '../components/TransactionsView/TransactionsView';
 import MyStickyTable from '../components/TransactionsView/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInput/AmountInputView';
@@ -65,9 +65,12 @@ import colors from '../../colors';
 
 import { dates } from '../functions/dates';
 
-function convertIntToValue (int) {
-  return Number(int.replace(/ [^0-9.-]+/g, '')) / 100
-}
+// function clearStorageSync() {
+//   const asyncStorageKeys = AsyncStorage.getAllKeys();
+//   if (asyncStorageKeys.length > 0) {
+//     AsyncStorage.clear();
+//   }
+// }
 
 class Home extends Component {
   static navigationOptions = () => {
@@ -105,7 +108,7 @@ class Home extends Component {
       // typeViewBounceValue: new Animated.Value(100), // initial position of the type view
       slideViewBounceValue: new Animated.Value(300), // initial position of the slide view
       currentTransaction: null,
-      isTableEnabled: false
+      isTableEnabled: true
     };
 
     this.handlePress = this.handlePress.bind(this);
@@ -139,7 +142,7 @@ class Home extends Component {
     // set fonts  are loaded
     this.setState({ fontsAreLoaded: true });
 
-    let { transactions } = await transactionsObject;
+    const { transactions } = await transactionsObject;
     // =========================================== TEST
     // this.clearStorageSync();
     // if (global.debugModeOn) {
@@ -187,8 +190,11 @@ class Home extends Component {
   }
 
   transactionBtnPressed = (transaction) => {
-    console.log(transaction);
-    const { currentTransaction, isSlideViewHidden } = this.state;
+    // console.log(transaction);
+    const {
+      currentTransaction,
+      isSlideViewHidden
+    } = this.state;
 
     if (currentTransaction === transaction) {
       // empty transaction
@@ -214,15 +220,6 @@ class Home extends Component {
         // this.toggleSlideView();
         // this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
-    }
-
-    // this.setState({ currentCategory: transaction.category });
-  }
-
-  async clearStorageSync() {
-    const asyncStorageKeys = await AsyncStorage.getAllKeys();
-    if (asyncStorageKeys.length > 0) {
-      AsyncStorage.clear();
     }
   }
 
@@ -284,7 +281,6 @@ class Home extends Component {
     const spent = this.calculateSpent(currentTransactions);
     this.setState({ currentSpentValue: spent });
   }
-
 
   clearCurrentInputs() {
     this.setState({ currentAmount: 0.00 });
@@ -497,16 +493,11 @@ class Home extends Component {
     if (String(value).length > global.maxAmountLength) {
       return;
     }
-
-    console.log(value)
     this.setState({ currentAmount: value });
   }
 
-
-
   createNewTransaction() {
     const {
-      currentTransactions,
       currentDate,
       currentAmount,
       currentPayee,
@@ -518,14 +509,13 @@ class Home extends Component {
 
     // check if category is selected and amount is provided by user
     if ((currentCategory) && (currentAmount > 0) && currentType) {
-
       // do date stuff here
 
       // convert amount to money format
-      let amount = currentAmount/100;
+      let amount = currentAmount / 100;
       amount = (currentType === 'income') ? amount : amount * -1; // income/expense
 
-      //do payee stuff here
+      // do payee stuff here
 
       transaction = new Transaction(
         // currentTransactions.length, // id
@@ -535,7 +525,7 @@ class Home extends Component {
         currentCategory, // category object
         currentType // type
       );
-      console.log(transaction)
+      // console.log(transaction);
     }
     return transaction;
   }
@@ -557,7 +547,7 @@ class Home extends Component {
       currentAmount,
       currentBalanceValue,
       currentSpentValue,
-      currentDate,
+      // currentDate,
       currentTransactions,
       currentCategory,
       // currentPayee,
@@ -574,75 +564,75 @@ class Home extends Component {
     let view = <View />;
     if (fontsAreLoaded) {
       view = (
-        
-          <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+        <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
-            <BalanceView
-              currentBalanceValue={currentBalanceValue}
-              currentSpentValue={currentSpentValue}
-              // currentBalanceBtnPressed={() => alert()}
-              // currentSpentBtnPressed={() => alert()}
-            />
+          <BalanceView
+            currentBalanceValue={currentBalanceValue}
+            currentSpentValue={currentSpentValue}
+            // currentBalanceBtnPressed={() => alert()}
+            // currentSpentBtnPressed={() => alert()}
+          />
+          {/*
+          <DateLabelView date={currentDate} />
+          */}
+          {/*
+          <TransactionsView
+            deleteBtnPressed={this.deleteBtnPressed}
+            transactions={currentTransactions}
+            onPress={this.transactionBtnPressed}
+            currentTransaction={currentTransaction}
+            isEnabled={isTableEnabled}
+            tableTop="65%"
 
-            <DateLabelView date={currentDate} />
+          />
+          */}
 
-           <TransactionsView
-              deleteBtnPressed={this.deleteBtnPressed}
-              transactions={currentTransactions}
-              onPress={this.transactionBtnPressed}
-              currentTransaction={currentTransaction}
-              isEnabled={isTableEnabled}
+          <MyStickyTable
+            transactions={currentTransactions}
+            tableTop="25%"
+            key={currentTransactions}
+            onPress={this.transactionBtnPressed}
+            currentTransaction={currentTransaction}
+            isEnabled={isTableEnabled}
+            deleteBtnPressed={this.deleteBtnPressed}
+          />
 
-              tableHeight="65%"
+          {/*
+          <TypeView
+            onPress={this.typeBtnPressed}
+            currentType={currentType}
+            toggleView={this.toggleTypeView}
+            typeViewBounceValue={typeViewBounceValue}
+          />
+          */}
 
-            />
+          <ScrollingPillCategoriesView
+            onPress={this.categoryBtnPressed}
+            currentCategory={currentCategory}
+            isEnabled={enableCategoryPills}
+            topPosition="57%"
+            shadowOffset={{
+              width: 1,
+              height: 1
+            }}
+            shadowRadius={26}
+            shadowOpacity={1}
+          />
 
-            <MyStickyTable
-              transactions={currentTransactions}
-              tableHeight="25%"
-              key={currentTransactions}
-              onPress={this.transactionBtnPressed}
-              currentTransaction={currentTransaction}
-              isEnabled={isTableEnabled}
-            />
+          <AmountInputView
+            isEditable={false}
+            value={currentAmount}
+            handleChange={this.handleChange}
+          />
 
-            {/*
-            <TypeView
-              onPress={this.typeBtnPressed}
-              currentType={currentType}
-              toggleView={this.toggleTypeView}
-              typeViewBounceValue={typeViewBounceValue}
-            />
-            */}
+          <KeypadView handlePress={this.handlePress} />
 
-            <ScrollingPillCategoriesView
-              onPress={this.categoryBtnPressed}
-              currentCategory={currentCategory}
-              isEnabled={enableCategoryPills}
-              topPosition="57%"
-              shadowOffset={{
-                width: 1,
-                height: 1
-              }}
-              shadowRadius={26}
-              shadowOpacity={1}
-            />
+          <SlideUp
+            toggleSlideView={() => this.toggleSlideView()}
+            slideViewBounceValue={slideViewBounceValue}
+          />
 
-            <AmountInputView
-              isEditable={false}
-              value={currentAmount}
-              handleChange={this.handleChange}
-            />
-
-            <KeypadView handlePress={this.handlePress} />
-
-            <SlideUp
-              toggleSlideView={() => this.toggleSlideView()}
-              slideViewBounceValue={slideViewBounceValue}
-            />
-
-          </ScrollView>
-
+        </ScrollView>
       );
     } else {
       view = (
