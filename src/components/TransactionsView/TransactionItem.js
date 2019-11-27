@@ -1,17 +1,17 @@
 import React from 'react';
 
 import {
-  // StyleSheet,
+  StyleSheet,
   View,
-  // Text,
-  // ScrollView,
+  Text,
+  ScrollView,
   TouchableOpacity
 } from 'react-native';
 
-// import CustomSwipeCell from './CustomSwipeCell';
+import CustomSwipeCell from './CustomSwipeCell';
 
 // ui colors
-// import colors from '../../../colors';
+import colors from '../../../colors';
 
 import ItemSymbol from './ItemSymbol';
 import ItemCategory from './ItemCategory';
@@ -21,72 +21,76 @@ import ItemNameInput from './ItemNameInput';
 import ItemAmount from './ItemAmount';
 
 const TransactionItem = (props) => {
-  const {
-    item,
-    onPress,
-    currentTransaction,
-    isEnabled
-  } = props;
+    const {
+      item,
+      onPress,
+      currentTransaction,
+      isEnabled
+    } = props;
 
-  // find current transaction
-  let isCurrentTransaction = false;
-  if (currentTransaction === item) {
-    isCurrentTransaction = true;
-  }
+    // find current transaction
+    let isCurrentTransaction = false;
+    if (currentTransaction === item) {
+      isCurrentTransaction = true;
+    }
 
-  // find headers
-  // let isHeader = item.isHeader;
+    // find headers
+    // let isHeader = item.isHeader;
 
-  //  item css
-  // let borderWidth = 0;
-  const backgroundColor = 'transparent';
+    //  item css
+    // let borderWidth = 0;
+    const backgroundColor = 'transparent';
 
-  // if (isCurrentTransaction) {
-  //   // borderWidth = 1;
-  //   backgroundColor = `${item.category.color}${'0f'}`; // item.category.color + '0f';
-  // }
+    // if (isCurrentTransaction) {
+    //   // borderWidth = 1;
+    //   backgroundColor = `${item.category.color}${'0f'}`; // item.category.color + '0f';
+    // }
 
-  return (
-    <TouchableOpacity
-      disabled={!isEnabled}
-      onPress={() => onPress(item)}
-      style={
-        {
-          // borderWidth: borderWidth,
-          // borderColor: '#ffffff0f',
-          // borderStyle: 'solid',
+    return (
+      <TouchableOpacity
+        disabled={!isEnabled}
+        onPress={() => onPress(item)}
+        style={
+          {
+            // borderWidth: borderWidth,
+            // borderColor: '#ffffff0f',
+            // borderStyle: 'solid',
 
-          backgroundColor
+            backgroundColor
+          }
         }
-      }
-    >
-      <View style={{
-        flex: 1,
-        flexDirection: 'row',
-
-        paddingVertical: 8,
-
-        marginHorizontal: 12,
-      }}
       >
+        <View style={{
+          flex: 1,
+          flexDirection: 'row',
 
-        <ItemSymbol item={item} />
+          paddingVertical: 8,
 
-        <ItemCategory
-          item={item}
-          isCurrentTransaction={isCurrentTransaction}
-        />
+          marginHorizontal: 12,
+        }}
+        >
 
-        <ItemNameInput item={item} />
+          <ItemSymbol item={item} />
 
-        {/* <ItemDate item={item} /> */}
+          <ItemCategory
+            item={item}
+            isCurrentTransaction={isCurrentTransaction} />
 
-        <ItemAmount item={item} />
+          <ItemNameInput item={item} />
+
+          {/* <ItemDate item={item} /> */}
+
+          <ItemAmount item={item} />
 
 
-      </View>
-    </TouchableOpacity>
-  );
-};
+        </View>
+      </TouchableOpacity>
+    );
+}
+
+const styles = StyleSheet.create({
+
+});
 
 export default TransactionItem;
+

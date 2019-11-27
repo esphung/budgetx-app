@@ -15,12 +15,12 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  // ActivityIndicator,
+  ActivityIndicator,
   ScrollView,
   Animated,
   Keyboard,
   TouchableWithoutFeedback,
-  // AsyncStorage
+  AsyncStorage
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -50,13 +50,6 @@ import Transaction from '../models/Transaction';
 import colors from '../../colors';
 
 import { dates } from '../functions/dates';
-
-// async function clearStorageSync() {
-//   const asyncStorageKeys = await AsyncStorage.getAllKeys();
-//   if (asyncStorageKeys.length > 0) {
-//     AsyncStorage.clear();
-//   }
-// }
 
 class Home extends Component {
   static navigationOptions = () => {
@@ -132,7 +125,7 @@ class Home extends Component {
     // =========================================== TEST
     // this.clearStorageSync();
     if (global.debugModeOn) {
-      transactions = global.testTransactions;
+      transactions = testTransactions;
     }
 
     // set transactions
@@ -178,6 +171,13 @@ class Home extends Component {
     }
 
     // this.setState({ currentCategory: transaction.category });
+  }
+
+  async clearStorageSync() {
+    const asyncStorageKeys = await AsyncStorage.getAllKeys();
+    if (asyncStorageKeys.length > 0) {
+      AsyncStorage.clear();
+    }
   }
 
   numberBtnPressed(number) {
