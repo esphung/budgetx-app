@@ -589,7 +589,9 @@ class Home extends Component {
 
           <MyStickyTable
             transactions={currentTransactions}
-            tableTop="25%"
+            tableTop="25.5%"
+            tableHeight="31%"
+            tablePosition="absolute"
             key={currentTransactions}
             onPress={this.transactionBtnPressed}
             currentTransaction={currentTransaction}

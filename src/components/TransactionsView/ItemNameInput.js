@@ -37,23 +37,31 @@ class ItemNameInput extends Component {
   constructor(props) {
     super(props);
 
+    const { payee } = props.item;
+
     this.state = {
-      text: ''
+      text: '',
+      payee: payee
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
 
     this.submitBtnPressed = this.submitBtnPressed.bind(this);
+
+    // this.endEditing = this.endEditing.bind(this);
   }
 
   componentDidMount() {
-    const { item } = this.props;
-    const { name } = item.payee;
-
-    if (name) {
-      this.setState({ text: name });
+    const { payee } = this.state;
+    if (payee) {
+      this.setState({ text: payee.name });
     }
   }
+
+  // endEditing() {
+  //   const { payee } = this.state; // current transaction item
+  //   this.setState({ text: payee.name })
+  // }
 
   handleTextChange(text) {
     this.setState({ text });
@@ -138,7 +146,7 @@ class ItemNameInput extends Component {
   render() {
     // const { item } = this.props;
 
-    const { text } = this.state;
+    const { text, payee } = this.state;
     return (
       <View
         style={
@@ -182,11 +190,11 @@ class ItemNameInput extends Component {
 
           returnKeyType="done"
 
-          autoCorrect={false}
+          autoCorrect={true}
 
-          autoCapitalize="words"
+          autoCapitalize="sentences" // "words"
 
-          maxLength={12}
+          maxLength={14}
 
           onSubmitEditing={() => this.submitBtnPressed(text)}
 
@@ -196,7 +204,7 @@ class ItemNameInput extends Component {
 
           value={text}
 
-          // onEndEditing={() => {}}
+          // onEndEditing={() => this.setState({ text: payee.name })}
         />
       </View>
     );

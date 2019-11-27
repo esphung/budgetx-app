@@ -125,6 +125,8 @@ const MyStickyTable = (props) => {
   // get passed props
   const {
     tableTop,
+    tableHeight,
+    tablePosition,
     onPress,
     isEnabled,
     deleteBtnPressed
@@ -149,7 +151,7 @@ const MyStickyTable = (props) => {
 
   const [
     data,
-    // setData
+    setData
   ] = useState(sortByHeadersDateDescending(transactions));
 
   // const [stickyHeaderIndices, setStickyHeaderIndices] = useState(getStickyIndices(data));
@@ -235,7 +237,7 @@ const MyStickyTable = (props) => {
     // }
   }
 
-  function renderHiddenItem({ item }) {
+  function renderHiddenItem({ item, index }) {
     let view = <View />;
     if (!item.header) {
       view = (
@@ -249,6 +251,7 @@ const MyStickyTable = (props) => {
           />
           <View style={styles.rowBack}>
             <CustomSwipeCell
+              keyExtractor={() => String(index)}
               onDeleteBtnPress={() => deleteBtnPressed(item)}
             />
           </View>
@@ -259,24 +262,25 @@ const MyStickyTable = (props) => {
     return view;
   }
 
-
   return (
     <SwipeListView
-      style={{
-        width: '100%',
+      style={
+        {
+          width: '100%',
+          height: tableHeight, // '32%',
+          position: tablePosition, // 'absolute'
+          top: tableTop, // '30%', // 240,
 
-        top: tableTop, // '30%', // 240,
+          // borderWidth: 2,
+          // borderColor: 'white',
+          // borderStyle: 'dashed',
 
-
-
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dashed',
-
-        // backgroundColor: 'pink',
-      }}
+          // backgroundColor: 'pink',
+        }
+      }
 
       data={data}
+      // extraData={setData}
       renderItem={renderItem}
       keyExtractor={(item, index) => String(index)}
       stickyHeaderIndices={getStickyIndices()}
@@ -289,6 +293,14 @@ const MyStickyTable = (props) => {
       // ItemSeparatorComponent={this.FlatListItemSeparator}
       // ListHeaderComponent={this.Render_FlatList_Sticky_header}
       // ListEmptyComponent={this.Render_Empty_Component}
+
+      showsVerticalScrollIndicator={false}
+
+      // optimization
+      initialNumToRender={24}
+      // windowSize={12} // {21}
+      // removeClippedSubviews={true}
+      // maxToRenderPerBatch={2}
     />
   );
 };
@@ -332,18 +344,6 @@ const styles = StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'dotted',
   },
-
-  // header: {
-  //   opacity: 0.6,
-  //   fontFamily: 'SFProDisplay-Semibold',
-  //   fontSize: 22,
-  //   // fontWeight: '600',
-  //   fontStyle: 'normal',
-  //   lineHeight: 28,
-  //   letterSpacing: 0.17,
-  //   textAlign: 'center',
-  //   color: 'rgba(255, 255, 255, 0.5)',
-  // },
 
   text: {
     opacity: 0.6,

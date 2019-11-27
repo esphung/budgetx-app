@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 
     width: '100%', // 375,
     height: 31,
-    opacity: 0.5,
+    opacity: 0.9, // 0.5
     backgroundColor: colors.dark,
 
     // position: 'absolute',

@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  ScrollView,
   // ActivityIndicator,
   // ScrollView,
   Animated,
@@ -318,7 +319,7 @@ class Search extends Component {
 
     // page body view
     let view = (
-      <View style={styles.container}>
+      <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
         {/* scrolling pills */}
         <ScrollingPillCategoriesView
@@ -356,7 +357,9 @@ class Search extends Component {
 
         <MyStickyTable
           transactions={currentTransactions}
-          tableTop="0%"
+          tableTop="3%"
+          tableHeight="31%"
+          tablePosition="relative"
           key={currentTransactions}
           onPress={this.transactionBtnPressed}
           currentTransaction={currentTransaction}
@@ -364,7 +367,7 @@ class Search extends Component {
           deleteBtnPressed={this.deleteBtnPressed}
         />
 
-      </View>
+      </ScrollView>
     );
 
     // which page to show; loading vs body
