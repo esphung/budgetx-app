@@ -12,7 +12,8 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  FlatList
 } from 'react-native';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -73,6 +74,8 @@ function TransactionsView(props) {
     isEnabled
   } = props;
 
+  // console.log(props)
+
   let view = (
     <ScrollView
       style={
@@ -93,7 +96,6 @@ function TransactionsView(props) {
     >
 
       <SwipeListView
-
         data={transactions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (

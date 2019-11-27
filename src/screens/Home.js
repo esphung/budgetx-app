@@ -9,6 +9,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             11/08/2019 03:01 AM (AsyncStorage -> Transactions, Categories)
             11/12/2019 05:03 AM
             11/12/2019 02:36 PM
+            11/26/2019 11:01 PM | Working  Sticky Header Table
 */
 import React, { Component } from 'react';
 
@@ -31,6 +32,7 @@ import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/Balances/BalanceView';
 import DateLabelView from '../components/DateLabel/DateLabelView';
 import TransactionsView from '../components/TransactionsView/TransactionsView';
+import MyStickyTable from '../components/TransactionsView/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
@@ -45,6 +47,7 @@ import {
 } from '../storage/TransactionsStorage';
 
 import Transaction from '../models/Transaction';
+// const Transaction = require('../models/Transaction');
 
 // ui colors
 import colors from '../../colors';
@@ -61,6 +64,10 @@ import colors from '../../colors';
 // }
 
 import { dates } from '../functions/dates';
+
+function convertIntToValue (int) {
+  return Number(int.replace(/ [^0-9.-]+/g, '')) / 100
+}
 
 class Home extends Component {
   static navigationOptions = () => {
@@ -135,9 +142,9 @@ class Home extends Component {
     let { transactions } = await transactionsObject;
     // =========================================== TEST
     // this.clearStorageSync();
-    if (global.debugModeOn) {
-      transactions = testTransactions;
-    }
+    // if (global.debugModeOn) {
+    //   transactions = testTransactions;
+    // }
 
     // set transactions
     this.setState({ currentTransactions: transactions });
@@ -151,8 +158,36 @@ class Home extends Component {
     this.setState({ currentSpentValue: spent });
   }
 
+
+  calculateBalance = (array) => {
+    let balance = 0.00;
+    let i = array.length - 1;
+    for (i; i >= 0; i -= 1) {
+      // console.log(array[i].amount)
+      balance += array[i].amount;
+    }
+    return balance.toFixed(2);
+  }
+
+  calculateSpent = (array) => {
+    //  get date 30 days ago
+    const date = new Date();
+    date.setDate(date.getDate() - 30);
+
+    let balance = 0.00;
+    let i = array.length - 1;
+    for (i; i >= 0; i -= 1) {
+      if (dates.compare(array[i].date, date) > 0) {
+        if (array[i].type === 'expense') {
+          balance += array[i].amount;
+        }
+      }
+    }
+    return balance;
+  }
+
   transactionBtnPressed = (transaction) => {
-    // console.log(transaction);
+    console.log(transaction);
     const { currentTransaction, isSlideViewHidden } = this.state;
 
     if (currentTransaction === transaction) {
@@ -462,8 +497,12 @@ class Home extends Component {
     if (String(value).length > global.maxAmountLength) {
       return;
     }
+
+    console.log(value)
     this.setState({ currentAmount: value });
   }
+
+
 
   createNewTransaction() {
     const {
@@ -477,16 +516,26 @@ class Home extends Component {
 
     let transaction = null;
 
-    // check if category is select and amount is given
+    // check if category is selected and amount is provided by user
     if ((currentCategory) && (currentAmount > 0) && currentType) {
+
+      // do date stuff here
+
+      // convert amount to money format
+      let amount = currentAmount/100;
+      amount = (currentType === 'income') ? amount : amount * -1; // income/expense
+
+      //do payee stuff here
+
       transaction = new Transaction(
-        currentTransactions.length, // id
+        // currentTransactions.length, // id
         currentDate, // current date
-        currentAmount, // current camount
+        amount, // current camount
         currentPayee, // payee obj
         currentCategory, // category object
         currentType // type
       );
+      console.log(transaction)
     }
     return transaction;
   }
@@ -520,10 +569,12 @@ class Home extends Component {
       isTableEnabled
     } = this.state;
 
+    // console.log(currentTransactions)
+
     let view = <View />;
     if (fontsAreLoaded) {
       view = (
-        <TouchableWithoutFeedback testID="test" onPress={Keyboard.dismiss} accessible={false}>
+        
           <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
             <BalanceView
@@ -535,7 +586,7 @@ class Home extends Component {
 
             <DateLabelView date={currentDate} />
 
-            <TransactionsView
+           <TransactionsView
               deleteBtnPressed={this.deleteBtnPressed}
               transactions={currentTransactions}
               onPress={this.transactionBtnPressed}
@@ -546,6 +597,15 @@ class Home extends Component {
 
             />
 
+            <MyStickyTable
+              transactions={currentTransactions}
+              tableHeight="25%"
+              key={currentTransactions}
+              onPress={this.transactionBtnPressed}
+              currentTransaction={currentTransaction}
+              isEnabled={isTableEnabled}
+            />
+
             {/*
             <TypeView
               onPress={this.typeBtnPressed}
@@ -554,6 +614,7 @@ class Home extends Component {
               typeViewBounceValue={typeViewBounceValue}
             />
             */}
+
             <ScrollingPillCategoriesView
               onPress={this.categoryBtnPressed}
               currentCategory={currentCategory}
@@ -581,7 +642,6 @@ class Home extends Component {
             />
 
           </ScrollView>
-        </TouchableWithoutFeedback>
 
       );
     } else {
@@ -610,29 +670,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
-Home.prototype.calculateBalance = (array) => {
-  let balance = 0.00;
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    balance += array[i].amount;
-  }
-  return Number(balance.toFixed(2));
-};
-
-Home.prototype.calculateSpent = (array) => {
-  //  get date 30 days ago
-  const date = new Date();
-  date.setDate(date.getDate() - 30);
-
-  let balance = 0.00;
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    if (dates.compare(array[i].date, date) > 0) {
-      if (array[i].type === 'expense') {
-        balance += array[i].amount;
-      }
-    }
-  }
-  return Number(balance.toFixed(2));
-};
