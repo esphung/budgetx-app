@@ -10,7 +10,7 @@ import StackNavigator from './navigation';
 
 import './globals'; // global values
 
-// global.debugModeOn = true;
+global.debugModeOn = true;
 
 // UNIT TEST TRANSACTIONS
 global.testTransactions = require('./testing/test');
