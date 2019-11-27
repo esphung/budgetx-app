@@ -4,7 +4,43 @@ PURPOSE:    search screen for budget x app
 AUTHOR:     eric phung
 UPDATED:    11/13/2019 05:26 AM
 */
+import React, { Component } from 'react';
 
+import {
+  StyleSheet,
+  View,
+  // ActivityIndicator,
+  // ScrollView,
+  Animated,
+  // Keyboard,
+  // TouchableWithoutFeedback,
+  // AsyncStorage
+} from 'react-native';
+
+import * as Font from 'expo-font';
+
+// components
+import SpinnerMask from '../components/SpinnerMask';
+// import DateLabelView from '../components/DateLabel/DateLabelView';
+// import TransactionsView from '../components/TransactionsView/TransactionsView';
+import MyStickyTable from '../components/TransactionsView/MyStickyTable';
+import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
+// import SlideUp from '../components/SlideUp/SlideUp';
+
+// transactions
+import {
+  loadTransactionsObject,
+  saveTransactionsObject
+} from '../storage/TransactionsStorage';
+
+// models
+// import Transaction from '../models/Transaction';
+
+// ui colors
+import colors from '../../colors';
+
+// date operators
+// import { dates } from '../functions/dates';
 function searchByID(idKey, myArray) {
   let obj = null;
   let i = 0;
@@ -16,64 +52,27 @@ function searchByID(idKey, myArray) {
   return obj;
 }
 
-import React, { Component } from 'react';
+// const headerRight = (
+//   <View style={{
+//     flex: 1,
+//     width: 45,
+//     height: '100%', // 19.9,
+//     backgroundColor: colors.darkTwo,
 
-import {
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  ScrollView,
-  Animated,
-  Keyboard,
-  TouchableWithoutFeedback,
-  AsyncStorage
-} from 'react-native';
+//     shadowColor: '#0000002e.68f5c28f5c28',
+//     shadowOffset: {
+//       width: 0,
+//       height: 2
+//     },
+//     shadowRadius: 4,
+//     shadowOpacity: 1,
 
-import * as Font from 'expo-font';
-
-// components
-import SpinnerMask from '../components/SpinnerMask';
-import DateLabelView from '../components/DateLabel/DateLabelView';
-import TransactionsView from '../components/TransactionsView/TransactionsView';
-import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
-import SlideUp from '../components/SlideUp/SlideUp';
-
-// transactions
-import {
-  loadTransactionsObject,
-  saveTransactionsObject
-} from '../storage/TransactionsStorage';
-
-// models
-import Transaction from '../models/Transaction';
-
-// ui colors
-import colors from '../../colors';
-
-// date operators
-import { dates } from '../functions/dates';
-
-const headerRight = (
-  <View style={{
-    flex: 1,
-    width: 45,
-    height: '100%', // 19.9,
-    backgroundColor: colors.darkTwo,
-
-    shadowColor: '#0000002e.68f5c28f5c28',
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowRadius: 4,
-    shadowOpacity: 1,
-
-    borderWidth: 1,
-    borderColor: 'white',
-    borderStyle: 'dotted',
-  }}
-  />
-);
+//     borderWidth: 1,
+//     borderColor: 'white',
+//     borderStyle: 'dotted',
+//   }}
+//   />
+// );
 
 class Search extends Component {
   static navigationOptions = () => {
@@ -91,7 +90,7 @@ class Search extends Component {
 
     this.state = {
       fontsAreLoaded: false,
-      currentDate: new Date(),
+      // currentDate: new Date(),
       currentCategory: null,
       currentTransactions: [],
       isSlideViewHidden: true,
@@ -106,6 +105,8 @@ class Search extends Component {
     this.transactionBtnPressed = this.transactionBtnPressed.bind(this);
 
     this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
+
+    this.deleteBtnPressed = this.deleteBtnPressed.bind(this);
   }
 
   async componentDidMount() {
@@ -276,7 +277,6 @@ class Search extends Component {
     this.removeTransaction(transaction);
   }
 
-
   async removeTransaction(transaction) {
     // pull storage object
     const storageObject = await loadTransactionsObject();
@@ -340,6 +340,8 @@ class Search extends Component {
 
 
         {/* transaction table with section headers */}
+
+        {/*
         <TransactionsView
           deleteBtnPressed={this.deleteBtnPressed}
           transactions={currentTransactions}
@@ -350,7 +352,17 @@ class Search extends Component {
           // table css
           tableHeight="70%"
         />
+        */}
 
+        <MyStickyTable
+          transactions={currentTransactions}
+          tableTop="0%"
+          key={currentTransactions}
+          onPress={this.transactionBtnPressed}
+          currentTransaction={currentTransaction}
+          isEnabled={isTableEnabled}
+          deleteBtnPressed={this.deleteBtnPressed}
+        />
 
       </View>
     );

@@ -2,6 +2,7 @@
 // PURPOSE:   app navigation | budget x
 // AUTHOR:    Eric Phung
 // CREATED:   11/11/2019 11:23 PM
+// UPDATED:   11/27/2019 12:40 AM
 
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
@@ -13,13 +14,7 @@ import Search from './src/screens/Search';
 const StackNavigator = createStackNavigator({
   Home: {
     screen: Home,
-    // navigationOptions : ({ navigation }) => {
-    //   return {
-    //     headerBackTitle: null,
-    //   }
-    // }
   },
-
   Settings: {
     screen: Settings,
   },
