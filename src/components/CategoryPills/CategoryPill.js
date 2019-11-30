@@ -11,15 +11,15 @@ const MIN_PILL_WIDTH = 73;
 // const MAX_PILL_HEIGHT = 32;
 
 
-export default function CategoryPill(props) {
+const CategoryPill = (props) => {
   const {
     color,
     name,
     isSelected,
     onPress,
+    isEnabled
   } = props;
 
-  let { isEnabled } = props;
 
   let textColor = color;
 
@@ -84,3 +84,5 @@ export default function CategoryPill(props) {
     </TouchableOpacity>
   );
 }
+
+export default CategoryPill;

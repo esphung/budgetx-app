@@ -12,7 +12,7 @@ import colors from '../../../colors';
 function SlideUpViews(props) {
   const {
     slideViewBounceValue,
-    // toggleSlideView
+    toggleSlideView
     // currentType,
     // onPress
   } = props;

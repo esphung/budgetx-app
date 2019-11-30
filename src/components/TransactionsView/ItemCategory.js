@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 const ItemCategory = (props) => {
-  const { item, isCurrentTransaction } = props;
+  // const {
+  //   color,
+  //   name,
+  //   isSelected,
+  //   onPress,
+  //   isEnabled
+  // } = props;
 
-  let textColor = '#ffffff7f';
+  const {
+    item
+  } = props;
 
-  if (isCurrentTransaction) {
-    textColor = item.category.color;
-  }
+
+  const [textColor] = useState(props.color);
+
   return (
     <View style={{
       flex: 1,

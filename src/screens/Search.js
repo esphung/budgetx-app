@@ -26,7 +26,7 @@ import SpinnerMask from '../components/SpinnerMask';
 // import TransactionsView from '../components/TransactionsView/TransactionsView';
 import MyStickyTable from '../components/TransactionsView/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
-// import SlideUp from '../components/SlideUp/SlideUp';
+import SlideUp from '../components/SlideUp/SlideUp';
 
 // transactions
 import {
@@ -91,7 +91,6 @@ class Search extends Component {
 
     this.state = {
       fontsAreLoaded: false,
-      // currentDate: new Date(),
       currentCategory: null,
       currentTransactions: [],
       isSlideViewHidden: true,
@@ -103,7 +102,7 @@ class Search extends Component {
       currentCategories: []
     };
 
-    this.transactionBtnPressed = this.transactionBtnPressed.bind(this);
+    // this.transactionBtnPressed = this.transactionBtnPressed.bind(this);
 
     this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
 
@@ -113,7 +112,6 @@ class Search extends Component {
   async componentDidMount() {
     // load default transactions
     const transactionsObject = loadTransactionsObject();
-    // console.log(transactions);
 
     // load fonts
     await Font.loadAsync({
@@ -124,50 +122,76 @@ class Search extends Component {
     // set fonts  are loaded
     this.setState({ fontsAreLoaded: true });
 
-    let { transactions } = await transactionsObject;
-
-    // =========================== TEST TRANSACTIONS
+    const { transactions } = await transactionsObject;
+    // =========================================== TEST
     // this.clearStorageSync();
-    if (global.debugModeOn) {
-      transactions = global.testTransactions;
-    }
 
     // set transactions
     this.setState({ currentTransactions: transactions });
   }
 
-  transactionBtnPressed = (transaction) => {
-    // console.log(transaction);
-    const {
-      currentTransaction,
-      isSlideViewHidden
-    } = this.state;
 
-    if (currentTransaction === transaction) {
+
+  showTransactionSlideView = (transaction) => {
+    // console.log(transaction);
+    if (this.state.currentTransaction === transaction) {
       // empty transaction
-      this.setState({ currentTransaction: null });
-      if (isSlideViewHidden !== true) {
+      if (this.state.isSlideViewHidden !== true) {
         // hide slide view
-        // this.toggleSlideView();
-        // this.setState({ enableCategoryPills: !isSlideViewHidden });
+        this.toggleSlideView();
       }
-    } else if (currentTransaction !== transaction) {
+    } else if (this.state.currentTransaction !== transaction) {
       // not same transaction
       this.setState({ currentTransaction: transaction });
       // this.setState({ enableCategoryPills: true });
-      if (isSlideViewHidden === true) {
-        // this.toggleSlideView();
+      if (this.state.isSlideViewHidden === true) {
+        this.toggleSlideView();
         // this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     } else {
       // set current transaction
       this.setState({ currentTransaction: transaction });
-      if (isSlideViewHidden === true) {
+      if (this.state.isSlideViewHidden === true) {
         // show slide view
-        // this.toggleSlideView();
+        this.toggleSlideView();
         // this.setState({ enableCategoryPills: !isSlideViewHidden });
       }
     }
+  }
+
+  transactionBtnPressed = (transaction) => {
+    // console.log(transaction);
+    this.showTransactionSlideView(transaction);
+    // const {
+    //   currentTransaction,
+    //   isSlideViewHidden
+    // } = this.state;
+
+    // if (currentTransaction === transaction) {
+    //   // empty transaction
+    //   this.setState({ currentTransaction: null });
+    //   if (isSlideViewHidden !== true) {
+    //     // hide slide view
+    //     this.toggleSlideView();
+    //     // this.setState({ enableCategoryPills: !isSlideViewHidden });
+    //   }
+    // } else if (currentTransaction !== transaction) {
+    //   // not same transaction
+    //   this.setState({ currentTransaction: transaction });
+    //   // this.setState({ enableCategoryPills: true });
+    //   if (isSlideViewHidden === true) {
+    //     this.toggleSlideView();
+    //     // this.setState({ enableCategoryPills: !isSlideViewHidden });
+    //   }
+    // } else {
+    //   // set current transaction
+    //   this.setState({ currentTransaction: transaction });
+    //   if (isSlideViewHidden === true) {
+    //     // show slide view
+    //     this.toggleSlideView();
+    //     // this.setState({ enableCategoryPills: !isSlideViewHidden });
+    //   }
+    // }
   }
 
   categoryBtnPressed(category) {
@@ -317,63 +341,56 @@ class Search extends Component {
       </View>
     );
 
-    // page body view
-    let view = (
-      <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+    let view = spinnerView;;
 
-        {/* scrolling pills */}
-        <ScrollingPillCategoriesView
-          onPress={this.categoryBtnPressed}
-          currentCategory={currentCategory}
-          isEnabled={enableCategoryPills}
-          topPosition="12%"
-          zIndex={1}
-        />
+    if (fontsAreLoaded) {
+      // page body view
+      view = (
+        <ScrollView
+          scrollEnabled={false}
+          contentContainerStyle={styles.container}
+        >
 
-        {/* separator line */}
-        <View style={line} />
+          {/* scrolling pills */}
+          <ScrollingPillCategoriesView
+            onPress={this.categoryBtnPressed}
+            currentCategory={currentCategory}
+            isEnabled={enableCategoryPills}
+            topPosition="12%"
+            zIndex={1}
+          />
 
-        {/* Date Picker Box */}
-        <View style={datePickerBox} />
+          {/* separator line */}
+          <View style={line} />
 
+          {/* Date Picker Box */}
+          <View style={datePickerBox} />
 
-        {/* date input | resetDateBtn */}
+          <MyStickyTable
+            transactions={currentTransactions}
+            tableTop="3%"
+            tableHeight="31%"
+            tablePosition="relative"
+            key={currentTransactions}
+            onPress={(transaction) => this.transactionBtnPressed(transaction)}
+            currentTransaction={currentTransaction}
+            isEnabled={isTableEnabled}
+            deleteBtnPressed={this.deleteBtnPressed}
+          />
 
-
-        {/* transaction table with section headers */}
-
-        {/*
-        <TransactionsView
-          deleteBtnPressed={this.deleteBtnPressed}
-          transactions={currentTransactions}
-          onPress={this.transactionBtnPressed}
-          currentTransaction={currentTransaction}
-          isEnabled={isTableEnabled}
-
-          // table css
-          tableHeight="70%"
-        />
-        */}
-
-        <MyStickyTable
-          transactions={currentTransactions}
-          tableTop="3%"
-          tableHeight="31%"
-          tablePosition="relative"
-          key={currentTransactions}
-          onPress={this.transactionBtnPressed}
-          currentTransaction={currentTransaction}
-          isEnabled={isTableEnabled}
-          deleteBtnPressed={this.deleteBtnPressed}
-        />
-
-      </ScrollView>
-    );
-
-    // which page to show; loading vs body
-    if (!fontsAreLoaded) {
-      view = spinnerView;
+          <SlideUp
+            toggleSlideView={() => this.toggleSlideView()}
+            slideViewBounceValue={this.state.slideViewBounceValue}
+          />
+        </ScrollView>
+      );    
     }
+
+
+    // // which page to show; loading vs body
+    // if (!fontsAreLoaded) {
+    //   view = spinnerView;
+    // }
     return view;
   }
 }

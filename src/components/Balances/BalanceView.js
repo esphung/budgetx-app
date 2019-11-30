@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -10,6 +10,14 @@ import {
 // ui colors
 import colors from '../../../colors';
 
+function getCurrencySymbol (amount) {
+  let symbol = '$';
+  if (amount <= 0) {
+    symbol = '- $';
+  }
+  return symbol;
+}
+
 function BalanceView(props) {
   const currentBalanceBtnPressed = () => {
     // console.log('Current Balance:', this.props.currentBalanceValue)
@@ -20,6 +28,23 @@ function BalanceView(props) {
   };
 
   const { currentBalanceValue, currentSpentValue } = props;
+
+  // const [symbol, setSymbol] = useState('$');
+
+  const [balance, setBalance] = useState(0);
+
+  const [spent, setSpent] = useState(0);
+
+  useEffect(() => {
+    // console.log('Mount')
+    setBalance(currentBalanceValue)
+    setSpent(currentSpentValue)
+    
+    return () => {
+      // console.log('Clean Up')
+    };
+  })
+
   return (
     <View style={styles.balanceView}>
       <View style={styles.container}>
@@ -38,8 +63,9 @@ function BalanceView(props) {
             <Text
               style={styles.currentBalanceValue}
             >
-              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$ </Text>
-              <Text>{ currentBalanceValue }</Text>
+              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}></Text>
+              <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(balance)} `}</Text>
+              <Text>{`${balance}`}</Text>
             </Text>
           </TouchableOpacity>
 
@@ -59,8 +85,9 @@ function BalanceView(props) {
 
           <TouchableOpacity onPress={() => currentSpentValueBtnPressed}>
             <Text style={styles.currentSpentValue}>
-              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}>$ </Text>
-              <Text>{ currentSpentValue }</Text>
+              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}></Text>
+              <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(spent)} `}</Text>
+              <Text>{ `${spent}` }</Text>
             </Text>
           </TouchableOpacity>
 

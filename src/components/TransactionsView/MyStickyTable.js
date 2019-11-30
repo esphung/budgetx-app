@@ -1,6 +1,6 @@
 import React, {
   useState,
-  // useEffect
+  useEffect
 } from 'react';
 
 import {
@@ -132,43 +132,20 @@ const MyStickyTable = (props) => {
     deleteBtnPressed
   } = props;
 
-  let {
-    transactions,
-    currentTransaction
-  } = props;
+  const [data,setData] = useState([]); // sortByHeadersDateDescending(props.transactions)
 
-
-  // get use hooks
-  [
-    transactions,
-    // setTransactions
-  ] = useState(transactions);
-
-  [
-    currentTransaction,
-    // setCurrentTransaction
-  ] = useState(currentTransaction);
-
-  const [
-    data,
-    setData
-  ] = useState(sortByHeadersDateDescending(transactions));
+  useEffect(() => {
+    setData(sortByHeadersDateDescending(props.transactions))
+    return () => {
+      // effect
+    };
+  }, [])
 
   // const [stickyHeaderIndices, setStickyHeaderIndices] = useState(getStickyIndices(data));
 
-
-  // // effect hooks: Similar to componentDidMount and componentDidUpdate
-  // useEffect(() => {
-  //   console.log('Using Effect Hooks');
-  //   console.log('Transactions:', transactions.length);
-  //   console.log('Data:', data.length);
-  //   console.log('Current Transaction:', currentTransaction);
-  //   console.log('StickyHeaderIndices:', stickyHeaderIndices);
-  //   // console.log(this.getStickyIndices(data));
-  // });
-
-  // // testing
-  // console.log('Done:',data)
+  function Render_Empty_Component() {
+    return <EmptyListView />
+  }
 
   function getStickyIndices() {
     // const { data } = this.state;
@@ -182,76 +159,56 @@ const MyStickyTable = (props) => {
     return indices;
   }
 
-
   function renderItem({ item, index }) {
     if (item.header) {
       return (
-        <StickyDateHeader date={item.date} />
-        /*
-        <ListItem
-          // noBorder={true}
-          itemDivider
-        >
-          <Left />
-          <Body style={styles.headerBody}>
-            <Text
-              style={{ fontWeight: 'bold' }}
-            >
-              { item.getTitle() }
-            </Text>
-          </Body>
-          <Right />
-        </ListItem>
-        */
+        <View style={styles.rowFront}>
+          <StickyDateHeader date={item.date} />
+        </View>
       );
     }
-    // else if (!item.header) {
     // console.log(item)
     return (
       <View style={styles.rowFront}>
         <TransactionItem
-          key={index} // {data[index]} // () => console.log(index)
+          // keyExtractor={() => String(index)} // {data[index]} // () => console.log(index)
           item={item}
-          onPress={onPress} // console.log(data[index])
-          currentTransaction={currentTransaction}
-          isEnabled={isEnabled}
+          isSelected={false}
+          onPress={() => props.onPress(item)} //{onPress} // console.log(data[index])
+          // currentTransaction={currentTransaction}
+          // isEnabled={isEnabled}
         />
       </View>
     );
-    /*
-      return (
-        <ListItem
-          noBorder={true}
-          style={styles.FlatList_Item}
-          onPress={() => alert(item)}
-        >
-
-          <Body>
-            <Text style={{
-              color: 'white'
-            }}>{ item.id }</Text>
-          </Body>
-        </ListItem>
-      );
-    */
-    // }
   }
 
-  function renderHiddenItem({ item, index }) {
+  function renderHiddenItem({ item }) {
     let view = <View />;
-    if (!item.header) {
+    if (item.header) {
       view = (
-        <View style={{ flexDirection: 'row', }}>
+        <View style={{
+          flex: 1,
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+          backgroundColor: colors.dark,
+        }}
+        />
+      );
+    } else if (!item.header) {
+      view = (
+        <View style={{ flexDirection: 'row', flex: 1, }}>
           <View style={{
             flex: 1,
             // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'solid',
+            // backgroundColor: colors.dark,
           }}
           />
           <View style={styles.rowBack}>
             <CustomSwipeCell
-              keyExtractor={() => String(index)}
+              // keyExtractor={() => String(index)}
               onDeleteBtnPress={() => deleteBtnPressed(item)}
             />
           </View>
@@ -261,6 +218,8 @@ const MyStickyTable = (props) => {
 
     return view;
   }
+
+
 
   return (
     <SwipeListView
@@ -284,7 +243,6 @@ const MyStickyTable = (props) => {
       renderItem={renderItem}
       keyExtractor={(item, index) => String(index)}
       stickyHeaderIndices={getStickyIndices()}
-
       renderHiddenItem={renderHiddenItem}
 
       leftOpenValue={0}

@@ -24,39 +24,34 @@ const TransactionItem = (props) => {
     const {
       item,
       onPress,
-      currentTransaction,
-      isEnabled
+      // currentTransaction,
+      // isEnabled,
+      isSelected
     } = props;
 
-    // find current transaction
-    let isCurrentTransaction = false;
-    if (currentTransaction === item) {
-      isCurrentTransaction = true;
-    }
 
     // find headers
     // let isHeader = item.isHeader;
 
     //  item css
     // let borderWidth = 0;
-    const backgroundColor = 'transparent';
+    let textColor = 'rgba(255, 255, 255, 0.5)';
 
-    // if (isCurrentTransaction) {
-    //   // borderWidth = 1;
-    //   backgroundColor = `${item.category.color}${'0f'}`; // item.category.color + '0f';
-    // }
+    if (isSelected) {
+      // borderWidth = 1;
+      textColor = `${item.category.color}`; // item.category.color + '0f';
+    }
 
     return (
       <TouchableOpacity
-        disabled={!isEnabled}
-        onPress={() => onPress(item)}
+        onPress={onPress}
         style={
           {
             // borderWidth: borderWidth,
             // borderColor: '#ffffff0f',
             // borderStyle: 'solid',
 
-            backgroundColor
+            // backgroundColor
           }
         }
       >
@@ -73,8 +68,12 @@ const TransactionItem = (props) => {
           <ItemSymbol item={item} />
 
           <ItemCategory
+            // item={item}
+            // isCurrentTransaction={isCurrentTransaction}
             item={item}
-            isCurrentTransaction={isCurrentTransaction} />
+ 
+            color={textColor}
+          />
 
           <ItemNameInput item={item} />
 
@@ -88,9 +87,6 @@ const TransactionItem = (props) => {
     );
 }
 
-const styles = StyleSheet.create({
-
-});
 
 export default TransactionItem;
 
