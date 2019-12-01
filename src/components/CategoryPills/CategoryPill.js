@@ -1,9 +1,16 @@
 import React from 'react';
 
 import {
-  TouchableOpacity,
+  // TouchableOpacity,
   Text
 } from 'react-native';
+
+import {
+ // TouchableNativeFeedback,
+ // TouchableHighlight,
+ TouchableOpacity,
+ // TouchableWithoutFeedback
+} from 'react-native-gesture-handler'
 
 // arbitrary size limits
 const MAX_PILL_WIDTH = 156;

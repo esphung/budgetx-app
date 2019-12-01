@@ -171,7 +171,7 @@ function Home({ screenProps }) {
   };
 
   const categoryBtnPressed = (category) => {
-    // console.log(category);
+    console.log(category);
     // toggle current category
     if (currentCategory === category) {
       setCurrentCategory(null); // set off
@@ -188,6 +188,7 @@ function Home({ screenProps }) {
   };
 
   const numberBtnPressed = (number) => {
+    
     // truncate single AND leading zeros; concatenate old + new values
     const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
     handleChange(newValue);
