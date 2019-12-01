@@ -333,6 +333,7 @@ function Home() {
           }}
           shadowRadius={26}
           shadowOpacity={1}
+          isEnabled={true}
         />
 
         <AmountInputView
