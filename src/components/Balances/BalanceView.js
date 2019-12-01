@@ -24,12 +24,10 @@ function BalanceView(props) {
   };
 
   const currentSpentValueBtnPressed = () => {
-    // console.log('Current Spent:', this.props.currentSpentValue)
+    console.log('Current Spent:', currentSpentValue)
   };
 
   const { currentBalanceValue, currentSpentValue } = props;
-
-  // const [symbol, setSymbol] = useState('$');
 
   const [balance, setBalance] = useState(0);
 
@@ -37,8 +35,9 @@ function BalanceView(props) {
 
   useEffect(() => {
     // console.log('Mount')
-    setBalance(currentBalanceValue)
-    setSpent(currentSpentValue)
+    setBalance(currentBalanceValue);
+
+    setSpent(currentSpentValue);
     
     return () => {
       // console.log('Clean Up')
@@ -65,7 +64,7 @@ function BalanceView(props) {
             >
               <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}></Text>
               <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(balance)} `}</Text>
-              <Text>{`${balance}`}</Text>
+              <Text>{`${Math.abs(balance).toFixed(2)}`}</Text>
             </Text>
           </TouchableOpacity>
 
@@ -87,7 +86,7 @@ function BalanceView(props) {
             <Text style={styles.currentSpentValue}>
               <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}></Text>
               <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(spent)} `}</Text>
-              <Text>{ `${spent}` }</Text>
+              <Text>{ `${Math.abs(spent).toFixed(2)}` }</Text>
             </Text>
           </TouchableOpacity>
 

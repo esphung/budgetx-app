@@ -23,8 +23,6 @@ import {
   // saveCategories
 } from '../../storage/CategoriesStorage';
 
-// const MIN_PILL_WIDTH = 73;
-
 class ScrollingPillCategoriesView extends Component {
   constructor(props) {
     super(props);
@@ -32,8 +30,6 @@ class ScrollingPillCategoriesView extends Component {
     this.state = {
       categories: []
     };
-
-    // this.categoryBtnPressed = this.categoryBtnPressed.bind(this);
   }
 
   async componentDidMount() {
@@ -41,7 +37,6 @@ class ScrollingPillCategoriesView extends Component {
     const storage = await loadCategories();
     const { categories } = storage;
     await this.setState({ categories });
-    // console.log('State Categories Set:', categories.length);
   }
 
   getCategoryPill(items) {
@@ -59,7 +54,7 @@ class ScrollingPillCategoriesView extends Component {
           key={item.id}
           onPress={() => this.categoryBtnPressed(item)}
           isSelected={this.isCurrentCategory(item)}
-          isEnabled={isEnabled}
+          isEnabled={true}
         />
       ));
     }
@@ -99,15 +94,8 @@ class ScrollingPillCategoriesView extends Component {
           width: '100%',
           height: '6%', // 53,
 
-          backgroundColor: colors.darkTwo,
-
           shadowColor: '#0a101b',
-
           shadowOffset: shadowOffset,
-          // shadowOffset: {
-          //   width: 1,
-          //   height: 1
-          // },
           shadowRadius: shadowRadius,
           shadowOpacity: shadowOpacity,
 
@@ -115,16 +103,17 @@ class ScrollingPillCategoriesView extends Component {
 
           top: topPosition, // '57%', // 462,
 
+          backgroundColor: colors.darkTwo,
+
+          zIndex: zIndex, // display ontop of datepickerbox
+
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'dashed',
-
-          zIndex: zIndex, // display ontop of datepickerbox
         }
       }
       >
         <ScrollView
-          scrollEnabled={isEnabled}
           contentContainerStyle={{
             alignItems: 'center',
           }}

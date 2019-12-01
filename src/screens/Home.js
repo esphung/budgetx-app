@@ -18,12 +18,7 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  // ActivityIndicator,
   ScrollView,
-  Animated,
-  // Keyboard,
-  // TouchableWithoutFeedback,
-  // AsyncStorage
 } from 'react-native';
 
 import * as Font from 'expo-font';
@@ -34,14 +29,14 @@ import {
 } from '../storage/TransactionsStorage';
 
 // import my custom view components
-// import HeaderLeftView from '../components/Header/HeaderLeftView';
+import HeaderLeftView from '../components/Header/HeaderLeftView';
 import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/Balances/BalanceView';
 import MyStickyTable from '../components/TransactionsView/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
-import SlideUp from '../components/SlideUp/SlideUp';
+// import SlideUp from '../components/SlideUp/SlideUp';
 import SpinnerMask from '../components/SpinnerMask';
 
 import Transaction from '../models/Transaction';
@@ -70,22 +65,38 @@ function Home() {
 
   const [currentAmount, setCurrentAmount] = useState(null);
 
-  const [slideViewBounceValue, setSlideViewBounceValue] = useState(new Animated.Value(300));
-
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
   // useEffect(fn, [these, states])
 
   useEffect(() => {
-    clearState();
+    retrieveFonts();// loaded Fonts
 
-    console.log('Mount');
-    return () => {
-      console.log('Clean Up');
-    };
-  }, [fontsAreLoaded, currentBalance, currentSpent]);
+    retrieveTransactions(); // loaded transactions
 
-  const _retrieveFonts = async () => {
+    // console.log('Home Mounted');
+    // return () => {
+    //   console.log('Cleaned up fonts');
+    // };
+  }, []);
+
+  useEffect(() => {
+    // calculate balance
+    const balance = (calculateBalance(transactions));
+    setCurrentBalance(balance);
+
+    // calculate spent
+    const spent = (calculateMonthSpent(transactions));
+    setCurrentSpent(spent);
+
+    // console.log('Transactions Mounted');
+    // return () => {
+    //   // effect
+    //   // console.log('Cleaned up transactions');
+    // };
+  }, [transactions])
+
+  const retrieveFonts = async () => {
     // load fonts
     await Font.loadAsync({
       'SFProDisplay-Regular': global.SFProDisplayRegularFont,
@@ -94,7 +105,7 @@ function Home() {
     setFontsAreLoaded(true);
   };
 
-  const _retrieveTransactions = async () => {
+  const retrieveTransactions = async () => {
     // load stored transactions
     try {
       const transactionsObject = await loadTransactionsObject();
@@ -102,14 +113,10 @@ function Home() {
 
       // set transactions
       setTransactions(transactionsObject.transactions);
-    } catch(e) {
+    } catch (e) {
       // statements
-      console.log(e);
+      // console.log('retrieveTransactions:', e);
     }
-  };
-
-  const _storeTransactions = async () => {
-    // save transactions
   };
 
   const calculateBalance = (array) => {
@@ -117,14 +124,16 @@ function Home() {
     if (array) {
       let i = array.length - 1;
       for (i; i >= 0; i -= 1) {
-        // console.log(array[i].amount)
-        balance += array[i].amount;
+        if (array[i].amount) {
+          // console.log(array[i].amount);
+          balance = balance + array[i].amount;       
+        }
       }
     }
     return balance.toFixed(2);
   };
 
-  const calculateSpent = (array) => {
+  const calculateMonthSpent = (array) => {
     let balance = 0.00;
     if (array) {
       //  get date 30 days ago
@@ -134,8 +143,9 @@ function Home() {
       let i = array.length - 1;
       for (i; i >= 0; i -= 1) {
         if (dates.compare(array[i].date, date) > 0) {
-          if (array[i].type === 'expense') {
-            balance += array[i].amount;
+          if (array[i].amount <= 0.00) {
+            // console.log(array[i].amount);
+            balance = balance + array[i].amount;
           }
         }
       }
@@ -145,7 +155,8 @@ function Home() {
 
   // actions
   const transactionBtnPressed = (transaction) => {
-    console.log(transaction);
+    // console.log(transaction);
+    setCurrentBalance(0.00)
   };
 
   const deleteBtnPressed = (transaction) => {
@@ -153,7 +164,7 @@ function Home() {
   };
 
   const categoryBtnPressed = (category) => {
-    console.log(category);
+    // console.log(category);
     // toggle current category
     if (currentCategory === category) {
       setCurrentCategory(null); // set off
@@ -198,6 +209,16 @@ function Home() {
     }
   };
 
+  // value changes
+  const handleChange = (value) => {
+    // check for limit of 11 digits
+    if (String(value).length > global.maxAmountLength) {
+      return;
+    }
+    // this.setState({ currentAmount: value });
+    setCurrentAmount(value);
+  };
+
   const createNewTransaction = () => {
     let transaction = null;
 
@@ -232,15 +253,11 @@ function Home() {
   };
 
   const storeNewTransaction = async (transaction) => {
-    const storageObj = await loadTransactionsObject(); // load storage object
+    const storageObject = await loadTransactionsObject(); // load storage object
 
-    const { transactions } = storageObj; // get transactions from storage object
+    storageObject.transactions.unshift(transaction); // add new transaction to transactions
 
-    transactions.unshift(transaction); // add new transaction to transactions
-
-    saveTransactionsObject(storageObj); // save updated storage object
-
-    // setTransactions(storageObj.transactions); // set to home
+    saveTransactionsObject(storageObject); // save updated storage object
 
     clearState();
   };
@@ -248,14 +265,10 @@ function Home() {
   const removeTransaction = async (transaction) => {
     const storageObject = await loadTransactionsObject();
 
-    const { transactions } = storageObject;
-
-    // console.log(transactions)
-
     // remove transaction by id
-    const array = transactions;
-    // console.log(array.length)
+    const array = storageObject.transactions;
 
+    // loop thru stored transactions and splice transaction from it
     let i = array.length - 1;
     for (i; i >= 0; i -= 1) {
       if (array[i].id === transaction.id) {
@@ -265,38 +278,19 @@ function Home() {
 
     saveTransactionsObject(storageObject);
 
-    // setTransactions(transactions);
-
     clearState();
   };
 
   const clearState = () => {
-    // setState({ ...initialState });
-    _retrieveFonts();// loaded Fonts
-    _retrieveTransactions(); // loaded transactions
+    retrieveTransactions(); // loaded transactions
 
-    setCurrentAmount(0);
+    setCurrentAmount(0.00);
+
     setCurrentCategory(null);
+
     setCurrentTransaction(null);
+
     setCurrentType(null);
-
-    // calculate balance
-    const balance = (calculateBalance(transactions));
-    setCurrentBalance(balance);
-
-    // calculate spent
-    const spent = (calculateSpent(transactions));
-    setCurrentSpent(spent);
-  };
-
-  // value changes
-  const handleChange = (value) => {
-    // check for limit of 11 digits
-    if (String(value).length > global.maxAmountLength) {
-      return;
-    }
-    // this.setState({ currentAmount: value });
-    setCurrentAmount(value);
   };
 
   // return component
@@ -333,7 +327,6 @@ function Home() {
           }}
           shadowRadius={26}
           shadowOpacity={1}
-          isEnabled={true}
         />
 
         <AmountInputView
@@ -343,11 +336,6 @@ function Home() {
         />
 
         <KeypadView handlePress={handlePress} />
-
-        <SlideUp
-          toggleSlideView={() => this.toggleSlideView()}
-          slideViewBounceValue={slideViewBounceValue}
-        />
 
       </ScrollView>
     );
@@ -373,14 +361,11 @@ const styles = StyleSheet.create({
   }
 });
 
-Home.navigationOptions = () => {
-  // { screenProps }
-  // get user name and email from props
-  // console.log(screenProps);
-  // const { name, email } = screenProps.user;
+Home.navigationOptions = ({ screenProps }) => {
+  // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    // headerLeft: <HeaderLeftView boldMessage={name} normalMessage={email} />,
+    headerLeft: <HeaderLeftView user={screenProps} />,
     headerRight: <HeaderRightView />,
   };
   return header;
@@ -389,8 +374,7 @@ Home.navigationOptions = () => {
 
 export default Home;
 
-// CLASS ========================================
-
+// Home original class component ========================================
 
 // import React, { Component } from 'react';
 
@@ -516,7 +500,7 @@ export default Home;
 //     this.setState({ currentBalanceValue: balance });
 
 //     // update current spent
-//     const spent = this.calculateSpent(transactions);
+//     const spent = this.calculateMonthSpent(transactions);
 //     this.setState({ currentSpentValue: spent });
 //   }
 
@@ -530,7 +514,7 @@ export default Home;
 //     return balance.toFixed(2);
 //   }
 
-//   calculateSpent = (array) => {
+//   calculateMonthSpent = (array) => {
 //     //  get date 30 days ago
 //     const date = new Date();
 //     date.setDate(date.getDate() - 30);
@@ -606,7 +590,7 @@ export default Home;
 //     this.setState({ currentBalanceValue: balance });
 
 //     // update current spent this month
-//     const spent = this.calculateSpent(currentTransactions);
+//     const spent = this.calculateMonthSpent(currentTransactions);
 //     this.setState({ currentSpentValue: spent });
 //   }
 
@@ -668,7 +652,7 @@ export default Home;
 //     this.setState({ currentBalanceValue: balance });
 
 //     // update current spent this month
-//     const spent = this.calculateSpent(currentTransactions);
+//     const spent = this.calculateMonthSpent(currentTransactions);
 //     this.setState({ currentSpentValue: spent });
 //   }
 

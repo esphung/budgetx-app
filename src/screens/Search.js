@@ -366,17 +366,18 @@ class Search extends Component {
           {/* Date Picker Box */}
           <View style={datePickerBox} />
 
-          <MyStickyTable
-            transactions={currentTransactions}
-            tableTop="3%"
-            tableHeight="31%"
-            tablePosition="relative"
-            key={currentTransactions}
-            onPress={(transaction) => this.transactionBtnPressed(transaction)}
-            currentTransaction={currentTransaction}
-            isEnabled={isTableEnabled}
-            deleteBtnPressed={this.deleteBtnPressed}
-          />
+        <MyStickyTable
+          transactions={currentTransactions}
+          currentTransaction={currentTransaction}
+          key={currentTransactions}
+
+          tableTop="25.5%"
+          tableHeight="65%"
+          tablePosition="absolute"
+
+          onPress={(transaction) => this.transactionBtnPressed(transaction)}
+          deleteBtnPressed={(transaction) => this.deleteBtnPressed(transaction)}
+        />
 
           <SlideUp
             toggleSlideView={() => this.toggleSlideView()}

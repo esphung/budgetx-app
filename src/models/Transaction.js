@@ -8,23 +8,20 @@ UPDATED:    11/25/2019 02:11 PM  | added header prop
             11/26/2019 11:01 PM
 */
 
-export default function Transaction(date, amount, payee, category, type) {
-  this.id = String(Date.now());
+function Transaction(date, amount, payee, category, type) {
+  this.id = `${Date.now()}`;
   this.date = date;
-  this.amount = amount; // (type === 'income') ? (Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) : ((Number(amount.replace(/ [^0-9.-]+/g, '')) / 100) * (-1));
+  this.amount = amount;
   this.payee = {};
   this.category = category;
   this.type = type;
 }
 
+Transaction.prototype = {
+  id: `${Date.now()}`
+}
 
-
-
-
-
-
-
-
+module.exports = Transaction;
 
 
 
