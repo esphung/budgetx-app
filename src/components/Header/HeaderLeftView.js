@@ -82,12 +82,13 @@ const HeaderLeftView = () => {
       // console.log(user)
     }
 
-    return () => {
-      // console.log('user clean up');
-      // setBoldMessage('Enter a name')//user.getFullName());
-      // setNormalMessage(user.email);
-      setIsInputEnabled(false);
-    };
+    // return () => {
+    //   // console.log('user clean up');
+    //   // setBoldMessage('Enter a name')//user.getFullName());
+    //   // setNormalMessage(user.email);
+
+    //   // setIsInputEnabled(false);
+    // };
   }, [user]);
 
 

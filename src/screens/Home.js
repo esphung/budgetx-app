@@ -47,11 +47,11 @@ import colors from '../../colors';
 
 import { dates } from '../functions/dates';
 
-function Home() {
+function Home({ screenProps }) {
   // hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
-  const [transactions, setTransactions] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
   const [currentBalance, setCurrentBalance] = useState(0);
 
@@ -64,6 +64,8 @@ function Home() {
   const [currentType, setCurrentType] = useState(null);
 
   const [currentAmount, setCurrentAmount] = useState(null);
+
+  const [user, setUser] = useState(screenProps);
 
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
@@ -113,6 +115,11 @@ function Home() {
 
       // set transactions
       setTransactions(transactionsObject.transactions);
+
+      // // get transactions from user
+      // console.log('User transactions:', user.transactions.length)
+      // setTransactions(user.transactions)
+
     } catch (e) {
       // statements
       // console.log('retrieveTransactions:', e);
