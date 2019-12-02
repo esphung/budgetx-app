@@ -136,13 +136,6 @@ function Home() {
     };
   }, [transactions]);
 
-  useEffect(() => {
-    console.log(currentCategory)
-    return () => {
-      // effect
-    };
-  }, [currentCategory])
-
   const retrieveFonts = async () => {
     // load fonts
     await Font.loadAsync({
@@ -189,7 +182,6 @@ function Home() {
     if (category.type) {
       setCurrentType(category.type);
     }
-    
   };
 
   const numberBtnPressed = (number) => {
