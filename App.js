@@ -5,6 +5,7 @@ AUTHOR:     eric phung
 UPDATED:    Fri Nov  1 13:20:51 2019
             11/12/2019 02:22 PM
             11/27/2019 12:39 AM
+            12/02/2019 12:58 AM | switched to user storage, iphone still has data
 */
 import React, { useState, useEffect } from 'react';
 
@@ -17,96 +18,76 @@ import StackNavigator from './navigation';
 
 import './globals'; // global values
 
-// ui colors
-import colors from './colors';
+import colors from './colors'; // ui colors
 
 import SpinnerMask from './src/components/SpinnerMask';
 
-import User from './src/models/User';
+// import User from './src/models/User';
 
 import {
   loadUserObject,
-  saveUserObject
+  // saveUserObject
 } from './src/storage/UserStorage';
 
-import {
-  loadTransactionsObject,
-  saveTransactionsObject
-} from './src/storage/TransactionsStorage';
-
-// user function testing
-
-// var empty = User.prototype;
-// console.log(empty);
-
-// var foo = new User('John');
-// console.log(foo);
-// console.log(foo.getFullName())
-
-// var bar = User.fromLoginCredentials('Jane', 'qZ8/p"X8E]*c8aH9');
-// console.log(bar);
-
-// LOAD STORED USER HERE!!!
-
-// const user = new User('esphung@gmail.com');
-// console.log(user)
-// const user = new User();
+// import {
+//   loadTransactionsObject,
+//   saveTransactionsObject
+// } from './src/storage/TransactionsStorage';
 
 function App() {
   const [user, setUser] = useState(null);
 
-  const [transactions, setTransactions] = useState(null);
+  const [isStoredUserLoaded, setIsStoredUserLoaded] = useState(false);
 
-  const retrieveUser = async () => {
+  const retrieveStoredUser = async () => {
     // load stored user
     try {
       const userObject = await loadUserObject();
 
+      // set user with stored user object
       setUser(userObject.user);
-      
+
+      // console.log('User transactions:', user.transactions.length)
+
+      setIsStoredUserLoaded(true);
     } catch (e) {
       // statements
-      console.log(e);
+      // console.log('Could not retrieve stored user.');
     }
-  }
+  };
 
-  // const retrieveTransactions = async () => {
+  // const retrieveStoredTransactions = async () => {
   //   // load stored transactions
   //   try {
   //     const transactionsObject = await loadTransactionsObject();
-  //     // console.log(transactions);
+  //     const userObject = await loadUserObject();
 
-  //     // set transactions
-  //     setTransactions(transactionsObject.transactions);
+  //     userObject.user.transactions = transactionsObject.transactions
+  //     saveUserObject(userObject);
+  //     console.log(userObject);
 
+  //     setIsStoredUserLoaded(true);
   //   } catch (e) {
   //     // statements
-  //     console.log(e);
+  //     console.log('Could not retrieve stored transactions.');
   //   }
   // };
 
+  // component did mount
   useEffect(() => {
-    retrieveUser();
-
-    // retrieveTransactions(); // load transactions
-    
-    return () => {
-      // effect
-      console.log('User clean up')
-    };
+    retrieveStoredUser();// load stored user
+    // retrieveStoredTransactions(); // loaded transactions
   }, []);
 
   // return component view
-  if (user) {
-    user.transactions = transactions //  temporary separate storage
+  let view = (
+    <View style={styles.container}>
+      <SpinnerMask />
+    </View>
+  );
+  if (isStoredUserLoaded) {
     // console.log(user)
-    return <StackNavigator screenProps={ user } />;
-  } else {
-    view = (
-      <View style={styles.container}>
-        <SpinnerMask />
-      </View>
-    );
+    view = (<StackNavigator screenProps={user} />);
   }
   return view;
 }

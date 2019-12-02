@@ -4,7 +4,9 @@ PURPOSE:   User
 AUTHOR:    Eric Phung
 CREATED:   12/01/2019 12:35 AM
 UPDATED:
-*/ 
+*/
+
+import defaultCategories from '../data/categories';
 
 // User function with multiple constructors
 function User(email) {
@@ -17,6 +19,8 @@ function User(email) {
   this.given = ''; // first name
   this.surname = '';
 
+  this.categories = defaultCategories;
+
   this.getFullName = () => {
     if (this.given || this.surname) {
       return `${this.given} ${this.surname}`;
@@ -28,20 +32,24 @@ function User(email) {
     }
   }
 
+  this.setTransactions = (transactions) => {
+    this.transactions = transactions;
+  }
+
   this.setEmail = (email) => {
     this.email = email;
   }
 } // end user function def
 
-// null prototype (no properties)
-User.prototype = {
-  _id: `${Date.now()}`,
-  username: null,
-  password: null,
-  // email: null,
-  // transactions: [],
-  created: new Date()
-}; // end user prototype def
+// // null prototype (no properties)
+// User.prototype = {
+//   _id: `${Date.now()}`,
+//   username: null,
+//   password: null,
+//   // email: null,
+//   // transactions: [],
+//   created: new Date()
+// }; // end user prototype def
 
 // // create user from some properties
 // User.fromComponents = function(foo, bar) {

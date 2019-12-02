@@ -12,7 +12,7 @@ import colors from '../../../colors';
 
 function getCurrencySymbol (amount) {
   let symbol = '$';
-  if (amount <= 0) {
+  if (amount < 0) {
     symbol = '- $';
   }
   return symbol;
@@ -20,7 +20,7 @@ function getCurrencySymbol (amount) {
 
 function BalanceView(props) {
   const currentBalanceBtnPressed = () => {
-    // console.log('Current Balance:', this.props.currentBalanceValue)
+    console.log('Current Balance:', currentBalanceValue)
   };
 
   const currentSpentValueBtnPressed = () => {
@@ -58,7 +58,7 @@ function BalanceView(props) {
             Current Balance
           </Text>
 
-          <TouchableOpacity onPress={() => currentBalanceBtnPressed}>
+          <TouchableOpacity onPress={() => currentBalanceBtnPressed()}>
             <Text
               style={styles.currentBalanceValue}
             >
@@ -82,7 +82,7 @@ function BalanceView(props) {
             Spent This Month
           </Text>
 
-          <TouchableOpacity onPress={() => currentSpentValueBtnPressed}>
+          <TouchableOpacity onPress={() => currentSpentValueBtnPressed()}>
             <Text style={styles.currentSpentValue}>
               <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}></Text>
               <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(spent)} `}</Text>

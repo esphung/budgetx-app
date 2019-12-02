@@ -20,8 +20,10 @@ const MIN_PILL_WIDTH = 73;
 
 const CategoryPill = (props) => {
   const {
+    item,
     color,
     name,
+    currentCategory,
     isSelected,
     onPress,
     isEnabled
