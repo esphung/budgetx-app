@@ -50,6 +50,10 @@ const ScrollingPillCategoriesView = (props) => {
 
   const [currentCategory, setCurrentCategory] = useState(null);
 
+  const [currentCategories, setCurrentCategories] = useState([]);
+
+  const [transactions, setTransactions] = useState(null);
+
   const retrieveStoredUser = async () => {
     // load stored user
     try {
@@ -59,6 +63,8 @@ const ScrollingPillCategoriesView = (props) => {
       setCategories(userObject.user.categories);
       // console.log('User:', userObject.user.categories);
 
+      setTransactions(userObject.user.transactions);
+
       setIsStoredUserLoaded(true);
     } catch (e) {
       // statements
@@ -67,28 +73,23 @@ const ScrollingPillCategoriesView = (props) => {
   };
 
   const isCurrentCategory = (category) => {
-    if (!currentCategory) {
+    if (!currentCategories.includes(category)) {
       return false;
     }
-    if (currentCategory === category) {
+    if (currentCategory === category || (currentCategories.includes(category))) {
       return true;
     }
-    return false;
   };
 
   const categoryBtnPressed = (item) => {
     props.onPress(item);
-
     if (currentCategory === item) {
       setCurrentCategory(null); // set off
-      // setIsSelected(false)
     } else if (currentCategory !== item) {
       setCurrentCategory(item); // set on
-      // setIsSelected(true)
     } else {
       // set new current category
       setCurrentCategory(null);
-      // setIsSelected(true)
     }
   };
 
@@ -101,24 +102,26 @@ const ScrollingPillCategoriesView = (props) => {
     setZIndex(props.zIndex);
 
     retrieveStoredUser(); // for user categories
-
-    // setCurrentCategory(props.currentCategory);
-
     return () => {
       // effect
-      // console.log('Clean up pills');
+      console.log('Clean up pills');
 
     };
   }, []);
 
-  // clear highlighted pill
   useEffect(() => {
     // console.log('mount')
+    // console.log(currentCategories.length)
+
     setCurrentCategory(props.currentCategory);
+    setCurrentCategories(props.currentCategories);
+
     return () => {
-      // console.log('cleanup')
+      // effect
+      // console.log('clean up')
     };
-  });
+  })
+
 
   const getCategoryPill = (items) => {
     // const { isEnabled } = this.props;

@@ -6,6 +6,13 @@ import {
   Text
 } from 'react-native';
 
+// import {
+//  // TouchableNativeFeedback,
+//  // TouchableHighlight,
+//  TouchableOpacity,
+//  // TouchableWithoutFeedback
+// } from 'react-native-gesture-handler'
+
 // ui colors
 import colors from '../../../colors';
 

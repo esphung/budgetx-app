@@ -328,6 +328,8 @@ function Home() {
           }}
           shadowRadius={26}
           shadowOpacity={1}
+
+          currentCategories={[]}
         />
 
         <AmountInputView
