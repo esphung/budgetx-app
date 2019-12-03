@@ -12,6 +12,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             11/26/2019 11:01 PM | Working  Sticky Header Table
             11/29/2019 04:40 AM | Hooks conversion
             12/02/2019 12:11 AM | Implemented storage user
+            12/03/2019 12:07 PM
 */
 
 import React, { useState, useEffect } from 'react';
@@ -21,6 +22,8 @@ import {
   View,
   ScrollView,
 } from 'react-native';
+
+import { NavigationEvents } from 'react-navigation';
 
 import * as Font from 'expo-font';
 
@@ -91,7 +94,7 @@ function Home() {
   // hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
-  const [transactions, setTransactions] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
   const [currentBalance, setCurrentBalance] = useState(0);
 
@@ -109,11 +112,15 @@ function Home() {
   // useEffect(fn, []) // no state
   // useEffect(fn, [these, states])
 
+  const refresh = () => {
+    retrieveFonts();// load Fonts
+    retrieveStoredUser(); // load stored user transactions
+  }
+
   // component did mount
   useEffect(() => {
-    // console.log('mount Home');
-    retrieveFonts();// loaded Fonts
-    retrieveStoredUser(); // loaded transactions
+    console.log('mount Home');
+    refresh();
     return () => {
       // console.log('Clean up Home');
     };
@@ -307,8 +314,16 @@ function Home() {
 
   if (fontsAreLoaded) {
     view = (
-      <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
 
+      <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+        <NavigationEvents
+          // try only this. and your component will auto refresh when this is the active component
+          onWillFocus={payload => clearState()}
+          // other props
+          // onDidFocus={payload => console.log('did focus',payload)}
+          // onWillBlur={payload => console.log('will blur',payload)}
+          // onDidBlur={payload => console.log('did blur',payload)}
+        />
         <BalanceView
           currentBalanceValue={currentBalance}
           currentSpentValue={currentSpent}

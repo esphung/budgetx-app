@@ -4,6 +4,7 @@ PURPOSE:    search screen for budget x app
 AUTHOR:     eric phung
 UPDATED:    11/13/2019 05:26 AM
             12/02/2019 02:40 AM
+            12/03/2019 12:00 PM
 */
 import React, { useState, useEffect } from 'react';
 
@@ -17,9 +18,13 @@ import {
   // Keyboard,
   // TouchableWithoutFeedback,
   // AsyncStorage
+  Button,
+  Text
 } from 'react-native';
 
 import * as Font from 'expo-font';
+
+// import { NavigationEvents } from 'react-navigation';
 
 import {
   loadUserObject,
@@ -306,16 +311,27 @@ const Search = () => {
   return view;
 }; // end Search definition
 
-Search.navigationOptions = () => {
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks'
+
+// Search navigation
+Search.navigationOptions = ({ navigation }) => {
+  console.log(navigation)
+
+   const goBack = () => {
+    navigation.navigate('Home')
+  }
+
   const header = {
     headerTransparent: {},
     headerTintColor: colors.white,
     title: 'Filter by Category',
     // headerRight,
+    headerLeft: (<View><Button title="Go Back" onPress={goBack} /></View>)
   };
   return header;
-};
+};// end search navigation def
 
+// Search styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -326,7 +342,7 @@ const styles = StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'dashed',
   }
-});
+}); // end search styles
 
 // separator line style
 const line = {
