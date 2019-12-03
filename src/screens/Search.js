@@ -24,8 +24,6 @@ import {
 
 import * as Font from 'expo-font';
 
-// import { NavigationEvents } from 'react-navigation';
-
 import {
   loadUserObject,
   saveUserObject
@@ -315,9 +313,7 @@ import { useNavigation, useNavigationParam } from 'react-navigation-hooks'
 
 // Search navigation
 Search.navigationOptions = ({ navigation }) => {
-  console.log(navigation)
-
-   const goBack = () => {
+  function goBack() {
     navigation.navigate('Home')
   }
 

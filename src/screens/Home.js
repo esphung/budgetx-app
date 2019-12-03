@@ -21,6 +21,7 @@ import {
   StyleSheet,
   View,
   ScrollView,
+  Animated
 } from 'react-native';
 
 import { NavigationEvents } from 'react-navigation';
@@ -45,7 +46,7 @@ import MyStickyTable from '../components/TransactionsView/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
-// import SlideUp from '../components/SlideUp/SlideUp';
+import SlideUp from '../components/SlideUp/SlideUp';
 import SpinnerMask from '../components/SpinnerMask';
 
 import Transaction from '../models/Transaction';
@@ -108,9 +109,29 @@ function Home() {
 
   const [currentAmount, setCurrentAmount] = useState(null);
 
+  const [slideViewBounceValue, setSlideViewBounceValue] = useState(new Animated.Value(300));
+
+  const [isSlideViewHidden, setIsSlideViewHidden] = useState(true);
+
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
   // useEffect(fn, [these, states])
+
+  const clearState = () => {
+    retrieveStoredUser(); // load stored user
+
+    setCurrentAmount(0.00);
+
+    setCurrentCategory(null);
+
+    setCurrentTransaction(null);
+
+    setCurrentType(null);
+
+    setSlideViewBounceValue(new Animated.Value(300));
+
+    setIsSlideViewHidden(true);
+  };
 
   const refresh = () => {
     retrieveFonts();// load Fonts
@@ -119,7 +140,7 @@ function Home() {
 
   // component did mount
   useEffect(() => {
-    console.log('mount Home');
+    // console.log('mount Home');
     refresh();
     return () => {
       // console.log('Clean up Home');
@@ -142,14 +163,22 @@ function Home() {
     };
   }, [transactions]);
 
-  // useEffect(() => {
-  //   console.log('Home mount')
-  //   return () => {
-  //     // effect
-  //     console.log('Home clean up')
-  //   };
-  // })
+  // current transaction updates
+  useEffect(() => {
+    // console.log('Mount current transaction');
+    // console.log(currentTransaction);
 
+    // toggle slideup view
+    if (currentTransaction) {
+      showSlideView();
+    } else {
+      hideSlideView();
+    }
+    return () => {
+      // effect
+      console.log('clean up current transaction');
+    };
+  }, [currentTransaction]);
 
   const retrieveFonts = async () => {
     // load fonts
@@ -175,7 +204,18 @@ function Home() {
 
   // actions
   const transactionBtnPressed = (transaction) => {
-    console.log(transaction);
+    if (currentTransaction === transaction) {
+      setCurrentTransaction(null);
+      if (isSlideViewHidden !== true) {
+        hideSlideView();
+      }
+    } else if (currentTransaction !== transaction) {
+      // not same transaction
+      setCurrentTransaction(transaction);
+    }
+    // else {
+    //   setCurrentTransaction(transaction);
+    // }
   };
 
   const deleteBtnPressed = (transaction) => {
@@ -213,6 +253,32 @@ function Home() {
 
       handleChange(newStr);
     }
+  };
+
+  const showSlideView = () => {
+    Animated.spring(
+      slideViewBounceValue,
+      {
+        toValue: 0,
+        velocity: 30,
+        tension: 2,
+        friction: 8,
+      }
+    ).start();
+    setIsSlideViewHidden(false);
+  };
+
+  const hideSlideView = () => {
+    Animated.spring(
+      slideViewBounceValue,
+      {
+        toValue: 300,
+        velocity: 30,
+        tension: 2,
+        friction: 8,
+      }
+    ).start();
+    setIsSlideViewHidden(true);
   };
 
   const handlePress = (value) => {
@@ -297,18 +363,6 @@ function Home() {
     clearState();
   };
 
-  const clearState = () => {
-    retrieveStoredUser(); // load stored user
-
-    setCurrentAmount(0.00);
-
-    setCurrentCategory(null);
-
-    setCurrentTransaction(null);
-
-    setCurrentType(null);
-  };
-
   // return component
   let view = <View />;
 
@@ -363,6 +417,12 @@ function Home() {
         />
 
         <KeypadView handlePress={handlePress} />
+
+        <SlideUp
+          toggleSlideView={() => {}} // toggleSlideView()}
+          slideViewBounceValue={slideViewBounceValue}
+          transaction={currentTransaction}
+        />
 
       </ScrollView>
     );

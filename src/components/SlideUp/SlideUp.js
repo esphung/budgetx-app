@@ -9,18 +9,24 @@ import {
 // ui colors
 import colors from '../../../colors';
 
+import SlideUpTransactionRect from './SlideUpTransactionRect';
+
 function SlideUpViews(props) {
   const {
     slideViewBounceValue,
-    toggleSlideView
+    // toggleSlideView,
     // currentType,
     // onPress
+    transaction
   } = props;
+
+  // console.log(transaction)
 
   const view = (
     <Animated.View
       style={[styles.container, { transform: [{ translateY: slideViewBounceValue }] }]}
     >
+      <SlideUpTransactionRect transaction={transaction} />
     </Animated.View>
   );
 
@@ -29,6 +35,7 @@ function SlideUpViews(props) {
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -49,7 +56,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'dashed',
-
   }
 });
 

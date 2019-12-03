@@ -62,7 +62,6 @@ function BalanceView(props) {
             <Text
               style={styles.currentBalanceValue}
             >
-              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}></Text>
               <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(balance)} `}</Text>
               <Text>{`${Math.abs(balance).toFixed(2)}`}</Text>
             </Text>
@@ -84,7 +83,6 @@ function BalanceView(props) {
 
           <TouchableOpacity onPress={() => currentSpentValueBtnPressed()}>
             <Text style={styles.currentSpentValue}>
-              <Text style={{ color: 'rgba(255, 255, 255, 0.5)', }}></Text>
               <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(spent)} `}</Text>
               <Text>{ `${Math.abs(spent).toFixed(2)}` }</Text>
             </Text>

@@ -24,7 +24,7 @@ const TransactionItem = (props) => {
     const {
       item,
       onPress,
-      // currentTransaction,
+      currentTransaction,
       // isEnabled,
       isSelected
     } = props;

@@ -134,8 +134,11 @@ const MyStickyTable = (props) => {
 
   const [data,setData] = useState([]); // sortByHeadersDateDescending(props.transactions)
 
+  const [currentTransaction, setCurrentTransaction] = useState(null);
+
   useEffect(() => {
-    setData(sortByHeadersDateDescending(props.transactions))
+    setData(sortByHeadersDateDescending(props.transactions));
+    setCurrentTransaction(props.currentTransaction);
     return () => {
       // effect
     };
@@ -167,7 +170,7 @@ const MyStickyTable = (props) => {
         </View>
       );
     }
-    // console.log(item)
+
     return (
       <View style={styles.rowFront}>
         <TransactionItem
@@ -175,7 +178,7 @@ const MyStickyTable = (props) => {
           item={item}
           isSelected={false}
           onPress={() => props.onPress(item)} //{onPress} // console.log(data[index])
-          // currentTransaction={currentTransaction}
+          currentTransaction={currentTransaction}
           // isEnabled={isEnabled}
         />
       </View>
