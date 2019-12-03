@@ -109,19 +109,18 @@ function Home() {
   // useEffect(fn, []) // no state
   // useEffect(fn, [these, states])
 
-  // component did mount effect
+  // component did mount
   useEffect(() => {
-    // console.log('Did mount Home');
+    // console.log('mount Home');
     retrieveFonts();// loaded Fonts
     retrieveStoredUser(); // loaded transactions
     return () => {
-      // console.log('Cleaned up Home');
+      // console.log('Clean up Home');
     };
   }, []);
 
   useEffect(() => {
-    // console.log('Did mount transactions');
-
+    // console.log('mount transactions');
     // calculate balances
     const balance = (calculateBalance(transactions));
     setCurrentBalance(balance);
@@ -132,9 +131,18 @@ function Home() {
 
     return () => {
       // effect
-      // console.log('Cleaned up transactions');
+      // console.log('Clean up transactions');
     };
   }, [transactions]);
+
+  // useEffect(() => {
+  //   console.log('Home mount')
+  //   return () => {
+  //     // effect
+  //     console.log('Home clean up')
+  //   };
+  // })
+
 
   const retrieveFonts = async () => {
     // load fonts
@@ -296,6 +304,7 @@ function Home() {
 
   // return component
   let view = <View />;
+
   if (fontsAreLoaded) {
     view = (
       <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>

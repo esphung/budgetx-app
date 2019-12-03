@@ -23,7 +23,7 @@ import * as Font from 'expo-font';
 
 import {
   loadUserObject,
-  // saveUserObject
+  saveUserObject
 } from '../storage/UserStorage';
 
 // components
@@ -63,7 +63,7 @@ import colors from '../../colors';
 //   />
 // );
 
-const Search = (props) => {
+const Search = () => {
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
   const [transactions, setTransactions] = useState(null);
@@ -74,11 +74,25 @@ const Search = (props) => {
 
   const [currentTransaction, setCurrentTransaction] = useState(null);
 
-  const [slideViewBounceValue] = useState(new Animated.Value(300));
+  const [slideViewBounceValue, setSlideViewBounceValue] = useState(new Animated.Value(300));
 
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(true);
 
   const [currentCategories, setCurrentCategories] = useState([]);
+
+  const clearState = () => {
+    retrieveStoredUser(); // load stored user
+
+    setCurrentCategory(null);
+
+    setCurrentTransaction(null);
+
+    setSlideViewBounceValue(new Animated.Value(300));
+
+    setIsSlideViewHidden(true);
+
+    setCurrentCategories([]);
+  };
 
   const retrieveStoredFonts = async () => {
     // load fonts
@@ -171,22 +185,43 @@ const Search = (props) => {
     }
   };
 
-  const getFilteredTransactions = () => {
-    const array = [];
-    currentCategories.forEach((element, index) => {
-      // filter thru transaction by categories selected
-      const list = transactions.filter((items) => {
-        return (items.category.name === element.name);
-      });
-      let i = list.length - 1;
-      for (i; i >= 0; i -= 1) {
-        array.push(list[i]);
-      }
-    });
-    // console.log(array)
-    return array;
+  // const getFilteredTransactions = () => {
+  //   const array = [];
+  //   currentCategories.forEach((element, index) => {
+  //     // filter thru transaction by categories selected
+  //     const list = transactions.filter((items) => {
+  //       return (items.category.name === element.name);
+  //     });
+  //     let i = list.length - 1;
+  //     for (i; i >= 0; i -= 1) {
+  //       array.push(list[i]);
+  //     }
+  //   });
+  //   // console.log(array)
+  //   return array;
+  // };
+
+  const deleteBtnPressed = (transaction) => {
+    removeTransaction(transaction);
   };
 
+  const removeTransaction = async (transaction) => {
+    // retrieve stored user object
+    const userObject = await loadUserObject();
+
+    // remove transaction by id
+    let i = userObject.user.transactions.length - 1;
+
+    for (i; i >= 0; i -= 1) {
+      if (userObject.user.transactions[i].id === transaction.id) {
+        userObject.user.transactions.splice(i, 1);
+      }
+    }
+
+    saveUserObject(userObject);
+
+    clearState();
+  };
 
   // component did mount
   useEffect(() => {
@@ -198,7 +233,7 @@ const Search = (props) => {
 
     return () => {
       // effect
-      // console.log('Clean up');
+      // console.log('Cleaned up Search');
     };
   }, []);
 
@@ -216,13 +251,14 @@ const Search = (props) => {
     };
   }, [currentTransaction]);
 
-  useEffect(() => {
-    if (getFilteredTransactions().length > 0) {
-      console.log(getFilteredTransactions());
-    }
-  });
+  // useEffect(() => {
+  //   if (getFilteredTransactions().length > 0) {
+  //     console.log(getFilteredTransactions());
+  //   }
+  // });
 
   let view = (<View style={styles.container}><SpinnerMask /></View>);
+
   if (fontsAreLoaded && isStoredUserLoaded) {
     // page body view
     view = (
@@ -257,11 +293,11 @@ const Search = (props) => {
           tablePosition="absolute"
 
           onPress={(transaction) => transactionBtnPressed(transaction)}
-          deleteBtnPressed={(transaction) => this.deleteBtnPressed(transaction)}
+          deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
         />
 
         <SlideUp
-          toggleSlideView={() => this.toggleSlideView()}
+          toggleSlideView={() => {}} // toggleSlideView()}
           slideViewBounceValue={slideViewBounceValue}
         />
       </ScrollView>
@@ -395,32 +431,6 @@ export default Search;
 //     }
 //   }
 
-
-//   deleteBtnPressed(transaction) {
-//     this.removeTransaction(transaction);
-//   }
-
-//   async removeTransaction(transaction) {
-//     // pull storage object
-//     const storageObject = await loadTransactionsObject();
-//     // get transactions list from object
-//     const { transactions } = storageObject;
-//     // console.log(transactions)
-
-//     // remove transaction by id
-//     const array = transactions;
-//     let i = array.length - 1;
-//     for (i; i >= 0; i -= 1) {
-//       if (array[i].id === transaction.id) {
-//         array.splice(i, 1);
-//       }
-//     }
-
-//     // save new transactions list
-//     saveTransactionsObject(storageObject);
-
-//     this.setState({ currentTransactions: transactions });
-//   }
 
 //   render() {
 //     const {

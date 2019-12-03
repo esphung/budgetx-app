@@ -73,10 +73,10 @@ const ScrollingPillCategoriesView = (props) => {
   };
 
   const isCurrentCategory = (category) => {
-    if (!currentCategories.includes(category)) {
+    if (currentCategory !== category) { // (!currentCategories.includes(category)) {
       return false;
     }
-    if (currentCategory === category || (currentCategories.includes(category))) {
+    if (currentCategory === category) { // || (currentCategories.includes(category))) {
       return true;
     }
   };
@@ -102,11 +102,11 @@ const ScrollingPillCategoriesView = (props) => {
     setZIndex(props.zIndex);
 
     retrieveStoredUser(); // for user categories
-    return () => {
-      // effect
-      console.log('Clean up pills');
+    // return () => {
+    //   // effect
+    //   console.log('Clean up pills');
 
-    };
+    // };
   }, []);
 
   useEffect(() => {
