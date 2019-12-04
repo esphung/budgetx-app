@@ -4,9 +4,10 @@ PURPOSE:    right sid e of header. with setttings and search btns
 AUTHOR:     eric phung
 DATE:       Sun Nov  3 14:25:49 2019
             12/11/2019 12:31 AM
+            12/04/2019 04:39 PM | implemented hooks
 */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -18,35 +19,32 @@ import {
 import { withNavigation } from 'react-navigation';
 
 function HeaderRightView(props) {
-  // let { isSearchModeOn } = props;
+  // state hooks
+  const [navigation, setNavigation] = useState(null);
 
-  const searchBtnPressed = () => {
-    // isSearchModeOn = !isSearchModeOn;
-    const { navigation } = props;
-    navigation.navigate('Search');
-  };
+  useEffect(() => {
+    // mount component
+    setNavigation(props.navigation);
+  }, []);
+
+  // const searchBtnPressed = () => {
+  //   navigation.navigate('Search');
+  // };
 
   const settingsBtnPressed = () => {
-    const { navigation } = props;
     navigation.navigate('Settings');
   };
+
   return (
     <View style={
       {
         flex: 1,
-
         flexDirection: 'row',
-
         alignItems: 'center',
-
         justifyContent: 'center',
-
         height: '100%',
-
         width: '100%',
-
         marginRight: 4, // '20%', // 3,
-
         marginTop: 20,
 
         // borderWidth: 1,
@@ -55,7 +53,9 @@ function HeaderRightView(props) {
       }
     }
     >
-      {/* Search Button */}
+      {/* ==== Search Button ==== */}
+
+      {/*
       <TouchableOpacity
         onPress={searchBtnPressed}
         style={styles.searchBtnTouchableOpacity}
@@ -68,8 +68,10 @@ function HeaderRightView(props) {
         />
 
       </TouchableOpacity>
+      */}
 
-      {/* Settings Button */}
+      {/* ==== Settings Button ==== */}
+
       <TouchableOpacity
         onPress={settingsBtnPressed}
         style={styles.settingsBtnTouchableOpacity}
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
   searchBtnTouchableOpacity: {
     flex: 0.5,
     width: 40,
-    height: '60%',
+    height: '60%'
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -99,17 +101,14 @@ const styles = StyleSheet.create({
   },
 
   searchImage: {
-    // flex: 1,
     width: '100%',
-    height: '100%',
-
+    height: '100%'
   },
 
   settingsBtnTouchableOpacity: {
     flex: 0.5,
-    // alignItems: 'center',
     width: 45, // 30,
-    height: 45, // 30,
+    height: 45 // 30,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -118,11 +117,10 @@ const styles = StyleSheet.create({
   },
 
   settingsImage: {
-    // flex: 1,
     width: '100%',
-    height: '100%',
+    height: '100%'
 
-  },
+  }
 });
 
 export default withNavigation(HeaderRightView);

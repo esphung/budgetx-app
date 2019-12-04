@@ -30,9 +30,9 @@ import {
 } from '../storage/UserStorage';
 
 // components
-import SpinnerMask from '../components/SpinnerMask';
 import MyStickyTable from '../components/TransactionsView/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
+import SpinnerMask from '../components/SpinnerMask';
 import SlideUp from '../components/SlideUp/SlideUp';
 
 // models
@@ -308,8 +308,6 @@ const Search = () => {
   }
   return view;
 }; // end Search definition
-
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks'
 
 // Search navigation
 Search.navigationOptions = ({ navigation }) => {

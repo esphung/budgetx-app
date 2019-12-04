@@ -14,6 +14,7 @@
                 11/13/2019 05:22 AM
                 11/27/2019 12:41 AM
                 12/03/2019 11:47 AM
+                12/04/2019 04:01 PM
 
 <hr>
 <img src="budgetX-designs/Financely-First-Opened.png" alt="Home App Screen" width="100"/>

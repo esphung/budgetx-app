@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   Text
 } from 'react-native';
@@ -12,7 +12,9 @@ import * as Font from 'expo-font';
 // ui colors
 import colors from '../../../colors';
 
-import SpinnerMask from '../../components/SpinnerMask';
+import SpinnerMask from '../SpinnerMask';
+
+import MyComponent from "components/MyComponent";
 
 function getCurrencySymbol(amount) {
   let symbol = '$';
@@ -21,6 +23,40 @@ function getCurrencySymbol(amount) {
   }
   return symbol;
 }
+
+function getFormattedDateString(date) {
+  const transactionDate = new Date(date);
+
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  let day = dayNames[transactionDate.getDay()];
+  let dd = transactionDate.getDate();
+  let mm = transactionDate.getMonth() + 1; // January is 0!
+  const yyyy = transactionDate.getFullYear();
+  const hours = transactionDate.getHours();
+  let minutes = transactionDate.getMinutes();
+
+  if(dd<10) { dd='0'+dd } 
+  if(mm<10)  { mm='0'+mm } 
+  if(minutes<10){ minutes='0'+minutes }
+
+  // set 'today' label
+  const todaysDate = new Date();
+  if ((transactionDate.getDay() === todaysDate.getDay()) && (transactionDate.getMonth() === todaysDate.getMonth()) && (transactionDate.getFullYear() === todaysDate.getFullYear())) {
+    day = 'Today';
+  }
+
+  // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
+  let string = day + ', ' + monthNames[mm - 1] + ' ' + parseInt(dd, 10);
+
+  // if different year, show the year
+  if (todaysDate.getFullYear() !== yyyy) {
+    string = day + ', ' + monthNames[mm - 1] + ' ' + parseInt(dd, 10) + ', ' + yyyy;
+  }
+  return string;
+};
+
 
 const SlideUpTransactionRect = (props) => {
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
@@ -33,31 +69,6 @@ const SlideUpTransactionRect = (props) => {
 
   const [transaction, setTransaction] = useState(null);
 
-  const getFormattedDate = () => {
-    const newDate = new Date(date);
-
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-    let day = dayNames[newDate.getDay()];
-    let dd = newDate.getDate();
-    let mm = newDate.getMonth() + 1; // January is 0!
-    const yyyy = newDate.getFullYear();
-    const hours = newDate.getHours();
-    let minutes = newDate.getMinutes();
-
-    if(dd<10) { dd='0'+dd } 
-    if(mm<10)  { mm='0'+mm } 
-    if(minutes<10){ minutes='0'+minutes }
-
-    // set 'today' label
-    if (newDate.getDay() === new Date().getDay()) {
-      day = 'Today';
-    }
-
-    // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
-    return day + ', ' + monthNames[mm - 1] + ' ' + parseInt(dd, 10);
-  };
 
   useEffect(() => {
     // console.log('Mounts')
@@ -73,7 +84,7 @@ const SlideUpTransactionRect = (props) => {
 
       setDate(props.transaction.date);
 
-      setTextLabel(`Amount Spent on ${getFormattedDate(date)}`);
+      setTextLabel(`${getFormattedDateString(date)}`); // Amount Spent on 
     }
 
     // return () => {

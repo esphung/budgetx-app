@@ -1,0 +1,8 @@
+{
+  "name": "components",
+   "dependencies": {
+    "react": "16.8.3",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
+    "react-navigation": "^4.0.10"
+  }
+}
