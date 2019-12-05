@@ -14,40 +14,36 @@ CREATED:    Thu Oct 31 23:17:49 2019
             12/02/2019 12:11 AM | Implemented storage user
             12/03/2019 12:07 PM
             12/04/2019 04:41 PM | Hide HeaderLeft and Hide Search btn
+            12/05/2019 12:45 PM | Added Hooks eslinter
 */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import {
   StyleSheet,
   View,
   ScrollView,
-  Animated
+  Animated,
 } from 'react-native';
 
 import { NavigationEvents } from 'react-navigation';
 
 import * as Font from 'expo-font';
 
-// import {
-//   loadTransactionsObject,
-//   saveTransactionsObject
-// } from '../storage/TransactionsStorage';
-
 import {
   loadUserObject,
-  saveUserObject
+  saveUserObject,
 } from '../storage/UserStorage';
 
 // import my custom view components
-import HeaderLeftView from '../components/Header/HeaderLeftView';
-import HeaderRightView from '../components/Header/HeaderRightView';
-import BalanceView from '../components/Balances/BalanceView';
+// import HeaderLeftView from '../components/home/HeaderLeftView';
+import HeaderRightView from '../components/home/HeaderRightView';
+import BalanceView from '../components/home/BalanceView';
 import MyStickyTable from '../components/TransactionsTable/MyStickyTable';
-import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
-import AmountInputView from '../components/AmountInput/AmountInputView';
-import KeypadView from '../components/Keypad/KeypadView';
-import SlideUp from '../components/SlideUp/SlideUp';
+import ScrollingPillCategoriesView from '../components/home/ScrollingPillCategoriesView';
+import AmountInputView from '../components/home/AmountInputView';
+import KeypadView from '../components/home/KeypadView';
+import SlideUp from '../components/home/SlideUp';
 import SpinnerMask from '../components/SpinnerMask';
 
 // data models
@@ -57,6 +53,14 @@ import Transaction from '../models/Transaction';
 import colors from '../../colors';
 
 import { calculateBalance, calculateMonthSpent } from './functions';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.darkTwo,
+  },
+});
 
 function Home() {
   // hooks
@@ -80,11 +84,20 @@ function Home() {
 
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(true);
 
-  const [isCurrentTransaction, setIsCurrentTransaction] = useState(false);
+  const [isCurrentTransaction] = useState(false);
 
-  // useEffect(fn) // all state
-  // useEffect(fn, []) // no state
-  // useEffect(fn, [these, states])
+  async function retrieveStoredUser() {
+    // load stored user transactions
+    try {
+      const userObject = await loadUserObject();
+
+      // set stored user transactions
+      setTransactions(userObject.user.transactions);
+    } catch (e) {
+      // statements
+      // console.log('Could not load stored user');
+    }
+  }
 
   const clearState = () => {
     retrieveStoredUser(); // load stored user
@@ -102,15 +115,154 @@ function Home() {
     setIsSlideViewHidden(true);
   };
 
-  const refresh = () => {
-    retrieveFonts();// load Fonts
-    retrieveStoredUser(); // load stored user transactions
+  async function retrieveFonts() {
+    // load fonts
+    await Font.loadAsync({
+      'SFProDisplay-Regular': global.SFProDisplayRegularFont,
+      'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
+    });
+    setFontsAreLoaded(true);
+  }
+
+  async function removeUserTransaction(transaction) {
+    const userObject = await loadUserObject();
+
+    // loop thru stored transactions and splice transaction from it
+    let i = userObject.user.transactions.length - 1;
+
+    for (i; i >= 0; i -= 1) {
+      if (userObject.user.transactions[i].id === transaction.id) {
+        userObject.user.transactions.splice(i, 1);
+      }
+    }
+    saveUserObject(userObject);
+
+    clearState();
+  }
+
+  async function storeUserTransaction(transaction) {
+    const userObject = await loadUserObject(); // load user object
+
+    userObject.user.transactions.unshift(transaction);
+
+    saveUserObject(userObject);
+
+    clearState();
+  }
+
+  const showSlideView = useCallback(
+    () => {
+      Animated.spring(
+        slideViewBounceValue,
+        {
+          toValue: 0,
+          velocity: 30,
+          tension: 2,
+          friction: 8,
+        },
+      ).start();
+      setIsSlideViewHidden(false);
+    },
+    [slideViewBounceValue],
+  );
+
+  const hideSlideView = useCallback(
+    () => {
+      Animated.spring(
+        slideViewBounceValue,
+        {
+          toValue: 300,
+          velocity: 30,
+          tension: 2,
+          friction: 8,
+        },
+      ).start();
+      setIsSlideViewHidden(true);
+    },
+    [slideViewBounceValue],
+  );
+
+  // value changes
+  const handleChange = (value) => {
+    // check for limit of 11 digits
+    if (String(value).length > global.maxAmountLength) {
+      return;
+    }
+    setCurrentAmount(value);
   };
+
+  const numberBtnPressed = (number) => {
+    // truncate single AND leading zeros; concatenate old + new values
+    const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
+    handleChange(newValue);
+  };
+
+  const createNewTransaction = () => {
+    let transaction = null;
+
+    // check if category is selected and amount is provided by user
+    if ((currentCategory) && (currentAmount > 0) && currentType) {
+      // do date stuff here
+
+      // convert amount to money format
+      let amount = currentAmount / 100;
+      amount = (currentType === 'income') ? amount : amount * -1; // income/expense
+
+      // do payee stuff here
+      transaction = new Transaction(
+        // currentTransactions.length, // id
+        new Date(), // current date
+        amount, // current camount
+        {}, // payee obj
+        currentCategory, // category object
+        currentCategory.type, // type
+      );
+      // console.log(transaction);
+    }
+    return transaction;
+  };
+
+  const addTransactionBtnPressed = () => {
+    const transaction = createNewTransaction();
+    if (transaction) {
+      storeUserTransaction(transaction); // add new transaction to existing storage
+    }
+    // console.log(transaction);
+  };
+
+  const backspaceBtnPressed = () => {
+    // check for null, NaN, undefined, ''
+    if (currentAmount) {
+      const strValue = String(currentAmount);
+      // pop last char from string value
+      const newStr = strValue.substring(0, strValue.length - 1);
+
+      handleChange(newStr);
+    }
+  };
+
+  const handlePress = (value) => {
+    if (typeof (value) === 'number') {
+      numberBtnPressed(value);
+    } else if (value === 'Add') {
+      addTransactionBtnPressed();
+      // console.log('Add', value)
+    } else if (value === '<') {
+      backspaceBtnPressed();
+    } else {
+      throw new Error('Pressed:', value);
+    }
+  };
+
+  // useEffect(fn) // all state
+  // useEffect(fn, []) // no state
+  // useEffect(fn, [these, states])
 
   // component did mount
   useEffect(() => {
     // console.log('mount Home');
-    refresh();
+    retrieveFonts();
+    retrieveStoredUser();
 
     return () => {
       // console.log('Clean up Home');
@@ -148,29 +300,7 @@ function Home() {
       // effect
       // console.log('clean up current transaction');
     };
-  }, [currentTransaction]);
-
-  const retrieveFonts = async () => {
-    // load fonts
-    await Font.loadAsync({
-      'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-      'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-    });
-    setFontsAreLoaded(true);
-  };
-
-  const retrieveStoredUser = async () => {
-    // load stored user transactions
-    try {
-      const userObject = await loadUserObject();
-
-      // set stored user transactions
-      setTransactions(userObject.user.transactions);
-    } catch (e) {
-      // statements
-      // console.log('Could not load stored user');
-    }
-  };
+  }, [currentTransaction, hideSlideView, showSlideView]);
 
   // actions
   const transactionBtnPressed = (transaction) => {
@@ -209,133 +339,12 @@ function Home() {
     }
   };
 
-  const numberBtnPressed = (number) => {
-    // truncate single AND leading zeros; concatenate old + new values
-    const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
-    handleChange(newValue);
-  };
-  const backspaceBtnPressed = () => {
-    // check for null, NaN, undefined, ''
-    if (currentAmount) {
-      const strValue = String(currentAmount);
-      // pop last char from string value
-      const newStr = strValue.substring(0, strValue.length - 1);
-
-      handleChange(newStr);
-    }
-  };
-
-  const showSlideView = () => {
-    Animated.spring(
-      slideViewBounceValue,
-      {
-        toValue: 0,
-        velocity: 30,
-        tension: 2,
-        friction: 8,
-      }
-    ).start();
-    setIsSlideViewHidden(false);
-  };
-
-  const hideSlideView = () => {
-    Animated.spring(
-      slideViewBounceValue,
-      {
-        toValue: 300,
-        velocity: 30,
-        tension: 2,
-        friction: 8,
-      }
-    ).start();
-    setIsSlideViewHidden(true);
-  };
-
-  const handlePress = (value) => {
-    if (typeof (value) === 'number') {
-      numberBtnPressed(value);
-    } else if (value === 'Add') {
-      addTransactionBtnPressed();
-      // console.log('Add', value)
-    } else if (value === '<') {
-      backspaceBtnPressed();
-    } else {
-      throw new Error('Pressed:', value);
-    }
-  };
-
-  // value changes
-  const handleChange = (value) => {
-    // check for limit of 11 digits
-    if (String(value).length > global.maxAmountLength) {
-      return;
-    }
-    setCurrentAmount(value);
-  };
-
-
-  const createNewTransaction = () => {
-    let transaction = null;
-
-    // check if category is selected and amount is provided by user
-    if ((currentCategory) && (currentAmount > 0) && currentType) {
-      // do date stuff here
-
-      // convert amount to money format
-      let amount = currentAmount / 100;
-      amount = (currentType === 'income') ? amount : amount * -1; // income/expense
-
-      // do payee stuff here
-      transaction = new Transaction(
-        // currentTransactions.length, // id
-        new Date(), // current date
-        amount, // current camount
-        {}, // payee obj
-        currentCategory, // category object
-        currentCategory.type // type
-      );
-      // console.log(transaction);
-    }
-    return transaction;
-  };
-
-  const addTransactionBtnPressed = () => {
-    const transaction = createNewTransaction();
-    if (transaction) {
-      storeUserTransaction(transaction); // add new transaction to existing storage
-    }
-    // console.log(transaction);
-  };
-
-  const storeUserTransaction = async (transaction) => {
-    const userObject = await loadUserObject(); // load user object
-
-    userObject.user.transactions.unshift(transaction);
-
-    saveUserObject(userObject);
-
-    clearState();
-  };
-
-  const removeUserTransaction = async (transaction) => {
-    const userObject = await loadUserObject();
-
-    // loop thru stored transactions and splice transaction from it
-    let i = userObject.user.transactions.length - 1;
-
-    for (i; i >= 0; i -= 1) {
-      if (userObject.user.transactions[i].id === transaction.id) {
-        userObject.user.transactions.splice(i, 1);
-      }
-    }
-
-    saveUserObject(userObject);
-
-    clearState();
-  };
-
   // return component
-  let view = (<View style={styles.container}><SpinnerMask /></View>);
+  let view = (
+    <View style={styles.container}>
+      <SpinnerMask />
+    </View>
+  );
 
   if (fontsAreLoaded) {
     view = (
@@ -373,7 +382,7 @@ function Home() {
           topPosition="57%"
           shadowOffset={{
             width: 1,
-            height: 1
+            height: 1,
           }}
           shadowRadius={26}
           shadowOpacity={1}
@@ -401,19 +410,7 @@ function Home() {
   return view;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: colors.darkTwo,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  }
-});
-
-Home.navigationOptions = ({ screenProps }) => {
+Home.navigationOptions = () => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},

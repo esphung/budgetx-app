@@ -30,10 +30,11 @@ import {
 } from '../storage/UserStorage';
 
 // components
-import MyStickyTable from '../components/TransactionsView/MyStickyTable';
-import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
+import MyStickyTable from '../components/TransactionsTable/MyStickyTable';
 import SpinnerMask from '../components/SpinnerMask';
-import SlideUp from '../components/SlideUp/SlideUp';
+
+import ScrollingPillCategoriesView from '../components/home/ScrollingPillCategoriesView';
+import SlideUp from '../components/home/SlideUp';
 
 // models
 // import Transaction from '../models/Transaction';

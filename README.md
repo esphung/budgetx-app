@@ -15,11 +15,12 @@
                 11/27/2019 12:41 AM
                 12/03/2019 11:47 AM
                 12/04/2019 04:01 PM
+                12/05/2019 12:19 PM
 
 <hr>
-<img src="budgetX-designs/Financely-First-Opened.png" alt="Home App Screen" width="100"/>
-<img src="budgetX-designs/Financely.png" alt="Financely Screen" width="100"/>
-<img src="budgetX-designs/Financely-2.png" alt="Financely 2 Screen" width="100"/>
-<img src="budgetX-designs/Financely-3.png" alt="Financely 3 Screen" width="100"/>
-<img src="budgetX-designs/Financely-Search.png" alt="Financely Search Screen" width="100"/>
-<img src="budgetX-designs/Financely-Settings.png" alt="Financely Settings Screen" width="100"/>
+<img src="designs/Financely-First-Opened.png" alt="Home App Screen" width="100"/>
+<img src="designs/Financely.png" alt="Financely Screen" width="100"/>
+<img src="designs/Financely-2.png" alt="Financely 2 Screen" width="100"/>
+<img src="designs/Financely-3.png" alt="Financely 3 Screen" width="100"/>
+<img src="designs/Financely-Search.png" alt="Financely Search Screen" width="100"/>
+<img src="designs/Financely-Settings.png" alt="Financely Settings Screen" width="100"/>
