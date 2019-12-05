@@ -20,25 +20,16 @@ import ItemNameInput from './ItemNameInput';
 // import ItemDate from './ItemDate';
 import ItemAmount from './ItemAmount';
 
-const TransactionItem = (props) => {
+function TransactionItem(props) {
     const {
       item,
       onPress,
-      currentTransaction,
-      // isEnabled,
-      isSelected
+      currentTransaction
     } = props;
 
+    let textColor = colors.offWhite // 'rgba(255, 255, 255, 0.5)';
 
-    // find headers
-    // let isHeader = item.isHeader;
-
-    //  item css
-    // let borderWidth = 0;
-    let textColor = 'rgba(255, 255, 255, 0.5)';
-
-    if (isSelected) {
-      // borderWidth = 1;
+    if (currentTransaction === item) {
       textColor = `${item.category.color}`; // item.category.color + '0f';
     }
 
@@ -68,11 +59,8 @@ const TransactionItem = (props) => {
           <ItemSymbol item={item} />
 
           <ItemCategory
-            // item={item}
-            // isCurrentTransaction={isCurrentTransaction}
             item={item}
- 
-            color={textColor}
+            textColor={textColor}
           />
 
           <ItemNameInput item={item} />

@@ -2,64 +2,21 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  // StyleSheet,
   View,
   Text
 } from 'react-native';
 
-import * as Font from 'expo-font';
+// import * as Font from 'expo-font';
+
+import SpinnerMask from '../SpinnerMask';
 
 // ui colors
 import colors from '../../../colors';
 
-import SpinnerMask from '../SpinnerMask';
-
-import MyComponent from "components/MyComponent";
-
-function getCurrencySymbol(amount) {
-  let symbol = '$';
-  if (amount < 0) {
-    symbol = '- $';
-  }
-  return symbol;
-}
-
-function getFormattedDateString(date) {
-  const transactionDate = new Date(date);
-
-  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-  let day = dayNames[transactionDate.getDay()];
-  let dd = transactionDate.getDate();
-  let mm = transactionDate.getMonth() + 1; // January is 0!
-  const yyyy = transactionDate.getFullYear();
-  const hours = transactionDate.getHours();
-  let minutes = transactionDate.getMinutes();
-
-  if(dd<10) { dd='0'+dd } 
-  if(mm<10)  { mm='0'+mm } 
-  if(minutes<10){ minutes='0'+minutes }
-
-  // set 'today' label
-  const todaysDate = new Date();
-  if ((transactionDate.getDay() === todaysDate.getDay()) && (transactionDate.getMonth() === todaysDate.getMonth()) && (transactionDate.getFullYear() === todaysDate.getFullYear())) {
-    day = 'Today';
-  }
-
-  // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
-  let string = day + ', ' + monthNames[mm - 1] + ' ' + parseInt(dd, 10);
-
-  // if different year, show the year
-  if (todaysDate.getFullYear() !== yyyy) {
-    string = day + ', ' + monthNames[mm - 1] + ' ' + parseInt(dd, 10) + ', ' + yyyy;
-  }
-  return string;
-};
-
+import { getCurrencySymbol, getFormattedDateString } from '../functions';
 
 const SlideUpTransactionRect = (props) => {
-  const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
+  const [dataIsLoaded, setDataIsLoaded] = useState(false);
 
   const [textLabel, setTextLabel] = useState('');
 
@@ -69,51 +26,48 @@ const SlideUpTransactionRect = (props) => {
 
   const [transaction, setTransaction] = useState(null);
 
-
   useEffect(() => {
-    // console.log('Mounts')
-    retrieveFonts();
+    // console.log('Mount');
+    retrieveData();
 
-    if (props.transaction) {
-      setTransaction(props.transaction);
-      // console.log(transaction)
+    if (transaction) {
+      // console.log('transaction');
 
-      setAmount(props.transaction.amount);
+      setAmount(transaction.amount);
 
-      // console.log(props.transaction.date);
+      setDate(transaction.date);
 
-      setDate(props.transaction.date);
-
-      setTextLabel(`${getFormattedDateString(date)}`); // Amount Spent on 
+      setTextLabel(`${getFormattedDateString(date)}`); // "Amount Spent on"
     }
-
     // return () => {
     //   // effect
-    //   // console.log('clean up')
+    //   // console.log('clean up');
     // };
   });
 
-  const retrieveFonts = async () => {
+  const retrieveData = async () => {
     // load fonts
-    await Font.loadAsync({
-      'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-      'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-    });
-    setFontsAreLoaded(true);
+    // await Font.loadAsync({
+    //   'SFProDisplay-Regular': global.SFProDisplayRegularFont,
+    //   'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
+    // });
+    setTransaction(props.transaction);
+
+    setDataIsLoaded(true);
   };
 
   let view = <SpinnerMask />;
 
-  if (fontsAreLoaded) {
+  if (dataIsLoaded && transaction) {
     view = (
       <View style={rectangle2}>
 
         <Text style={copy9}>{ textLabel }</Text>
         <Text style={copy}>
           <Text style={{ color: colors.offWhite }}>
-            { getCurrencySymbol(amount) }
+            {`${getCurrencySymbol(amount)}`}
           </Text>
-          { Math.abs(amount).toFixed(2) }
+          {`${Math.abs(amount).toFixed(2)}`}
         </Text>
       </View>
     );

@@ -13,6 +13,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             11/29/2019 04:40 AM | Hooks conversion
             12/02/2019 12:11 AM | Implemented storage user
             12/03/2019 12:07 PM
+            12/04/2019 04:41 PM | Hide HeaderLeft and Hide Search btn
 */
 
 import React, { useState, useEffect } from 'react';
@@ -42,54 +43,20 @@ import {
 import HeaderLeftView from '../components/Header/HeaderLeftView';
 import HeaderRightView from '../components/Header/HeaderRightView';
 import BalanceView from '../components/Balances/BalanceView';
-import MyStickyTable from '../components/TransactionsView/MyStickyTable';
+import MyStickyTable from '../components/TransactionsTable/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/CategoryPills/ScrollingPillCategoriesView';
 import AmountInputView from '../components/AmountInput/AmountInputView';
 import KeypadView from '../components/Keypad/KeypadView';
 import SlideUp from '../components/SlideUp/SlideUp';
 import SpinnerMask from '../components/SpinnerMask';
 
+// data models
 import Transaction from '../models/Transaction';
-// const Transaction = require('../models/Transaction');
 
 // ui colors
 import colors from '../../colors';
 
-import { dates } from '../functions/dates';
-
-const calculateBalance = (array) => {
-  let balance = 0.00;
-  if (array) {
-    let i = array.length - 1;
-    for (i; i >= 0; i -= 1) {
-      if (array[i].amount) {
-        // console.log(array[i].amount);
-        balance += array[i].amount;
-      }
-    }
-  }
-  return balance.toFixed(2);
-};
-
-const calculateMonthSpent = (array) => {
-  let balance = 0.00;
-  if (array) {
-    //  get date 30 days ago
-    const date = new Date();
-    date.setDate(date.getDate() - 30);
-
-    let i = array.length - 1;
-    for (i; i >= 0; i -= 1) {
-      if (dates.compare(array[i].date, date) > 0) {
-        if (array[i].amount <= 0.00) {
-          // console.log(array[i].amount);
-          balance += array[i].amount;
-        }
-      }
-    }
-  }
-  return balance.toFixed(2);
-};
+import { calculateBalance, calculateMonthSpent } from './functions';
 
 function Home() {
   // hooks
@@ -112,6 +79,8 @@ function Home() {
   const [slideViewBounceValue, setSlideViewBounceValue] = useState(new Animated.Value(300));
 
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(true);
+
+  const [isCurrentTransaction, setIsCurrentTransaction] = useState(false);
 
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
@@ -136,12 +105,13 @@ function Home() {
   const refresh = () => {
     retrieveFonts();// load Fonts
     retrieveStoredUser(); // load stored user transactions
-  }
+  };
 
   // component did mount
   useEffect(() => {
     // console.log('mount Home');
     refresh();
+
     return () => {
       // console.log('Clean up Home');
     };
@@ -176,7 +146,7 @@ function Home() {
     }
     return () => {
       // effect
-      console.log('clean up current transaction');
+      // console.log('clean up current transaction');
     };
   }, [currentTransaction]);
 
@@ -303,6 +273,7 @@ function Home() {
     setCurrentAmount(value);
   };
 
+
   const createNewTransaction = () => {
     let transaction = null;
 
@@ -364,15 +335,14 @@ function Home() {
   };
 
   // return component
-  let view = <View />;
+  let view = (<View style={styles.container}><SpinnerMask /></View>);
 
   if (fontsAreLoaded) {
     view = (
-
       <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
         <NavigationEvents
           // try only this. and your component will auto refresh when this is the active component
-          onWillFocus={payload => clearState()}
+          onWillFocus={() => clearState()} // {(payload) => clearState()}
           // other props
           // onDidFocus={payload => console.log('did focus',payload)}
           // onWillBlur={payload => console.log('will blur',payload)}
@@ -394,6 +364,7 @@ function Home() {
 
           onPress={(transaction) => transactionBtnPressed(transaction)}
           deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
+          isCurrentTransaction={isCurrentTransaction}
         />
 
         <ScrollingPillCategoriesView
@@ -425,12 +396,6 @@ function Home() {
         />
 
       </ScrollView>
-    );
-  } else {
-    view = (
-      <View style={styles.container}>
-        <SpinnerMask />
-      </View>
     );
   }
   return view;

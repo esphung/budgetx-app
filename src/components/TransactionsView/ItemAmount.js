@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 
-import getMinusSymbol from '../../functions/getMinusSymbol';
+import { View, Text } from 'react-native';
 
 // ui colors
 import colors from '../../../colors';
 
-const ItemAmount = (props) => {
+import { getCurrencySymbol } from '../functions';
+
+function ItemAmount(props) {
   const { item } = props;
   return (
     <View style={{
@@ -31,9 +32,6 @@ const ItemAmount = (props) => {
       <Text>
 
         <Text style={{
-          // flex: 1,
-
-          // textAlignVertical: 'center',
           width: '100%',
           height: 20,
           fontFamily: 'SFProDisplay-Regular',
@@ -44,13 +42,11 @@ const ItemAmount = (props) => {
           color: colors.offWhite,
         }}
         >
-          { getMinusSymbol(item) }
+          {`${getCurrencySymbol(item.amount)}`}
 
         </Text>
 
         <Text style={{
-          // flex: 1,
-
           width: '100%',
           height: 20,
           fontFamily: 'SFProDisplay-Regular',
@@ -63,13 +59,13 @@ const ItemAmount = (props) => {
 
         }}
         >
-          { Math.abs(item.amount) }
+          {`${Math.abs(item.amount).toFixed(2)}`}
 
         </Text>
       </Text>
 
     </View>
   );
-};
+}
 
 export default ItemAmount;

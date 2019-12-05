@@ -4,6 +4,14 @@
 // CREATED:   11/11/2019 11:23 PM
 // UPDATED:   11/27/2019 12:40 AM
 
+
+// function truncateString(str, num) {
+//   if (str.length <= num) {
+//     return str
+//   }
+//   return str.slice(0, num)
+// }
+
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
 
@@ -18,10 +26,10 @@ const StackNavigator = createStackNavigator({
   Settings: {
     screen: Settings,
   },
-
-  Search: {
-    screen: Search,
-  }
+  // Search: {
+  //   screen: Search,
+  // },
+  // initialRouteName: 'Home',
 });
 
 const AppContainer = createAppContainer(StackNavigator);

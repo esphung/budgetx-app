@@ -2,21 +2,17 @@ import React from 'react';
 
 import {
   StyleSheet,
-  Animated,
-  // Text
+  Animated
 } from 'react-native';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
 
 import SlideUpTransactionRect from './SlideUpTransactionRect';
 
-function SlideUpViews(props) {
+function SlideUpView(props) {
   const {
     slideViewBounceValue,
-    // toggleSlideView,
-    // currentType,
-    // onPress
     transaction
   } = props;
 
@@ -60,4 +56,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default SlideUpViews;
+export default SlideUpView;

@@ -1,7 +1,4 @@
-import React, {
-  useState,
-  useEffect
-} from 'react';
+import React from 'react';
 
 import {
   StyleSheet,
@@ -128,41 +125,27 @@ const MyStickyTable = (props) => {
     tableHeight,
     tablePosition,
     onPress,
-    isEnabled,
-    deleteBtnPressed
+    deleteBtnPressed,
+    currentTransaction,
+    transactions,
+    isCurrentTransaction
   } = props;
-
-  const [data,setData] = useState([]); // sortByHeadersDateDescending(props.transactions)
-
-  const [currentTransaction, setCurrentTransaction] = useState(null);
-
-  useEffect(() => {
-    setData(sortByHeadersDateDescending(props.transactions));
-    setCurrentTransaction(props.currentTransaction);
-    return () => {
-      // effect
-    };
-  }, [])
-
-  // const [stickyHeaderIndices, setStickyHeaderIndices] = useState(getStickyIndices(data));
-
-  function Render_Empty_Component() {
-    return <EmptyListView />
-  }
 
   function getStickyIndices() {
     // const { data } = this.state;
     const indices = [];
     let i = 0;
-    for (i; i <= data.length - 1; i += 1) {
-      if (data[i].header === true) {
+    for (i; i <= transactions.length - 1; i += 1) {
+      if (transactions[i].header === true) {
         indices.push(i);
       }
     }
     return indices;
   }
 
-  function renderItem({ item, index }) {
+
+
+  function renderItem({ item }) {
     if (item.header) {
       return (
         <View style={styles.rowFront}>
@@ -177,9 +160,8 @@ const MyStickyTable = (props) => {
           // keyExtractor={() => String(index)} // {data[index]} // () => console.log(index)
           item={item}
           isSelected={false}
-          onPress={() => props.onPress(item)} //{onPress} // console.log(data[index])
+          onPress={() => onPress(item)} // {onPress} // console.log(data[index])
           currentTransaction={currentTransaction}
-          // isEnabled={isEnabled}
         />
       </View>
     );
@@ -223,7 +205,6 @@ const MyStickyTable = (props) => {
   }
 
 
-
   return (
     <SwipeListView
       style={
@@ -241,7 +222,7 @@ const MyStickyTable = (props) => {
         }
       }
 
-      data={data}
+      data={sortByHeadersDateDescending(transactions)}
       // extraData={setData}
       renderItem={renderItem}
       keyExtractor={(item, index) => String(index)}

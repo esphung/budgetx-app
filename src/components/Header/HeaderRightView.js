@@ -5,6 +5,7 @@ AUTHOR:     eric phung
 DATE:       Sun Nov  3 14:25:49 2019
             12/11/2019 12:31 AM
             12/04/2019 04:39 PM | implemented hooks
+            12/04/2019 07:41 PM Updated to TouchabaleOp from gesture handler. changed css
 */
 
 import React, { useState, useEffect } from 'react';
@@ -12,9 +13,16 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
+  // TouchableOpacity,
   Image
 } from 'react-native';
+
+import {
+  // TouchableNativeFeedback,
+  // TouchableHighlight,
+  TouchableOpacity,
+  // TouchableWithoutFeedback
+} from 'react-native-gesture-handler';
 
 import { withNavigation } from 'react-navigation';
 
@@ -27,9 +35,9 @@ function HeaderRightView(props) {
     setNavigation(props.navigation);
   }, []);
 
-  // const searchBtnPressed = () => {
-  //   navigation.navigate('Search');
-  // };
+  const searchBtnPressed = () => {
+    navigation.navigate('Search');
+  };
 
   const settingsBtnPressed = () => {
     navigation.navigate('Settings');
@@ -38,7 +46,7 @@ function HeaderRightView(props) {
   return (
     <View style={
       {
-        flex: 1,
+        // flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -55,8 +63,7 @@ function HeaderRightView(props) {
     >
       {/* ==== Search Button ==== */}
 
-      {/*
-      <TouchableOpacity
+{/*      <TouchableOpacity
         onPress={searchBtnPressed}
         style={styles.searchBtnTouchableOpacity}
       >
@@ -68,8 +75,7 @@ function HeaderRightView(props) {
         />
 
       </TouchableOpacity>
-      */}
-
+*/}
       {/* ==== Settings Button ==== */}
 
       <TouchableOpacity
@@ -91,9 +97,12 @@ function HeaderRightView(props) {
 
 const styles = StyleSheet.create({
   searchBtnTouchableOpacity: {
-    flex: 0.5,
-    width: 40,
+    width: 45,
     height: '60%'
+
+    // flex: 0.5,
+    // width: 40,
+    // height: '60%',
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -106,20 +115,18 @@ const styles = StyleSheet.create({
   },
 
   settingsBtnTouchableOpacity: {
-    flex: 0.5,
+    // flex: 1,
     width: 45, // 30,
-    height: 45 // 30,
+    // height: 45, // 30,
 
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'dashed',
-
   },
 
   settingsImage: {
     width: '100%',
     height: '100%'
-
   }
 });
 

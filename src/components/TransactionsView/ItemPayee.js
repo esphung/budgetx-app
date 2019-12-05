@@ -1,50 +1,37 @@
 import React from 'react';
+
 import { Text, View } from 'react-native';
 
 // ui colors
 import colors from '../../../colors';
 
-const ItemPayee = (props) => {
+function ItemPayee(props) {
   const { item } = props;
 
   return (
-    <View style={{
-      flex: 1,
+    <View style={
+      {
+        flex: 1,
+        justifyContent: 'center',
 
-      // flexDirection: 'row',
-
-      justifyContent: 'center',
-
-
-      // borderWidth: 1,
-      // borderColor: 'white',
-      // borderStyle: 'dotted',
-    }}
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'dotted',
+      }
+    }
     >
       <Text style={
         {
-          // width: 'auto',
           fontFamily: 'SFProDisplay-Semibold',
           fontSize: 17,
           fontWeight: 'normal',
           fontStyle: 'normal',
           letterSpacing: 0.13,
-
-          // marginHorizontal: 10,
-          // paddingRight: 10,
-
-          // color: item.category.color +  '7f',
-
           color: colors.white,
-
-          // backgroundColor: colors.darkTwo,
-
-
         }
       }
       >
-
-        { item.payee.name }
+        {`${item.payee.name}`}
 
       </Text>
     </View>

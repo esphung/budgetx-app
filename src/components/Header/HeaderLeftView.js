@@ -3,6 +3,7 @@ FILENAME:   HeaderLeftView.js
 PURPOSE:    left side of header in home view
 AUTHOR:     eric phung
 DATE:       Sun Nov  3 13:47:40 2019
+UPDATED:    12/04/2019 05:07 PM | commented out Font loader
 */
 
 
@@ -44,10 +45,10 @@ const HeaderLeftView = () => {
 
   const retrieveFonts = async () => {
     // load sf pro fonts
-    await Font.loadAsync({
-      'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-      'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-    });
+    // await Font.loadAsync({
+    //   'SFProDisplay-Regular': global.SFProDisplayRegularFont,
+    //   'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
+    // });
     setFontsAreLoaded(true);
   };
 

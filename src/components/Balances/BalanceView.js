@@ -10,21 +10,15 @@ import {
 // ui colors
 import colors from '../../../colors';
 
-function getCurrencySymbol (amount) {
-  let symbol = '$';
-  if (amount < 0) {
-    symbol = '- $';
-  }
-  return symbol;
-}
+import { getCurrencySymbol } from '../functions';
 
 function BalanceView(props) {
   const currentBalanceBtnPressed = () => {
-    console.log('Current Balance:', currentBalanceValue)
+    // console.log('Current Balance:', currentBalanceValue);
   };
 
   const currentSpentValueBtnPressed = () => {
-    console.log('Current Spent:', currentSpentValue)
+    // console.log('Current Spent:', currentSpentValue);
   };
 
   const { currentBalanceValue, currentSpentValue } = props;
@@ -38,11 +32,11 @@ function BalanceView(props) {
     setBalance(currentBalanceValue);
 
     setSpent(currentSpentValue);
-    
-    return () => {
-      // console.log('Clean Up')
-    };
-  })
+
+    // return () => {
+    //   // console.log('Clean Up')
+    // };
+  });
 
   return (
     <View style={styles.balanceView}>
@@ -62,7 +56,7 @@ function BalanceView(props) {
             <Text
               style={styles.currentBalanceValue}
             >
-              <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(balance)} `}</Text>
+              <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(balance)}`}</Text>
               <Text>{`${Math.abs(balance).toFixed(2)}`}</Text>
             </Text>
           </TouchableOpacity>
@@ -83,7 +77,7 @@ function BalanceView(props) {
 
           <TouchableOpacity onPress={() => currentSpentValueBtnPressed()}>
             <Text style={styles.currentSpentValue}>
-              <Text style={{color: colors.offWhite }}>{`${getCurrencySymbol(spent)} `}</Text>
+              <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(spent)}`}</Text>
               <Text>{ `${Math.abs(spent).toFixed(2)}` }</Text>
             </Text>
           </TouchableOpacity>

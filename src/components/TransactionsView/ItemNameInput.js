@@ -8,10 +8,15 @@ import {
 // ui colors
 import colors from '../../../colors';
 
+// import {
+//   loadTransactionsObject,
+//   saveTransactionsObject
+// } from '../../storage/TransactionsStorage';
+
 import {
-  loadTransactionsObject,
-  saveTransactionsObject
-} from '../../storage/TransactionsStorage';
+  loadUserObject,
+  saveUserObject
+} from '../../storage/UserStorage';
 
 import {
   loadPayees,
@@ -81,24 +86,20 @@ class ItemNameInput extends Component {
     const previousPayee = search(text, payees);
 
     if (previousPayee) {
-      // console.log('PREVIOUS:',previousObj);
-      // save payee to item (transaction)
-      // load saved transactions
-      const transactionsObj = await loadTransactionsObject(); // load storage object
+      // load stored user
+      const userObject = await loadUserObject(); // load storage object
 
-      const { transactions } = transactionsObj; // get transactions from storage object
-
-      // // find current transaction from list
-      let i = transactions.length - 1;
+      // find current transaction fromm user transactions list
+      let i = userObject.user.transactions.length - 1;
       for (i; i >= 0; i -= 1) {
-        if (transactions[i].id === item.id) {
-          // set transaction payee
-          transactions[i].payee = previousPayee;
+        if (userObject.user.transactions[i].id === item.id) {
+          // set user transaction payee
+          userObject.user.transactions[i].payee = previousPayee;
 
           // console.log(transactions[i]);
 
           // save transactions list
-          saveTransactionsObject(transactionsObj);
+          saveUserObject(userObject);
 
           // return from here
           return;
@@ -108,7 +109,7 @@ class ItemNameInput extends Component {
       // clean scrub name
 
       //  create new payee
-      const payee = new Payee(payees.length, text);
+      const payee = new Payee(text);
 
       // add payee to list
       payees.push(payee);
@@ -117,22 +118,20 @@ class ItemNameInput extends Component {
       // save new list of payees
       savePayees(payeesObject);
 
-      // load saved transactions
-      const transactionsObj = await loadTransactionsObject(); // load storage object
-
-      const { transactions } = transactionsObj; // get transactions from storage object
+      // load user saved transactions
+      const userObject = await loadUserObject(); // load storage object
 
       // // find current transaction from list
-      let i = transactions.length - 1;
+      let i = userObject.user.transactions.length - 1;
       for (i; i >= 0; i -= 1) {
-        if (transactions[i].id === item.id) {
+        if (userObject.user.transactions[i].id === item.id) {
           // set transaction payee
-          transactions[i].payee = payee;
+          userObject.user.transactions[i].payee = payee;
 
           // console.log(transactions[i]);
 
           // save transactions list
-          saveTransactionsObject(transactionsObj);
+          saveUserObject(userObject);
 
           // return from here
           return;
@@ -146,7 +145,7 @@ class ItemNameInput extends Component {
   render() {
     // const { item } = this.props;
 
-    const { text, payee } = this.state;
+    const { text } = this.state;
     return (
       <View
         style={
