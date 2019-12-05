@@ -19,6 +19,8 @@ function User(email) {
   this.given = ''; // first name
   this.surname = '';
 
+  this.profileImage = global.placeholderUserImage;
+
   this.categories = defaultCategories;
 
   this.getFullName = () => {

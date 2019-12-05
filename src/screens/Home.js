@@ -43,7 +43,7 @@ import MyStickyTable from '../components/TransactionsTable/MyStickyTable';
 import ScrollingPillCategoriesView from '../components/home/ScrollingPillCategoriesView';
 import AmountInputView from '../components/home/AmountInputView';
 import KeypadView from '../components/home/KeypadView';
-import SlideUp from '../components/home/SlideUp';
+import SlideUpView from '../components/home/SlideUpView';
 import SpinnerMask from '../components/SpinnerMask';
 
 // data models
@@ -398,8 +398,7 @@ function Home() {
 
         <KeypadView handlePress={handlePress} />
 
-        <SlideUp
-          // toggleSlideView={() => {}} // toggleSlideView()}
+        <SlideUpView
           slideViewBounceValue={slideViewBounceValue}
           transaction={currentTransaction}
         />

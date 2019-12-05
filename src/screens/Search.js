@@ -34,7 +34,7 @@ import MyStickyTable from '../components/TransactionsTable/MyStickyTable';
 import SpinnerMask from '../components/SpinnerMask';
 
 import ScrollingPillCategoriesView from '../components/home/ScrollingPillCategoriesView';
-import SlideUp from '../components/home/SlideUp';
+import SlideUpView from '../components/home/SlideUpView';
 
 // models
 // import Transaction from '../models/Transaction';
@@ -300,7 +300,7 @@ const Search = () => {
           deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
         />
 
-        <SlideUp
+        <SlideUpView
           toggleSlideView={() => {}} // toggleSlideView()}
           slideViewBounceValue={slideViewBounceValue}
         />
@@ -498,7 +498,7 @@ export default Search;
 //           deleteBtnPressed={(transaction) => this.deleteBtnPressed(transaction)}
 //         />
 
-//           <SlideUp
+//           <SlideUpView
 //             toggleSlideView={() => this.toggleSlideView()}
 //             slideViewBounceValue={this.state.slideViewBounceValue}
 //           />
