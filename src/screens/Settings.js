@@ -17,13 +17,19 @@ import {
   // Button,
   // TouchableOpacity,
   Text,
-  Image,
-  TextInput
+  Image
+  // TextInput
 } from 'react-native';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { NavigationEvents } from 'react-navigation';
+
+import ProfileRectangle from '../components/settings/ProfileRectangle';
+
+import BankAccountRectangle from '../components/settings/BankAccountRectangle';
+
+import UserOptions from '../components/settings/UserOptions';
 
 // ui colors
 import colors from '../../colors';
@@ -31,7 +37,8 @@ import colors from '../../colors';
 function Settings() {
   return (
     <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
-      <NavigationEvents
+    {/*
+    <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         onWillFocus={() => console.log('Settings')} // {(payload) => clearState()}
         // other props
@@ -39,224 +46,160 @@ function Settings() {
         // onWillBlur={payload => console.log('will blur',payload)}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
+    */}
 
       <View style={rectangle5} />
 
-      <View style={userProfileRectangle}>
-        <View style={
+      <ProfileRectangle />
+
+      <BankAccountRectangle />
+
+      {/* User Options */}
+
+      <UserOptions />
+
+      <View
+        style={
+          {
+            flex: 0.4,
+
+            // top: '55%',
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        }
+      >
+        <Text
+          style={
             {
-              flex: 0.3,
+              height: 40,
+              opacity: 0.5,
+              fontFamily: 'SFProDisplay-Regular',
+              fontSize: 17,
+              fontWeight: 'normal',
+              fontStyle: 'normal',
+              letterSpacing: 0.13,
+              textAlign: 'center',
+              color: colors.white
+            }
+          }
+        >
+          Developed by Eric Phung
+        </Text>
+
+        <View
+          style={
+            {
+              flex: 1,
+              justifyContent: 'space-around',
+              flexDirection: 'row',
+
+              marginHorizontal: 20,
 
               // borderWidth: 1,
               // borderColor: 'white',
               // borderStyle: 'solid',
+            }
+          }
+        >
+          <View style={
+            {
+              // alignSelf: 'center',
+              // justifyContent: 'center',
+              width: '38%', // 133,
+              height: 46,
+              borderRadius: 23,
+              backgroundColor: colors.azure
+            }
+          }
+          >
+            <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', }}>
+              <Text
+                style={
+                  {
+                    fontFamily: 'SFProDisplay-Regular',
+                    fontSize: 17,
+                    fontWeight: 'normal',
+                    fontStyle: 'normal',
+                    letterSpacing: 0.13,
+                    textAlign: 'center',
+                    color: '#ffffff',
 
-              // backgroundColor: 'pink',
+                    alignSelf: 'center',
+
+                    // borderWidth: 1,
+                    // borderColor: 'white',
+                    // borderStyle: 'solid',
+                  }
+                }
+              >
+                Rate Us
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={
+              {
+                // alignSelf: 'center',
+                // justifyContent: 'center',
+                width: '38%', // 133,
+                height: 46,
+                borderRadius: 23,
+                backgroundColor: colors.azure
+              }
+            }
+          >
+            <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', }}>
+              <Text
+                style={
+                  {
+                    fontFamily: 'SFProDisplay-Regular',
+                    fontSize: 17,
+                    fontWeight: 'normal',
+                    fontStyle: 'normal',
+                    letterSpacing: 0.13,
+                    textAlign: 'center',
+                    color: '#ffffff',
+
+                    alignSelf: 'center',
+
+                    // borderWidth: 1,
+                    // borderColor: 'white',
+                    // borderStyle: 'solid',
+                  }
+                }
+              >
+              Share
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Text
+          style={
+            {
+              flex: 1,
+              // width: 61,
+              // height: 15,
+              opacity: 0.5,
+              fontFamily: 'SFProDisplay-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              fontStyle: 'normal',
+              letterSpacing: 0.1,
+              textAlign: 'center',
+              color: colors.white // '#ffffff'
             }
         }
         >
-          <TouchableOpacity style={
-            {
-              alignItems: 'center',
-              justifyContent: 'center',
-
-              width: '100%',
-              height: '100%',
-            }
-          }
-          >
-            <Image
-              source={global.placeholderUserImage}
-              style={
-                {
-                  width: '68%',
-                  height: '68%',
-                  backgroundColor: colors.darkGreyBlue,
-                  borderRadius: 29,
-                }
-              }
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <View style={
-            {
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
-            }
-          }
-          >
-            {/* User Name input */}
-            <Text style={
-              {
-                flex: 0.2,
-                // width: 44,
-                // height: 20,
-                fontFamily: 'SFProDisplay-Regular',
-                fontSize: 17,
-                fontWeight: 'normal',
-                fontStyle: 'normal',
-                letterSpacing: 0.13,
-                color: colors.white,
-
-                marginLeft: 5,
-                marginBottom: 4,
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
-              }
-            }
-            >
-            Name
-            </Text>
-            <TextInput
-              style={
-                {
-                  flex: 0.8,
-                  // width: 120,
-                  // height: 20,
-                  fontFamily: 'SFProDisplay-Regular',
-                  fontSize: 17,
-                  fontWeight: 'normal',
-                  fontStyle: 'normal',
-                  letterSpacing: 0.13,
-                  textAlign: 'right',
-                  color: colors.offWhite, // '#ffffff7f.8',
-
-                  marginRight: 10,
-                  marginBottom: 4,
-
-                  // borderWidth: 1,
-                  // borderColor: 'white',
-                  // borderStyle: 'solid',
-                }
-              }
-              placeholder="John Smith"
-
-              placeholderTextColor={colors.offWhite}
-
-              keyboardAppearance="dark" // ios
-
-              // textContentType="name" // ios
-
-              // keyboardType="name-phone-pad"
-
-              returnKeyType="done"
-
-              // autoCorrect={true}
-
-              autoCapitalize="sentences" // "words"
-
-              maxLength={24}
-
-              // onSubmitEditing={() => this.submitBtnPressed(text)}
-
-              // onChangeText={this.handleTextChange}
-
-              // editable={this.isInputEnabled}
-
-              // value={text}
-
-            />
-
-          </View>
-          <View style={line2} />
-          <View style={
-            {
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
-            }
-          }
-          >
-            {/* User Email input */}
-            <Text style={
-              {
-                flex: 0.2,
-                // width: 44,
-                // height: 20,
-                fontFamily: 'SFProDisplay-Regular',
-                fontSize: 17,
-                fontWeight: 'normal',
-                fontStyle: 'normal',
-                letterSpacing: 0.13,
-                color: colors.white,
-
-                marginLeft: 5,
-                marginBottom: 4,
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
-              }
-            }
-            >
-            Email
-            </Text>
-            <TextInput
-              style={
-                {
-                  flex: 0.8,
-                  // width: 120,
-                  // height: 20,
-                  fontFamily: 'SFProDisplay-Regular',
-                  fontSize: 17,
-                  fontWeight: 'normal',
-                  fontStyle: 'normal',
-                  letterSpacing: 0.13,
-                  textAlign: 'right',
-                  color: colors.offWhite, // '#ffffff7f.8',
-
-                  marginRight: 10,
-                  marginBottom: 4,
-
-                  // borderWidth: 1,
-                  // borderColor: 'white',
-                  // borderStyle: 'solid',
-                }
-              }
-              placeholder="mail@budgetx.com"
-
-              placeholderTextColor={colors.offWhite}
-
-              keyboardAppearance="dark" // ios
-
-              // textContentType="name" // ios
-
-              // keyboardType="name-phone-pad"
-
-              returnKeyType="done"
-
-              // autoCorrect={true}
-
-              autoCapitalize="sentences" // "words"
-
-              maxLength={24}
-
-              // onSubmitEditing={() => this.submitBtnPressed(text)}
-
-              // onChangeText={this.handleTextChange}
-
-              // editable={this.isInputEnabled}
-
-              // value={text}
-
-            />
-
-          </View>
-        </View>
+          
+        { `Version ${global.appVersion.toFixed(1)}` }
+        </Text>
       </View>
+
     </ScrollView>
   );
 }
@@ -310,7 +253,8 @@ Settings.navigationOptions = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    // alignItems: 'center',
+
     backgroundColor: colors.darkTwo,
 
     // borderWidth: 1,
@@ -335,8 +279,9 @@ const styles = StyleSheet.create({
 
 // header rectangle
 const rectangle5 = {
-  width: '100%', // 375,
-  height: '11%', // 88,
+  flex: 0.23,
+  // width: '100%', // 375,
+  // height: '11%', // 88,
   backgroundColor: colors.dark,
 
   // borderWidth: 1,
@@ -344,19 +289,10 @@ const rectangle5 = {
   // borderStyle: 'dashed',
 };
 
-const line2 = {
-  alignSelf: 'center',
-  justifyContent: 'center',
-  width: '95%', // 267,
-  height: '1%',
-  borderStyle: 'solid',
-  borderWidth: 1,
-  borderColor: colors.darkTwo
-};
 
 // log out header backBtn
 const copy18 = {
-  width: '100%',
+  // width: '100%',
   // width: 58,
   // height: 20,
   fontFamily: 'SFProDisplay-Regular',
@@ -371,6 +307,7 @@ const copy18 = {
   // borderColor: 'white',
   // borderStyle: 'dashed',
 };
+
 
 // right X header btn
 const combinedShape = {
@@ -395,22 +332,6 @@ const combinedShape = {
   // borderStyle: 'solid',
 };
 
-// user profile rectangle
-const userProfileRectangle = {
-  flexDirection: 'row',
-  // width: 375,
-  width: '100%',
-  // height: 92,
-  height: '11%',
-
-  backgroundColor: colors.dark,
-
-  top: '6%',
-
-  // borderWidth: 1,
-  // borderColor: 'white',
-  // borderStyle: 'dashed',
-};
 
 // const userProfilePicView = {
 //   flex: 1,

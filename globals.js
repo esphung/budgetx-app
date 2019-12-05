@@ -23,3 +23,5 @@ global.clickSound = require('./assets/sounds/test.mp3');
 // global.isSearchModeOn = false;
 
 global.maxAmountLength = 9;
+
+global.appVersion = 1.0;
