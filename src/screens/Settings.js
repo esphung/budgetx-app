@@ -5,6 +5,7 @@ AUTHOR:     Eric Phung
 CREATED:    Thu Oct 31 23:17:49 2019
 UPDATED:    12/04/2019 07:44 PM Changed to hook state
             12/04/2019 08:37 PM
+            12/04/2019 10:53 PM | Cleaned up code
 */
 
 import React from 'react';
@@ -13,14 +14,14 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Button,
+  // Button,
   // TouchableOpacity,
   Text,
   Image,
   TextInput
 } from 'react-native';
 
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { NavigationEvents } from 'react-navigation';
 
@@ -38,6 +39,9 @@ function Settings() {
         // onWillBlur={payload => console.log('will blur',payload)}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
+
+      <View style={rectangle5} />
+
       <View style={userProfileRectangle}>
         <View style={
             {
@@ -58,18 +62,24 @@ function Settings() {
 
               width: '100%',
               height: '100%',
-            }}>
-            <Image source={global.placeholderUserImage}  style={
-            {
-              width: '68%',
-              height: '68%',
-              backgroundColor: colors.darkGreyBlue,
-              borderRadius: 29,
-            }}/>
+            }
+          }
+          >
+            <Image
+              source={global.placeholderUserImage}
+              style={
+                {
+                  width: '68%',
+                  height: '68%',
+                  backgroundColor: colors.darkGreyBlue,
+                  borderRadius: 29,
+                }
+              }
+            />
           </TouchableOpacity>
         </View>
 
-        <View style={{flex: 1, flexDirection: 'column',}}>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
           <View style={
             {
               flex: 1,
@@ -102,30 +112,34 @@ function Settings() {
                 // borderColor: 'white',
                 // borderStyle: 'solid',
               }
-            }>Name</Text>
-            <TextInput style={
-              {
-                flex: 0.8,
-                // width: 120,
-                // height: 20,
-                fontFamily: 'SFProDisplay-Regular',
-                fontSize: 17,
-                fontWeight: 'normal',
-                fontStyle: 'normal',
-                letterSpacing: 0.13,
-                textAlign: 'right',
-                color: colors.offWhite, // '#ffffff7f.8',
-
-                marginRight: 10,
-                marginBottom: 4,
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
-              }
             }
+            >
+            Name
+            </Text>
+            <TextInput
+              style={
+                {
+                  flex: 0.8,
+                  // width: 120,
+                  // height: 20,
+                  fontFamily: 'SFProDisplay-Regular',
+                  fontSize: 17,
+                  fontWeight: 'normal',
+                  fontStyle: 'normal',
+                  letterSpacing: 0.13,
+                  textAlign: 'right',
+                  color: colors.offWhite, // '#ffffff7f.8',
+
+                  marginRight: 10,
+                  marginBottom: 4,
+
+                  // borderWidth: 1,
+                  // borderColor: 'white',
+                  // borderStyle: 'solid',
+                }
+              }
               placeholder="John Smith"
-              
+
               placeholderTextColor={colors.offWhite}
 
               keyboardAppearance="dark" // ios
@@ -136,7 +150,7 @@ function Settings() {
 
               returnKeyType="done"
 
-              autoCorrect={true}
+              // autoCorrect={true}
 
               autoCapitalize="sentences" // "words"
 
@@ -150,9 +164,8 @@ function Settings() {
 
               // value={text}
 
-            >
-              
-            </TextInput>
+            />
+
           </View>
           <View style={line2} />
           <View style={
@@ -167,7 +180,7 @@ function Settings() {
             }
           }
           >
-          {/* User Email input */}
+            {/* User Email input */}
             <Text style={
               {
                 flex: 0.2,
@@ -187,30 +200,34 @@ function Settings() {
                 // borderColor: 'white',
                 // borderStyle: 'solid',
               }
-            }>Email</Text>
-            <TextInput style={
-              {
-                flex: 0.8,
-                // width: 120,
-                // height: 20,
-                fontFamily: 'SFProDisplay-Regular',
-                fontSize: 17,
-                fontWeight: 'normal',
-                fontStyle: 'normal',
-                letterSpacing: 0.13,
-                textAlign: 'right',
-                color: colors.offWhite, // '#ffffff7f.8',
-
-                marginRight: 10,
-                marginBottom: 4,
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
-              }
             }
+            >
+            Email
+            </Text>
+            <TextInput
+              style={
+                {
+                  flex: 0.8,
+                  // width: 120,
+                  // height: 20,
+                  fontFamily: 'SFProDisplay-Regular',
+                  fontSize: 17,
+                  fontWeight: 'normal',
+                  fontStyle: 'normal',
+                  letterSpacing: 0.13,
+                  textAlign: 'right',
+                  color: colors.offWhite, // '#ffffff7f.8',
+
+                  marginRight: 10,
+                  marginBottom: 4,
+
+                  // borderWidth: 1,
+                  // borderColor: 'white',
+                  // borderStyle: 'solid',
+                }
+              }
               placeholder="mail@budgetx.com"
-              
+
               placeholderTextColor={colors.offWhite}
 
               keyboardAppearance="dark" // ios
@@ -221,7 +238,7 @@ function Settings() {
 
               returnKeyType="done"
 
-              autoCorrect={true}
+              // autoCorrect={true}
 
               autoCapitalize="sentences" // "words"
 
@@ -235,16 +252,11 @@ function Settings() {
 
               // value={text}
 
-            >
-              
-            </TextInput>
-          </View>
-          </View>
+            />
 
-          
-          
-
+          </View>
         </View>
+      </View>
     </ScrollView>
   );
 }
@@ -259,15 +271,15 @@ Settings.navigationOptions = ({ navigation }) => {
     headerTransparent: {},
     headerTintColor: colors.white,
 
-    headerRight: 
+    headerRight: (
       <View style={{ marginHorizontal: 8 }}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack(null)}>
-        <View style={combinedShape}>
-        <Image source={global.xIconWhite}  style={styles.backBtnImage}/>
-        </View>
-        
-      </TouchableOpacity>
-      </View>,
+        <TouchableOpacity style={styles.backBtn} onPress={() => backBtnPressed()}>
+          <View style={combinedShape}>
+            <Image source={global.xIconWhite} style={styles.backBtnImage} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    ),
 
     // headerTitleStyle: {
     //   // borderWidth: 1,
@@ -292,8 +304,6 @@ Settings.navigationOptions = ({ navigation }) => {
     ),
 
   };
-  // const props = navigation.getScreenProps('props');
-  // console.log(props)
   return navbar;
 };
 
@@ -309,7 +319,7 @@ const styles = StyleSheet.create({
   },
   backBtnImage: {
     width: '100%',
-    height: '100%' 
+    height: '100%'
   },
   backBtn: {
     width: 25,
@@ -322,6 +332,17 @@ const styles = StyleSheet.create({
     // borderStyle: 'solid',
   }
 });
+
+// header rectangle
+const rectangle5 = {
+  width: '100%', // 375,
+  height: '11%', // 88,
+  backgroundColor: colors.dark,
+
+  // borderWidth: 1,
+  // borderColor: 'white',
+  // borderStyle: 'dashed',
+};
 
 const line2 = {
   alignSelf: 'center',
@@ -337,7 +358,7 @@ const line2 = {
 const copy18 = {
   width: '100%',
   // width: 58,
-  height: 20,
+  // height: 20,
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 17,
   fontWeight: 'normal',
@@ -384,22 +405,22 @@ const userProfileRectangle = {
 
   backgroundColor: colors.dark,
 
-  top: '30%',
+  top: '6%',
 
   // borderWidth: 1,
   // borderColor: 'white',
   // borderStyle: 'dashed',
 };
 
-const userProfilePicView = {
-  flex: 1,
-  // width: 58,
-  // height: 58,
+// const userProfilePicView = {
+//   flex: 1,
+//   // width: 58,
+//   // height: 58,
 
-  // borderWidth: 1,
-  // borderColor: 'white',
-  // borderStyle: 'solid',
-};
+//   // borderWidth: 1,
+//   // borderColor: 'white',
+//   // borderStyle: 'solid',
+// };
 
 export default Settings;
 
