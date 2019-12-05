@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 
 import {
+  StyleSheet,
   View,
   Text
 } from 'react-native';
 
-// import * as Font from 'expo-font';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import SpinnerMask from '../SpinnerMask';
 
@@ -37,7 +38,7 @@ const SlideUpTransactionRect = (props) => {
 
       setDate(transaction.date);
 
-      setTextLabel(`${getFormattedDateString(date)}`); // "Amount Spent on"
+      setTextLabel(`${getFormattedDateString(date)}`); // 'Amount Spent on'
     }
     // return () => {
     //   // effect
@@ -60,7 +61,8 @@ const SlideUpTransactionRect = (props) => {
 
   if (dataIsLoaded && transaction) {
     view = (
-      <View style={rectangle2}>
+      <View style={styles.container}>
+      <View style={styles.rectangle2}>
 
         <Text style={copy9}>{ textLabel }</Text>
         <Text style={copy}>
@@ -69,34 +71,117 @@ const SlideUpTransactionRect = (props) => {
           </Text>
           {`${Math.abs(amount).toFixed(2)}`}
         </Text>
+
+        {/*
+
+        <TouchableOpacity style={
+          {
+
+            top: '35%',
+            
+            width: '100%',
+            // // height: 46,
+            height: '100%',
+            backgroundColor: colors.dark,
+
+            // borderWidth: 2,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        }>
+        
+          <View style={
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+
+              // paddingVertical: 2,
+            }
+          }>
+          
+          <Text style={
+            {
+              flex: 1,
+              // width: 67,
+              // height: 20,
+              height: '100%',
+              fontFamily: 'SFProDisplay-Regular',
+              fontSize: 17,
+              fontWeight: 'normal',
+              fontStyle: 'normal',
+              letterSpacing: 0.13,
+              color: '#ffffff',
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+
+            }
+          }>
+            Category
+          </Text>
+
+          <Text style={
+            {
+              flex: 1,
+              height: '100%',
+              fontFamily: 'SFProDisplay-Regular',
+              fontSize: 17,
+              fontWeight: 'normal',
+              fontStyle: 'normal',
+              letterSpacing: 0.13,
+              textAlign: 'right',
+              color: colors.offWhite,
+
+            }
+          }>
+            { `${transaction.category.name} >` }
+          </Text>
+          
+          </View>
+          
+        </TouchableOpacity>
+        */}
+      </View>
       </View>
     );
   }
   return view;
 };
-// view box
-const rectangle2 = {
 
-  width: '93%', // 346,
-  height: '30%', // 74,
-
-
-  top: '18%',
-
-  borderRadius: 9,
-  backgroundColor: colors.dark,
-  shadowColor: '#0f1725',
-  shadowOffset: {
-    width: 5,
-    height: 5
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    width: '100%', // 346,
+    
+    // borderWidth: 2,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',  
   },
-  shadowRadius: 16,
-  shadowOpacity: 1,
+  rectangle2: {
+    width: '93%', // 346,
+    height: '30%', // 74,
 
-  // borderWidth: 2,
-  // borderColor: 'white',
-  // borderStyle: 'dashed',
-};
+
+    top: '18%',
+
+    borderRadius: 9,
+    backgroundColor: colors.dark,
+    shadowColor: '#0f1725',
+    shadowOffset: {
+      width: 5,
+      height: 5
+    },
+    shadowRadius: 16,
+    shadowOpacity: 1,
+
+    // borderWidth: 2,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+  }
+});
 
 // test label
 const copy9 = {

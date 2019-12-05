@@ -27,7 +27,7 @@ import { NavigationEvents } from 'react-navigation';
 
 import ProfileRectangle from '../components/settings/ProfileRectangle';
 
-import BankAccountRectangle from '../components/settings/BankAccountRectangle';
+import SubscriptionRect from '../components/settings/SubscriptionRect';
 
 import UserOptions from '../components/settings/UserOptions';
 
@@ -52,7 +52,7 @@ function Settings() {
 
       <ProfileRectangle />
 
-      <BankAccountRectangle />
+      <SubscriptionRect />
 
       {/* User Options */}
 
@@ -224,27 +224,31 @@ Settings.navigationOptions = ({ navigation }) => {
       </View>
     ),
 
+    headerLeft: null
+
     // headerTitleStyle: {
     //   // borderWidth: 1,
     //   // borderColor: 'white',
     //   // borderStyle: 'solid',
     // },
 
-    headerLeft: (
-      <View style={
-        {
-          marginHorizontal: 14,
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }
-      }
-      >
-        <TouchableOpacity onPress={() => navigation.goBack(null)}>
-          <Text style={copy18}>Log Out</Text>
-        </TouchableOpacity>
-      </View>
-    ),
+
+
+    // headerLeft: (
+    //   <View style={
+    //     {
+    //       marginHorizontal: 14,
+    //       // borderWidth: 1,
+    //       // borderColor: 'white',
+    //       // borderStyle: 'solid',
+    //     }
+    //   }
+    //   >
+    //     <TouchableOpacity onPress={() => navigation.goBack(null)}>
+    //       <Text style={copy18}>Log Out</Text>
+    //     </TouchableOpacity>
+    //   </View>
+    // ),
 
   };
   return navbar;

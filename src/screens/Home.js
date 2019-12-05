@@ -390,7 +390,7 @@ function Home() {
         <KeypadView handlePress={handlePress} />
 
         <SlideUp
-          toggleSlideView={() => {}} // toggleSlideView()}
+          // toggleSlideView={() => {}} // toggleSlideView()}
           slideViewBounceValue={slideViewBounceValue}
           transaction={currentTransaction}
         />
@@ -417,7 +417,7 @@ Home.navigationOptions = ({ screenProps }) => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    headerLeft: <HeaderLeftView props={screenProps} />,
+    // headerLeft: <HeaderLeftView props={screenProps} />,
     headerRight: <HeaderRightView />,
   };
   return header;
