@@ -112,7 +112,7 @@ function Settings(props) {
 
   function rateUsBtnPressed() {
     // store review
-    // console.log('Rate Us button pressed')
+    console.log('Rate Us button pressed')
     StoreReview.requestReview();
   }
 
@@ -127,7 +127,7 @@ function Settings(props) {
   }
 
   function shareBtnPressed() {
-    // console.log('Share button pressed');
+    console.log('Share button pressed');
   }
 
   function onPress(btn) {
@@ -138,10 +138,6 @@ function Settings(props) {
       contactSupportBtnPressed();
     } else if (name === 'Terms of Service') {
       termsOfServiceBtnPressed();
-    } else if (name === 'Share') {
-      shareBtnPressed();
-    } else if (name === 'Rate Us') {
-      rateUsBtnPressed();
     }
   }
 
@@ -228,9 +224,9 @@ function Settings(props) {
               }
             }
           >
-            <RateUsButton onPress={() => onPress('Rate Us')} />
+            <RateUsButton onPress={() => rateUsBtnPressed()} />
 
-            <ShareButton onPress={() => onPress('Share')} />
+            <ShareButton onPress={() => shareBtnPressed()} />
 
           </View>
 
