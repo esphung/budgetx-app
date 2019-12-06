@@ -26,10 +26,12 @@ global.appIcon = require('./assets/icon.png');
 
 global.maxAmountLength = 9;
 
-global.appVersion = 1.0;
+global.appVersion = '1.0.0';
 
 global.adminEmailAddress = 'esphung@gmail.com';
 
 global.appName = 'Budget X App';
 
 global.appDeveloper = 'Eric Phung';
+
+global.appDesigner = 'Andrey Nasanov';
