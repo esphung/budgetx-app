@@ -18,7 +18,8 @@ import { createAppContainer } from 'react-navigation';
 // import Login from './src/screens/Login';
 import Home from './src/screens/Home';
 import Settings from './src/screens/Settings';
-import Search from './src/screens/Search';
+// import Search from './src/screens/Search';
+import Terms from './src/screens/Terms';
 
 const StackNavigator = createStackNavigator({
   // Login: {
@@ -29,6 +30,9 @@ const StackNavigator = createStackNavigator({
   },
   Settings: {
     screen: Settings,
+  },
+  Terms: {
+    screen: Terms,
   },
   // Search: {
   //   screen: Search,

@@ -351,10 +351,13 @@ function Home() {
     </View>
   );
 
-  if (!isUserLoggedIn) {
-    // send to login page
+  // if (!isUserLoggedIn) {
+  //   // send to login page
 
-  } else if (fontsAreLoaded) {
+
+  // }
+  // else
+    if (fontsAreLoaded) {
     //  show home page
     view = (
       <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>

@@ -127,9 +127,13 @@ const HeaderLeftView = () => {
         setUserProfileImage({ uri: userObject.user.profileImage });
       }
 
-      setBoldMessage(`Hello ${userObject.user.username}`);
+      if (userObject.user.username) {
+        setBoldMessage(`Hello ${userObject.user.username}`);
+      }
 
-      setNormalMessage(`${userObject.user.email}`);
+      if (userObject.user.email) {
+        setNormalMessage(`${userObject.user.email}`);
+      }
 
       setIsInputEnabled(false);
 

@@ -22,6 +22,10 @@ import {
   // TextInput
 } from 'react-native';
 
+import * as StoreReview from 'expo-store-review';
+
+import * as MailComposer from 'expo-mail-composer';
+
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { NavigationEvents } from 'react-navigation';
@@ -35,7 +39,47 @@ import UserOptions from '../components/settings/UserOptions';
 // ui colors
 import colors from '../../colors';
 
-function Settings() {
+import {
+  loadUserObject,
+  saveUserObject,
+} from '../storage/UserStorage';
+
+function Settings(props) {
+  const send = async () => {
+    const userObject = await loadUserObject();
+    MailComposer.composeAsync({
+      recipients: [global.adminEmailAddress],
+      subject: `Contact Support ${Date.now()} ${userObject.user.username}`,
+      body: '',
+      attachments: [],
+      isHtml: false,
+    });
+  }
+
+  function rateUsBtnPressed() {
+    // store review
+    StoreReview.requestReview();
+  }
+
+  function contactSupportBtnPressed() {
+    // send contact support email
+    send();
+  }
+
+  function termsOfServiceBtnPressed() {
+    // console.log('Terms');
+    props.navigation.navigate('Terms');
+  }
+
+  function onPress(btn) {
+    // console.log(btn)
+    if (btn.key === 'Contact Support') {
+      contactSupportBtnPressed();
+    } else if (btn.key === 'Terms of Service') {
+      termsOfServiceBtnPressed();
+    }
+  }
+
   return (
     <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
     {/*
@@ -57,7 +101,9 @@ function Settings() {
 
       {/* User Options */}
 
-      <UserOptions />
+      <UserOptions
+        onPress={onPress}
+      />
 
       <View
         style={
@@ -116,7 +162,9 @@ function Settings() {
             }
           }
           >
-            <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', }}>
+            <TouchableOpacity
+              onPress={rateUsBtnPressed}
+              style={{ width: '100%', height: '100%', justifyContent: 'center', }}>
               <Text
                 style={
                   {

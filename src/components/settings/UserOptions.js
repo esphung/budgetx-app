@@ -13,8 +13,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 // ui colors
 import colors from '../../../colors';
 
-function UserOptions() {
+function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
+  const { onPress } = props;
 
   function renderSeparator(item) {
     let view = <View />;
@@ -81,6 +82,7 @@ function UserOptions() {
           }
         }
         disabled={isDisabled}
+        onPress={() => onPress(item)}
       >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center',}}>
         <Text style={styles.title}>{item.key}</Text>
