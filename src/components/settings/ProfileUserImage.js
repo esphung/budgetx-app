@@ -113,10 +113,10 @@ function ProfileUserImage() {
           source={{ uri: image }}
           style={
             {
-              width: '68%',
+              width: '60%',
               height: '60%',
               backgroundColor: colors.darkGreyBlue,
-              borderRadius: 30,
+              borderRadius: 26,
             }
           }
         />

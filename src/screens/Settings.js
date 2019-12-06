@@ -7,6 +7,7 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
             12/04/2019 08:37 PM
             12/04/2019 10:53 PM | Cleaned up code
             12/06/2019 02:20 AM | Added Log out functionality
+            12/06/2019 03:15 PM
 */
 
 import React from 'react';
