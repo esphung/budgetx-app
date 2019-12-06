@@ -19,7 +19,9 @@ function User(email) {
   this.given = ''; // first name
   this.surname = '';
 
-  this.profileImage = global.placeholderUserImage;
+  this.profileImage = null;
+
+  this.isLoggedIn = false;
 
   this.categories = defaultCategories;
 

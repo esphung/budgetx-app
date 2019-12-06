@@ -25,11 +25,11 @@ import {
 function ProfileUserImage() {
   const [image, setImage] = useState(null);
 
-  async function saveProfileImage() {
+  async function saveProfileImage(newImage) {
     const userObject = await loadUserObject(); // load storage object
     // console.log('user:', userObject.user.username);
 
-    userObject.user.profileImage = image;
+    userObject.user.profileImage = newImage;
     // console.log(image);
     // console.log('user image:', userObject.user.profileImage);
 
@@ -84,13 +84,13 @@ function ProfileUserImage() {
     // console.log('hi');
   }, []);
 
-  // useEffect(() => {
-  //   // console.log('Image updated');
+  useEffect(() => {
+    // console.log('Image updated');
 
-  //   // if (image) {
-  //   //   saveProfileImage(image);
-  //   // }
-  // }, [image]);
+    // if (image) {
+    //   saveProfileImage(image);
+    // }
+  }, [image]);
 
   let view = <SpinnerMask />;
 

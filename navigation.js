@@ -15,11 +15,15 @@
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
 
+// import Login from './src/screens/Login';
 import Home from './src/screens/Home';
 import Settings from './src/screens/Settings';
 import Search from './src/screens/Search';
 
 const StackNavigator = createStackNavigator({
+  // Login: {
+  //   screen: Login,
+  // },
   Home: {
     screen: Home,
   },

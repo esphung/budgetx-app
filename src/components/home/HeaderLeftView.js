@@ -3,7 +3,9 @@ FILENAME:   HeaderLeftView.js
 PURPOSE:    left side of header in home view
 AUTHOR:     eric phung
 DATE:       Sun Nov  3 13:47:40 2019
-UPDATED:    12/04/2019 05:07 PM | commented out Font loader
+UPDATED:    12/04/2019 05:07 PM   | commented out Font loader
+            12/05/2019 11:22 PM   | fixed  bold, norrmal messages,
+            image to show updated user image
 */
 
 
@@ -18,20 +20,77 @@ import {
   TextInput,
   ActivityIndicator,
   Platform,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 
-import * as Font from 'expo-font';
+import { NavigationEvents } from 'react-navigation';
 
 // ui colors
 import colors from '../../../colors';
 
-import User from '../../models/User';
+import {
+  loadUserObject,
+  // saveUserObject,
+} from '../../storage/UserStorage';
 
 const isValidEmail = require('../../functions/isValidEmail');
 
+const styles = StyleSheet.create({
+  container: {
+    // flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    marginLeft: 15,
+    width: '100%',
+    height: '100%',
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+  },
+
+  userImageMaskView: {
+    flex: 0.1,
+    width: 33,
+    height: 33,
+    backgroundColor: colors.darkGreyBlue,
+    borderRadius: 50,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+
+  userImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 17,
+
+    // width: 27,// if user image available???
+    // height: 27,// if user image available???
+    // opacity: 0.2, // if no image available
+    // backgroundColor: '#ffffff'
+  },
+
+  userMessageView: {
+    flex: 1,
+    // flexDirection: 'column',
+    // height: '100%', // 36,
+    // left: 12,
+    // justifyContent: 'center',
+    marginLeft: 12,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+});
+
+
 const HeaderLeftView = () => {
-  const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
+  // const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
   const [text, setText] = useState('');
 
@@ -41,16 +100,49 @@ const HeaderLeftView = () => {
 
   const [isInputEnabled, setIsInputEnabled] = useState(true);
 
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
-  const retrieveFonts = async () => {
-    // load sf pro fonts
-    // await Font.loadAsync({
-    //   'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-    //   'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-    // });
-    setFontsAreLoaded(true);
-  };
+  const [isStoredUserLoaded, setIsStoredUserLoaded] = useState(false);
+
+  const [userProfileImage, setUserProfileImage] = useState(null);
+
+  // const retrieveFonts = async () => {
+  //   // load sf pro fonts
+  //   // await Font.loadAsync({
+  //   //   'SFProDisplay-Regular': global.SFProDisplayRegularFont,
+  //   //   'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
+  //   // });
+  //   setFontsAreLoaded(true);
+  // };
+
+  async function retrieveStoredUser() {
+    // load stored user transactions
+    try {
+      const userObject = await loadUserObject();
+
+      // set stored user image
+      if (!userObject.user.profileImage) {
+        setUserProfileImage(global.placeholder500x500);
+      } else {
+        setUserProfileImage({ uri: userObject.user.profileImage });
+      }
+
+      setBoldMessage(`Hello ${userObject.user.username}`);
+
+      setNormalMessage(`${userObject.user.email}`);
+
+      setIsInputEnabled(false);
+
+      setIsStoredUserLoaded(true);
+    } catch (e) {
+      // statements
+      // console.log('Could not load stored user');
+    }
+  }
+
+  function clearState() {
+    retrieveStoredUser(); // load stored user
+  }
 
   const handleTextChange = (value) => {
     setText(value);
@@ -59,11 +151,11 @@ const HeaderLeftView = () => {
 
   const submitBtnPressed = (value) => {
     setText(value);
-    if (isValidEmail(text)) {
-      // create new user with text email
-      // console.log(text);
-      setUser(new User(text));
-    }
+    // if (isValidEmail(text)) {
+    //   // create new user with text email
+    //   // console.log(text);
+    //   setUser(new User(text));
+    // }
   };
 
   // useEffect(fn) // all state
@@ -71,26 +163,27 @@ const HeaderLeftView = () => {
   // useEffect(fn, [these, states])
 
   useEffect(() => {
-    retrieveFonts();
+    // retrieveFonts();
+    retrieveStoredUser();
   }, []);
 
-  // mount user
-  useEffect(() => {
-    if (user) {
-      const fullName = user.getFullName();
-      setBoldMessage(`Welcome ${fullName}`);
-      setNormalMessage(user.email);
-      // console.log(user)
-    }
+  // // mount user
+  // useEffect(() => {
+  //   if (user) {
+  //     const fullName = user.getFullName();
+  //     setBoldMessage(`Welcome ${fullName}`);
+  //     setNormalMessage(user.email);
+  //     // console.log(user)
+  //   }
 
-    // return () => {
-    //   // console.log('user clean up');
-    //   // setBoldMessage('Enter a name')//user.getFullName());
-    //   // setNormalMessage(user.email);
+  //   // return () => {
+  //   //   // console.log('user clean up');
+  //   //   // setBoldMessage('Enter a name')//user.getFullName());
+  //   //   // setNormalMessage(user.email);
 
-    //   // setIsInputEnabled(false);
-    // };
-  }, [user]);
+  //   //   // setIsInputEnabled(false);
+  //   // };
+  // }, [user]);
 
 
   const spinnerView = (
@@ -101,15 +194,26 @@ const HeaderLeftView = () => {
 
   let view = spinnerView;
 
-  if (fontsAreLoaded) {
+  if (isStoredUserLoaded) {
     view = (
       <SafeAreaView style={styles.container}>
 
-        <TouchableOpacity testID="userImageBtn" style={styles.userImageMaskView}>
+        <NavigationEvents
+          // try only this. and your component will auto refresh when this is the active component
+          onWillFocus={() => clearState()} // {(payload) => clearState()}
+          // other props
+          // onDidFocus={payload => console.log('did focus',payload)}
+          // onWillBlur={payload => console.log('will blur',payload)}
+          // onDidBlur={payload => console.log('did blur',payload)}
+        />
+
+        <TouchableOpacity
+          style={styles.userImageMaskView}
+        >
           <Image
             resizeMode="contain"
             style={styles.userImage}
-            source={global.placeholder500x500}
+            source={userProfileImage} // {global.placeholder500x500}
           />
         </TouchableOpacity>
 
@@ -126,7 +230,6 @@ const HeaderLeftView = () => {
 
           }
           >
-
             { boldMessage }
 
           </Text>
@@ -347,59 +450,5 @@ export default HeaderLeftView;
 //     );
 //   }
 // }
-
-const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-    marginLeft: 15,
-    width: '100%',
-    height: '100%',
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
-
-  userImageMaskView: {
-    flex: 0.1,
-    width: 33,
-    height: 33,
-    backgroundColor: colors.darkGreyBlue,
-    borderRadius: 50,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-
-  userImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 17,
-
-    // width: 27,// if user image available???
-    // height: 27,// if user image available???
-    // opacity: 0.2, // if no image available
-    // backgroundColor: '#ffffff'
-  },
-
-  userMessageView: {
-    flex: 1,
-    // flexDirection: 'column',
-    // height: '100%', // 36,
-    // left: 12,
-    // justifyContent: 'center',
-    marginLeft: 12,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  }
-});
-
 
 // export default HeaderLeftView;

@@ -36,7 +36,7 @@ import {
 } from '../storage/UserStorage';
 
 // import my custom view components
-// import HeaderLeftView from '../components/home/HeaderLeftView';
+import HeaderLeftView from '../components/home/HeaderLeftView';
 import HeaderRightView from '../components/home/HeaderRightView';
 import BalanceView from '../components/home/BalanceView';
 import MyStickyTable from '../components/TransactionsTable/MyStickyTable';
@@ -86,12 +86,17 @@ function Home() {
 
   const [isCurrentTransaction] = useState(false);
 
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
   async function retrieveStoredUser() {
     // load stored user transactions
     try {
       const userObject = await loadUserObject();
+      // console.log(await getIsUserLoggedIn())
 
-      // set stored user transactions
+      setIsUserLoggedIn(await global.getIsStoredUserLoggedIn());
+
+      // set stored user's transactions
       setTransactions(userObject.user.transactions);
     } catch (e) {
       // statements
@@ -346,7 +351,11 @@ function Home() {
     </View>
   );
 
-  if (fontsAreLoaded) {
+  if (!isUserLoggedIn) {
+    // send to login page
+
+  } else if (fontsAreLoaded) {
+    //  show home page
     view = (
       <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
         <NavigationEvents
@@ -409,11 +418,11 @@ function Home() {
   return view;
 }
 
-Home.navigationOptions = () => {
+Home.navigationOptions = ({ navigation }) => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    // headerLeft: <HeaderLeftView props={screenProps} />,
+    headerLeft: <HeaderLeftView navigation={navigation} />,
     headerRight: <HeaderRightView />,
   };
   return header;

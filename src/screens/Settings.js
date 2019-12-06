@@ -6,6 +6,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
 UPDATED:    12/04/2019 07:44 PM Changed to hook state
             12/04/2019 08:37 PM
             12/04/2019 10:53 PM | Cleaned up code
+            12/06/2019 02:20 AM | Added Log out functionality
 */
 
 import React from 'react';
@@ -209,6 +210,11 @@ Settings.navigationOptions = ({ navigation }) => {
     navigation.navigate('Home');
   };
 
+  async function logUserOut() {
+    await global.setIsStoredUserLoggedIn(false);
+    navigation.navigate('Login');
+  }
+
   const navbar = {
     title: 'Settings',
     headerTransparent: {},
@@ -244,7 +250,7 @@ Settings.navigationOptions = ({ navigation }) => {
     //     }
     //   }
     //   >
-    //     <TouchableOpacity onPress={() => navigation.goBack(null)}>
+    //     <TouchableOpacity onPress={() => logUserOut()}>
     //       <Text style={copy18}>Log Out</Text>
     //     </TouchableOpacity>
     //   </View>
