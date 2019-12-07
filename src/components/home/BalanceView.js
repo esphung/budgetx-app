@@ -32,10 +32,6 @@ function BalanceView(props) {
     setBalance(currentBalanceValue);
 
     setSpent(currentSpentValue);
-
-    // return () => {
-    //   // console.log('Clean Up')
-    // };
   });
 
   return (
