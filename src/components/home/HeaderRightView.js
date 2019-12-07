@@ -63,7 +63,7 @@ function HeaderRightView(props) {
     >
       {/* ==== Search Button ==== */}
 
-{/*      <TouchableOpacity
+     <TouchableOpacity
         onPress={searchBtnPressed}
         style={styles.searchBtnTouchableOpacity}
       >
@@ -75,7 +75,7 @@ function HeaderRightView(props) {
         />
 
       </TouchableOpacity>
-*/}
+
       {/* ==== Settings Button ==== */}
 
       <TouchableOpacity

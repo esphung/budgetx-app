@@ -51,6 +51,8 @@ import VersionCredit from '../components/settings/VersionCredit';
 // ui colors
 import colors from '../../colors';
 
+import JSONPretty from 'react-json-pretty';
+
 import {
   loadUserObject,
   // saveUserObject,
@@ -98,6 +100,21 @@ const combinedShape = {
   shadowOpacity: 1,
 };
 
+function getShortDate(date) {
+  // short human readable date
+  let str = '';
+  if (date) {
+    const dateObj = new Date(date);
+    const dd = dateObj.getDate();
+    const mm = dateObj.getMonth() + 1; // January is 0!
+    const yyyy = dateObj.getFullYear();
+
+    // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
+    str = `${mm}/${parseInt(dd, 10)}/${yyyy}`;
+  }
+  return str;
+}
+
 
 function Settings(props) {
   const send = async () => {
@@ -110,6 +127,34 @@ function Settings(props) {
       isHtml: false,
     });
   };
+
+  const sendTransactions = async () => {
+    const userObject = await loadUserObject();
+    console.log(JSON.stringify(userObject.user.transactions, null, 1))
+
+    const transactions = userObject.user.transactions;
+
+    transactions.reverse();
+
+//     let string = '';
+//     for (var i = transactions.length - 1; i >= 0; i--) {
+//       string += `
+// ${getShortDate(transactions[i].date)}, ${transactions[i].amount}, ${transactions[i].category.name}
+// \n`
+//     }
+
+    // console.log(string);
+
+
+    MailComposer.composeAsync({
+      recipients: [global.adminEmailAddress],
+      subject: `Contact Support ${Date.now()} ${userObject.user.username}`,
+      body: JSON.stringify(transactions, null, ''), // <JSONPretty id="json-pretty" data={transactions}></JSONPretty>, // JSON.stringify(transactions, null, ' '), // '',
+      attachments: [],
+      isHtml: true,
+    });
+  };
+
 
   function rateUsBtnPressed() {
     // store review
@@ -131,6 +176,11 @@ function Settings(props) {
     console.log('Share button pressed');
   }
 
+  function exportBtnPressed() {
+    // console.log('Export btn pressed');
+    sendTransactions();
+  }
+
   function onPress(btn) {
     const name = btn.key;
 
@@ -139,6 +189,8 @@ function Settings(props) {
       contactSupportBtnPressed();
     } else if (name === 'Terms of Service') {
       termsOfServiceBtnPressed();
+    } else if (name === 'Export Transactions') {
+      exportBtnPressed();
     }
   }
 
