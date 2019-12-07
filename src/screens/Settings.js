@@ -261,7 +261,17 @@ Settings.navigationOptions = ({ navigation }) => {
     headerTintColor: colors.white,
 
     headerRight: (
-      <View style={{ marginHorizontal: 8 }}>
+      <View
+        style={{
+
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginHorizontal: 8,
+          width: '100%',
+          height: '100%',
+        }}
+      >
         <TouchableOpacity style={styles.backBtn} onPress={() => backBtnPressed()}>
           <View style={combinedShape}>
             <Image source={global.xIconWhite} style={styles.backBtnImage} />

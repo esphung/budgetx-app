@@ -9,9 +9,9 @@ import colors from '../../colors';
 
 import messages from '../../messages';
 
-import HeadingLabel from '../components/Terms/HeadingLabel';
+import HeadingLabel from '../components/terms/HeadingLabel';
 
-import MessageLabel from '../components/Terms/MessageLabel';
+import MessageLabel from '../components/terms/MessageLabel';
 
 function titleCaseSentence(string) {
   const sentence = string.toLowerCase().split('.');
@@ -19,7 +19,7 @@ function titleCaseSentence(string) {
   for (i; i < sentence.length; i += 1) {
     sentence[i] = `${sentence[i][0]}`.toUpperCase() + sentence[i].slice(1);
   }
-  return sentence.join(' ');
+  return sentence.join('.');
 }
 
 function Terms() {

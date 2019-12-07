@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
-  View
+  View,
 } from 'react-native';
+
+import PropTypes from 'prop-types';
+
+// ui colors
+import colors from 'main/colors';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import CustomSwipeCell from './TransactionCell/CustomSwipeCell';
 
 import StickyDateHeader from './StickyDateHeader';
-
-// ui colors
-import colors from 'main/colors';
 
 import TransactionItem from './TransactionCell/TransactionItem';
 
@@ -106,135 +108,6 @@ function sortByHeadersDateDescending(items) {
   return list; // .sort((a, b) => (a.date.getTime < b.date.getTime) ? 1 : -1)
 }
 
-const MyStickyTable = (props) => {
-  // get passed props
-  const {
-    tableTop,
-    tableHeight,
-    tablePosition,
-    onPress,
-    deleteBtnPressed,
-    currentTransaction,
-    transactions,
-    isCurrentTransaction
-  } = props;
-
-  function getStickyIndices() {
-    // const { data } = this.state;
-    const indices = [];
-    let i = 0;
-    for (i; i <= transactions.length - 1; i += 1) {
-      if (transactions[i].header === true) {
-        indices.push(i);
-      }
-    }
-    return indices;
-  }
-
-
-
-  function renderItem({ item }) {
-    if (item.header) {
-      return (
-        <View style={styles.rowFront}>
-          <StickyDateHeader date={item.date} />
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.rowFront}>
-        <TransactionItem
-          // keyExtractor={() => String(index)} // {data[index]} // () => console.log(index)
-          item={item}
-          isSelected={false}
-          onPress={() => onPress(item)} // {onPress} // console.log(data[index])
-          currentTransaction={currentTransaction}
-        />
-      </View>
-    );
-  }
-
-  function renderHiddenItem({ item }) {
-    let view = <View />;
-    if (item.header) {
-      view = (
-        <View style={{
-          flex: 1,
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-          backgroundColor: colors.dark,
-        }}
-        />
-      );
-    } else if (!item.header) {
-      view = (
-        <View style={{ flexDirection: 'row', flex: 1, }}>
-          <View style={{
-            flex: 1,
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-            // backgroundColor: colors.dark,
-          }}
-          />
-          <View style={styles.rowBack}>
-            <CustomSwipeCell
-              // keyExtractor={() => String(index)}
-              onDeleteBtnPress={() => deleteBtnPressed(item)}
-            />
-          </View>
-        </View>
-      );
-    }
-
-    return view;
-  }
-
-
-  return (
-    <SwipeListView
-      style={
-        {
-          width: '100%',
-          height: tableHeight, // '32%',
-          position: tablePosition, // 'absolute'
-          top: tableTop, // '30%', // 240,
-
-          // borderWidth: 2,
-          // borderColor: 'white',
-          // borderStyle: 'dashed',
-
-          // backgroundColor: 'pink',
-        }
-      }
-
-      data={sortByHeadersDateDescending(transactions)}
-      // extraData={setData}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => String(index)}
-      stickyHeaderIndices={getStickyIndices()}
-      renderHiddenItem={renderHiddenItem}
-
-      leftOpenValue={0}
-      rightOpenValue={-75}
-
-      // ItemSeparatorComponent={this.FlatListItemSeparator}
-      // ListHeaderComponent={this.Render_FlatList_Sticky_header}
-      // ListEmptyComponent={this.Render_Empty_Component}
-
-      showsVerticalScrollIndicator={false}
-
-      // optimization
-      initialNumToRender={24}
-      // windowSize={12} // {21}
-      // removeClippedSubviews={true}
-      // maxToRenderPerBatch={2}
-    />
-  );
-};
-
 const styles = StyleSheet.create({
   FlatList_Item: {
     // padding: 10,
@@ -285,8 +158,176 @@ const styles = StyleSheet.create({
     letterSpacing: 0.17,
     textAlign: 'center',
     color: 'rgba(255, 255, 255, 0.5)', // 'rgba(255, 255, 255, 0.5)',
-  }
+  },
 });
+
+const MyStickyTable = (props) => {
+  // get passed props
+  const {
+    tableTop,
+    tableHeight,
+    tablePosition,
+    onPress,
+    deleteBtnPressed,
+    currentTransaction,
+    transactions,
+    isCurrentTransaction,
+  } = props;
+
+  const [data, setData] = useState(null);
+
+  const [stickyHeaderIndices, setStickyHeaderIndices] = useState(null);
+
+  function getStickyIndices(array) {
+    // const { data } = this.state;
+    const indices = [];
+    let i = 0;
+    for (i; i <= array.length - 1; i += 1) {
+      if (array[i].header === true) {
+        indices.push(i);
+      }
+    }
+    // console.log(indices);
+    return indices;
+  }
+
+  function renderItem({ item }) {
+    if (item.header) {
+      return (
+        <View style={styles.rowFront}>
+          <StickyDateHeader date={item.date} />
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.rowFront}>
+        <TransactionItem
+          // keyExtractor={() => String(index)} // {data[index]} // () => console.log(index)
+          item={item}
+          isSelected={false}
+          onPress={() => onPress(item)} // {onPress} // console.log(data[index])
+          currentTransaction={currentTransaction}
+        />
+      </View>
+    );
+  }
+
+  function renderHiddenItem({ item }) {
+    let view = <View />;
+    if (item.header) {
+      view = (
+        <View style={{
+          flex: 1,
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+          backgroundColor: colors.dark,
+        }}
+        />
+      );
+    } else if (!item.header) {
+      view = (
+        <View style={{ flexDirection: 'row', flex: 1 }}>
+          <View style={{
+            flex: 1,
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+            // backgroundColor: colors.dark,
+          }}
+          />
+          <View style={styles.rowBack}>
+            <CustomSwipeCell
+              // keyExtractor={() => String(index)}
+              onDeleteBtnPress={() => deleteBtnPressed(item)}
+            />
+          </View>
+        </View>
+      );
+    }
+
+    return view;
+  }
+
+  useEffect(() => {
+    setData(sortByHeadersDateDescending(transactions));
+    return () => {
+      // effect
+    };
+  }, [transactions]);
+
+  useEffect(() => {
+    setStickyHeaderIndices(getStickyIndices(sortByHeadersDateDescending(transactions)));
+    return () => {
+      // data effect
+    };
+  }, [data, transactions]);
+
+
+  return (
+    <SwipeListView
+      style={
+        {
+          width: '100%',
+          height: tableHeight, // '32%',
+          position: tablePosition, // 'absolute'
+          top: tableTop, // '30%', // 240,
+
+          // borderWidth: 2,
+          // borderColor: 'white',
+          // borderStyle: 'dashed',
+
+          // backgroundColor: 'pink',
+        }
+      }
+
+      data={data}
+      // extraData={setData}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => String(index)}
+      stickyHeaderIndices={stickyHeaderIndices}
+      renderHiddenItem={renderHiddenItem}
+
+      leftOpenValue={0}
+      rightOpenValue={-75}
+
+      // ItemSeparatorComponent={this.FlatListItemSeparator}
+      // ListHeaderComponent={this.Render_FlatList_Sticky_header}
+      // ListEmptyComponent={this.Render_Empty_Component}
+
+      showsVerticalScrollIndicator={false}
+
+      // optimization
+      initialNumToRender={24}
+      // windowSize={12} // {21}
+      // removeClippedSubviews={true}
+      // maxToRenderPerBatch={2}
+    />
+  );
+};
+
+// tableTop,
+// tableHeight,
+// tablePosition,
+// onPress,
+// deleteBtnPressed,
+// currentTransaction,
+// transactions,
+// isCurrentTransaction,
+
+MyStickyTable.propTypes = {
+  tableTop: PropTypes.string.isRequired,
+  tableHeight: PropTypes.string.isRequired,
+  tablePosition: PropTypes.string.isRequired,
+
+  onPress: PropTypes.func.isRequired,
+  deleteBtnPressed: PropTypes.func.isRequired,
+  // currentTransaction: PropTypes.object.isRequired,
+  // transactions: PropTypes.array.isRequired,
+  isCurrentTransaction: PropTypes.bool.isRequired,
+
+};
 
 export default MyStickyTable;
 

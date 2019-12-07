@@ -23,7 +23,7 @@ function MessageLabel(props) {
 
         paddingHorizontal: '6%',
 
-        paddingTop: '2%',
+        // paddingTop: '2%',
 
         // borderWidth: 1,
         // borderColor: 'white',

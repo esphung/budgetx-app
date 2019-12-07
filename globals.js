@@ -35,3 +35,7 @@ global.appName = 'Budget X App';
 global.appDeveloper = 'Eric Phung';
 
 global.appDesigner = 'Andrey Nasanov';
+
+global.privacyLink = 'www.google.com';
+
+global.latestReleaseDate = '12/13/2019';
