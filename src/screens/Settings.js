@@ -115,6 +115,53 @@ function getShortDate(date) {
   return str;
 }
 
+function getObjectKeys (list) {
+  let keys = [];
+
+  let key;
+
+  let item = list[0];
+
+
+  for ( key in item ) {
+    keys.push(key);
+  }
+  return keys.join(','); 
+}
+
+function convertObjectToCSV (item) {
+  let key;
+    // item = {
+    //   name: "John",
+    //   surname: "Smith",
+    //   phone: "253 689 4555"
+    // },
+  let array = [];
+
+  for ( key in item ) {
+    if ( item.hasOwnProperty( key ) ) {
+      // parse nested opbj properties
+      if (key === 'category') {
+        // console.log(item[key].name);
+        array.push(item[key].name);
+      } else if (key === 'payee') {
+         array.push(item[key].name);
+      } else {
+        array.push(item[key]);
+      }
+    }
+  }
+  return array.join( ',' );
+}
+
+function getCSVObjects(array) {
+  let string = '';
+  let i = array.length - 1;
+  for (i; i >= 0; i -= 1) {
+    string += `${convertObjectToCSV(array[i])} ${'\n'}`
+  }
+  return string;
+}
 
 function Settings(props) {
   const send = async () => {
@@ -130,11 +177,29 @@ function Settings(props) {
 
   const sendTransactions = async () => {
     const userObject = await loadUserObject();
-    console.log(JSON.stringify(userObject.user.transactions, null, 1))
+    
+    // console.log(JSON.stringify(userObject.user.transactions, null, 1))
 
     const transactions = userObject.user.transactions;
 
     transactions.reverse();
+
+let csv = '';
+
+csv += `${getObjectKeys(transactions)} ${'\n'}`;
+
+csv += `${getCSVObjects(transactions)} ${'\n'}`;
+
+console.log(csv)
+
+    // var csv = transactions.map(function(d){
+    //    return JSON.stringify(d.date);
+    // })
+    // .join(',') 
+    // //.replace(/(^\[)|(\]$)/mg, ''); // remove opening [ and closing ] brackets from each line 
+
+
+    // console.log(csv)
 
 //     let string = '';
 //     for (var i = transactions.length - 1; i >= 0; i--) {
@@ -149,7 +214,7 @@ function Settings(props) {
     MailComposer.composeAsync({
       recipients: [global.adminEmailAddress],
       subject: `Contact Support ${Date.now()} ${userObject.user.username}`,
-      body: JSON.stringify(transactions, null, ''), // <JSONPretty id="json-pretty" data={transactions}></JSONPretty>, // JSON.stringify(transactions, null, ' '), // '',
+      body: csv, // <JSONPretty id="json-pretty" data={transactions}></JSONPretty>, // JSON.stringify(transactions, null, ' '), // '',
       attachments: [],
       isHtml: true,
     });
