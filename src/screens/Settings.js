@@ -51,7 +51,22 @@ import VersionCredit from '../components/settings/VersionCredit';
 // ui colors
 import colors from '../../colors';
 
-import JSONPretty from 'react-json-pretty';
+// import JSONPretty from 'react-json-pretty';
+
+// import RNFetchBlob from 'react-native-fetch-blob';
+
+const htmlContent = (`
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+
+        <!-- Add your site or application content here -->
+        <p>Hello world! This is HTML5 Boilerplate.</p>
+
+    </body>
+</html>
+`)
 
 import {
   loadUserObject,
@@ -99,6 +114,169 @@ const combinedShape = {
   shadowRadius: 4,
   shadowOpacity: 1,
 };
+
+function convertObjectToHTML(item) {
+  let key;
+  let array = [];
+  // console.log(item);
+
+
+  for ( key in item ) {
+    if ( item.hasOwnProperty( key ) ) {
+      // parse nested opbj properties
+      if (key === 'category') {
+        // console.log(item[key].name);
+        array.push('<td>' + item[key].name + '</td>\n');
+      } else if (key === 'payee') {
+         array.push('<td>' + item[key].name + '</td>\n');
+      } else {
+        array.push('<td>' + item[key] + '</td>\n');
+      }
+    }
+  }
+  return array.join( '' );
+}
+
+function getHTMLObjectRows(array) {
+  let string = '';
+  let i = array.length - 1;
+  for (i; i >= 0; i -= 1) {
+    string += `<tr>${convertObjectToHTML(array[i])}</tr>${'\n'}`
+  }
+  return string;
+}
+
+function getObjectKeysHTML (list) {
+  let keys = [];
+
+  let key;
+
+  let item = list[0];
+
+  for ( key in item ) {
+    keys.push('<th>' + key + '</th>');
+  }
+  return keys.join('\n'); 
+}
+
+
+const htmlTop = `
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+        /*
+        th {
+          border: 1px gray black;
+        }
+        */
+        table {
+            border-collapse: collapse;
+            font: 12px sf-pro;
+        }
+
+        td {
+            border: 1px lightgray solid;
+        }
+
+        th, td {
+          padding: 8px;
+          text-align: left;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sf-pro;
+        }
+    </style>
+    <title>${'Hello WOrld'}</title>
+  </head>
+    <body>
+`;
+
+const htmlTable = `
+    <table style="width:100%">
+      <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Age</th>
+      </tr>
+      <tr>
+        <td>Jill</td>
+        <td>Smith</td>
+        <td>50</td>
+      </tr>
+      <tr>
+        <td>Eve</td>
+        <td>Jackson</td>
+        <td>94</td>
+      </tr>
+    </table>
+`;
+
+const htmlBottom = `
+  </body>
+</html>
+`
+
+const data =  [
+  {
+    "id": "1575264547767",
+    "date": "2019-12-02T05:29:07.767Z",
+    "amount": 0.01,
+    "payee": {},
+    "category": {
+     "id": 0,
+     "name": "Income",
+     "color": "#00e157",
+     "type": "income"
+    },
+    "type": "income"
+  },
+   {
+    "id": "1575264543544",
+    "date": "2019-12-02T05:29:03.544Z",
+    "amount": -11.24,
+    "payee": {},
+    "category": {
+     "id": 2,
+     "name": "Transport & Travel",
+     "color": "#e05ceb",
+     "type": "expense"
+    },
+    "type": "expense"
+  }
+];
+
+
+function getCSVHTML (data) {
+  let html = '';
+
+  const keys = `${getObjectKeysHTML(data)}`;
+
+  const tableHead = `${keys}`;
+
+  const table = `
+<div>
+<table style="width:100%">
+<tr>
+${keys}
+</tr>
+${getHTMLObjectRows(data)}
+</table>
+
+</div>${'\n'}
+`;
+
+  const row  = `
+<div>${getHTMLObjectRows(data)}</div>
+`;
+
+  html = htmlTop + table + htmlBottom;
+
+  // console.log(html);
+  return html;
+}
 
 function getShortDate(date) {
   // short human readable date
@@ -182,15 +360,60 @@ function Settings(props) {
 
     const transactions = userObject.user.transactions;
 
-    transactions.reverse();
+    
 
-let csv = '';
+    const list = transactions.reverse();
 
-csv += `${getObjectKeys(transactions)} ${'\n'}`;
+    for (var i = list.length - 1; i >= 0; i--) {
+      list[i].date = getShortDate(list[i].date)
+    }
+    // console.log(getCSVHTML(data));
 
-csv += `${getCSVObjects(transactions)} ${'\n'}`;
+    // const values = [
+    //   ['build', 'Hello'],
+    //   ['deploy', 'World']
+    // ];
 
-console.log(csv)
+    // let dirs = RNFetchBlob.fs.dirs;
+
+    // const dirs = RNFetchBlob.fs.dirs
+    // console.log(dirs.DocumentDir)
+    // console.log(dirs.CacheDir)
+    // console.log(dirs.DCIMDir)
+    // console.log(dirs.DownloadDir)
+
+
+    // // construct csvString
+    // const headerString = 'event,timestamp\n';
+    // const rowString = values.map(d => `${d[0]},${d[1]}\n`).join('');
+    // const csvString = `${headerString}${rowString}`;
+
+    // // write the current list of answers to a local csv file
+    // const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/data.csv`;
+    // console.log('pathToWrite', pathToWrite);
+    // // pathToWrite /storage/emulated/0/Download/data.csv
+    // RNFetchBlob.fs
+    //   .writeFile(pathToWrite, csvString, 'utf8')
+    //   .then(() => {
+    //     console.log(`wrote file ${pathToWrite}`);
+    //     // wrote file /storage/emulated/0/Download/data.csv
+    //   })
+    //   .catch(error => console.error(error));
+
+
+
+
+
+
+    // let csv = '';
+
+    // csv += `${getObjectKeys(transactions)} ${'\n'}`;
+
+    // csv += `${getCSVObjects(transactions)} ${'\n'}`;
+
+    // console.log(csv)
+
+    // ================
 
     // var csv = transactions.map(function(d){
     //    return JSON.stringify(d.date);
@@ -213,8 +436,8 @@ console.log(csv)
 
     MailComposer.composeAsync({
       recipients: [global.adminEmailAddress],
-      subject: `Contact Support ${Date.now()} ${userObject.user.username}`,
-      body: csv, // <JSONPretty id="json-pretty" data={transactions}></JSONPretty>, // JSON.stringify(transactions, null, ' '), // '',
+      subject: `${userObject.user.username} Exported Transactions on ${getShortDate(new Date())}`,
+      body: getCSVHTML(list), // '<div>Hello</div>', // <JSONPretty id="json-pretty" data={transactions}></JSONPretty>, // JSON.stringify(transactions, null, ' '), // '',
       attachments: [],
       isHtml: true,
     });
