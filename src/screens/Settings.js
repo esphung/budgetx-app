@@ -48,30 +48,13 @@ import DesignerCredit from '../components/settings/DesignerCredit';
 
 import VersionCredit from '../components/settings/VersionCredit';
 
-// ui colors
-import colors from '../../colors';
-
-// import JSONPretty from 'react-json-pretty';
-
-// import RNFetchBlob from 'react-native-fetch-blob';
-
-const htmlContent = (`
-<!doctype html>
-<html>
-    <head></head>
-    <body>
-
-        <!-- Add your site or application content here -->
-        <p>Hello world! This is HTML5 Boilerplate.</p>
-
-    </body>
-</html>
-`)
-
 import {
   loadUserObject,
   // saveUserObject,
 } from '../storage/UserStorage';
+
+// ui colors
+import colors from '../../colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -116,49 +99,45 @@ const combinedShape = {
 };
 
 function convertObjectToHTML(item) {
-  let key;
-  let array = [];
+  const array = [];
   // console.log(item);
 
-
-  for ( key in item ) {
-    if ( item.hasOwnProperty( key ) ) {
-      // parse nested opbj properties
-      if (key === 'category') {
-        // console.log(item[key].name);
-        array.push('<td>' + item[key].name + '</td>\n');
-      } else if (key === 'payee') {
-         array.push('<td>' + item[key].name + '</td>\n');
-      } else {
-        array.push('<td>' + item[key] + '</td>\n');
-      }
+  Object.keys(item).forEach((key) => {
+    // parse nested opbj properties
+    if (key === 'category') {
+      // console.log(item[key].name);
+      array.push(`<td>${item[key].name}</td>\n`);
+    } else if (key === 'payee') {
+      array.push(`<td>${item[key].name}</td>\n`);
+    } else {
+      array.push(`<td>${item[key]}</td>\n`);
     }
-  }
-  return array.join( '' );
+  });
+  return array.join('');
 }
 
 function getHTMLObjectRows(array) {
   let string = '';
   let i = array.length - 1;
   for (i; i >= 0; i -= 1) {
-    string += `<tr>${convertObjectToHTML(array[i])}</tr>${'\n'}`
+    string += `<tr>${convertObjectToHTML(array[i])}</tr>${'\n'}`;
   }
   return string;
 }
 
-function getObjectKeysHTML (list) {
-  let keys = [];
+function getObjectKeysHTML(list) {
+  const keys = [];
 
   let key;
 
-  let item = list[0];
+  const item = list[0];
 
-  for ( key in item ) {
-    keys.push('<th>' + key + '</th>');
-  }
-  return keys.join('\n'); 
+  Object.keys(item).forEach((key) => {
+    // parse nested opbj properties
+    keys.push(`<td>${key}</td>\n`);
+  });
+  return keys.join(''); 
 }
-
 
 const htmlTop = `
 <!doctype html>
