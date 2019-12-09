@@ -8,6 +8,7 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
             12/04/2019 10:53 PM | Cleaned up code
             12/06/2019 02:20 AM | Added Log out functionality
             12/06/2019 03:15 PM
+            12/09/2019 12:32 PM
 */
 
 import React from 'react';
@@ -49,12 +50,21 @@ import DesignerCredit from '../components/settings/DesignerCredit';
 import VersionCredit from '../components/settings/VersionCredit';
 
 import {
+  getObjectKeysHTML,
+  getHTMLObjectRows,
+  htmlTop,
+  htmlBottom,
+} from '../components/settings/exportHTML';
+
+import {
   loadUserObject,
   // saveUserObject,
 } from '../storage/UserStorage';
 
 // ui colors
 import colors from '../../colors';
+
+import { getShortDate } from './functions';
 
 const styles = StyleSheet.create({
   container: {
@@ -98,142 +108,11 @@ const combinedShape = {
   shadowOpacity: 1,
 };
 
-function convertObjectToHTML(item) {
-  const array = [];
-  // console.log(item);
 
-  Object.keys(item).forEach((key) => {
-    // parse nested opbj properties
-    if (key === 'category') {
-      // console.log(item[key].name);
-      array.push(`<td>${item[key].name}</td>\n`);
-    } else if (key === 'payee') {
-      array.push(`<td>${item[key].name}</td>\n`);
-    } else {
-      array.push(`<td>${item[key]}</td>\n`);
-    }
-  });
-  return array.join('');
-}
-
-function getHTMLObjectRows(array) {
-  let string = '';
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    string += `<tr>${convertObjectToHTML(array[i])}</tr>${'\n'}`;
-  }
-  return string;
-}
-
-function getObjectKeysHTML(list) {
-  const keys = [];
-
-  let key;
-
-  const item = list[0];
-
-  Object.keys(item).forEach((key) => {
-    // parse nested opbj properties
-    keys.push(`<td>${key}</td>\n`);
-  });
-  return keys.join(''); 
-}
-
-const htmlTop = `
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <style>
-        /*
-        th {
-          border: 1px gray black;
-        }
-        */
-        table {
-            border-collapse: collapse;
-            font: 12px sf-pro;
-        }
-
-        td {
-            border: 1px lightgray solid;
-        }
-
-        th, td {
-          padding: 8px;
-          text-align: left;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, sf-pro;
-        }
-    </style>
-    <title>${'Hello WOrld'}</title>
-  </head>
-    <body>
-`;
-
-const htmlTable = `
-    <table style="width:100%">
-      <tr>
-        <th>Firstname</th>
-        <th>Lastname</th>
-        <th>Age</th>
-      </tr>
-      <tr>
-        <td>Jill</td>
-        <td>Smith</td>
-        <td>50</td>
-      </tr>
-      <tr>
-        <td>Eve</td>
-        <td>Jackson</td>
-        <td>94</td>
-      </tr>
-    </table>
-`;
-
-const htmlBottom = `
-  </body>
-</html>
-`
-
-const data =  [
-  {
-    "id": "1575264547767",
-    "date": "2019-12-02T05:29:07.767Z",
-    "amount": 0.01,
-    "payee": {},
-    "category": {
-     "id": 0,
-     "name": "Income",
-     "color": "#00e157",
-     "type": "income"
-    },
-    "type": "income"
-  },
-   {
-    "id": "1575264543544",
-    "date": "2019-12-02T05:29:03.544Z",
-    "amount": -11.24,
-    "payee": {},
-    "category": {
-     "id": 2,
-     "name": "Transport & Travel",
-     "color": "#e05ceb",
-     "type": "expense"
-    },
-    "type": "expense"
-  }
-];
-
-
-function getCSVHTML (data) {
+function getTransactionsHTML(data) {
   let html = '';
 
   const keys = `${getObjectKeysHTML(data)}`;
-
-  const tableHead = `${keys}`;
 
   const table = `
 <div>
@@ -247,177 +126,36 @@ ${getHTMLObjectRows(data)}
 </div>${'\n'}
 `;
 
-  const row  = `
-<div>${getHTMLObjectRows(data)}</div>
-`;
-
   html = htmlTop + table + htmlBottom;
 
   // console.log(html);
   return html;
 }
 
-function getShortDate(date) {
-  // short human readable date
-  let str = '';
-  if (date) {
-    const dateObj = new Date(date);
-    const dd = dateObj.getDate();
-    const mm = dateObj.getMonth() + 1; // January is 0!
-    const yyyy = dateObj.getFullYear();
-
-    // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
-    str = `${mm}/${parseInt(dd, 10)}/${yyyy}`;
-  }
-  return str;
-}
-
-function getObjectKeys (list) {
-  let keys = [];
-
-  let key;
-
-  let item = list[0];
-
-
-  for ( key in item ) {
-    keys.push(key);
-  }
-  return keys.join(','); 
-}
-
-function convertObjectToCSV (item) {
-  let key;
-    // item = {
-    //   name: "John",
-    //   surname: "Smith",
-    //   phone: "253 689 4555"
-    // },
-  let array = [];
-
-  for ( key in item ) {
-    if ( item.hasOwnProperty( key ) ) {
-      // parse nested opbj properties
-      if (key === 'category') {
-        // console.log(item[key].name);
-        array.push(item[key].name);
-      } else if (key === 'payee') {
-         array.push(item[key].name);
-      } else {
-        array.push(item[key]);
-      }
-    }
-  }
-  return array.join( ',' );
-}
-
-function getCSVObjects(array) {
-  let string = '';
-  let i = array.length - 1;
-  for (i; i >= 0; i -= 1) {
-    string += `${convertObjectToCSV(array[i])} ${'\n'}`
-  }
-  return string;
-}
-
 function Settings(props) {
-  const send = async () => {
-    const userObject = await loadUserObject();
+  const send = () => {
+    // const userObject = await loadUserObject();
     MailComposer.composeAsync({
       recipients: [global.adminEmailAddress],
-      subject: `Contact Support ${Date.now()} ${userObject.user.username}`,
-      body: '',
+      subject: `Issue #${Date.now()}`,
+      body: '', // `<p>${userObject.user.username}</p>`,
       attachments: [],
       isHtml: false,
     });
   };
 
-  const sendTransactions = async () => {
+  const sendTransactionsMail = async () => {
     const userObject = await loadUserObject();
-    
-    // console.log(JSON.stringify(userObject.user.transactions, null, 1))
 
-    const transactions = userObject.user.transactions;
+    const { transactions, email } = userObject.user;
 
-    
-
-    const list = transactions.reverse();
-
-    for (var i = list.length - 1; i >= 0; i--) {
-      list[i].date = getShortDate(list[i].date)
-    }
-    // console.log(getCSVHTML(data));
-
-    // const values = [
-    //   ['build', 'Hello'],
-    //   ['deploy', 'World']
-    // ];
-
-    // let dirs = RNFetchBlob.fs.dirs;
-
-    // const dirs = RNFetchBlob.fs.dirs
-    // console.log(dirs.DocumentDir)
-    // console.log(dirs.CacheDir)
-    // console.log(dirs.DCIMDir)
-    // console.log(dirs.DownloadDir)
-
-
-    // // construct csvString
-    // const headerString = 'event,timestamp\n';
-    // const rowString = values.map(d => `${d[0]},${d[1]}\n`).join('');
-    // const csvString = `${headerString}${rowString}`;
-
-    // // write the current list of answers to a local csv file
-    // const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/data.csv`;
-    // console.log('pathToWrite', pathToWrite);
-    // // pathToWrite /storage/emulated/0/Download/data.csv
-    // RNFetchBlob.fs
-    //   .writeFile(pathToWrite, csvString, 'utf8')
-    //   .then(() => {
-    //     console.log(`wrote file ${pathToWrite}`);
-    //     // wrote file /storage/emulated/0/Download/data.csv
-    //   })
-    //   .catch(error => console.error(error));
-
-
-
-
-
-
-    // let csv = '';
-
-    // csv += `${getObjectKeys(transactions)} ${'\n'}`;
-
-    // csv += `${getCSVObjects(transactions)} ${'\n'}`;
-
-    // console.log(csv)
-
-    // ================
-
-    // var csv = transactions.map(function(d){
-    //    return JSON.stringify(d.date);
-    // })
-    // .join(',') 
-    // //.replace(/(^\[)|(\]$)/mg, ''); // remove opening [ and closing ] brackets from each line 
-
-
-    // console.log(csv)
-
-//     let string = '';
-//     for (var i = transactions.length - 1; i >= 0; i--) {
-//       string += `
-// ${getShortDate(transactions[i].date)}, ${transactions[i].amount}, ${transactions[i].category.name}
-// \n`
-//     }
-
-    // console.log(string);
-
+    transactions.reverse();
 
     MailComposer.composeAsync({
-      recipients: [global.adminEmailAddress],
-      subject: `${userObject.user.username} Exported Transactions on ${getShortDate(new Date())}`,
-      body: getCSVHTML(list), // '<div>Hello</div>', // <JSONPretty id="json-pretty" data={transactions}></JSONPretty>, // JSON.stringify(transactions, null, ' '), // '',
-      attachments: [],
+      recipients: [email],
+      subject: `${userObject.user.username} Exported Transactions ${getShortDate(new Date())}`,
+      body: getTransactionsHTML(transactions),
+      // attachments: [],
       isHtml: true,
     });
   };
@@ -425,7 +163,7 @@ function Settings(props) {
 
   function rateUsBtnPressed() {
     // store review
-    console.log('Rate Us button pressed')
+    console.log('Rate Us button pressed');
     StoreReview.requestReview();
   }
 
@@ -445,7 +183,7 @@ function Settings(props) {
 
   function exportBtnPressed() {
     // console.log('Export btn pressed');
-    sendTransactions();
+    sendTransactionsMail();
   }
 
   function onPress(btn) {
@@ -628,80 +366,3 @@ Settings.navigationOptions = ({ navigation }) => {
 };
 
 export default Settings;
-
-// // Settings.js
-// // Thu Oct 31 23:17:49 2019
-// // eric phung
-// //  settings screen for budget x app
-// import React, { Component } from 'react';
-// import {
-//   StyleSheet,
-//   View,
-
-//   Button,
-//   AsyncStorage
-// } from 'react-native';
-
-// // ui colors
-// import colors from '../../colors';
-
-// class Settings extends Component {
-//   static navigationOptions = ({ navigation }) => {
-//     const obj = {
-//       title: 'Settings',
-
-//       headerStyle: {
-//         backgroundColor: colors.dark,
-//       },
-//       headerLeft: (
-//         <Button title='Back' onPress={() => navigation.goBack(null)} />
-//       ),
-
-//       headerTintColor: colors.white
-//     };
-//     // const props = navigation.getScreenProps('props');
-
-//     return obj;
-//   }
-
-//   clearAll() {
-//     const { navigation } = this.props;
-//     AsyncStorage.clear();
-//     navigation.goBack(null);
-//   }
-
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <Button title='Reset' onPress={() => this.clearAll()} />
-//       </View>
-//     );
-//   }
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: colors.darkTwo
-//   },
-
-//   logOutBtnView: {
-//     flex: 1,
-//     marginLeft: 15,
-//     marginBottom: 6
-//   },
-
-//   logOutBtnText: {
-//     width: 58,
-//     height: 20,
-//     fontFamily: 'SFProDisplay-Regular',
-//     fontSize: 17,
-//     fontWeight: 'normal',
-//     fontStyle: 'normal',
-//     letterSpacing: 0.13,
-//     textAlign: 'right',
-//     color: colors.pinkRed,
-//   }
-// });
-
-// export default Settings;

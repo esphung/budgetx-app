@@ -6,6 +6,20 @@
 
 import { dates } from '../functions/dates';
 
+export const capitalize = (s) => {
+  if (typeof s !== 'string') return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+};
+
+export function getCurrencySymbol(amount) {
+  let symbol = '$';
+  if (amount < 0) {
+    symbol = `- $`;
+  }
+  return symbol;
+}
+
+
 Date.prototype.addDays = (days) => {
   const date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);

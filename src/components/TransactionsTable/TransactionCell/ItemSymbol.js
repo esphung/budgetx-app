@@ -1,9 +1,16 @@
 import React from 'react';
 
-import { Text, View } from 'react-native';
+import PropTypes from 'prop-types';
+
+import {
+  Text,
+  View,
+} from 'react-native';
 
 function ItemSymbol(props) {
-  const { item } = props;
+  const {
+    color,
+  } = props;
   return (
     <View style={{
       flex: 0.3,
@@ -16,7 +23,7 @@ function ItemSymbol(props) {
     }}
     >
       <Text style={{
-        color: `${item.category.color}`,
+        color: `${color}`,
         fontFamily: 'SFProDisplay-Semibold',
         fontSize: 17,
         fontWeight: 'normal',
@@ -29,5 +36,10 @@ function ItemSymbol(props) {
     </View>
   );
 }
+
+ItemSymbol.propTypes = {
+  color: PropTypes.string.isRequired,
+};
+
 
 export default ItemSymbol;

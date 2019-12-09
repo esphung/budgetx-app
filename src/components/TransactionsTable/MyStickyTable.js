@@ -7,10 +7,14 @@ import {
 
 import PropTypes from 'prop-types';
 
+import { SwipeListView } from 'react-native-swipe-list-view';
+
 // ui colors
 import colors from 'main/colors';
 
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { getShortDate } from './functions';
+
+import Header from './Header';
 
 import CustomSwipeCell from './TransactionCell/CustomSwipeCell';
 
@@ -20,50 +24,6 @@ import TransactionItem from './TransactionCell/TransactionItem';
 
 const ROW_HEIGHT = 44;
 
-function Header(date) {
-  const timeStamp = `${Date.now()}`;
-  this.id = timeStamp;
-  this.header = true;
-  this.date = date;
-
-  // console.log('Created new header')
-  // console.log(this)
-
-  this.getShortDate = () => {
-    // short human readable date
-    let str = '';
-    if (this.date) {
-      const dateObj = new Date(this.date);
-      const dd = dateObj.getDate();
-      const mm = dateObj.getMonth() + 1; // January is 0!
-      const yyyy = dateObj.getFullYear();
-
-      // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
-      str = `${mm}/${parseInt(dd, 10)}/${yyyy}`;
-    }
-    return str;
-  };
-
-  this.getTitle = () => {
-    const str = `${this.getShortDate()}`;
-    // ${this.payee} ${this.category}`;
-    return str;
-  };
-}// end header definition
-
-function getShortDate(item) {
-  let str = '';
-  if (item) {
-    const dateObj = new Date(item.date);
-    const dd = dateObj.getDate();
-    const mm = dateObj.getMonth() + 1; // January is 0!
-    const yyyy = dateObj.getFullYear();
-
-    // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;
-    str = `${mm}/${parseInt(dd, 10)}/${yyyy}`;
-  }
-  return str;
-}
 
 function sortByHeadersDateDescending(items) {
   // push first header with a date
@@ -171,7 +131,7 @@ const MyStickyTable = (props) => {
     deleteBtnPressed,
     currentTransaction,
     transactions,
-    isCurrentTransaction,
+    // isCurrentTransaction,
   } = props;
 
   const [data, setData] = useState(null);
@@ -192,10 +152,11 @@ const MyStickyTable = (props) => {
   }
 
   function renderItem({ item }) {
-    if (item.header) {
+    const { header, date } = item;
+    if (header) {
       return (
         <View style={styles.rowFront}>
-          <StickyDateHeader date={item.date} />
+          <StickyDateHeader date={date} />
         </View>
       );
     }
@@ -214,8 +175,9 @@ const MyStickyTable = (props) => {
   }
 
   function renderHiddenItem({ item }) {
+    const { header } = item;
     let view = <View />;
-    if (item.header) {
+    if (header) {
       view = (
         <View style={{
           flex: 1,
@@ -226,7 +188,7 @@ const MyStickyTable = (props) => {
         }}
         />
       );
-    } else if (!item.header) {
+    } else if (!header) {
       view = (
         <View style={{ flexDirection: 'row', flex: 1 }}>
           <View style={{
@@ -323,9 +285,10 @@ MyStickyTable.propTypes = {
 
   onPress: PropTypes.func.isRequired,
   deleteBtnPressed: PropTypes.func.isRequired,
+
   // currentTransaction: PropTypes.object.isRequired,
   // transactions: PropTypes.array.isRequired,
-  isCurrentTransaction: PropTypes.bool.isRequired,
+  // isCurrentTransaction: PropTypes.bool.isRequired,
 
 };
 

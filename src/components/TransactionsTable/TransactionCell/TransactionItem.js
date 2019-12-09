@@ -56,7 +56,7 @@ function TransactionItem(props) {
         }}
         >
 
-          <ItemSymbol item={item} />
+          <ItemSymbol color={item.category.color} />
 
           <ItemCategory
             item={item}
