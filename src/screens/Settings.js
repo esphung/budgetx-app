@@ -19,10 +19,11 @@ import {
   ScrollView,
   // Button,
   // TouchableOpacity,
-  // Text,
+  Text,
   Image,
   // TextInput
   SafeAreaView,
+  AsyncStorage,
 } from 'react-native';
 
 import * as StoreReview from 'expo-store-review';
@@ -127,12 +128,16 @@ ${getHTMLObjectRows(data)}
 `;
 
   html = htmlTop + table + htmlBottom;
-
   // console.log(html);
   return html;
 }
 
 function Settings(props) {
+  // async function signOut() {
+  //   await AsyncStorage.clear()
+  //   props.navigation.navigate('Authloading');
+  // };
+
   const send = () => {
     // const userObject = await loadUserObject();
     MailComposer.composeAsync({
@@ -160,10 +165,9 @@ function Settings(props) {
     });
   };
 
-
   function rateUsBtnPressed() {
     // store review
-    console.log('Rate Us button pressed');
+    // console.log('Rate Us button pressed');
     StoreReview.requestReview();
   }
 
@@ -178,7 +182,7 @@ function Settings(props) {
   }
 
   function shareBtnPressed() {
-    console.log('Share button pressed');
+    // console.log('Share button pressed');
   }
 
   function exportBtnPressed() {
@@ -303,6 +307,12 @@ function Settings(props) {
 }
 
 Settings.navigationOptions = ({ navigation }) => {
+  async function signOut() {
+    // await AsyncStorage.clear()
+    await AsyncStorage.removeItem('userToken');
+    navigation.navigate('AuthLoading');
+  }
+
   const backBtnPressed = () => {
     navigation.navigate('Home');
   };
@@ -320,7 +330,6 @@ Settings.navigationOptions = ({ navigation }) => {
     headerRight: (
       <View
         style={{
-
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
@@ -337,29 +346,51 @@ Settings.navigationOptions = ({ navigation }) => {
       </View>
     ),
 
-    headerLeft: null,
-
     // headerTitleStyle: {
     //   // borderWidth: 1,
     //   // borderColor: 'white',
     //   // borderStyle: 'solid',
     // },
 
-    // headerLeft: (
-    //   <View style={
-    //     {
-    //       marginHorizontal: 14,
-    //       // borderWidth: 1,
-    //       // borderColor: 'white',
-    //       // borderStyle: 'solid',
-    //     }
-    //   }
-    //   >
-    //     <TouchableOpacity onPress={() => logUserOut()}>
-    //       <Text style={copy18}>Log Out</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // ),
+    headerLeft: (
+      <View style={
+        {
+          width: '100%',
+          height: '100%',
+
+          justifyContent: 'center',
+          // alignItems: 'center',
+
+          marginHorizontal: 14,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }
+      }
+      >
+        <TouchableOpacity onPress={signOut}>
+          <Text
+            style={
+              {
+                // width: 42,
+                height: 20,
+                fontFamily: 'SFProDisplay-Regular',
+                fontSize: 17,
+                fontWeight: 'normal',
+                fontStyle: 'normal',
+                letterSpacing: 0.13,
+                color: colors.pinkRed,
+              }
+            }
+          >
+            Log Out
+          </Text>
+        </TouchableOpacity>
+      </View>
+    ),
+
+    // headerLeft: null,
 
   };
   return navbar;

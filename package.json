@@ -19,6 +19,7 @@
     "expo-detox-hook": "^1.0.10",
     "expo-font": "~7.0.0",
     "expo-image-picker": "^7.0.0",
+    "expo-local-authentication": "^7.0.0",
     "expo-mail-composer": "~7.0.0",
     "expo-permissions": "^7.0.0",
     "expo-store-review": "^1.0.0",
