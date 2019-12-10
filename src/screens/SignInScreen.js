@@ -32,7 +32,7 @@ import colors from 'main/colors';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark, // '#aa73b7',
+    backgroundColor: colors.darkTwo, // '#aa73b7',
     justifyContent: 'center',
     flexDirection: 'column',
   },
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     color: colors.white, // '#5a52a5',
 
     fontFamily: 'SFProDisplay-Semibold',
-    // fontWeight: 'normal',
+    fontWeight: 'normal',
     fontStyle: 'normal',
     lineHeight: 28,
     letterSpacing: 0.17,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    height: '40%', // 200,
+    height: '100%', // 200,
     bottom: '0%', // '5%', // 25,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
 
     fontFamily: 'SFProDisplay-Semibold',
-    fontWeight: 'normal',
+    // fontWeight: 'normal',
     fontStyle: 'normal',
     lineHeight: 28,
     letterSpacing: 0.17,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
 
 function SignInScreen(props) {
   // state hooks
-  const nextInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
 
   const [username, setUsername] = useState(null);
 
@@ -138,9 +138,10 @@ function SignInScreen(props) {
     props.navigation.navigate('AuthLoading');
   };
 
+  // user input handlers
   function handleUsernameInputSubmit() {
-    nextInputRef.current._root.focus();
-    // console.log(nextInputRef.current._root.focus());
+    passwordInputRef.current._root.focus();
+    // console.log(passwordInputRef.current._root.focus());
   }
 
   function onChangeText(key, value) {
@@ -184,6 +185,8 @@ function SignInScreen(props) {
                     autoCorrect={false}
                     onSubmitEditing={() => handleUsernameInputSubmit()}
                     onChangeText={(value) => onChangeText('username', value)}
+
+                    keyboardAppearance="dark"
                   />
                 </Item>
                 <Item rounded style={styles.itemStyle}>
@@ -196,8 +199,10 @@ function SignInScreen(props) {
                     autoCapitalize="none"
                     autoCorrect={false}
                     secureTextEntry
-                    ref={nextInputRef}
+                    ref={passwordInputRef}
                     onChangeText={(value) => onChangeText('password', value)}
+
+                    keyboardAppearance="dark"
                   />
                 </Item>
                 <TouchableOpacity
