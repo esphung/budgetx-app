@@ -1,7 +1,7 @@
 /*
 FILENAME:   App.js
-PURPOSE:    entry point for budget x app
-AUTHOR:     eric phung
+PURPOSE:    Entry point for budget x app
+AUTHOR:     Eric Phung
 CREATED:    Fri Nov 1 2019
 UPDATED:    Fri Nov  1 13:20:51 2019
             11/12/2019 02:22 PM
@@ -10,11 +10,16 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             12/05/2019 11:41 PM | added user.isLoggedIn to App.js entry
             12/09/2019 12:56 PM | added AuthLoadingScreen, SwitchNavigator, AUthStackNavigator
             12/10/2019 06:02 AM | Stuck at AWS suspension
+            12/10/2019 01:58 PM | AWS authentication set up
 */
 
 import React, { useState, useEffect } from 'react';
 
 import * as Font from 'expo-font';
+
+// Amplify imports and config
+import Amplify from 'aws-amplify'; // '@aws-amplify/core';
+import config from './aws-exports';
 
 import SpinnerMask from './src/components/SpinnerMask';
 
@@ -24,10 +29,8 @@ import './globals'; // global values
 
 // import LocalAuthentication from './src/screens/LocalAuthentication';
 
-// Amplify imports and config
-import Amplify from '@aws-amplify/core';
-import config from './aws-exports';
 Amplify.configure(config);
+
 
 function App() {
   // state hooks

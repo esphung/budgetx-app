@@ -1,11 +1,21 @@
+/*
+FILENAME:  SignUpScreen.js
+PURPOSE:   Sign Up Screen for budget x app
+AUTHOR:    Eric Phung
+CREATED:   12/10/2019 02:26 PM
+UPDATED:   12/10/2019 02:26 PM
+*/
+
 import React, { useState, useEffect, useRef } from 'react';
 
 import { Ionicons } from 'expo-vector-icons';
 
+import PropTypes from 'prop-types';
+
 import {
   TouchableOpacity,
   TouchableWithoutFeedback,
-  StyleSheet,
+  // StyleSheet,
   Text,
   SafeAreaView,
   StatusBar,
@@ -15,25 +25,45 @@ import {
   Alert,
   Modal,
   FlatList,
-  Animated,
+  // Animated,
 } from 'react-native';
 
 import {
   Container,
   Item,
   Input,
-  // Icon
 } from 'native-base';
+
+// AWS Amplify
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 import colors from 'main/colors';
 
 import styles from './styles';
 
-// AWS Amplify
-import Auth from '@aws-amplify/auth';
+import countries from 'main/Countries';
 
-function SignUpScreen() {
-  // input refs
+function SignUpScreen(props) {
+  /*
+  * > Hooks
+  */
+  const [username, setUsername] = useState(null);
+
+  const [password, setPassword] = useState(null);
+
+  const [email, setEmail] = useState(null);
+
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const [authCode, setAuthCode] = useState(null);
+
+  const [flag, setFlag] = useState(null);
+
+  const [modalVisible, setModalVisible] = useState(null);
+
+  /*
+  * > Input Refs
+  */
   const passwordInputRef = useRef(null);
 
   const emailInputRef = useRef(null);
@@ -42,18 +72,22 @@ function SignUpScreen() {
 
   const authCodeInputRef = useRef(null);
 
-  // state hooks
-  const [username, setUsername] = useState(null);
+  useEffect(() => {
+    // Default render of country flag
+    const defaultFlag = countries.filter((obj) => obj.name === 'United States')[0].flag;
+    setFlag(defaultFlag);
 
-  const [password, setPassword] = useState(null);
 
-  const [email, setEmail] = useState(null);
+    // setCountryData(countries);
+    return () => {
+      // effect
+    };
+  }, [])
 
-  const [phoneNumber, setPhoneNumber] = useState(null);
-
-  const [authCode, setAuthCode] = useState(null);
-
-  // input handlers
+ 
+  /*
+  * > Handlers
+  */
   function onChangeText(key, value) {
     console.log('key:', key);
     console.log('value:', value);
@@ -69,13 +103,6 @@ function SignUpScreen() {
     } else if (key === 'authCode') {
       setAuthCode(value);
     }
-
-    // if (key === 'username') {
-    //   setUsername(value);
-    // } else if (key === 'password') {
-    //   setPassword(value);
-    // }
-    // this.setState({[key]: value})
   }
 
   function handleUsernameInputSubmit() {
@@ -103,6 +130,148 @@ function SignUpScreen() {
     // console.log(passwordInputRef.current._root.focus());
   }
 
+  /*
+  * > Modal Methods
+  */
+  function showModal() {
+    setModalVisible(true);
+    // this.setState({ modalVisible: true })
+  }
+  function hideModal() {
+    setModalVisible(false);
+    // Refocus on the Input field after selecting the country code
+    phoneNumberInputRef.current._root.focus();
+  }
+
+  const PickCountryModal = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+      >
+        <View style={{ flex: 1, backgroundColor: colors.dark }}>
+          <View style={{ height: '80%', marginTop: 80 }}>
+            {/*
+            * > Render the list of countries
+            */}
+            <FlatList
+              data={countries}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={
+                ({ item }) => (
+                  <TouchableWithoutFeedback
+                    onPress={() => selectCountry(item.name)}
+                  >
+                    <View style={styles.countryStyle}>
+                      <Text style={styles.textStyle}>
+                        {item.flag} {item.name} ({item.dial_code})
+                      </Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                )
+              }
+            />
+          </View>
+          <TouchableOpacity
+            onPress={() => hideModal()}
+            style={styles.closeButtonStyle}>
+            <Text style={styles.textStyle}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    );
+  }
+
+
+  async function selectCountry(country) {
+    // Get data from Countries.js  
+    // const countryData = await countries;
+    try {
+      // Get the country code
+      const countryCode = await countries.filter(
+        (obj) => obj.name === country)[0].dial_code;
+      // Get the country flag
+      const countryFlag = await countries.filter(
+        (obj) => obj.name === country)[0].flag;
+      // Update the state then hide the Modal
+      setPhoneNumber(countryCode);
+      setFlag(countryFlag);
+      // this.setState({ phoneNumber: countryCode, flag: countryFlag })
+      await hideModal();
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
+  /*
+  * > User Sign Up Methods
+  */
+  // Sign up user with AWS Amplify Auth
+  async function signUp() {
+    // rename variable to conform with Amplify Auth field phone attribute
+    const phone_number = phoneNumber; // +01234567890 format
+    await Auth.signUp({
+      username,
+      password,
+      attributes: { email, phone_number },
+    })
+      .then(() => {
+        console.log('Sign up successful!');
+        Alert.alert('Enter the confirmation code you received.');
+      })
+      .catch((err) => {
+        if (!err.message) {
+          console.log('Error when signing up: ', err);
+          Alert.alert('Error when signing up: ', err);
+        } else {
+          console.log('Error when signing up: ', err.message);
+          Alert.alert('Error when signing up: ', err.message);
+        }
+      });
+  }
+
+  // Confirm users and redirect them to the SignIn page
+  async function confirmSignUp() {
+    // const { username, authCode } = this.state;
+    await Auth.confirmSignUp(username, authCode)
+      .then(() => {
+        props.navigation.navigate('SignIn');
+        console.log('Confirm sign up successful');
+      })
+      .catch((err) => {
+        if (!err.message) {
+          console.log('Error when entering confirmation code: ', err);
+          Alert.alert('Error when entering confirmation code: ', err);
+        } else {
+          console.log('Error when entering confirmation code: ', err.message);
+          Alert.alert('Error when entering confirmation code: ', err.message);
+        }
+      });
+  }
+
+  // Resend code if not received already
+  async function resendSignUp() {
+    // const { username } = this.state;
+    await Auth.resendSignUp(username)
+      .then(() => console.log('Confirmation code resent successfully'))
+      .catch((err) => {
+        if (!err.message) {
+          console.log('Error requesting new confirmation code: ', err);
+          Alert.alert('Error requesting new confirmation code: ', err);
+        } else {
+          console.log('Error requesting new confirmation code: ', err.message);
+          Alert.alert('Error requesting new confirmation code: ', err.message);
+        }
+      });
+  }
+
+  /*
+  * > return component
+  */
   const view = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
@@ -126,7 +295,6 @@ function SignUpScreen() {
                     returnKeyType="next"
                     autoCapitalize="none"
                     autoCorrect={false}
-                    // onSubmitEditing={(event) => {refs.SecondInput._root.focus()}}
                     onSubmitEditing={() => handleUsernameInputSubmit()}
                     onChangeText={(value) => onChangeText('username', value)}
 
@@ -144,9 +312,6 @@ function SignUpScreen() {
                     autoCapitalize="none"
                     autoCorrect={false}
                     secureTextEntry
-                    // ref={c => this.SecondInput = c}
-                    // ref="SecondInput"
-                    // onSubmitEditing={(event) => {this.refs.ThirdInput._root.focus()}}
                     onSubmitEditing={() => handlePasswordInputSubmit()}
                     ref={passwordInputRef}
                     onChangeText={(value) => onChangeText('password', value)}
@@ -167,19 +332,45 @@ function SignUpScreen() {
                     autoCorrect={false}
                     secureTextEntry={false}
                     ref={emailInputRef}
-                    // onSubmitEditing={(event) => {this.refs.FourthInput._root.focus()}}
                     onSubmitEditing={() => handleEmailInputSubmit()}
                     onChangeText={(value) => onChangeText('email', value)}
 
                     keyboardAppearance="dark"
                   />
                 </Item>
-                {/* phone section  */}
+                {/*
+                * > phone number section
+                */}
                 <Item rounded style={styles.itemStyle}>
-                  <Ionicons active name="md-call" style={styles.iconStyle} />
+                  <PickCountryModal />
+                  <Ionicons
+                    active
+                    name="md-call"
+                    style={styles.iconStyle}
+                    onPress={() => showModal()}
+                  />
+
+                  {/*
+                  * > country flag
+                  */}
+                  <TouchableOpacity
+                    onPress={showModal}
+                    style={
+                      {
+                        flex: 0.1,
+                        alignItems: 'center',
+
+                        // borderWidth: 1,
+                        // borderColor: 'orange',
+                        // borderStyle: 'solid',
+                      }
+                    }
+                  >
+                    <Text>{flag}</Text>
+                  </TouchableOpacity>
                   <Input
                     style={styles.input}
-                    placeholder="+44766554433"
+                    placeholder="+12345678910"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="phone-pad"
                     returnKeyType="done"
@@ -193,6 +384,11 @@ function SignUpScreen() {
 
                     keyboardAppearance="dark"
                   />
+
+                  {/*
+                  * > Modal for country code and flag
+                  */}
+                  
                 </Item>
 
                 {/* code confirmation section  */}
@@ -215,8 +411,14 @@ function SignUpScreen() {
                   />
                 </Item>
 
-                {/* End of text input */}
-                <TouchableOpacity style={styles.buttonStyle}>
+                {/*
+                * > Sign Up Buttons
+                */}
+
+                <TouchableOpacity
+                  onPress={signUp}
+                  style={styles.buttonStyle}
+                >
                   <Text style={styles.buttonText}>
                     Sign Up
                   </Text>
@@ -242,6 +444,9 @@ function SignUpScreen() {
   return view;
 }
 
+/*
+* > Navigation Options
+*/
 SignUpScreen.navigationOptions = () => {
   const navbar = {
     headerTransparent: {},
@@ -249,5 +454,16 @@ SignUpScreen.navigationOptions = () => {
   };
   return navbar;
 };
+
+/*
+* > Prop Types
+*/
+// SignUpScreen.propTypes = {
+//   username: PropTypes.string.isRequired,
+//   password: PropTypes.string.isRequired,
+//   email: PropTypes.string.isRequired,
+//   phoneNumber: PropTypes.string.isRequired,
+//   authCode: PropTypes.string.isRequired,
+// };
 
 export default SignUpScreen;

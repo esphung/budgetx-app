@@ -20,7 +20,7 @@ export default StyleSheet.create({
     fontFamily: 'SFProDisplay-Semibold',
     fontWeight: 'normal',
     fontStyle: 'normal',
-    lineHeight: 28,
+    // lineHeight: 28,
     letterSpacing: 0.17,
     textAlign: 'left',
 
@@ -81,6 +81,20 @@ export default StyleSheet.create({
     lineHeight: 28,
     letterSpacing: 0.17,
     textAlign: 'center',
+  },
+  textStyle: {
+    // fontSize: 18,
+    // fontWeight: 'bold',
+    color: colors.white, // '#fff',
+    // opacity: 0.6,
+    fontSize: 15,
+
+    fontFamily: 'SFProDisplay-Regular',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    lineHeight: 28,
+    letterSpacing: 0.17,
+    textAlign: 'left',
   },
   logoContainer: {
     flex: 1,
