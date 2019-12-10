@@ -5,9 +5,9 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import colors from '../../colors';
+import colors from 'main/colors';
 
-import messages from '../../messages';
+import messages from 'main/messages';
 
 import HeadingLabel from '../components/terms/HeadingLabel';
 

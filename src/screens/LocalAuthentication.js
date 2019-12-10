@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState } from 'react';
+
 import {
   Text,
   View,
@@ -9,7 +10,9 @@ import {
   Image,
   Platform,
 } from 'react-native';
+
 import Constants from 'expo-constants';
+
 import * as LocalAuthentication from 'expo-local-authentication';
 
 export default class App extends React.Component {

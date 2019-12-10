@@ -10,14 +10,19 @@ import {
 
 import colors from 'main/colors';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.dark, // '#aa73b7',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// AWS Amplify
+import Auth from '@aws-amplify/auth';
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: colors.dark, // '#aa73b7',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });
+
+import styles from './styles';
 
 export default function AuthLoadingScreen(props) {
   const loadApp = async () => {
@@ -28,16 +33,11 @@ export default function AuthLoadingScreen(props) {
   useEffect(() => {
     // console.log('Mount');
     loadApp();
-
-    return async () => {
-      // effect
-      // console.log('Clean up');
-    };
   }, []);
 
   const view = (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#fff" />
+      <ActivityIndicator size="large" color={colors.white} />
     </View>
   );
   return view;

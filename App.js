@@ -9,24 +9,12 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             12/02/2019 12:58 AM | switched to user storage, iphone still has data
             12/05/2019 11:41 PM | added user.isLoggedIn to App.js entry
             12/09/2019 12:56 PM | added AuthLoadingScreen, SwitchNavigator, AUthStackNavigator
+            12/10/2019 06:02 AM | Stuck at AWS suspension
 */
 
 import React, { useState, useEffect } from 'react';
 
-// import { AppLoading } from 'expo';
-
-// import { Container, Text } from 'native-base';
-
 import * as Font from 'expo-font';
-
-// import { StyleSheet, Text, View } from 'react-native';
-
-// import {
-//   View,
-//   // Text,
-// } from 'react-native';
-
-// import StackNavigator from './StackNavigator';
 
 import SpinnerMask from './src/components/SpinnerMask';
 
@@ -35,6 +23,11 @@ import SwitchNavigator from './SwitchNavigator';
 import './globals'; // global values
 
 // import LocalAuthentication from './src/screens/LocalAuthentication';
+
+// Amplify imports and config
+import Amplify from '@aws-amplify/core';
+import config from './aws-exports';
+Amplify.configure(config);
 
 function App() {
   // state hooks
@@ -54,10 +47,6 @@ function App() {
   useEffect(() => {
     // console.log('Mount');
     retrieveStoredFonts();
-    return () => {
-      // effect
-      // console.log('Clean up');
-    };
   }, []);
 
   let view = <SpinnerMask />;

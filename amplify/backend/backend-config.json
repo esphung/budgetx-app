@@ -1,0 +1,9 @@
+{
+	"auth": {
+		"budgetxapp7ad453bb": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	}
+}

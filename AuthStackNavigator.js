@@ -12,8 +12,13 @@ import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
 // import ScreenName from './src/components/ScreenName';
 
+import LocalAuthentication from './src/screens/LocalAuthentication';
+
 // Auth stack
 const AuthStackNavigator = createStackNavigator({
+  // LocalAuthentication: {
+  //   screen: LocalAuthentication,
+  // },
   Welcome: {
     screen: WelcomeScreen,
     navigationOptions: () => ({

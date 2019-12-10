@@ -26,6 +26,9 @@ import colors from 'main/colors';
 
 import styles from './styles';
 
+// AWS Amplify
+import Auth from '@aws-amplify/auth';
+
 function ChangePasswordScreen(props) {
   // hooks
   const [oldPassword, setOldPassword] = useState(null);

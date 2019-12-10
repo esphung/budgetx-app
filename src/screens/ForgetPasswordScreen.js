@@ -30,6 +30,9 @@ import colors from 'main/colors';
 
 import styles from './styles';
 
+// AWS Amplify
+import Auth from '@aws-amplify/auth';
+
 function ForgotPasswordScreen() {
   // input refs
   const newPasswordInputRef = useRef(null);

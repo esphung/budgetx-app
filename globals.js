@@ -22,11 +22,6 @@ global.clickSound = require('./assets/sounds/test.mp3');
 
 global.appIcon = require('./assets/icon.png');
 
-// Load the app logo
-global.logo = require('./assets/logo.png');
-
-// global.isSearchModeOn = false;
-
 global.maxAmountLength = 9;
 
 global.appVersion = '1.0.0';

@@ -69,6 +69,9 @@ import colors from '../../colors';
 
 import { getShortDate } from './functions';
 
+// AWS Amplify
+import Auth from '@aws-amplify/auth';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

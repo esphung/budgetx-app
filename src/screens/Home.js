@@ -29,8 +29,6 @@ import {
 
 import { NavigationEvents } from 'react-navigation';
 
-import * as Font from 'expo-font';
-
 // ui colors
 import colors from 'main/colors';
 
@@ -65,8 +63,6 @@ const styles = StyleSheet.create({
 
 function Home() {
   // hooks
-  const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
-
   const [transactions, setTransactions] = useState([]);
 
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -120,15 +116,6 @@ function Home() {
 
     setIsSlideViewHidden(true);
   };
-
-  async function retrieveFonts() {
-    // load fonts
-    await Font.loadAsync({
-      'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-      'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
-    });
-    setFontsAreLoaded(true);
-  }
 
   async function removeUserTransaction(transaction) {
     const userObject = await loadUserObject();
@@ -267,7 +254,6 @@ function Home() {
   // component did mount
   useEffect(() => {
     // console.log('mount Home');
-    retrieveFonts();
     retrieveStoredUser();
 
     return () => {
@@ -352,73 +338,65 @@ function Home() {
     </View>
   );
 
-  // if (!isUserLoggedIn) {
-  //   // send to login page
 
+  view = (
+    <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+      <NavigationEvents
+        // try only this. and your component will auto refresh when this is the active component
+        onWillFocus={() => clearState()} // {(payload) => clearState()}
+        // other props
+        // onDidFocus={payload => console.log('did focus',payload)}
+        // onWillBlur={payload => console.log('will blur',payload)}
+        // onDidBlur={payload => console.log('did blur',payload)}
+      />
+      <BalanceView
+        currentBalanceValue={currentBalance}
+        currentSpentValue={currentSpent}
+      />
 
-  // }
-  // else
-  if (fontsAreLoaded) {
-    //  show home page
-    view = (
-      <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
-        <NavigationEvents
-          // try only this. and your component will auto refresh when this is the active component
-          onWillFocus={() => clearState()} // {(payload) => clearState()}
-          // other props
-          // onDidFocus={payload => console.log('did focus',payload)}
-          // onWillBlur={payload => console.log('will blur',payload)}
-          // onDidBlur={payload => console.log('did blur',payload)}
-        />
-        <BalanceView
-          currentBalanceValue={currentBalance}
-          currentSpentValue={currentSpent}
-        />
+      <MyStickyTable
+        transactions={transactions}
+        currentTransaction={currentTransaction}
+        key={transactions}
 
-        <MyStickyTable
-          transactions={transactions}
-          currentTransaction={currentTransaction}
-          key={transactions}
+        tableTop="25.5%"
+        tableHeight="32%"
+        tablePosition="absolute"
 
-          tableTop="25.5%"
-          tableHeight="32%"
-          tablePosition="absolute"
+        onPress={(transaction) => transactionBtnPressed(transaction)}
+        deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
+        isCurrentTransaction={isCurrentTransaction}
+      />
 
-          onPress={(transaction) => transactionBtnPressed(transaction)}
-          deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
-          isCurrentTransaction={isCurrentTransaction}
-        />
+      <ScrollingPillCategoriesView
+        onPress={(category) => categoryBtnPressed(category)}
+        currentCategory={currentCategory}
+        topPosition="57%"
+        shadowOffset={{
+          width: 1,
+          height: 1,
+        }}
+        shadowRadius={26}
+        shadowOpacity={1}
 
-        <ScrollingPillCategoriesView
-          onPress={(category) => categoryBtnPressed(category)}
-          currentCategory={currentCategory}
-          topPosition="57%"
-          shadowOffset={{
-            width: 1,
-            height: 1,
-          }}
-          shadowRadius={26}
-          shadowOpacity={1}
+        currentCategories={[]}
+      />
 
-          currentCategories={[]}
-        />
+      <AmountInputView
+        isEditable={false}
+        value={currentAmount}
+        handleChange={handleChange}
+      />
 
-        <AmountInputView
-          isEditable={false}
-          value={currentAmount}
-          handleChange={handleChange}
-        />
+      <KeypadView handlePress={handlePress} />
 
-        <KeypadView handlePress={handlePress} />
+      <SlideUpView
+        slideViewBounceValue={slideViewBounceValue}
+        transaction={currentTransaction}
+      />
 
-        <SlideUpView
-          slideViewBounceValue={slideViewBounceValue}
-          transaction={currentTransaction}
-        />
-
-      </ScrollView>
-    );
-  }
+    </ScrollView>
+  );
   return view;
 }
 
@@ -426,7 +404,7 @@ Home.navigationOptions = ({ navigation }) => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    headerLeft: <HeaderLeftView navigation={navigation} />,
+    // headerLeft: <HeaderLeftView navigation={navigation} />,
     headerRight: <HeaderRightView />,
   };
   return header;

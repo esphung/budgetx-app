@@ -29,6 +29,9 @@ import colors from 'main/colors';
 
 import styles from './styles';
 
+// AWS Amplify
+import Auth from '@aws-amplify/auth';
+
 function SignUpScreen() {
   // input refs
   const passwordInputRef = useRef(null);

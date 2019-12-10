@@ -31,6 +31,9 @@ import colors from 'main/colors';
 
 import styles from './styles';
 
+// AWS Amplify
+import Auth from '@aws-amplify/auth'
+
 function SignInScreen(props) {
   // state hooks
   const passwordInputRef = useRef(null);

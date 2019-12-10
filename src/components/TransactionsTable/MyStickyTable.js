@@ -24,7 +24,6 @@ import TransactionItem from './TransactionCell/TransactionItem';
 
 const ROW_HEIGHT = 44;
 
-
 function sortByHeadersDateDescending(items) {
   // push first header with a date
   let header = new Header();
