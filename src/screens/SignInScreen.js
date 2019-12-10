@@ -29,98 +29,7 @@ import {
 
 import colors from 'main/colors';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.darkTwo, // '#aa73b7',
-    justifyContent: 'center',
-    flexDirection: 'column',
-  },
-  input: {
-    flex: 1,
-    fontSize: 17,
-    // fontWeight: 'bold',
-    color: colors.white, // '#5a52a5',
-
-    fontFamily: 'SFProDisplay-Semibold',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    lineHeight: 28,
-    letterSpacing: 0.17,
-    textAlign: 'left',
-  },
-  // textStyle: {
-  //   fontSize: 18,
-  //   padding: 10,
-  //   color: colors.white,
-
-  //   fontFamily: 'SFProDisplay-Regular',
-  //   fontWeight: 'normal',
-  //   fontStyle: 'normal',
-  //   lineHeight: 28,
-  //   letterSpacing: 0.17,
-  //   textAlign: 'center',
-  // },
-  infoContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: '100%', // 200,
-    bottom: '0%', // '5%', // 25,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 30,
-    backgroundColor: 'transparent', // '#aa73b7',
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  itemStyle: {
-    marginBottom: 20,
-  },
-  iconStyle: {
-    color: colors.white, // '#5a52a5',
-    fontSize: 28,
-    marginLeft: 15,
-  },
-  buttonStyle: {
-    alignItems: 'center',
-    backgroundColor: colors.offWhite, // '#667292',
-    padding: 14,
-    marginBottom: 20,
-    borderRadius: 26, // 24,
-  },
-  buttonText: {
-    // fontSize: 18,
-    // fontWeight: 'bold',
-    color: colors.white, // '#fff',
-    // opacity: 0.6,
-    fontSize: 22,
-
-    fontFamily: 'SFProDisplay-Semibold',
-    // fontWeight: 'normal',
-    fontStyle: 'normal',
-    lineHeight: 28,
-    letterSpacing: 0.17,
-    textAlign: 'center',
-  },
-  logoContainer: {
-    flex: 1,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 400,
-    bottom: 180,
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    borderWidth: 1,
-    borderColor: 'white',
-    borderStyle: 'solid',
-  },
-});
+import styles from './styles';
 
 function SignInScreen(props) {
   // state hooks
@@ -141,6 +50,11 @@ function SignInScreen(props) {
   // user input handlers
   function handleUsernameInputSubmit() {
     passwordInputRef.current._root.focus();
+    // console.log(passwordInputRef.current._root.focus());
+  }
+
+  function handlePasswordInputSubmit() {
+    // authCodeInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
@@ -200,6 +114,7 @@ function SignInScreen(props) {
                     autoCorrect={false}
                     secureTextEntry
                     ref={passwordInputRef}
+                    onSubmitEditing={() => handlePasswordInputSubmit()}
                     onChangeText={(value) => onChangeText('password', value)}
 
                     keyboardAppearance="dark"
