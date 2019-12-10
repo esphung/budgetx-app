@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import PropTypes from 'prop-types';
+
 import { Ionicons } from 'expo-vector-icons';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   Text,
   AsyncStorage,
@@ -16,8 +18,6 @@ import {
   // Alert,
   // Animated,
 } from 'react-native';
-
-import PropTypes from 'prop-types';
 
 import {
   Container,

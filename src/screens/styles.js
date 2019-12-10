@@ -58,10 +58,15 @@ export default StyleSheet.create({
   },
   buttonStyle: {
     alignItems: 'center',
-    backgroundColor: colors.offWhite, // '#667292',
+    backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
     padding: 14,
     marginBottom: 20,
     borderRadius: 26, // 24,
+
+    borderWidth: 1,
+    borderColor: colors.white,
+    borderStyle: 'solid',
+    
   },
   buttonText: {
     // fontSize: 18,
