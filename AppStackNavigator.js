@@ -26,6 +26,8 @@ import Settings from './src/screens/Settings';
 // import Search from './src/screens/Search';
 import Terms from './src/screens/Terms';
 
+import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
+
 const StackNavigator = createStackNavigator({
   // Login: {
   //   screen: Login,
@@ -39,6 +41,10 @@ const StackNavigator = createStackNavigator({
   Terms: {
     screen: Terms,
   },
+
+  ChangePasswordScreen: {
+    screen: ChangePasswordScreen,
+  }
   // Search: {
   //   screen: Search,
   // },

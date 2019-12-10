@@ -11,7 +11,7 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -39,6 +39,8 @@ const styles = StyleSheet.create({
   },
   arrow: {
     flex: 0.1,
+    flexDirection: 'row-reverse',
+
     textAlign: 'center',
     // width: 8,
     // height: 13,
@@ -64,8 +66,8 @@ function UserOptions(props) {
 
   function renderSeparator(item) {
     let view = <View />;
-    // console.log(item.leadingItem.key)
-    if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Passcode') {
+    // console.log(item.leadingItem.key);
+    if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Passcode' && item.leadingItem.key !== 'Change Password') {
       view = (
         <View
           style={{
@@ -101,13 +103,17 @@ function UserOptions(props) {
     let rowHeight = 45;
     let backgroundColor = colors.dark;
     let isDisabled = false;
+    let caret = '>';
 
     if (item.key === '') {
       rowHeight = 20;
       backgroundColor = colors.darkTwo;
       isDisabled = true;
+      caret = '';
       // console.log(item);
     }
+
+    // console.log(item);
     const view = (
       <TouchableOpacity
         style={
@@ -135,7 +141,7 @@ function UserOptions(props) {
           }}
         >
           <Text style={styles.title}>{item.key}</Text>
-          <Text style={styles.arrow}>></Text>
+          <Text style={styles.arrow}>{caret}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -148,7 +154,8 @@ function UserOptions(props) {
       data={[
         { key: 'Customize Categories' },
         { key: 'Export Transactions' },
-        { key: 'Passcode' },
+        // { key: 'Passcode' },
+        { key: 'Change Password' },
         { key: '' },
         { key: 'Contact Support' },
         { key: 'Terms of Service' },

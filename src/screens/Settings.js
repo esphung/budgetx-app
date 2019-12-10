@@ -13,6 +13,8 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
 
 import React from 'react';
 
+import PropTypes from 'prop-types';
+
 import {
   StyleSheet,
   View,
@@ -133,11 +135,6 @@ ${getHTMLObjectRows(data)}
 }
 
 function Settings(props) {
-  // async function signOut() {
-  //   await AsyncStorage.clear()
-  //   props.navigation.navigate('Authloading');
-  // };
-
   const send = () => {
     // const userObject = await loadUserObject();
     MailComposer.composeAsync({
@@ -190,6 +187,10 @@ function Settings(props) {
     sendTransactionsMail();
   }
 
+  function changePasswordBtnPressed() {
+    props.navigation.navigate('ChangePasswordScreen');
+  }
+
   function onPress(btn) {
     const name = btn.key;
 
@@ -200,6 +201,8 @@ function Settings(props) {
       termsOfServiceBtnPressed();
     } else if (name === 'Export Transactions') {
       exportBtnPressed();
+    } else if (name === 'Change Password') {
+      changePasswordBtnPressed();
     }
   }
 
@@ -395,5 +398,12 @@ Settings.navigationOptions = ({ navigation }) => {
   };
   return navbar;
 };
+
+Settings.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 
 export default Settings;
