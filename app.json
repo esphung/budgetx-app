@@ -19,6 +19,8 @@
     "sdkVersion": "35.0.0",
     "slug": "budgetx-app",
     "splash": {
+      "image": "./assets/splashscreen-budgetx.png",
+      "resizeMode": "contain",
       "backgroundColor": "#18202f",
       "userInterfaceStyle": "dark"
     },

@@ -30,7 +30,7 @@ global.appVersion = '1.0.0';
 
 global.adminEmailAddress = 'esphung@gmail.com';
 
-global.appName = 'Budget X App';
+global.appName = 'Budget X';
 
 global.appDeveloper = 'Eric Phung';
 

@@ -18,7 +18,6 @@ const SwitchNavigator = createSwitchNavigator({
   // screen: name
   AuthLoading: AuthLoadingScreen,
   Auth: AuthStackNavigator, // Auth stack
-  // App: AppDrawerNavigator, // the App stack (with drawer)
   App: AppStackNavigator, // the App stack
 });
 

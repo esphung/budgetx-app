@@ -10,11 +10,6 @@ import {
 
 import colors from 'main/colors';
 
-// import {
-//   loadUserObject,
-//   // saveUserObject,
-// } from '../storage/UserStorage';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

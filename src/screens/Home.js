@@ -15,6 +15,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             12/03/2019 12:07 PM
             12/04/2019 04:41 PM | Hide HeaderLeft and Hide Search btn
             12/05/2019 12:45 PM | Added Hooks eslinter
+            12/10/2019 12:22 AM
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -29,6 +30,9 @@ import {
 import { NavigationEvents } from 'react-navigation';
 
 import * as Font from 'expo-font';
+
+// ui colors
+import colors from 'main/colors';
 
 import {
   loadUserObject,
@@ -48,9 +52,6 @@ import SpinnerMask from '../components/SpinnerMask';
 
 // data models
 import Transaction from '../models/Transaction';
-
-// ui colors
-import colors from '../../colors';
 
 import { calculateBalance, calculateMonthSpent } from './functions';
 
@@ -86,7 +87,7 @@ function Home() {
 
   const [isCurrentTransaction] = useState(false);
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   async function retrieveStoredUser() {
     // load stored user transactions
@@ -94,7 +95,7 @@ function Home() {
       const userObject = await loadUserObject();
       // console.log(await getIsUserLoggedIn())
 
-      setIsUserLoggedIn(await global.getIsStoredUserLoggedIn());
+      // setIsUserLoggedIn(await global.getIsStoredUserLoggedIn());
 
       // set stored user's transactions
       setTransactions(userObject.user.transactions);
@@ -357,7 +358,7 @@ function Home() {
 
   // }
   // else
-    if (fontsAreLoaded) {
+  if (fontsAreLoaded) {
     //  show home page
     view = (
       <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
