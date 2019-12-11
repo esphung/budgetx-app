@@ -11,6 +11,7 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             12/09/2019 12:56 PM | added AuthLoadingScreen, SwitchNavigator, AUthStackNavigator
             12/10/2019 06:02 AM | Stuck at AWS suspension
             12/10/2019 01:58 PM | AWS authentication set up
+            12/11/2019 02:55 PM |
 */
 
 import React, { useState, useEffect } from 'react';

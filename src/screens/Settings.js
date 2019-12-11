@@ -139,6 +139,39 @@ ${getHTMLObjectRows(data)}
 }
 
 function Settings(props) {
+
+  const clearAsyncStorage = async () => {
+      AsyncStorage.clear();
+  };
+
+  /*
+  * > Confirm reset data
+  */
+  const resetDataAlert = async () => {
+    await Alert.alert(
+      'Reset Data',
+      'Are you sure you want to reset all data from the app?',
+      [
+        {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
+        // Calling resetData
+        {text: 'OK', onPress: () => resetData()}, 
+      ],
+      { cancelable: false }
+    )
+  };
+  
+  /*
+  * > reset data from the app
+  */
+  const resetData = async () => {
+    await clearAsyncStorage()
+    .then(() => {
+      console.log('Reset complete');
+      props.navigation.navigate('AuthLoading');
+    })
+    .catch((err) => console.log('Error while signing out!', err))
+  };
+
   const send = () => {
     // const userObject = await loadUserObject();
     MailComposer.composeAsync({
@@ -166,9 +199,12 @@ function Settings(props) {
     });
   };
 
+  function resetDataBtnPressed() {
+    resetDataAlert();
+  }
+
   function rateUsBtnPressed() {
     // store review
-    // console.log('Rate Us button pressed');
     StoreReview.requestReview();
   }
 
@@ -178,7 +214,6 @@ function Settings(props) {
   }
 
   function termsOfServiceBtnPressed() {
-    // console.log('Terms');
     props.navigation.navigate('Terms');
   }
 
@@ -207,6 +242,8 @@ function Settings(props) {
       exportBtnPressed();
     } else if (name === 'Change Password') {
       changePasswordBtnPressed();
+    } else if (name === 'Reset Data') {
+      resetDataBtnPressed();
     }
   }
 
