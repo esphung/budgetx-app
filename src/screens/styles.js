@@ -12,17 +12,19 @@ export default StyleSheet.create({
     flexDirection: 'column',
   },
   input: {
-    // flex: 1,
-    fontSize: 15,
+    alignItems: 'center',
+    fontSize: 17,
     // fontWeight: 'bold',
     color: colors.white, // '#5a52a5',
 
-    fontFamily: 'SFProDisplay-Semibold',
+    fontFamily: 'SFProDisplay-Regular',
     fontWeight: 'normal',
     fontStyle: 'normal',
     // lineHeight: 28,
     letterSpacing: 0.17,
     textAlign: 'left',
+
+    // padding: 14,
 
     // borderWidth: 1,
     // borderColor: 'orange',
@@ -33,7 +35,7 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     height: '100%', // 200,
-    bottom: '0%', // '5%', // 25,
+    // bottom: '0%', // '5%', // 25,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -46,8 +48,12 @@ export default StyleSheet.create({
   },
   itemStyle: {
     marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   iconStyle: {
+    flex: 0.1,
     color: colors.white, // '#5a52a5',
     fontSize: 17,
     marginLeft: 15,
@@ -63,10 +69,9 @@ export default StyleSheet.create({
     marginBottom: 20,
     borderRadius: 26, // 24,
 
-    borderWidth: 1,
-    borderColor: colors.white,
-    borderStyle: 'solid',
-    
+    // borderWidth: 1,
+    // borderColor: colors.white,
+    // borderStyle: 'solid',    
   },
   buttonText: {
     // fontSize: 18,

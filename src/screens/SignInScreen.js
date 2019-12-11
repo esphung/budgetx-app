@@ -41,7 +41,7 @@ function SignInScreen(props) {
 
   const [password, setPassword] = useState(null);
 
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
   // methods
   const signIn = async () => {
@@ -51,7 +51,7 @@ function SignInScreen(props) {
     // props.navigation.navigate('AuthLoading');
     await Auth.signIn(username, password)
       .then((cognitoUser) => {
-        setUser(cognitoUser);
+        // setUser(cognitoUser);
         // console.log(cognitoUser);
         props.navigation.navigate('AuthLoading');
       })
@@ -90,8 +90,8 @@ function SignInScreen(props) {
   }
 
   useEffect(() => {
-    console.log('username:', username);
-    console.log('password:', password);
+    // console.log('username:', username);
+    // console.log('password:', password);
     return () => {
       // effect
     };
@@ -140,7 +140,17 @@ function SignInScreen(props) {
                   />
                 </Item>
                 <TouchableOpacity
-                  onPress={() => signIn()}
+                  onPress={() => {
+                    if (username) {
+                      if (password) {
+                        signIn();
+                      } else {
+                        Alert.alert('Enter password');
+                      }
+                    } else {
+                      Alert.alert('Enter a username');
+                    }
+                  }}
                   style={styles.buttonStyle}
                 >
                   <Text style={styles.buttonText}>

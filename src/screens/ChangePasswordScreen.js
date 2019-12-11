@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   View,
-  // Alert,
+  Alert,
 } from 'react-native';
 
 import {
@@ -162,7 +162,7 @@ function ChangePasswordScreen(props) {
                       },
                     ]
                   }
-                  onPress={signOut}
+                  onPress={signOutAlert}
                 >
                   <Ionicons active name="md-power" style={{ color: '#fff', paddingRight: 10 }} />
                   <Text style={styles.buttonText}>

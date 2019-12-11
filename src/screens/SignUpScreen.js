@@ -26,6 +26,7 @@ import {
   Modal,
   FlatList,
   // Animated,
+  TextInput,
 } from 'react-native';
 
 import {
@@ -63,9 +64,13 @@ function SignUpScreen(props) {
 
   const [isKeyboardAvoidEnabled, setIsKeyboardAvoidEnabled] = useState(false);
 
+  const [dialCode, setDialCode] = useState(null);
+
   /*
   * > Input Refs
   */
+  const usernameInputRef = useRef(null);
+
   const passwordInputRef = useRef(null);
 
   const emailInputRef = useRef(null);
@@ -79,6 +84,7 @@ function SignUpScreen(props) {
     const defaultFlag = countries.filter((obj) => obj.name === 'United States')[0].flag;
     setFlag(defaultFlag);
 
+    setDialCode(countries.filter((obj) => obj.name === 'United States')[0].dial_code)
     // setCountryData(countries);
     return () => {
       // effect
@@ -89,8 +95,8 @@ function SignUpScreen(props) {
   * > Handlers
   */
   function onChangeText(key, value) {
-    // console.log('key:', key);
-    // console.log('value:', value);
+    console.log('key:', key);
+    console.log('value:', value);
 
     if (key === 'username') {
       setUsername(value);
@@ -121,6 +127,7 @@ function SignUpScreen(props) {
   }
 
   function handlePhoneNumberInputSubmit() {
+    console.log(`${dialCode}${phoneNumber}`);
     // authCodeInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
@@ -155,9 +162,14 @@ function SignUpScreen(props) {
       const countryFlag = await countries.filter(
         (obj) => obj.name === country,
       )[0].flag;
+
       // Update the state then hide the Modal
-      setPhoneNumber(countryCode);
+      // setPhoneNumber(countryCode);
+
+      setDialCode(countryCode);
+
       setFlag(countryFlag);
+
       // this.setState({ phoneNumber: countryCode, flag: countryFlag })
       await hideModal();
     } catch (err) {
@@ -213,28 +225,55 @@ function SignUpScreen(props) {
     return modal;
   };
 
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+
   /*
   * > User Sign Up Methods
   */
   // Sign up user with AWS Amplify Auth
   async function signUp() {
-    // rename variable to conform with Amplify Auth field phone attribute
-    const phone_number = phoneNumber; // +01234567890 format
-    await Auth.signUp({
-      username,
-      password,
-      attributes: { email, phone_number },
-    })
-      .then(() => {
-        console.log('Sign up successful!');
-        Alert.alert('Enter the confirmation code you received.');
+    if (!username) {
+      Alert.alert('Username required');
+      return;
+    }
+
+    if (!password) {
+      Alert.alert('Password required');
+      return;   
+    } else if (password.length < 6) {
+      Alert.alert('Password requires atleast 6 characters.');
+      return;   
+    }
+
+    if (!email) {
+      Alert.alert('Email required');
+      return;   
+    } else if (!isValidEmail(email)) {
+      Alert.alert('Email invalid');
+      return;
+    } else {
+
+      // rename variable to conform with Amplify Auth field phone attribute
+      const phone_number = phoneNumber; // +01234567890 format
+      await Auth.signUp({
+        username,
+        password,
+        attributes: { email, phone_number },
       })
-      .catch((err) => {
-        if (!err.message) {
-          console.log('Error when signing up: ', err.message);
-          Alert.alert('Error when signing up: ', err.message);
-        }
-      });
+        .then(() => {
+          console.log('Sign up successful!');
+          Alert.alert('Enter the confirmation code you received.');
+        })
+        .catch((err) => {
+          if (!err.message) {
+            console.log('Error when signing up: ', err.message);
+            Alert.alert('Error when signing up: ', err.message);
+          }
+        });
+    }
   }
 
   // Confirm users and redirect them to the SignIn page
@@ -299,6 +338,7 @@ function SignUpScreen(props) {
                     autoCapitalize="none"
                     autoCorrect={false}
                     onSubmitEditing={() => handleUsernameInputSubmit()}
+                    ref={usernameInputRef}
                     onChangeText={(value) => onChangeText('username', value)}
 
                     keyboardAppearance="dark"
@@ -347,7 +387,7 @@ function SignUpScreen(props) {
                 {/*
                 * > phone number section
                 */}
-                <Item rounded style={styles.itemStyle}>
+                <View rounded style={styles.itemStyle}>
                   <PickCountryModal />
                   <Ionicons
                     active
@@ -374,25 +414,28 @@ function SignUpScreen(props) {
                   >
                     <Text>{flag}</Text>
                   </TouchableOpacity>
-                  <Input
-                    style={styles.input}
-                    placeholder="+12345678910"
-                    placeholderTextColor={colors.offWhite}
-                    keyboardType="phone-pad"
-                    returnKeyType="done"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry={false}
-                    ref={phoneNumberInputRef}
-                    value={phoneNumber}
-                    onSubmitEditing={() => handlePhoneNumberInputSubmit()}
-                    onChangeText={(val) => onChangeText('phoneNumber', val)}
 
-                    keyboardAppearance="dark"
-                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
-                  />
 
-                </Item>
+                    <Text style={styles.input}>{dialCode}</Text>
+                    <Input
+                      style={styles.input}
+                      placeholder="123-456-7890"
+                      placeholderTextColor={colors.offWhite}
+                      keyboardType="phone-pad"
+                      returnKeyType="done"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      secureTextEntry={false}
+                      ref={phoneNumberInputRef}
+                      value={phoneNumber}
+                      onSubmitEditing={() => handlePhoneNumberInputSubmit()}
+                      onChangeText={(val) => onChangeText('phoneNumber', val)}
+
+                      keyboardAppearance="dark"
+                      onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                      maxLength={15}
+                    />
+                </View>
 
                 <TouchableOpacity
                   onPress={signUp}

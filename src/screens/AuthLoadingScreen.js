@@ -34,7 +34,7 @@ function AuthLoadingScreen(props) {
         // this.setState({userToken: user.signInUserSession.accessToken.jwtToken})
       })
       .catch((err) => console.log(err));
-      props.navigation.navigate(userToken ? 'App' : 'Auth');
+    props.navigation.navigate(userToken ? 'App' : 'Auth');
   }
 
   useEffect(() => {
@@ -43,15 +43,13 @@ function AuthLoadingScreen(props) {
   }, []);
 
   useEffect(() => {
-    // if (userToken) {
-    //   console.log(userToken);
-    // }
+    if (userToken) {
+      console.log(userToken);
+    }
     return () => {
       props.navigation.navigate(userToken ? 'App' : 'Auth');
-    }
+    };
   }, [userToken, props.navigation]);
-
-
 
   const view = (
     <View style={styles.container}>

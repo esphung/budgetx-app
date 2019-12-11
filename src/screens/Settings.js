@@ -26,6 +26,7 @@ import {
   // TextInput
   SafeAreaView,
   AsyncStorage,
+  Alert,
 } from 'react-native';
 
 import * as StoreReview from 'expo-store-review';
@@ -313,20 +314,38 @@ function Settings(props) {
 }
 
 Settings.navigationOptions = ({ navigation }) => {
-  async function signOut() {
-    // await AsyncStorage.clear()
-    await AsyncStorage.removeItem('userToken');
-    navigation.navigate('AuthLoading');
-  }
+  // async function signOut() {
+  //   // await AsyncStorage.clear()
+  //   await AsyncStorage.removeItem('userToken');
+  //   navigation.navigate('AuthLoading');
+  // }
 
   const backBtnPressed = () => {
     navigation.navigate('Home');
   };
 
-  // async function logUserOut() {
-  //   await global.setIsStoredUserLoggedIn(false);
-  //   navigation.navigate('Login');
-  // }
+  // Sign out from the app
+  const signOutAlert = async () => {
+    await Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out from the app?',
+      [
+        {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
+        // Calling signOut
+        {text: 'OK', onPress: () => signOut()}, 
+      ],
+      { cancelable: false }
+    )
+  }
+  // Confirm sign out
+  const signOut = async () => {
+    await Auth.signOut()
+    .then(() => {
+      console.log('Sign out complete');
+      navigation.navigate('AuthLoading');
+    })
+    .catch((err) => console.log('Error while signing out!', err))
+  }
 
   const navbar = {
     title: 'Settings',
@@ -375,7 +394,7 @@ Settings.navigationOptions = ({ navigation }) => {
         }
       }
       >
-        <TouchableOpacity onPress={signOut}>
+        <TouchableOpacity onPress={signOutAlert}>
           <Text
             style={
               {
