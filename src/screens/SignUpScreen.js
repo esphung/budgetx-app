@@ -10,7 +10,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { Ionicons } from 'expo-vector-icons';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 import {
   TouchableOpacity,
@@ -37,11 +37,11 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
+import countries from 'main/Countries';
+
 import colors from 'main/colors';
 
 import styles from './styles';
-
-import countries from 'main/Countries';
 
 function SignUpScreen(props) {
   /*
@@ -61,6 +61,8 @@ function SignUpScreen(props) {
 
   const [modalVisible, setModalVisible] = useState(null);
 
+  const [isKeyboardAvoidEnabled, setIsKeyboardAvoidEnabled] = useState(false);
+
   /*
   * > Input Refs
   */
@@ -77,20 +79,18 @@ function SignUpScreen(props) {
     const defaultFlag = countries.filter((obj) => obj.name === 'United States')[0].flag;
     setFlag(defaultFlag);
 
-
     // setCountryData(countries);
     return () => {
       // effect
     };
-  }, [])
+  }, []);
 
- 
   /*
   * > Handlers
   */
   function onChangeText(key, value) {
-    console.log('key:', key);
-    console.log('value:', value);
+    // console.log('key:', key);
+    // console.log('value:', value);
 
     if (key === 'username') {
       setUsername(value);
@@ -121,7 +121,7 @@ function SignUpScreen(props) {
   }
 
   function handlePhoneNumberInputSubmit() {
-    authCodeInputRef.current._root.focus();
+    // authCodeInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
@@ -143,8 +143,30 @@ function SignUpScreen(props) {
     phoneNumberInputRef.current._root.focus();
   }
 
+  async function selectCountry(country) {
+    // Get data from Countries.js
+    // const countryData = await countries;
+    try {
+      // Get the country code
+      const countryCode = await countries.filter(
+        (obj) => obj.name === country,
+      )[0].dial_code;
+      // Get the country flag
+      const countryFlag = await countries.filter(
+        (obj) => obj.name === country,
+      )[0].flag;
+      // Update the state then hide the Modal
+      setPhoneNumber(countryCode);
+      setFlag(countryFlag);
+      // this.setState({ phoneNumber: countryCode, flag: countryFlag })
+      await hideModal();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const PickCountryModal = () => {
-    return (
+    const modal = (
       <Modal
         animationType="slide"
         transparent={false}
@@ -165,7 +187,11 @@ function SignUpScreen(props) {
                   >
                     <View style={styles.countryStyle}>
                       <Text style={styles.textStyle}>
-                        {item.flag} {item.name} ({item.dial_code})
+                        {item.flag}
+                        {item.name}
+                        (
+                        {item.dial_code}
+                        )
                       </Text>
                     </View>
                   </TouchableWithoutFeedback>
@@ -175,7 +201,8 @@ function SignUpScreen(props) {
           </View>
           <TouchableOpacity
             onPress={() => hideModal()}
-            style={styles.closeButtonStyle}>
+            style={styles.closeButtonStyle}
+          >
             <Text style={styles.textStyle}>
               Cancel
             </Text>
@@ -183,29 +210,8 @@ function SignUpScreen(props) {
         </View>
       </Modal>
     );
-  }
-
-
-  async function selectCountry(country) {
-    // Get data from Countries.js  
-    // const countryData = await countries;
-    try {
-      // Get the country code
-      const countryCode = await countries.filter(
-        (obj) => obj.name === country)[0].dial_code;
-      // Get the country flag
-      const countryFlag = await countries.filter(
-        (obj) => obj.name === country)[0].flag;
-      // Update the state then hide the Modal
-      setPhoneNumber(countryCode);
-      setFlag(countryFlag);
-      // this.setState({ phoneNumber: countryCode, flag: countryFlag })
-      await hideModal();
-    }
-    catch (err) {
-      console.log(err);
-    }
-  }
+    return modal;
+  };
 
   /*
   * > User Sign Up Methods
@@ -225,9 +231,6 @@ function SignUpScreen(props) {
       })
       .catch((err) => {
         if (!err.message) {
-          console.log('Error when signing up: ', err);
-          Alert.alert('Error when signing up: ', err);
-        } else {
           console.log('Error when signing up: ', err.message);
           Alert.alert('Error when signing up: ', err.message);
         }
@@ -277,8 +280,8 @@ function SignUpScreen(props) {
       <StatusBar />
       <KeyboardAvoidingView
         style={styles.container}
-        // behavior="padding"
-        // enabled
+        behavior="padding"
+        enabled={isKeyboardAvoidEnabled}
       >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
@@ -299,6 +302,7 @@ function SignUpScreen(props) {
                     onChangeText={(value) => onChangeText('username', value)}
 
                     keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
                 </Item>
                 {/*  password section  */}
@@ -317,6 +321,7 @@ function SignUpScreen(props) {
                     onChangeText={(value) => onChangeText('password', value)}
 
                     keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
                 </Item>
                 {/* email section */}
@@ -336,6 +341,7 @@ function SignUpScreen(props) {
                     onChangeText={(value) => onChangeText('email', value)}
 
                     keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
                 </Item>
                 {/*
@@ -383,13 +389,19 @@ function SignUpScreen(props) {
                     onChangeText={(val) => onChangeText('phoneNumber', val)}
 
                     keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
 
-                  {/*
-                  * > Modal for country code and flag
-                  */}
-                  
                 </Item>
+
+                <TouchableOpacity
+                  onPress={signUp}
+                  style={styles.buttonStyle}
+                >
+                  <Text style={styles.buttonText}>
+                    Sign Up
+                  </Text>
+                </TouchableOpacity>
 
                 {/* code confirmation section  */}
                 <Item rounded style={styles.itemStyle}>
@@ -408,32 +420,21 @@ function SignUpScreen(props) {
                     onChangeText={(value) => onChangeText('authCode', value)}
 
                     keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(true)}
                   />
                 </Item>
-
-                {/*
-                * > Sign Up Buttons
-                */}
-
-                <TouchableOpacity
-                  onPress={signUp}
-                  style={styles.buttonStyle}
-                >
-                  <Text style={styles.buttonText}>
-                    Sign Up
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.buttonStyle}>
+                <TouchableOpacity onPress={confirmSignUp} style={styles.buttonStyle}>
                   <Text style={styles.buttonText}>
                     Confirm Sign Up
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonStyle}>
+
+                <TouchableOpacity onPress={resendSignUp} style={styles.buttonStyle}>
                   <Text style={styles.buttonText}>
                     Resend code
                   </Text>
                 </TouchableOpacity>
+
               </View>
             </Container>
           </View>
@@ -455,9 +456,9 @@ SignUpScreen.navigationOptions = () => {
   return navbar;
 };
 
-/*
-* > Prop Types
-*/
+// /*
+// * > Prop Types
+// */
 // SignUpScreen.propTypes = {
 //   username: PropTypes.string.isRequired,
 //   password: PropTypes.string.isRequired,

@@ -15,7 +15,7 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
-  // Alert,
+  Alert,
   // Animated,
 } from 'react-native';
 
@@ -23,16 +23,15 @@ import {
   Container,
   Item,
   Input,
-  // Icon,
 } from 'native-base';
 
+// AWS Amplify
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 import colors from 'main/colors';
 
 import styles from './styles';
 
-// AWS Amplify
-import Auth from '@aws-amplify/auth'
 
 function SignInScreen(props) {
   // state hooks
@@ -42,12 +41,29 @@ function SignInScreen(props) {
 
   const [password, setPassword] = useState(null);
 
+  const [user, setUser] = useState(null);
+
   // methods
   const signIn = async () => {
-    const userTokenValue = '123456789';
-    await AsyncStorage.setItem('userToken', userTokenValue);
-    // console.log('userToken set:', userTokenValue);
-    props.navigation.navigate('AuthLoading');
+    // const userTokenValue = '123456789';
+    // await AsyncStorage.setItem('userToken', userTokenValue);
+    // // console.log('userToken set:', userTokenValue);
+    // props.navigation.navigate('AuthLoading');
+    await Auth.signIn(username, password)
+      .then((cognitoUser) => {
+        setUser(cognitoUser);
+        // console.log(cognitoUser);
+        props.navigation.navigate('AuthLoading');
+      })
+      .catch((err) => {
+        if (!err.message) {
+          console.log('Error when signing in: ', err);
+          Alert.alert('Error when signing in: ', err);
+        } else {
+          console.log('Error when signing in: ', err.message);
+          Alert.alert('Error when signing in: ', err.message);
+        }
+      });
   };
 
   // user input handlers

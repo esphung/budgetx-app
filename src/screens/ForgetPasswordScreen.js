@@ -16,7 +16,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   View,
-  // Alert,
+  Alert,
   // Animated,
 } from 'react-native';
 
@@ -26,14 +26,14 @@ import {
   Input,
 } from 'native-base';
 
+// AWS Amplify
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+
 import colors from 'main/colors';
 
 import styles from './styles';
 
-// AWS Amplify
-import Auth from '@aws-amplify/auth';
-
-function ForgotPasswordScreen() {
+function ForgotPasswordScreen(props) {
   // input refs
   const newPasswordInputRef = useRef(null);
 
@@ -73,6 +73,44 @@ function ForgotPasswordScreen() {
   function handleAuthCodeInputSubmit() {
     // emailInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
+  }
+
+
+  /*
+  * > Request a new password
+  */
+  async function forgotPassword() {
+    // const { username } = this.state;
+    await Auth.forgotPassword(username)
+      .then((data) => console.log('New code sent', data))
+      .catch((err) => {
+        if (!err.message) {
+          console.log('Error while setting up the new password: ', err);
+          Alert.alert('Error while setting up the new password: ', err);
+        } else {
+          console.log('Error while setting up the new password: ', err.message);
+          Alert.alert('Error while setting up the new password: ', err.message);
+        }
+      });
+  }
+
+  // Upon confirmation redirect the user to the Sign In page
+  async function forgotPasswordSubmit() {
+    // const { username, authCode, newPassword } = this.state;
+    await Auth.forgotPasswordSubmit(username, authCode, newPassword)
+      .then(() => {
+        props.navigation.navigate('SignIn');
+        console.log('New password submitted successfully!');
+      })
+      .catch((err) => {
+        if (!err.message) {
+          console.log('Error while confirming the new password: ', err);
+          Alert.alert('Error while confirming the new password: ', err);
+        } else {
+          console.log('Error while confirming the new password: ', err.message);
+          Alert.alert('Error while confirming the new password: ', err.message);
+        }
+      });
   }
 
   const view = (

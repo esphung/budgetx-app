@@ -22,12 +22,12 @@ import {
   // Icon,
 } from 'native-base';
 
+// AWS Amplify
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+
 import colors from 'main/colors';
 
 import styles from './styles';
-
-// AWS Amplify
-import Auth from '@aws-amplify/auth';
 
 function ChangePasswordScreen(props) {
   // hooks
@@ -58,10 +58,33 @@ function ChangePasswordScreen(props) {
     // console.log(passwordInputRef.current._root.focus());
   }
 
-  async function signOut() {
-    // await AsyncStorage.clear()
-    await AsyncStorage.removeItem('userToken');
-    props.navigation.navigate('AuthLoading');
+  // async function signOut() {
+  //   // await AsyncStorage.clear()
+  //   await AsyncStorage.removeItem('userToken');
+  //   props.navigation.navigate('AuthLoading');
+  // }
+
+  // Sign out from the app
+  const signOutAlert = async () => {
+    await Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out from the app?',
+      [
+        {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
+        // Calling signOut
+        {text: 'OK', onPress: () => signOut()}, 
+      ],
+      { cancelable: false }
+    )
+  }
+  // Confirm sign out
+  const signOut = async () => {
+    await Auth.signOut()
+    .then(() => {
+      console.log('Sign out complete');
+      props.navigation.navigate('AuthLoading');
+    })
+    .catch((err) => console.log('Error while signing out!', err))
   }
 
   const view = (
