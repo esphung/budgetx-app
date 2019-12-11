@@ -20,7 +20,7 @@
     "slug": "budgetx-app",
     "splash": {
       "image": "./assets/splashscreen-budgetx.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#18202f",
       "userInterfaceStyle": "dark"
     },

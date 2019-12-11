@@ -37,3 +37,7 @@ global.appDesigner = 'Andrey Nasanov';
 global.privacyLink = 'www.google.com';
 
 global.latestReleaseDate = '12/13/2019';
+
+// validation
+// var usernameRegex = /^[a-zA-Z0-9]+$/;
+// global.usernameRegex = /^[a-zA-Z0-9]+$/;

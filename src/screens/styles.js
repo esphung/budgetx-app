@@ -7,6 +7,8 @@ import colors from 'main/colors';
 export default StyleSheet.create({
   container: {
     flex: 1,
+    // height: '100%',
+    // width: '100%',
     backgroundColor: colors.darkTwo, // '#aa73b7',
     justifyContent: 'center',
     flexDirection: 'column',
@@ -24,7 +26,6 @@ export default StyleSheet.create({
     letterSpacing: 0.17,
     textAlign: 'left',
 
-    // padding: 14,
 
     // borderWidth: 1,
     // borderColor: 'orange',
@@ -35,6 +36,7 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     height: '100%', // 200,
+    top: '5%',
     // bottom: '0%', // '5%', // 25,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -48,12 +50,12 @@ export default StyleSheet.create({
   },
   itemStyle: {
     marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   iconStyle: {
-    flex: 0.1,
+    // flex: 0.1,
     color: colors.white, // '#5a52a5',
     fontSize: 17,
     marginLeft: 15,
@@ -69,10 +71,33 @@ export default StyleSheet.create({
     marginBottom: 20,
     borderRadius: 26, // 24,
 
-    // borderWidth: 1,
-    // borderColor: colors.white,
-    // borderStyle: 'solid',    
+    borderWidth: 1,
+    borderColor: colors.white,
+    borderStyle: 'solid',    
   },
+  // buttonStyleEnabled: {
+  //   alignItems: 'center',
+  //   backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+  //   padding: 14,
+  //   marginBottom: 20,
+  //   borderRadius: 26, // 24,
+
+  //   // borderWidth: 1,
+  //   // borderColor: colors.white,
+  //   // borderStyle: 'solid',    
+  // },
+  // buttonStyleDisabled: {
+  //   alignItems: 'center',
+  //   backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+  //   padding: 14,
+  //   marginBottom: 20,
+  //   borderRadius: 26, // 24,
+  //   opacity: 0.4,
+
+  //   // borderWidth: 1,
+  //   // borderColor: colors.white,
+  //   // borderStyle: 'solid',    
+  // },
   buttonText: {
     // fontSize: 18,
     // fontWeight: 'bold',

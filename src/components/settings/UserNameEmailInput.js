@@ -7,8 +7,11 @@ import {
   // TouchableOpacity,
   Text,
   // Image,
-  TextInput
+  TextInput,
 } from 'react-native';
+
+// AWS Amplify
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 import SpinnerMask from '../SpinnerMask';
 
@@ -17,99 +20,99 @@ import colors from '../../../colors';
 
 import {
   loadUserObject,
-  saveUserObject
+  saveUserObject,
 } from '../../storage/UserStorage';
-
-// var nameRegex = /^[a-zA-Z\-]+$/;
-var usernameRegex = /^[a-zA-Z0-9]+$/;
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function isValidName(text) {
-  // var regExp = /^[a-zA-Z]*$/
+  // var nameRegex = /^[a-zA-Z\-]+$/;
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  let bool = false;
   const regExp = usernameRegex;
-  if (!regExp.test(text)) {
-    return false;
-  } else {      
-    return true;
+  if (regExp.test(text)) {
+    bool = true;
   }
+  return bool;
 }
 
 const EMAIL_INPUT_LIMIT = 22;
 
 function UserNameEmailInput() {
-  const [text, setText] = useState(null);
+  // const [text, setText] = useState(null);
 
-  const [isUserLoaded, setIsUserLoaded] = useState(false);
+  // const [isUserLoaded, setIsUserLoaded] = useState(false);
 
-  const [isInputEnabled, setIsInputEnabled] = useState(false);
+  // const [isInputEnabled, setIsInputEnabled] = useState(false);
 
   const [name, setName] = useState('');
 
   const [email, setEmail] = useState(null);
 
-  const [emailPlaceholder, setEmailPlaceholder] = useState('examplemail@budget.com');
+  // const [emailPlaceholder, setEmailPlaceholder] = useState('examplemail@budget.com');
 
   const [namePlaceholder, setNamePlaceholder] = useState('johnsmith123');
 
-  const [shouldNameAutofocus, setShouldNameAutoFocus] = useState(false);
+  // const [shouldNameAutofocus, setShouldNameAutoFocus] = useState(false);
 
-  const [isEmailInputEnabled, setIsEmailInputEnabled] = useState(true);
+  // const [isEmailInputEnabled, setIsEmailInputEnabled] = useState(false);
 
-  const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
+  const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
 
   const [shouldClearNameInput, setShouldClearNameInput] = useState(false);
 
-  async function saveName(name) {
+  const [user, setUser] = useState(null);
+
+  async function saveName(string) {
     const userObject = await loadUserObject(); // load storage object
     // console.log('user:', userObject.user.username);
 
-    userObject.user.username = name;
+    userObject.user.username = string;
     // console.log('user:', userObject.user.username);
 
-    if (isValidName(name)) {
+    if (isValidName(string)) {
       saveUserObject(userObject);
     }
   }
 
-  async function saveEmail(email) {
+  async function saveEmail(string) {
     const userObject = await loadUserObject(); // load storage object
 
-    userObject.user.email = email;
+    userObject.user.email = string;
     // console.log('user:', userObject.user.username);
 
-    if (isValidEmail(email)) {
+    if (isValidEmail(string)) {
       saveUserObject(userObject);
       // setIsEmailInputEnabled(false);
     }
   }
 
-  async function retrieveStoredUserData () {
-    const userObject = await loadUserObject(); // load storage object
-    // console.log(userObject.user);
+  // async function retrieveStoredUserData() {
+  //   const userObject = await loadUserObject(); // load storage object
+  //   // console.log(userObject.user);
 
-    // //  Testing
-    // userObject.user.username = ''
-    // userObject.user.email = ''
-    // saveUserObject(userObject)
+  //   // //  Testing
+  //   // userObject.user.username = ''
+  //   // userObject.user.email = ''
+  //   // saveUserObject(userObject)
 
-    if (userObject.user.username) {
-      setName(userObject.user.username);
-      setNamePlaceholder(userObject.user.username);
-    } else {
-      setShouldClearNameInput(true);
-    }
+  //   if (userObject.user.username) {
+  //     setName(userObject.user.username);
+  //     // setNamePlaceholder(userObject.user.username);
+  //   } else {
+  //     setShouldClearNameInput(true);
+  //   }
 
-    if (userObject.user.email) {
-      setEmail(userObject.user.email);
-      setEmailPlaceholder(userObject.user.email);
-      // setIsEmailInputEnabled(false);
-    }
+  //   if (userObject.user.email) {
+  //     setEmail(userObject.user.email);
+  //     // setEmailPlaceholder(userObject.user.email);
+  //     // setIsEmailInputEnabled(false);
+  //   }
 
-     setIsUserLoaded(true);
-  }
+  //   setIsUserLoaded(true);
+  // }
 
   function submitNamePressed(text) {
     // setName(text);
@@ -118,19 +121,31 @@ function UserNameEmailInput() {
   }
 
   function handleTextChange(text) {
-    setName(text)
+    setName(text);
   }
 
   function handleEmailChange(text) {
     setEmail(text);
-    setEmailPlaceholder(text)
+    // setEmailPlaceholder(text);
   }
   function submitEmailPressed(text) {
     // console.log('Submit:', text)
     // setEmail(text);
 
-    saveEmail(text)
+    saveEmail(text);
   }
+
+  async function loadCognitoUser() {
+    await Auth.currentAuthenticatedUser()
+      .then((cognitoUser) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+
+        setUser(cognitoUser);
+      })
+      .catch((err) => console.log(err));
+  }
+
 
   useEffect(() => {
     if (isValidName(name) || name === '') {
@@ -147,24 +162,36 @@ function UserNameEmailInput() {
   }, [name]);
 
   useEffect(() => {
-
     if (isValidEmail(email) || email === '') {
       // console.log(email);
-      setEmailPlaceholder(email);
+      // setEmailPlaceholder(email);
     }
-  }, [email])
+  }, [email]);
+
+  useEffect(() => {
+    if (user) {
+      // console.log(user);
+      setName(user.username);
+      setEmail(user.attributes.email);
+    }
+    return () => {
+      // effect
+    };
+  }, [user])
 
   useEffect(() => {
     // check for stored user
-    retrieveStoredUserData();
+    // retrieveStoredUserData();
 
-    // enable input
-    setIsInputEnabled(true);
+    loadCognitoUser();
+
+    // // enable input
+    // setIsInputEnabled(true);
   }, [])
 
   let view = <SpinnerMask />;
 
-  if (isUserLoaded) {
+  if (user) {
     view = (
         <View style={{ flex: 1, flexDirection: 'column' }}>
           <View style={
@@ -225,7 +252,7 @@ function UserNameEmailInput() {
                   // borderStyle: 'solid',
                 }
               }
-              placeholder={'Choose username'}
+              placeholder={'No username'}
 
               placeholderTextColor={colors.offWhite}
 
@@ -251,7 +278,7 @@ function UserNameEmailInput() {
 
               value={name}
 
-              autoFocus={shouldNameAutofocus}
+              // autoFocus={shouldNameAutofocus}
 
               autoCompleteType="username" // android
 
@@ -325,7 +352,7 @@ function UserNameEmailInput() {
                   // borderStyle: 'solid',
                 }
               }
-              placeholder={'Enter email address'}
+              placeholder={'No email address'}
 
               placeholderTextColor={colors.offWhite}
 
@@ -347,7 +374,7 @@ function UserNameEmailInput() {
 
               onChangeText={handleEmailChange}
 
-              editable={isEmailInputEnabled}
+              editable={false}
 
               value={email}
 

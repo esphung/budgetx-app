@@ -32,6 +32,7 @@ import colors from 'main/colors';
 
 import styles from './styles';
 
+import { isValidUsername, getButtonStyle } from './functions';
 
 function SignInScreen(props) {
   // state hooks
@@ -40,6 +41,8 @@ function SignInScreen(props) {
   const [username, setUsername] = useState(null);
 
   const [password, setPassword] = useState(null);
+
+  const [isSignInBtnEnabled, setIsSignInBtnEnabled] = useState(false);
 
   // const [user, setUser] = useState(null);
 
@@ -92,6 +95,13 @@ function SignInScreen(props) {
   useEffect(() => {
     // console.log('username:', username);
     // console.log('password:', password);
+
+    if (username && isValidUsername(username) && password) {
+      setIsSignInBtnEnabled(true);
+      // console.log(username);
+    } else {
+      setIsSignInBtnEnabled(false);
+    }
     return () => {
       // effect
     };
@@ -140,18 +150,9 @@ function SignInScreen(props) {
                   />
                 </Item>
                 <TouchableOpacity
-                  onPress={() => {
-                    if (username) {
-                      if (password) {
-                        signIn();
-                      } else {
-                        Alert.alert('Enter password');
-                      }
-                    } else {
-                      Alert.alert('Enter a username');
-                    }
-                  }}
-                  style={styles.buttonStyle}
+                  disabled={!isSignInBtnEnabled}
+                  onPress={signIn}
+                  style={getButtonStyle(isSignInBtnEnabled)}
                 >
                   <Text style={styles.buttonText}>
                     Sign In

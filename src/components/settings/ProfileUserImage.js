@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 import {
   Image,
+  Alert,
+  View,
+  ActivityIndicator,
 } from 'react-native';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -12,10 +15,25 @@ import * as Permissions from 'expo-permissions';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import SpinnerMask from '../SpinnerMask';
+// import SpinnerMask from '../SpinnerMask';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
+
+// AWS Amplify
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+
+import mime from 'mime-types';
+
+import { Storage } from 'aws-amplify';
+
+// import Storage from '@aws-amplify/storage'
+//
+// to store an item
+// await Storage.put('test.txt', 'Hello World!')
+//
+// retrieve an item
+// const image = await Storage.get('welcome.png')
 
 import {
   loadUserObject,
@@ -24,6 +42,50 @@ import {
 
 function ProfileUserImage() {
   const [image, setImage] = useState(null);
+
+  // const [user, setUser] = useState(null);
+
+  const [userProfileImage, setUserProfileImage] = useState(global.placeholder500x500);
+
+  const profilePictureName = 'profilePicture.jpg';
+
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  // this handles the image upload to S3
+  const handleImagePicked = async (pickerResult) => {
+    // const imageName = pickerResult.uri.replace(/^.*[\\\/]/, '');
+    const imageName = profilePictureName;
+
+    const fileType = mime.lookup(pickerResult.uri);
+    const access = { level: 'public', contentType: 'image/jpeg' };
+    const imageData = await fetch(pickerResult.uri);
+    const blobData = await imageData.blob();
+
+    // setUploadedImageName(imageName);
+    // console.log(imageName);
+    
+    try {
+      await Storage.put(imageName, blobData, access);
+      setImage(pickerResult.uri);
+      // console.log('Successfully uploaded', imageName, 'to bucket!');
+
+      setIsImageLoaded(true)
+
+    } catch (err) {
+      console.log('error: ', err);
+    }
+
+
+  };
+
+  const loadUserProfilePicture = async (imageName) => {
+    // retrieve the item
+      // console.log(imageName);
+      const storedImage = await Storage.get(imageName);
+      
+      setImage(storedImage);
+      setIsImageLoaded(true);
+  }
 
   async function saveProfileImage(newImage) {
     const userObject = await loadUserObject(); // load storage object
@@ -48,7 +110,7 @@ function ProfileUserImage() {
 
     if (userObject.user.profileImage) {
       setImage(userObject.user.profileImage);
-      // setIsUserImageLoaded(true);
+      setIsImageLoaded(true);
     }
   }
 
@@ -56,7 +118,7 @@ function ProfileUserImage() {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
-        // alert('Sorry, we need camera roll permissions to make this work!');
+        Alert.alert('Sorry, we need camera roll permissions to make this work!');
       }
     }
   }
@@ -73,26 +135,55 @@ function ProfileUserImage() {
 
     if (!result.cancelled) {
       // this.setState({ image: result.uri });
-      setImage(result.uri);
-      saveProfileImage(result.uri);
+      // setImage(result.uri);
+      // // saveProfileImage(result.uri);
+
+      handleImagePicked(result);
     }
   }
 
+  // async function loadCognitoUser() {
+  //   await Auth.currentAuthenticatedUser()
+  //     .then((cognitoUser) => {
+  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
+  //       // console.log('username:', cognitoUser.username);
+  //       setUser(cognitoUser);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }
+
+
   useEffect(() => {
+    // setImage(userProfileImage);
+
     getPermissionAsync();
+
+    // retrieveStoredUserData();
+
+    loadUserProfilePicture(profilePictureName);
+
     retrieveStoredUserData();
+    // loadCognitoUser();
+    
     // console.log('hi');
   }, []);
 
   useEffect(() => {
     // console.log('Image updated');
+    if (image) {
+      // console.log(image);
+      saveProfileImage(image);
 
-    // if (image) {
-    //   saveProfileImage(image);
-    // }
+    }
   }, [image]);
 
-  let view = <SpinnerMask />;
+  const spinnerView = (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.dark }}>
+      <ActivityIndicator size="large" color={colors.offWhite} />
+    </View>
+  );
+
+  let view = spinnerView;
 
   if (image) {
     view = (
@@ -100,11 +191,13 @@ function ProfileUserImage() {
         onPress={pickImage}
         style={
           {
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: 58,
+            height: 58,
+            backgroundColor: colors.dark,
 
-            width: '100%',
-            height: '100%',
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
           }
         }
       >
@@ -113,38 +206,9 @@ function ProfileUserImage() {
           source={{ uri: image }}
           style={
             {
-              width: '60%',
-              height: '60%',
-              backgroundColor: colors.darkGreyBlue,
+              width: '100%',
+              height: '100%',
               borderRadius: 26,
-            }
-          }
-        />
-      </TouchableOpacity>
-    );
-  } else {
-    view = (
-      <TouchableOpacity
-        onPress={pickImage}
-        style={
-          {
-            alignItems: 'center',
-            justifyContent: 'center',
-
-            width: '100%',
-            height: '100%',
-          }
-        }
-      >
-        <Image
-          // source={global.placeholderUserImage}
-          source={global.placeholder500x500}
-          style={
-            {
-              width: '68%',
-              height: '60%',
-              backgroundColor: colors.darkGreyBlue,
-              borderRadius: 30,
             }
           }
         />

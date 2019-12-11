@@ -34,7 +34,17 @@ function ProfileRectangle() {
           }
       }
       >
-        <ProfileUserImage />
+        <View style={
+          {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+
+            // borderWidth: 1,
+            // borderColor: 'orange',
+            // borderStyle: 'solid',
+          }
+        }><ProfileUserImage /></View>
       </View>
 
       <UserNameEmailInput />

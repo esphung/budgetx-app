@@ -43,9 +43,9 @@ function AuthLoadingScreen(props) {
   }, []);
 
   useEffect(() => {
-    if (userToken) {
-      console.log(userToken);
-    }
+    // if (userToken) {
+    //   // console.log(userToken);
+    // }
     return () => {
       props.navigation.navigate(userToken ? 'App' : 'Auth');
     };

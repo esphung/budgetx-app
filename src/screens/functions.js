@@ -6,6 +6,59 @@
 
 import { dates } from '../functions/dates';
 
+import colors from 'main/colors';
+
+export function isValidPhoneNumber(phoneNumber) {
+  phoneNumber.replace('-', '');
+  var phoneno = /^([+])?([0-9]{1,5})?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+  if(phoneNumber.match(phoneno)) {
+    return true;
+  } else {
+
+    return false;
+  }
+}
+
+export function getButtonStyle(bool) {
+  // console.log(bool);
+  if (bool) {
+    return {
+      alignItems: 'center',
+      backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+      padding: 14,
+      marginBottom: 20,
+      borderRadius: 26, // 24,
+
+      borderWidth: 1,
+      borderColor: colors.white,
+      borderStyle: 'solid',   
+    }
+  }
+  else  {
+    return {
+      alignItems: 'center',
+      backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+      padding: 14,
+      marginBottom: 20,
+      borderRadius: 26, // 24,
+      opacity: 0.4,
+
+      borderWidth: 1,
+      borderColor: colors.white,
+      borderStyle: 'solid',   
+    }
+  }
+}
+
+export const isValidUsername = (name) => {
+  var usernameRegex = /^[a-zA-Z0-9]+$/;
+  if (name.match(usernameRegex)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export const capitalize = (s) => {
   if (typeof s !== 'string') return ''
   return s.charAt(0).toUpperCase() + s.slice(1)

@@ -6,6 +6,7 @@ DATE:       Sun Nov  3 13:47:40 2019
 UPDATED:    12/04/2019 05:07 PM   | commented out Font loader
             12/05/2019 11:22 PM   | fixed  bold, norrmal messages,
             image to show updated user image
+            12/11/2019 03:07 AM | added cognito user
 */
 
 
@@ -23,10 +24,13 @@ import {
   SafeAreaView,
 } from 'react-native';
 
+// AWS Amplify
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
 
 import {
   loadUserObject,
@@ -94,31 +98,30 @@ const HeaderLeftView = () => {
 
   const [text, setText] = useState('');
 
-  const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+  const [boldMessage, setBoldMessage] = useState('');
 
-  const [normalMessage, setNormalMessage] = useState('Enter your email');
+  const [normalMessage, setNormalMessage] = useState('');
 
-  const [isInputEnabled, setIsInputEnabled] = useState(true);
+  // const [isInputEnabled, setIsInputEnabled] = useState(true);
 
-  // const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const [isStoredUserLoaded, setIsStoredUserLoaded] = useState(false);
+  const [isStorageLoaded, setIsStorageLoaded] = useState(false);
 
-  const [userProfileImage, setUserProfileImage] = useState(null);
+  const [userProfileImage, setUserProfileImage] = useState(global.placeholder500x500);
 
-  // const retrieveFonts = async () => {
-  //   // load sf pro fonts
-  //   // await Font.loadAsync({
-  //   //   'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-  //   //   'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-  //   // });
-  //   setFontsAreLoaded(true);
-  // };
+  const [username, setUsername] = useState('');
 
-  async function retrieveStoredUser() {
+  const [email, setEmail] = useState('');
+
+  const [isReady, setIsReady] = useState(false);
+
+  async function retrieveStoredUserImage() {
     // load stored user transactions
     try {
       const userObject = await loadUserObject();
+
+      // setUser(userObject.user)
 
       // set stored user image
       if (!userObject.user.profileImage) {
@@ -127,25 +130,20 @@ const HeaderLeftView = () => {
         setUserProfileImage({ uri: userObject.user.profileImage });
       }
 
-      if (userObject.user.username) {
-        setBoldMessage(`Hello ${userObject.user.username}`);
-      }
+      // setBoldMessage(`Hello ${userObject.user.username}`);
 
-      if (userObject.user.email) {
-        setNormalMessage(`${userObject.user.email}`);
-      }
+      // setNormalMessage(`${userObject.user.email}`);
 
-      setIsInputEnabled(false);
-
-      setIsStoredUserLoaded(true);
+      setIsStorageLoaded(true);
     } catch (e) {
       // statements
-      // console.log('Could not load stored user');
+      console.log('Could not load storage');
     }
   }
 
   function clearState() {
-    retrieveStoredUser(); // load stored user
+    loadCognitoUser();
+    // retrieveStoredUserImage(); // load stored user
   }
 
   const handleTextChange = (value) => {
@@ -162,14 +160,59 @@ const HeaderLeftView = () => {
     // }
   };
 
+  async function loadCognitoUser() {
+    await Auth.currentAuthenticatedUser()
+      .then((cognitoUser) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+
+        setUser(cognitoUser);
+      })
+      .catch((err) => console.log(err));
+  }
+
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
   // useEffect(fn, [these, states])
 
+  // useEffect(() => {
+  //   // retrieveFonts();
+  //   retrieveStoredUserImage();
+
+  // }, []);
+
   useEffect(() => {
-    // retrieveFonts();
-    retrieveStoredUser();
+    loadCognitoUser();
+    // retrieveStoredUserImage();
+    // return () => {
+    //   // effect
+    // };
   }, []);
+
+  useEffect(() => {
+    // console.log('Updating Online Info');
+    if (user) {
+      // console.log(user);
+      // setUsername(user.username);
+
+      // setEmail(user.attributes.email);
+
+      setBoldMessage(`Welcome Back, ${user.username}`);
+
+      setNormalMessage(`Logged in as ${user.attributes.email}`);
+    }
+  });
+
+  useEffect(() => {
+    // cognito user could not be retrieved
+    retrieveStoredUserImage();
+
+    setBoldMessage('Offline Mode');
+
+    setNormalMessage('Using local storage');
+
+    setIsReady(true);
+  }, [user]);
 
   // // mount user
   // useEffect(() => {
@@ -192,13 +235,13 @@ const HeaderLeftView = () => {
 
   const spinnerView = (
     <View style={{ marginLeft: 15, marginTop: 20, backgroundColor: colors.darkTwo }}>
-      <ActivityIndicator size="large" color="#ffffff7f" />
+      <ActivityIndicator size="large" color={colors.offWhite} />
     </View>
   );
 
   let view = spinnerView;
 
-  if (isStoredUserLoaded) {
+  if (isReady || isStorageLoaded) {
     view = (
       <SafeAreaView style={styles.container}>
 
@@ -212,6 +255,7 @@ const HeaderLeftView = () => {
         />
 
         <TouchableOpacity
+          disabled={true}
           style={styles.userImageMaskView}
         >
           <Image
@@ -273,7 +317,7 @@ const HeaderLeftView = () => {
 
             onChangeText={handleTextChange}
 
-            editable={isInputEnabled}
+            editable={false} // {isInputEnabled}
 
             value={text}
 
@@ -298,161 +342,3 @@ const HeaderLeftView = () => {
 };
 
 export default HeaderLeftView;
-
-// class HeaderLeftView extends Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       text: '',
-//       fontsAreLoaded: false
-//     };
-
-//     this.boldMessage = (props.boldMessage) ? props.boldMessage : 'Get cross-device sync';
-
-//     this.normalMessage = (props.normalMessage) ? props.normalMessage : 'Enter your email';
-
-//     this.isInputEnabled = props.isInputEnabled;
-
-//     this.handleTextChange = this.handleTextChange.bind(this);
-
-//     this.submitBtnPressed = this.submitBtnPressed.bind(this);
-//   }
-
-//   async componentWillMount() {
-//     // load sf pro fonts
-//     await Font.loadAsync({
-//       'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-//       'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-//     });
-
-//     this.setState({ fontsAreLoaded: true });
-//   }
-
-//   getView() {
-//     const { fontsAreLoaded, text } = this.state;
-
-//     const spinnerView = (
-//       <View style={{ marginLeft: 15, marginTop: 20, backgroundColor: colors.darkTwo }}>
-//         <ActivityIndicator size="large" color="#ffffff7f" />
-//       </View>
-//     );
-
-//     let view = spinnerView;
-
-//     if (fontsAreLoaded) {
-//       view = (
-//         <SafeAreaView style={styles.container}>
-
-//           <TouchableOpacity testID="userImageBtn" style={styles.userImageMaskView}>
-//             <Image
-//               resizeMode="contain"
-//               style={styles.userImage}
-//               source={global.placeholder500x500}
-//             />
-//           </TouchableOpacity>
-
-//           <View style={styles.userMessageView}>
-//             <Text style={
-//               {
-//                 fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
-//                 fontSize: 15,
-//                 fontStyle: 'normal',
-//                 letterSpacing: 0.12,
-//                 color: '#ffffff',
-//                 fontWeight: '600',
-//               }
-
-//             }
-//             >
-
-//               { this.boldMessage }
-
-//             </Text>
-
-//             <TextInput
-//               style={
-//                 {
-//                   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-//                   fontSize: 15,
-//                   fontStyle: 'normal',
-//                   letterSpacing: 0.1,
-//                   color: '#ffffff',
-//                 }
-//               }
-
-//               placeholder={this.normalMessage}
-
-//               placeholderTextColor="#ffffff"
-
-//               autoCompleteType="email" // android
-
-//               keyboardAppearance="dark" // ios
-
-//               textContentType="emailAddress" // ios
-
-//               keyboardType="email-address"
-
-//               returnKeyType="next"
-
-//               autoCorrect={false}
-
-//               autoCapitalize="none"
-
-//               maxLength={22}
-
-//               onSubmitEditing={() => this.submitBtnPressed(text)}
-
-//               onChangeText={this.handleTextChange}
-
-//               editable={this.isInputEnabled}
-
-//               value={text}
-
-//               onEndEditing={() => {
-//                 if (isValidEmail(text) === true) {
-//                   // send email ??
-//                   // create user to send aws cred
-//                 } else {
-//                   // clear text field
-//                   this.setState({ text: '' });
-//                   // console.log('Ended:', text);
-//                 }
-//               }}
-//             />
-
-//           </View>
-
-//         </SafeAreaView>
-
-//       );
-//     }
-//     return view;
-//   }
-
-//   handleTextChange(text) {
-//     this.setState({ text });
-//     // console.log(text);
-//   }
-
-//   submitBtnPressed(text) {
-//     this.setState({ text });
-
-//     if (isValidEmail(text)) {
-//       console.log(text);
-//       const user = new User(text);
-//       console.log(user);
-//     }
-//     // console.log('Submit:', text);
-//   }
-
-
-//   render() {
-//     // console.log('Rendered HeaderLeftView Fonts Are Loaded:', this.state.fontsAreLoaded)
-//     return (
-//       this.getView()
-//     );
-//   }
-// }
-
-// export default HeaderLeftView;

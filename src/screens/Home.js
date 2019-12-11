@@ -404,7 +404,7 @@ Home.navigationOptions = ({ navigation }) => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    // headerLeft: <HeaderLeftView navigation={navigation} />,
+    headerLeft: <HeaderLeftView navigation={navigation} />,
     headerRight: <HeaderRightView />,
   };
   return header;

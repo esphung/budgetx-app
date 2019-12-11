@@ -1,6 +1,6 @@
 import React, {
   useState,
-  // useEffect,
+  useEffect,
   useRef,
 } from 'react';
 
@@ -33,6 +33,9 @@ import colors from 'main/colors';
 
 import styles from './styles';
 
+import { isValidUsername } from './functions';
+
+
 function ForgotPasswordScreen(props) {
   // input refs
   const newPasswordInputRef = useRef(null);
@@ -46,11 +49,36 @@ function ForgotPasswordScreen(props) {
 
   const [newPassword, setNewPassword] = useState(null);
 
+  const [isSendCodeBtnEnabled, setIsSendCodeBtnEnabled] = useState(false);
+
+  const [isConfirmNewPasswordBtnEnabled, setIsConfirmNewPasswordBtnEnabled] = useState(false);
+
+  useEffect(() => {
+    if (username && isValidUsername(username)) {
+      setIsSendCodeBtnEnabled(true);
+    } else {
+      setIsSendCodeBtnEnabled(false);
+    }
+    return () => {
+      // effect
+    };
+  }, [username])
+
+  useEffect(() => {
+    if (authCode) {
+      setIsConfirmNewPasswordBtnEnabled(true);
+    } else {
+      setIsConfirmNewPasswordBtnEnabled(false);
+    }
+    return () => {
+      // effect
+    };
+  }, [authCode])
+
   // input handlers
   function onChangeText(key, value) {
-    console.log('key:', key);
-    console.log('value:', value);
-
+    // console.log('key:', key);
+    // console.log('value:', value);
     if (key === 'username') {
       setUsername(value);
     } else if (key === 'authCode') {
@@ -61,7 +89,7 @@ function ForgotPasswordScreen(props) {
   }
 
   function handleUsernameInputSubmit() {
-    newPasswordInputRef.current._root.focus();
+    // newPasswordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
@@ -75,6 +103,28 @@ function ForgotPasswordScreen(props) {
     // console.log(passwordInputRef.current._root.focus());
   }
 
+  function getButtonStyle(bool) {
+    // console.log(bool);
+    if (bool) {
+      return {
+        alignItems: 'center',
+        backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+        padding: 14,
+        marginBottom: 20,
+        borderRadius: 26, // 24,
+      }
+    }
+    else  {
+      return {
+        alignItems: 'center',
+        backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+        padding: 14,
+        marginBottom: 20,
+        borderRadius: 26, // 24,
+        opacity: 0.4,
+      }
+    }
+  }
 
   /*
   * > Request a new password
@@ -82,7 +132,10 @@ function ForgotPasswordScreen(props) {
   async function forgotPassword() {
     // const { username } = this.state;
     await Auth.forgotPassword(username)
-      .then((data) => console.log('New code sent', data))
+      .then((data) => {
+        console.log('New code sent', data);
+        Alert.alert('Code was emailed')
+      })
       .catch((err) => {
         if (!err.message) {
           console.log('Error while setting up the new password: ', err);
@@ -101,6 +154,7 @@ function ForgotPasswordScreen(props) {
       .then(() => {
         props.navigation.navigate('SignIn');
         console.log('New password submitted successfully!');
+        Alert.alert('New password submitted successfully!');
       })
       .catch((err) => {
         if (!err.message) {
@@ -113,6 +167,29 @@ function ForgotPasswordScreen(props) {
       });
   }
 
+  function getButtonStyle(bool) {
+    // console.log(bool);
+    if (bool) {
+      return {
+        alignItems: 'center',
+        backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+        padding: 14,
+        marginBottom: 20,
+        borderRadius: 26, // 24,
+      }
+    }
+    else  {
+      return {
+        alignItems: 'center',
+        backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
+        padding: 14,
+        marginBottom: 20,
+        borderRadius: 26, // 24,
+        opacity: 0.4,
+      }
+    }
+  }
+
   const view = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
@@ -120,7 +197,7 @@ function ForgotPasswordScreen(props) {
         style={styles.container}
         behavior="padding"
         enabled
-        keyboardVerticalOffset={23}
+        // keyboardVerticalOffset={23}
       >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
@@ -144,7 +221,11 @@ function ForgotPasswordScreen(props) {
                     keyboardAppearance="dark"
                   />
                 </Item>
-                <TouchableOpacity style={styles.buttonStyle}>
+                <TouchableOpacity
+                  disabled={!isSendCodeBtnEnabled}
+                  onPress={forgotPassword}
+                  style={getButtonStyle(isSendCodeBtnEnabled)}
+                >
                   <Text style={styles.buttonText}>
                     Send code
                   </Text>
@@ -187,7 +268,11 @@ function ForgotPasswordScreen(props) {
                     keyboardAppearance="dark"
                   />
                 </Item>
-                <TouchableOpacity style={styles.buttonStyle}>
+                <TouchableOpacity
+                  disabled={!isConfirmNewPasswordBtnEnabled}
+                  onPress={forgotPasswordSubmit}
+                  style={getButtonStyle(isConfirmNewPasswordBtnEnabled)}
+                >
                   <Text style={styles.buttonText}>
                     Confirm the new password
                   </Text>
