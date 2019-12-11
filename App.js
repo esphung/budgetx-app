@@ -31,7 +31,6 @@ import './globals'; // global values
 
 Amplify.configure(config);
 
-
 function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);

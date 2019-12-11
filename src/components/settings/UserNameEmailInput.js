@@ -89,30 +89,30 @@ function UserNameEmailInput() {
     }
   }
 
-  // async function retrieveStoredUserData() {
-  //   const userObject = await loadUserObject(); // load storage object
-  //   // console.log(userObject.user);
+  async function retrieveStoredUserData() {
+    const userObject = await loadUserObject(); // load storage object
+    // console.log(userObject.user);
 
-  //   // //  Testing
-  //   // userObject.user.username = ''
-  //   // userObject.user.email = ''
-  //   // saveUserObject(userObject)
+    // //  Testing
+    // userObject.user.username = ''
+    // userObject.user.email = ''
+    // saveUserObject(userObject)
 
-  //   if (userObject.user.username) {
-  //     setName(userObject.user.username);
-  //     // setNamePlaceholder(userObject.user.username);
-  //   } else {
-  //     setShouldClearNameInput(true);
-  //   }
+    if (userObject.user.username) {
+      setName(userObject.user.username);
+      // setNamePlaceholder(userObject.user.username);
+    } else {
+      setShouldClearNameInput(true);
+    }
 
-  //   if (userObject.user.email) {
-  //     setEmail(userObject.user.email);
-  //     // setEmailPlaceholder(userObject.user.email);
-  //     // setIsEmailInputEnabled(false);
-  //   }
+    if (userObject.user.email) {
+      setEmail(userObject.user.email);
+      // setEmailPlaceholder(userObject.user.email);
+      // setIsEmailInputEnabled(false);
+    }
 
-  //   setIsUserLoaded(true);
-  // }
+    setIsUserLoaded(true);
+  }
 
   function submitNamePressed(text) {
     // setName(text);
@@ -132,7 +132,7 @@ function UserNameEmailInput() {
     // console.log('Submit:', text)
     // setEmail(text);
 
-    saveEmail(text);
+    saveEmail(text)
   }
 
   async function loadCognitoUser() {

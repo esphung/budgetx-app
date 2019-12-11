@@ -43,7 +43,7 @@ import {
 function ProfileUserImage() {
   const [image, setImage] = useState(null);
 
-  // const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
   const [userProfileImage, setUserProfileImage] = useState(global.placeholder500x500);
 
@@ -57,23 +57,25 @@ function ProfileUserImage() {
     const imageName = profilePictureName;
 
     const fileType = mime.lookup(pickerResult.uri);
-    const access = { level: 'public', contentType: 'image/jpeg' };
+    const access = { level: 'public', contentType: fileType }; // 'image/jpeg'
     const imageData = await fetch(pickerResult.uri);
     const blobData = await imageData.blob();
 
     // setUploadedImageName(imageName);
     // console.log(imageName);
-    
+
     try {
       await Storage.put(imageName, blobData, access);
-      setImage(pickerResult.uri);
+      // ssetImage(pickerResult.uri);
       // console.log('Successfully uploaded', imageName, 'to bucket!');
 
-      setIsImageLoaded(true)
+      // seretrtIsImageLoaded(true);
 
     } catch (err) {
       console.log('error: ', err);
     }
+
+    loadUserProfilePicture(profilePictureName)
 
 
   };
@@ -82,10 +84,15 @@ function ProfileUserImage() {
     // retrieve the item
       // console.log(imageName);
       const storedImage = await Storage.get(imageName);
+
+      if (storedImage) {
+        setImage(storedImage);
+      } else {
+        retrieveStoredUserData();
+      }
       
-      setImage(storedImage);
       setIsImageLoaded(true);
-  }
+  };
 
   async function saveProfileImage(newImage) {
     const userObject = await loadUserObject(); // load storage object
@@ -96,6 +103,8 @@ function ProfileUserImage() {
     // console.log('user image:', userObject.user.profileImage);
 
     saveUserObject(userObject);
+
+    // setIsImageLoaded(true);
   }
 
   async function retrieveStoredUserData() {
@@ -110,7 +119,7 @@ function ProfileUserImage() {
 
     if (userObject.user.profileImage) {
       setImage(userObject.user.profileImage);
-      setIsImageLoaded(true);
+      // setIsImageLoaded(true);
     }
   }
 
@@ -142,39 +151,60 @@ function ProfileUserImage() {
     }
   }
 
-  // async function loadCognitoUser() {
-  //   await Auth.currentAuthenticatedUser()
-  //     .then((cognitoUser) => {
-  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //       // console.log('username:', cognitoUser.username);
-  //       setUser(cognitoUser);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }
+  async function loadCognitoUser() {
+    await Auth.currentAuthenticatedUser()
+      .then((cognitoUser) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
 
+        setUser(cognitoUser);
+      })
+      .catch((err) => console.log(err));
+  }
 
   useEffect(() => {
     // setImage(userProfileImage);
 
-    getPermissionAsync();
+    if (!image) {
+      getPermissionAsync();
 
-    // retrieveStoredUserData();
+      retrieveStoredUserData();
 
-    loadUserProfilePicture(profilePictureName);
+      loadCognitoUser();
+    }
 
-    retrieveStoredUserData();
-    // loadCognitoUser();
-    
-    // console.log('hi');
   }, []);
 
   useEffect(() => {
-    // console.log('Image updated');
-    if (image) {
-      // console.log(image);
-      saveProfileImage(image);
-
+    if (user) {
+      loadUserProfilePicture(profilePictureName);
     }
+  }, [user]);
+
+  useEffect(() => {
+    if (isImageLoaded) {
+      saveProfileImage(image);
+    } else {
+      console.log(isImageLoaded)
+    }
+    // return () => {
+    //   // effect
+    // };
+  }, [isImageLoaded])
+
+  useEffect(() => {
+    // console.log('Image updated');
+    // if (image) {
+    //   // console.log(image);
+    //   setIsImageLoaded(true);
+      
+    // } else {
+    //   setIsImageLoaded(false);
+    // }
+    // return () => {
+    //   // effect
+    //   console.log('Clean up image')
+    // };
   }, [image]);
 
   const spinnerView = (
@@ -185,7 +215,7 @@ function ProfileUserImage() {
 
   let view = spinnerView;
 
-  if (image) {
+  if (isImageLoaded) {
     view = (
       <TouchableOpacity
         onPress={pickImage}
@@ -214,7 +244,38 @@ function ProfileUserImage() {
         />
       </TouchableOpacity>
     );
+  } else {
+    view = (
+      <TouchableOpacity
+        onPress={pickImage}
+        style={
+          {
+            width: 58,
+            height: 58,
+            backgroundColor: colors.dark,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        }
+      >
+        <Image
+          // source={global.placeholderUserImage}
+          source={global.placeholder500x500}
+          style={
+            {
+              width: '100%',
+              height: '100%',
+              borderRadius: 26,
+            }
+          }
+        />
+      </TouchableOpacity>
+    );
   }
+
+
   return view;
 }
 

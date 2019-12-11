@@ -11,6 +11,7 @@
     "test": "node_modules/.bin/jest test/**/*.spec.js"
   },
   "dependencies": {
+    "@react-native-community/netinfo": "~3.2.1",
     "aws-amplify": "^2.2.0",
     "aws-amplify-react-native": "^2.2.3",
     "detox": "^14.7.1",
