@@ -294,7 +294,7 @@ const MyStickyTable = (props) => {
         showsVerticalScrollIndicator={false}
 
         // optimization
-        initialNumToRender={24}
+        // initialNumToRender={24}
         // windowSize={12} // {21}
         // removeClippedSubviews={true}
         // maxToRenderPerBatch={2}

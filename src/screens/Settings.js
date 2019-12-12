@@ -27,6 +27,7 @@ import {
   SafeAreaView,
   AsyncStorage,
   Alert,
+  Share,
 } from 'react-native';
 
 import * as StoreReview from 'expo-store-review';
@@ -35,7 +36,7 @@ import * as MailComposer from 'expo-mail-composer';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-// import { NavigationEvents } from 'react-navigation';
+import { NavigationEvents } from 'react-navigation';
 
 import ProfileRectangle from '../components/settings/ProfileRectangle';
 
@@ -199,6 +200,26 @@ function Settings(props) {
     });
   };
 
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: 'React Native | A framework for building native apps using React',
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   function customizeCategoriesBtnPressed() {
     props.navigation.navigate('CustomizeCategoriesScreen');
   }
@@ -222,6 +243,7 @@ function Settings(props) {
   }
 
   function shareBtnPressed() {
+    // onShare()
     // console.log('Share button pressed');
   }
 
@@ -244,7 +266,7 @@ function Settings(props) {
       termsOfServiceBtnPressed();
     } else if (name === 'Export Transactions') {
       exportBtnPressed();
-    } else if (name === 'Change Password') {
+    } else if (name === 'Change Password/Sign Out') {
       changePasswordBtnPressed();
     } else if (name === 'Reset Data') {
       resetDataBtnPressed();
@@ -266,7 +288,7 @@ function Settings(props) {
         scrollEnabled={false}
         contentContainerStyle={styles.container}
       >
-        {/*
+        
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={() => console.log('Settings')} // {(payload) => clearState()}
@@ -275,7 +297,7 @@ function Settings(props) {
             // onWillBlur={payload => console.log('will blur',payload)}
             // onDidBlur={payload => console.log('did blur',payload)}
           />
-        */}
+        
 
         <View style={rectangle5} />
 
@@ -292,7 +314,10 @@ function Settings(props) {
         <View
           style={
             {
-              flex: 0.4,
+              flex: 0.5,
+              alignItems: 'center',
+              justifyContent: 'center',
+
 
               // top: '55%',
 
@@ -306,7 +331,9 @@ function Settings(props) {
             style={
               {
                 flex: 1,
+                 alignItems: 'center',
                 justifyContent: 'center',
+
 
                 // borderWidth: 1,
                 // borderColor: 'white',
@@ -338,7 +365,7 @@ function Settings(props) {
           >
             <RateUsButton onPress={() => rateUsBtnPressed()} />
 
-            <ShareButton onPress={() => shareBtnPressed()} />
+            {/*<ShareButton onPress={() => shareBtnPressed()} />*/}
 
           </View>
 
@@ -395,24 +422,24 @@ Settings.navigationOptions = ({ navigation }) => {
     headerTransparent: {},
     headerTintColor: colors.white,
 
-    headerRight: (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginHorizontal: 8,
-          width: '100%',
-          height: '100%',
-        }}
-      >
-        <TouchableOpacity style={styles.backBtn} onPress={() => backBtnPressed()}>
-          <View style={combinedShape}>
-            <Image source={global.xIconWhite} style={styles.backBtnImage} />
-          </View>
-        </TouchableOpacity>
-      </View>
-    ),
+    // headerRight: (
+    //   <View
+    //     style={{
+    //       flex: 1,
+    //       justifyContent: 'center',
+    //       alignItems: 'center',
+    //       marginHorizontal: 8,
+    //       width: '100%',
+    //       height: '100%',
+    //     }}
+    //   >
+    //     <TouchableOpacity style={styles.backBtn} onPress={() => backBtnPressed()}>
+    //       <View style={combinedShape}>
+    //         <Image source={global.xIconWhite} style={styles.backBtnImage} />
+    //       </View>
+    //     </TouchableOpacity>
+    //   </View>
+    // ),
 
     // headerTitleStyle: {
     //   // borderWidth: 1,
@@ -420,43 +447,43 @@ Settings.navigationOptions = ({ navigation }) => {
     //   // borderStyle: 'solid',
     // },
 
-    headerLeft: (
-      <View style={
-        {
-          width: '100%',
-          height: '100%',
+    // headerLeft: (
+    //   <View style={
+    //     {
+    //       width: '100%',
+    //       height: '100%',
 
-          justifyContent: 'center',
-          // alignItems: 'center',
+    //       justifyContent: 'center',
+    //       // alignItems: 'center',
 
-          marginHorizontal: 14,
+    //       marginHorizontal: 14,
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }
-      }
-      >
-        <TouchableOpacity onPress={signOutAlert}>
-          <Text
-            style={
-              {
-                // width: 42,
-                height: 20,
-                fontFamily: 'SFProDisplay-Regular',
-                fontSize: 17,
-                fontWeight: 'normal',
-                fontStyle: 'normal',
-                letterSpacing: 0.13,
-                color: colors.pinkRed,
-              }
-            }
-          >
-            Log Out
-          </Text>
-        </TouchableOpacity>
-      </View>
-    ),
+    //       // borderWidth: 1,
+    //       // borderColor: 'white',
+    //       // borderStyle: 'solid',
+    //     }
+    //   }
+    //   >
+    //     <TouchableOpacity onPress={signOutAlert}>
+    //       <Text
+    //         style={
+    //           {
+    //             // width: 42,
+    //             height: 20,
+    //             fontFamily: 'SFProDisplay-Regular',
+    //             fontSize: 17,
+    //             fontWeight: 'normal',
+    //             fontStyle: 'normal',
+    //             letterSpacing: 0.13,
+    //             color: colors.pinkRed,
+    //           }
+    //         }
+    //       >
+    //         Log Out
+    //       </Text>
+    //     </TouchableOpacity>
+    //   </View>
+    // ),
 
     // headerLeft: null,
 

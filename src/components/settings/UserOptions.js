@@ -67,7 +67,7 @@ function UserOptions(props) {
   function renderSeparator(item) {
     let view = <View />;
     // console.log(item.leadingItem.key);
-    if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Passcode' && item.leadingItem.key !== 'Change Password') {
+    if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Passcode' && item.leadingItem.key !== 'Change Password/Sign Out') {
       view = (
         <View
           style={{
@@ -155,7 +155,7 @@ function UserOptions(props) {
         { key: 'Customize Categories' },
         { key: 'Export Transactions' },
         // { key: 'Passcode' },
-        { key: 'Change Password' },
+        { key: 'Change Password/Sign Out' },
         { key: '' },
         { key: 'Contact Support' },
         { key: 'Terms of Service' },

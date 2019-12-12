@@ -35,9 +35,11 @@ export const loadUserObject = async () => {
   }
 };
 
-
-export const saveUserCategories = (key, user) => {
-  AsyncStorage.setItem(key, JSON.stringify(user));
+/*
+* > Categories
+*/
+export const saveUserCategories = (key, categories) => {
+  AsyncStorage.setItem(key, JSON.stringify(categories));
 };
 
 // LOAD VALUE USERDEFAULTCATEGORIES

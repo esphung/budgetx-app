@@ -22,6 +22,8 @@ import colors from '../../../colors';
 
 import CategoryPill from './CategoryPill';
 
+import { NavigationEvents } from 'react-navigation';
+
 // import {
 //   loadCategories,
 //   // saveCategories
@@ -93,24 +95,37 @@ const ScrollingPillCategoriesView = (props) => {
     }
   };
 
+  const clearState = () => {
+    // setShadowOffset(props.shadowOffset);
+    // setShadowRadius(props.shadowRadius);
+    // setShadowOpacity(props.shadowOpacity);
+    // setTopPosition(props.topPosition);
+    // setZIndex(props.zIndex);
+
+    retrieveStoredUser(); // for user categories
+  };
+
   useEffect(() => {
-    // console.log('Mount pills')
+    // console.log('Mount pills');
+
     setShadowOffset(props.shadowOffset);
     setShadowRadius(props.shadowRadius);
     setShadowOpacity(props.shadowOpacity);
     setTopPosition(props.topPosition);
     setZIndex(props.zIndex);
 
-    retrieveStoredUser(); // for user categories
+    // retrieveStoredUser(); // for user categories
     // return () => {
     //   // effect
     //   console.log('Clean up pills');
+
+    clearState();
 
     // };
   }, []);
 
   useEffect(() => {
-    // console.log('mount')
+    // console.log('mount');
     // console.log(currentCategories.length)
 
     setCurrentCategory(props.currentCategory);
@@ -120,7 +135,7 @@ const ScrollingPillCategoriesView = (props) => {
       // effect
       // console.log('clean up')
     };
-  })
+  }, [categoryBtnPressed])
 
 
   const getCategoryPill = (items) => {
@@ -172,6 +187,14 @@ const ScrollingPillCategoriesView = (props) => {
       }
     }
     >
+    <NavigationEvents
+        // try only this. and your component will auto refresh when this is the active component
+        onWillFocus={clearState} // {(payload) => clearState()}
+        // other props
+        // onDidFocus={payload => console.log('did focus',payload)}
+        // onWillBlur={payload => console.log('will blur',payload)}
+        // onDidBlur={payload => console.log('did blur',payload)}
+      />
       <ScrollView
         contentContainerStyle={{
           alignItems: 'center',

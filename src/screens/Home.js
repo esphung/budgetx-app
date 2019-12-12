@@ -94,7 +94,7 @@ function Home() {
       // setIsUserLoggedIn(await global.getIsStoredUserLoggedIn());
 
       // set stored user's transactions
-      setTransactions(userObject.user.transactions);
+      await setTransactions(userObject.user.transactions);
     } catch (e) {
       // statements
       // console.log('Could not load stored user');
@@ -343,7 +343,7 @@ function Home() {
     <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={() => clearState()} // {(payload) => clearState()}
+        onWillFocus={clearState} // {(payload) => clearState()}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         // onWillBlur={payload => console.log('will blur',payload)}
