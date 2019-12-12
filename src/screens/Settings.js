@@ -199,6 +199,10 @@ function Settings(props) {
     });
   };
 
+  function customizeCategoriesBtnPressed() {
+    props.navigation.navigate('CustomizeCategoriesScreen');
+  }
+
   function resetDataBtnPressed() {
     resetDataAlert();
   }
@@ -244,6 +248,8 @@ function Settings(props) {
       changePasswordBtnPressed();
     } else if (name === 'Reset Data') {
       resetDataBtnPressed();
+    } else if (name === 'Customize Categories') {
+      customizeCategoriesBtnPressed();
     }
   }
 

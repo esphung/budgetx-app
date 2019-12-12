@@ -8,12 +8,12 @@ import { AsyncStorage } from 'react-native';
 
 import defaultCategories from '../data/categories';
 
-const STORAGE_KEY = 'CATEGORIES';
+// const STORAGE_KEY = 'CATEGORIES';
 
 // AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
 
-export const saveCategories = (categories) => {
-  AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(categories));
+export const saveCategories = (storage_key, categories) => {
+  AsyncStorage.setItem(storage_key, JSON.stringify(categories));
 };
 
 // LOAD VALUE USERDEFAULTCATEGORIES
@@ -21,9 +21,9 @@ const DEFAULT_USERDEFAULTCATEGORIES = {
   categories: defaultCategories,
 };
 
-export const loadCategories = async () => {
+export const loadCategories = async (storage_key) => {
   try {
-    const storageObject = await AsyncStorage.getItem(STORAGE_KEY);
+    const storageObject = await AsyncStorage.getItem(storage_key);
 
     if (storageObject === null) { return DEFAULT_USERDEFAULTCATEGORIES; }
 

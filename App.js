@@ -36,7 +36,10 @@ function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   async function retrieveStoredFonts() {
+    setLoading(true);
     // load stored fonts
     await Font.loadAsync({
       'SFProDisplay-Regular': global.SFProDisplayRegularFont,
@@ -52,9 +55,18 @@ function App() {
     retrieveStoredFonts();
   }, []);
 
+  useEffect(() => {
+    if (fontsAreLoaded) {
+      setLoading(false);
+    }
+    return () => {
+      // effect
+    };
+  }, [fontsAreLoaded])
+
   let view = <SpinnerMask />;
 
-  if (fontsAreLoaded) {
+  if (fontsAreLoaded && !loading) {
     view = (
       <SwitchNavigator />
     );

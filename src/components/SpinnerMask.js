@@ -33,11 +33,17 @@ const styles = StyleSheet.create({
 });
 
 function SpinnerMask() {
-  return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#ffffff7f" />
+    const spinnerView = (
+    <View
+      style={
+        {
+          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.dark }
+      }
+    >
+      <ActivityIndicator size="large" color={colors.offWhite} />
     </View>
   );
+  return spinnerView;
 }
 
 export default SpinnerMask;

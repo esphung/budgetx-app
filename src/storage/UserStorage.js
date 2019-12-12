@@ -8,6 +8,8 @@ import { AsyncStorage } from 'react-native';
 
 import User from '../models/User';
 
+import defaultCategories from '../data/categories';
+
 const STORAGE_KEY = 'USER';
 
 // AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
@@ -26,6 +28,26 @@ export const loadUserObject = async () => {
     const storageObject = await AsyncStorage.getItem(STORAGE_KEY);
 
     if (storageObject === null) { return DEFAULT_USERDEFAULTUSER; }
+
+    return JSON.parse(storageObject);
+  } catch (error) {
+    throw new Error('Error loading storageObject', error);
+  }
+};
+
+
+export const saveUserCategories = (key, user) => {
+  AsyncStorage.setItem(key, JSON.stringify(user));
+};
+
+// LOAD VALUE USERDEFAULTCATEGORIES
+const DEFAULT_USERCATEGORIES = defaultCategories;
+
+export const loadUserCategories = async (key) => {
+  try {
+    const storageObject = await AsyncStorage.getItem(key);
+
+    if (storageObject === null) { return defaultCategories; }
 
     return JSON.parse(storageObject);
   } catch (error) {

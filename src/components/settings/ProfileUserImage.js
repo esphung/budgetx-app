@@ -52,7 +52,7 @@ function ProfileUserImage() {
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  const [onlineImageDoesNotExist, setOnlineImageDoesNotExist] = useState(true);
+  const [onlineImageDoesNotExist, setOnlineImageDoesNotExist] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -68,7 +68,6 @@ function ProfileUserImage() {
 
   // this handles the image upload to S3
   const handleImagePicked = async (pickerResult) => {
-    setLoading(true);
     // const imageName = pickerResult.uri.replace(/^.*[\\\/]/, '');
     const imageName = profilePictureName;
 
@@ -79,20 +78,19 @@ function ProfileUserImage() {
 
     // setUploadedImageName(imageName);
     // console.log(imageName);
+
     try {
+      setLoading(true);
       await Storage.put(imageName, blobData, access);
       setImage(pickerResult.uri);
       // console.log('Successfully uploaded', imageName, 'to bucket!');
 
-      
-
       // seretrtIsImageLoaded(true);
     } catch (err) {
-      // console.log('error: ', err);
+      console.log('error: ', err);
     }
 
     loadUserProfilePicture(profilePictureName);
-
     setLoading(false);
   };
 
@@ -154,17 +152,14 @@ function ProfileUserImage() {
   }
 
   async function loadCognitoUser() {
-    setLoading(true);
     await Auth.currentAuthenticatedUser()
       .then((cognitoUser) => {
         // setUserToken(user.signInUserSession.accessToken.jwtToken);
         // console.log('username:', cognitoUser.username);
+
         setUser(cognitoUser);
       })
-      .catch((err) => {
-        console.log(err)
-      });
-    setLoading(false);
+      .catch((err) => console.log(err));
   }
 
   useEffect(() => {
@@ -205,19 +200,14 @@ function ProfileUserImage() {
   }, [image]);
 
   const spinnerView = (
-    <View
-      style={
-        {
-          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.dark }
-      }
-    >
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.dark }}>
       <ActivityIndicator size="large" color={colors.offWhite} />
     </View>
   );
 
   let view = spinnerView;
 
-  if (!loading && isImageLoaded) {
+  if (!loading || isImageLoaded) {
     view = (
       <TouchableOpacity
         onPress={pickImage}
@@ -246,8 +236,6 @@ function ProfileUserImage() {
         />
       </TouchableOpacity>
     );
-  } else if (loading) {
-    view = spinnerView;
   }
 
   return view;

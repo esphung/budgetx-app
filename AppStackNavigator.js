@@ -5,6 +5,7 @@ AUTHOR:     Eric Phung
 CREATED:    11/11/2019 11:23 PM
 UPDATED:    11/27/2019 12:40 AM
             12/09/2019 01:10 PM
+            12/11/2019 05:34 PM | added Customize Categories Screen
 */
 
 
@@ -26,6 +27,8 @@ import Settings from './src/screens/Settings';
 // import Search from './src/screens/Search';
 import Terms from './src/screens/Terms';
 
+import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen'
+
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 
 const StackNavigator = createStackNavigator({
@@ -34,17 +37,37 @@ const StackNavigator = createStackNavigator({
   // },
   Home: {
     screen: Home,
+    navigationOptions: () => ({
+      title: '',
+      headerBackTitle: null,
+    }),
   },
   Settings: {
     screen: Settings,
+    navigationOptions: () => ({
+      title: 'Settings',
+      headerBackTitle: null,
+    }),
   },
   Terms: {
     screen: Terms,
+    navigationOptions: () => ({
+      title: 'Terms of Service',
+      headerBackTitle: '',
+    }),
   },
 
   ChangePasswordScreen: {
     screen: ChangePasswordScreen,
-  }
+  },
+  CustomizeCategoriesScreen: {
+    screen: CustomizeCategoriesScreen,
+    navigationOptions: () => ({
+      title: 'Customize Categories',
+      headerBackTitle: '',
+    }),
+  },
+
   // Search: {
   //   screen: Search,
   // },

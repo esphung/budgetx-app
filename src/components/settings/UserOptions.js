@@ -72,7 +72,7 @@ function UserOptions(props) {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'transparent',
+            // backgroundColor: 'transparent',
 
             borderWidth: 1,
             borderColor: colors.dark,

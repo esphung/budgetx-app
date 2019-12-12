@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
+  ActivityIndicator,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -21,6 +22,8 @@ import CustomSwipeCell from './TransactionCell/CustomSwipeCell';
 import StickyDateHeader from './StickyDateHeader';
 
 import TransactionItem from './TransactionCell/TransactionItem';
+
+// import SpinnerMask from '../SpinnerMask';
 
 const ROW_HEIGHT = 44;
 
@@ -137,6 +140,8 @@ const MyStickyTable = (props) => {
 
   const [stickyHeaderIndices, setStickyHeaderIndices] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
   function getStickyIndices(array) {
     // const { data } = this.state;
     const indices = [];
@@ -212,61 +217,92 @@ const MyStickyTable = (props) => {
   }
 
   useEffect(() => {
-    setData(sortByHeadersDateDescending(transactions));
-    return () => {
-      // effect
-    };
+    setLoading(true);
+    if (transactions) {
+      setData(sortByHeadersDateDescending(transactions));
+      setLoading(false);
+    }
+    // return () => {
+    //   // effect
+    // };
   }, [transactions]);
 
   useEffect(() => {
-    setStickyHeaderIndices(getStickyIndices(sortByHeadersDateDescending(transactions)));
-    return () => {
-      // data effect
-    };
+    setLoading(true);
+    if (data) {
+      setStickyHeaderIndices(getStickyIndices(sortByHeadersDateDescending(transactions)));
+      setLoading(false);
+    }
+    // return () => {
+    //   // effect
+    // };
   }, [data, transactions]);
 
-
-  return (
-    <SwipeListView
+  const spinnerView = (
+    <View
       style={
         {
           width: '100%',
           height: tableHeight, // '32%',
           position: tablePosition, // 'absolute'
           top: tableTop, // '30%', // 240,
-
-          // borderWidth: 2,
-          // borderColor: 'white',
-          // borderStyle: 'dashed',
-
-          // backgroundColor: 'pink',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.darkTwo,
         }
       }
-
-      data={data}
-      // extraData={setData}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => String(index)}
-      stickyHeaderIndices={stickyHeaderIndices}
-      renderHiddenItem={renderHiddenItem}
-
-      leftOpenValue={0}
-      rightOpenValue={-75}
-
-      // ItemSeparatorComponent={this.FlatListItemSeparator}
-      // ListHeaderComponent={this.Render_FlatList_Sticky_header}
-      // ListEmptyComponent={this.Render_Empty_Component}
-
-      showsVerticalScrollIndicator={false}
-
-      // optimization
-      initialNumToRender={24}
-      // windowSize={12} // {21}
-      // removeClippedSubviews={true}
-      // maxToRenderPerBatch={2}
-    />
+    >
+      <ActivityIndicator size="large" color={colors.offWhite} />
+    </View>
   );
-};
+
+  let view = spinnerView;
+
+  if (!loading) {
+    view = (
+      <SwipeListView
+        style={
+          {
+            width: '100%',
+            height: tableHeight, // '32%',
+            position: tablePosition, // 'absolute'
+            top: tableTop, // '30%', // 240,
+
+            // borderWidth: 2,
+            // borderColor: 'white',
+            // borderStyle: 'dashed',
+
+            // backgroundColor: 'pink',
+          }
+        }
+
+        data={data}
+        // extraData={setData}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => String(index)}
+        stickyHeaderIndices={stickyHeaderIndices}
+        renderHiddenItem={renderHiddenItem}
+
+        leftOpenValue={0}
+        rightOpenValue={-75}
+
+        // ItemSeparatorComponent={this.FlatListItemSeparator}
+        // ListHeaderComponent={this.Render_FlatList_Sticky_header}
+        // ListEmptyComponent={this.Render_Empty_Component}
+
+        showsVerticalScrollIndicator={false}
+
+        // optimization
+        initialNumToRender={24}
+        // windowSize={12} // {21}
+        // removeClippedSubviews={true}
+        // maxToRenderPerBatch={2}
+      />
+    );
+  }
+  return view;
+}
 
 // tableTop,
 // tableHeight,
