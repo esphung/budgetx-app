@@ -26,6 +26,7 @@ function Category(name, color) {
   this.created = new Date();
   this.name = name;
   this.color = color; // randomProperty(colors);
+  this.type = 'expense';
 }
 
 // var category = new Category('Insurance', '#fff');

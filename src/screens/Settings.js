@@ -288,7 +288,7 @@ function Settings(props) {
         scrollEnabled={false}
         contentContainerStyle={styles.container}
       >
-        
+      
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={() => console.log('Settings')} // {(payload) => clearState()}
@@ -297,7 +297,7 @@ function Settings(props) {
             // onWillBlur={payload => console.log('will blur',payload)}
             // onDidBlur={payload => console.log('did blur',payload)}
           />
-        
+      
 
         <View style={rectangle5} />
 
@@ -314,10 +314,7 @@ function Settings(props) {
         <View
           style={
             {
-              flex: 0.5,
-              alignItems: 'center',
-              justifyContent: 'center',
-
+              flex: 0.4,
 
               // top: '55%',
 
@@ -331,9 +328,7 @@ function Settings(props) {
             style={
               {
                 flex: 1,
-                 alignItems: 'center',
                 justifyContent: 'center',
-
 
                 // borderWidth: 1,
                 // borderColor: 'white',
