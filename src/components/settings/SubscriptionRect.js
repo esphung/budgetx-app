@@ -36,8 +36,8 @@ const oval2 = {
   height: '100%',
   // width: 84,
   // height: 74,
-  borderRadius: 9,
-  backgroundColor: colors.shamrockGreen,
+  // borderRadius: 9,
+  // backgroundColor: colors.shamrockGreen,
 };
 
 // view rectangle
@@ -62,7 +62,7 @@ const mask = {
 
 
 function SubscriptionRect() {
-  const [message] = useState('Add expenses automatically from your bank account');
+  const [message, setMessage] = useState(`Thank you for using ${global.appName} version ${global.appVersion}!`);
   const view = (
     <SafeAreaView
       style={
@@ -100,7 +100,7 @@ function SubscriptionRect() {
         }}
       >
 
-        <TouchableOpacity style={mask}>
+        <TouchableOpacity disabled style={mask}>
           <View
             style={
               {
@@ -114,7 +114,7 @@ function SubscriptionRect() {
             }
           >
             <View>
-              <Image resizeMode="contain" style={oval2} source={global.placeholder500x500} />
+              <Image resizeMode="cover" style={oval2} source={global.appIcon} />
             </View>
           </View>
           <View style={

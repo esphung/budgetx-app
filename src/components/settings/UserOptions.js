@@ -16,6 +16,9 @@ import colors from 'main/colors';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
+    top: '5%',
+
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',

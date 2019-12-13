@@ -13,8 +13,11 @@ import colors from '../../../colors';
 
 // user profile rectangle
 const userProfileRectangle = {
-  flex: 0.25,
+  flex: 1,
   flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  
   backgroundColor: colors.dark,
   // borderWidth: 1,
   // borderColor: 'white',
@@ -36,7 +39,7 @@ function ProfileRectangle() {
       >
         <View style={
           {
-            flex: 1,
+            // flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
 

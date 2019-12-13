@@ -108,7 +108,7 @@ const HeaderLeftView = () => {
 
   const [isStorageLoaded, setIsStorageLoaded] = useState(false);
 
-  const [userProfileImage, setUserProfileImage] = useState(global.placeholder500x500);
+  const [userProfileImage, setUserProfileImage] = useState(null); // useState(global.placeholder500x500);
 
   const [username, setUsername] = useState('');
 
@@ -123,11 +123,14 @@ const HeaderLeftView = () => {
 
       // setUser(userObject.user)
 
+
+      // REPLACE THIS IN SETTINGS USER PROFILE IMAGE COMP !!!!!
+
       // set stored user image
-      if (!userObject.user.profileImage) {
-        setUserProfileImage(global.placeholder500x500);
+      if (userObject.user.profileImage) {
+        setUserProfileImage(userObject.user.profileImage);
       } else {
-        setUserProfileImage({ uri: userObject.user.profileImage });
+        setUserProfileImage(global.avatar);
       }
 
       // setBoldMessage(`Hello ${userObject.user.username}`);

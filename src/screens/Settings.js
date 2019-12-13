@@ -30,6 +30,8 @@ import {
   Share,
 } from 'react-native';
 
+// import { Ionicons } from 'expo-vector-icons';
+
 import * as StoreReview from 'expo-store-review';
 
 import * as MailComposer from 'expo-mail-composer';
@@ -301,20 +303,47 @@ function Settings(props) {
 
         <View style={rectangle5} />
 
-        <ProfileRectangle />
+        <View
+          style={
+            {
+              flex: 0.25,
+
+              // top: '55%',
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }
+          }
+        ><ProfileRectangle />
+        </View>
 
         <SubscriptionRect />
 
         {/* User Options */}
 
-        <UserOptions
+        <View
+          style={
+            {
+              flex: 1,
+
+              // top: '55%',
+
+              // paddingTop: '10%',
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }
+          }
+        ><UserOptions
           onPress={onPress}
-        />
+        /></View>
 
         <View
           style={
             {
-              flex: 0.4,
+              flex: 0.5,
 
               // top: '55%',
 
@@ -329,6 +358,7 @@ function Settings(props) {
               {
                 flex: 1,
                 justifyContent: 'center',
+
 
                 // borderWidth: 1,
                 // borderColor: 'white',
@@ -358,6 +388,8 @@ function Settings(props) {
               }
             }
           >
+           
+
             <RateUsButton onPress={() => rateUsBtnPressed()} />
 
             {/*<ShareButton onPress={() => shareBtnPressed()} />*/}

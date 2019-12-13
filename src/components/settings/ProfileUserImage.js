@@ -52,7 +52,7 @@ function ProfileUserImage() {
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  const [onlineImageDoesNotExist, setOnlineImageDoesNotExist] = useState(false);
+  const [onlineImageDoesNotExist, setOnlineImageDoesNotExist] = useState(true);
 
   const [loading, setLoading] = useState(false);
 
@@ -82,7 +82,7 @@ function ProfileUserImage() {
     try {
       setLoading(true);
       await Storage.put(imageName, blobData, access);
-      setImage(pickerResult.uri);
+      setImage(pickerResult);
       // console.log('Successfully uploaded', imageName, 'to bucket!');
 
       // seretrtIsImageLoaded(true);
@@ -90,7 +90,7 @@ function ProfileUserImage() {
       console.log('error: ', err);
     }
 
-    loadUserProfilePicture(profilePictureName);
+    // loadUserProfilePicture(profilePictureName);
     setLoading(false);
   };
 
@@ -117,10 +117,14 @@ function ProfileUserImage() {
 
     // console.log(userObject.user.profileImage);
 
-    if (userObject.user.profileImage) {
-      setImage(userObject.user.profileImage);
-      // setIsImageLoaded(true);
-    }
+      // set stored user image
+      if (userObject.user.profileImage) {
+        // console.log(userObject.user.profileImage);
+        setImage(userObject.user.profileImage);
+      } else {
+        setImage(global.avatar);
+      }
+
   }
 
   async function getPermissionAsync() {
@@ -144,8 +148,8 @@ function ProfileUserImage() {
 
     if (!result.cancelled) {
       // this.setState({ image: result.uri });
-      // setImage(result.uri);
-      // // saveProfileImage(result.uri);
+      setImage(result);
+      saveProfileImage(result);
 
       handleImagePicked(result);
     }
@@ -168,16 +172,26 @@ function ProfileUserImage() {
   }, []);
 
   useEffect(() => {
+    if (profilePictureName) {
+      loadUserProfilePicture(profilePictureName);
+    }
+    return () => {
+      // effect
+    };
+  }, [profilePictureName]);
+
+  useEffect(() => {
     if (user) {
       setProfilePictureName(`images/profile/${user.username}`);
       // console.log(`Loading images/profile/${user.username}`)
-      loadUserProfilePicture(profilePictureName);
     }
-  }, [user, profilePictureName]);
+  }, [user]);
 
   useEffect(() => {
-    if (!onlineImageDoesNotExist) {
+    if (onlineImageDoesNotExist) {
       retrieveStoredUserData();
+    } else {
+      console.log('Load back up/offline image here')
     }
     return () => {
       // effect
@@ -225,7 +239,7 @@ function ProfileUserImage() {
       >
         <Image
           // source={global.placeholderUserImage}
-          source={{ uri: image }}
+          source={image}
           style={
             {
               width: '100%',

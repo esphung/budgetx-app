@@ -6,9 +6,9 @@
     "icon": "./assets/icon.png",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ericphung.budgetx-app"
+      "bundleIdentifier": "com.ericphung.financely"
     },
-    "name": "Budget X",
+    "name": "Financely",
     "orientation": "portrait",
     "platforms": [
       "ios",
@@ -27,6 +27,6 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "1.0.0"
+    "version": "1.0.1"
   }
 }

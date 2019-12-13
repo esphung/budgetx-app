@@ -18,17 +18,21 @@ global.settingsIcon = require('./assets/settings-icon.png');
 
 global.xIconWhite = require('./assets/x-icon-white.png');
 
-global.clickSound = require('./assets/sounds/test.mp3');
+global.walletFilledMoneyToolIcon = require('./assets/wallet-filled-money-tool.png'); // 261 × 252
+
+global.avatar = require('./assets/avatar.png');
+
+// global.clickSound = require('./assets/sounds/test.mp3');
 
 global.appIcon = require('./assets/icon.png');
 
 global.maxAmountLength = 9;
 
-global.appVersion = '1.0.0';
+global.appVersion = '1.0.1';
 
 global.adminEmailAddress = 'esphung@gmail.com';
 
-global.appName = 'Budget X';
+global.appName = 'Financely';
 
 global.appDeveloper = 'Eric Phung';
 
@@ -36,7 +40,7 @@ global.appDesigner = 'Andrey Nasanov';
 
 global.privacyLink = 'www.google.com';
 
-global.latestReleaseDate = '12/13/2019';
+global.latestReleaseDate = '12/12/2019 02:09 AM';
 
 // validation
 // var usernameRegex = /^[a-zA-Z0-9]+$/;

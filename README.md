@@ -1,11 +1,10 @@
-# Budget X App #
+# Financely #
 <img src="assets/icon.png" alt="512x512 App Icon" width="100" />
 
     PURPOSE:    personal finance mobile app  made with RN and Expo
-    PACKAGES:   react-native-swipe-list-view
-    Author:     Eric Phung
-    Created:    Sun Nov  3 04:53:21 2019
-    Updated:
+    AUTHOR:     Eric Phung
+    CREATED:    Sun Nov  3 04:53:21 2019
+    UPDATED:
                 11/06/2019 02:57 PM
                 11/12/2019 05:03 AM
                 11/13/2019 05:22 AM
@@ -16,6 +15,7 @@
                 12/03/2019 11:47 AM
                 12/04/2019 04:01 PM
                 12/05/2019 12:19 PM
+                12/12/2019 02:12 AM | Ready for push to App Store
 
 <hr>
 <img src="designs/Financely-First-Opened.png" alt="Home App Screen" width="100"/>
