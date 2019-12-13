@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
+// import { PropTypes } from 'prop-types';
+
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   // Text,
   ActivityIndicator,
-  AsyncStorage,
+  // AsyncStorage,
+  // Button,
 } from 'react-native';
 
 // AWS Amplify
@@ -20,11 +23,6 @@ function AuthLoadingScreen(props) {
   * > hooks
   */
   const [userToken, setUserToken] = useState(null);
-
-  // const loadApp = async () => {
-  //   const userToken = await AsyncStorage.getItem('userToken');
-  //   props.navigation.navigate(userToken ? 'App' : 'Auth');
-  // };
 
   // Get the logged in users and remember them
   async function loadApp() {

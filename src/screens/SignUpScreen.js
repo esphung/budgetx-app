@@ -35,6 +35,10 @@ import {
   Input,
 } from 'native-base';
 
+import { NetworkConsumer } from 'react-native-offline';
+
+import Offline from '../components/Offline';
+
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
@@ -450,55 +454,84 @@ function SignUpScreen(props) {
                     />
                 </Item>
 
-                <TouchableOpacity
-                  onPress={signUp}
-                  style={getButtonStyle(isSignUpBtnEnabled)}
-                  disabled={!isSignUpBtnEnabled}
-                >
-                  <Text style={styles.buttonText}>
-                    Sign Up
-                  </Text>
-                </TouchableOpacity>
+
+      <NetworkConsumer>
+        {({ isConnected }) => (
+          isConnected ? (
+            <View>
+            <TouchableOpacity
+              onPress={signUp}
+              style={getButtonStyle(isSignUpBtnEnabled)}
+              disabled={!isSignUpBtnEnabled}
+            >
+              <Text style={styles.buttonText}>
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+
+
+
+              <Item rounded style={styles.itemStyle}>
+                <Ionicons active name="md-apps" style={styles.iconStyle} />
+                <Input
+                  disabled={!isAuthCodeInputEnabled}
+                  style={styles.input}
+                  placeholder="Confirmation code"
+                  placeholderTextColor={colors.offWhite}
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry={false}
+                  ref={authCodeInputRef}
+                  onSubmitEditing={() => handleAuthCodeInputSubmit()}
+                  onChangeText={(value) => onChangeText('authCode', value)}
+
+                  keyboardAppearance="dark"
+                  onFocus={() => setIsKeyboardAvoidEnabled(true)}
+                />
+              </Item>
+              <TouchableOpacity
+                disabled={!isConfirmSignUpBtnEnabled}
+                onPress={confirmSignUp} style={getButtonStyle(isConfirmSignUpBtnEnabled)}
+              >
+                <Text style={styles.buttonText}>
+                  Confirm Sign Up
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                disabled={!isResendCodeBtnEnabled}
+                onPress={resendSignUp}
+                style={getButtonStyle(isResendCodeBtnEnabled)}
+              >
+                <Text style={styles.buttonText}>
+                  Resend code
+                </Text>
+              </TouchableOpacity>
+              </View>
+
+          ) : (
+
+            <View 
+              style={
+                {
+                  flex: 0.5,
+                  // alignItems: 'center',
+                }
+              }
+            >
+            <Offline />
+            </View>
+          )
+        )}
+      </NetworkConsumer>
+
+
+                
 
                 {/* code confirmation section  */}
-                <Item rounded style={styles.itemStyle}>
-                  <Ionicons active name="md-apps" style={styles.iconStyle} />
-                  <Input
-                    disabled={!isAuthCodeInputEnabled}
-                    style={styles.input}
-                    placeholder="Confirmation code"
-                    placeholderTextColor={colors.offWhite}
-                    keyboardType="numeric"
-                    returnKeyType="done"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry={false}
-                    ref={authCodeInputRef}
-                    onSubmitEditing={() => handleAuthCodeInputSubmit()}
-                    onChangeText={(value) => onChangeText('authCode', value)}
-
-                    keyboardAppearance="dark"
-                    onFocus={() => setIsKeyboardAvoidEnabled(true)}
-                  />
-                </Item>
-                <TouchableOpacity
-                  disabled={!isConfirmSignUpBtnEnabled}
-                  onPress={confirmSignUp} style={getButtonStyle(isConfirmSignUpBtnEnabled)}
-                >
-                  <Text style={styles.buttonText}>
-                    Confirm Sign Up
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  disabled={!isResendCodeBtnEnabled}
-                  onPress={resendSignUp}
-                  style={getButtonStyle(isResendCodeBtnEnabled)}
-                >
-                  <Text style={styles.buttonText}>
-                    Resend code
-                  </Text>
-                </TouchableOpacity>
+                
 
               </View>
             </Container>
