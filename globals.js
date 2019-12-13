@@ -28,7 +28,7 @@ global.appIcon = require('./assets/icon.png');
 
 global.maxAmountLength = 9;
 
-global.appVersion = '1.0.3';
+global.appVersion = '1.0.4';
 
 global.adminEmailAddress = 'esphung@gmail.com';
 

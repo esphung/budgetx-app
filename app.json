@@ -6,7 +6,10 @@
     "icon": "./assets/icon.png",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ericphung.financely"
+      "bundleIdentifier": "com.ericphung.financely",
+      "infoPlist": {
+  "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets."
+},
     },
     "name": "Financely",
     "orientation": "portrait",
@@ -27,6 +30,6 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "1.0.3"
+    "version": "1.0.4"
   }
 }
