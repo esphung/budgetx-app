@@ -141,9 +141,9 @@ function App() {
     }
   };
 
-  const retrieveAuthenticated = async () => {
+const retrieveIsPasscodeEnabled = async () => {
 
-        // // Saves to storage as a JSON-string
+    // // Saves to storage as a JSON-string
     // AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(false))
 
     // Retrieves from storage as boolean
@@ -152,25 +152,18 @@ function App() {
     // }
 
     // Or if you prefer using Promises
-    const bool = await AsyncStorage.getItem('isPasscodeEnabled')
+    await AsyncStorage.getItem('isPasscodeEnabled')
         .then( function (value) {
             JSON.parse(value) // boolean false
+            if (value === null) {
+              setIsPasscodeEnabled(false);
+            }
+            if (value) {
+              // setAuthenticated(true);
+              setIsPasscodeEnabled(JSON.parse(value));
+              // console.log(value);
+            }
         })
-
-        if (!bool) {
-          setAuthenticated(true);
-          
-        }
-
-    // try {
-    //   const value = await AsyncStorage.getItem('@MySuperStore:authenticated');
-    //   if (value !== null) {
-    //     // We have data!!
-    //     console.log(value);
-    //   }
-    // } catch (error) {
-    //   // Error retrieving data
-    // }
   };
 
   const handleConnectionChange = (connectionInfo) => {
@@ -185,7 +178,7 @@ function App() {
     // console.log('Mount');
     retrieveStoredFonts();
 
-
+    retrieveIsPasscodeEnabled();
 
     // local authentication
     // set authenticated
@@ -199,18 +192,18 @@ function App() {
 
   useEffect(() => {
     // console.log(authenticated)
-    if (!authenticated) {
-       if (Platform.OS === 'android') {
+    if (isPasscodeEnabled) {
+      if (Platform.OS === 'android') {
             setModalVisible(modalVisible);
           } else {
             scanFingerPrint();
       }
     }
 
-    return () => {
-      // effect
-    };
-  }, [authenticated])
+    // return () => {
+    //   // effect
+    // };
+  }, [isPasscodeEnabled])
 
   // useEffect(() => {
   //   return () => {

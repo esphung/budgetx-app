@@ -116,6 +116,16 @@ function UserOptions(props) {
       // console.log(item);
     }
 
+    let title = `${item.key}`;
+    if (item.key === 'Passcode') {
+      if (props.isPasscodeEnabled === true) {
+        title = `Passcode Enabled`;
+      } else {
+        title = `Passcode Disabled`;
+      }
+      
+    }
+
     // console.log(item);
     const view = (
       <TouchableOpacity
@@ -143,7 +153,7 @@ function UserOptions(props) {
             justifyContent: 'center',
           }}
         >
-          <Text style={styles.title}>{item.key}</Text>
+          <Text style={styles.title}>{title}</Text>
           <Text style={styles.arrow}>{caret}</Text>
         </View>
       </TouchableOpacity>
@@ -162,7 +172,7 @@ function UserOptions(props) {
         { key: '' },
         { key: 'Contact Support' },
         { key: 'Terms of Service' },
-        /*{ key: 'Passcode' },*/
+        { key: 'Passcode' },
         { key: 'Reset Data' },
       ]}
 

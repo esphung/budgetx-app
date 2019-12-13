@@ -11,7 +11,7 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
             12/09/2019 12:32 PM
 */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
 
@@ -143,6 +143,8 @@ ${getHTMLObjectRows(data)}
 
 function Settings(props) {
 
+  const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
+
   const clearAsyncStorage = async () => {
       AsyncStorage.clear();
   };
@@ -222,7 +224,41 @@ function Settings(props) {
     }
   };
 
+  const retrieveIsPasscodeEnabled = async () => {
+
+    // // Saves to storage as a JSON-string
+    // AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(false))
+
+    // Retrieves from storage as boolean
+    // AsyncStorage.getItem('isPasscodeEnabled', function (err, value) {
+    //     JSON.parse(value) // boolean false
+    // }
+
+    // Or if you prefer using Promises
+    await AsyncStorage.getItem('isPasscodeEnabled')
+        .then( function (value) {
+            JSON.parse(value) // boolean false
+            if (value === null) {
+              setIsPasscodeEnabled(false);
+            }
+            if (value) {
+              // setAuthenticated(true);
+              setIsPasscodeEnabled(JSON.parse(value));
+              // console.log(value);
+            }
+        })
+  };
+
+  const storeIsPasscodeEnabled = () => {
+    if (isPasscodeEnabled !== null) {
+      // Saves to storage as a JSON-string
+      AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(isPasscodeEnabled));
+    }
+  };
+
   async function passcodeBtnPressed() {
+    setIsPasscodeEnabled(!isPasscodeEnabled);
+    // storeIsPasscodeEnabled();
   }
 
   function customizeCategoriesBtnPressed() {
@@ -281,6 +317,21 @@ function Settings(props) {
       customizeCategoriesBtnPressed();
     }
   }
+
+  useEffect(() => {
+    retrieveIsPasscodeEnabled();
+  }, [])
+
+  useEffect(() => {
+    if (isPasscodeEnabled !== null) {
+      console.log('passcode:',isPasscodeEnabled);
+      storeIsPasscodeEnabled();
+    }
+    
+    return () => {
+      // effect
+    };
+  }, [isPasscodeEnabled])
 
   return (
     <SafeAreaView
@@ -343,6 +394,7 @@ function Settings(props) {
           }
         ><UserOptions
           onPress={onPress}
+          isPasscodeEnabled={isPasscodeEnabled}
         /></View>
 
         <View
