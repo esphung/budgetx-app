@@ -222,6 +222,9 @@ function Settings(props) {
     }
   };
 
+  async function passcodeBtnPressed() {
+  }
+
   function customizeCategoriesBtnPressed() {
     props.navigation.navigate('CustomizeCategoriesScreen');
   }
@@ -266,6 +269,8 @@ function Settings(props) {
       contactSupportBtnPressed();
     } else if (name === 'Terms of Service') {
       termsOfServiceBtnPressed();
+    } else if (name === 'Passcode') {
+      passcodeBtnPressed();
     } else if (name === 'Export Transactions') {
       exportBtnPressed();
     } else if (name === 'Change Password/Sign Out') {

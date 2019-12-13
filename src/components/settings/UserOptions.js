@@ -162,6 +162,7 @@ function UserOptions(props) {
         { key: '' },
         { key: 'Contact Support' },
         { key: 'Terms of Service' },
+        /*{ key: 'Passcode' },*/
         { key: 'Reset Data' },
       ]}
 

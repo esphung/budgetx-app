@@ -93,13 +93,14 @@ function App() {
 
   const [loading, setLoading] = useState(false);
 
-  // const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
 
-  // const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  // const [failedCount, setFailedCount] = useState(0);
+  const [failedCount, setFailedCount] = useState(0);
 
-  // const [isOnline, setIsOnline] = useState(false);
+  const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(false);
+
 
   async function retrieveStoredFonts() {
     setLoading(true);
@@ -117,52 +118,74 @@ function App() {
     setFailedCount(0);
   }
 
-  // const scanFingerPrint = async () => {
-  //   try {
-  //     const results = await LocalAuthentication.authenticateAsync();
-  //     if (results.success) {
-  //       setModalVisible(false);
-  //       setAuthenticated(true);
-  //       setFailedCount(0);
-  //     } else {
-  //       setFailedCount(failedCount + 1);
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+  const scanFingerPrint = async () => {
+    try {
+      const results = await LocalAuthentication.authenticateAsync();
+      if (results.success) {
+        setModalVisible(false);
+        setAuthenticated(true);
+        setFailedCount(0);
+      } else {
+        setFailedCount(failedCount + 1);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-  // const storeAuthenticated = async (bool) => {
-  //   try {
-  //     await AsyncStorage.setItem('@MySuperStore:authenticated', bool);
-  //   } catch (error) {
-  //     // Error saving data
-  //   }
-  // };
+  const storeAuthenticated = async (bool) => {
+    try {
+      await AsyncStorage.setItem('@MySuperStore:authenticated', bool);
+    } catch (error) {
+      // Error saving data
+    }
+  };
 
-  // const retrieveAuthenticated = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem('@MySuperStore:authenticated');
-  //     if (value !== null) {
-  //       // We have data!!
-  //       console.log(value);
-  //     }
-  //   } catch (error) {
-  //     // Error retrieving data
-  //   }
-  // };
+  const retrieveAuthenticated = async () => {
 
-  // const handleConnectionChange = (connectionInfo) => {
-  //   console.log('connection info: ', connectionInfo);
-  //   NetInfo.isConnected.fetch().then((isConnected) => {
-  //     setIsOnline(isConnected);
-  //   });
-  // };
+        // // Saves to storage as a JSON-string
+    // AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(false))
+
+    // Retrieves from storage as boolean
+    // AsyncStorage.getItem('isPasscodeEnabled', function (err, value) {
+    //     JSON.parse(value) // boolean false
+    // }
+
+    // Or if you prefer using Promises
+    const bool = await AsyncStorage.getItem('isPasscodeEnabled')
+        .then( function (value) {
+            JSON.parse(value) // boolean false
+        })
+
+        if (!bool) {
+          setAuthenticated(true);
+          
+        }
+
+    // try {
+    //   const value = await AsyncStorage.getItem('@MySuperStore:authenticated');
+    //   if (value !== null) {
+    //     // We have data!!
+    //     console.log(value);
+    //   }
+    // } catch (error) {
+    //   // Error retrieving data
+    // }
+  };
+
+  const handleConnectionChange = (connectionInfo) => {
+    console.log('connection info: ', connectionInfo);
+    NetInfo.isConnected.fetch().then((isConnected) => {
+      setIsOnline(isConnected);
+    });
+  };
 
   // component did mount
   useEffect(() => {
     // console.log('Mount');
     retrieveStoredFonts();
+
+
 
     // local authentication
     // set authenticated
@@ -173,6 +196,21 @@ function App() {
     //   // console.log('unmount');
     // };
   }, []);
+
+  useEffect(() => {
+    // console.log(authenticated)
+    if (!authenticated) {
+       if (Platform.OS === 'android') {
+            setModalVisible(modalVisible);
+          } else {
+            scanFingerPrint();
+      }
+    }
+
+    return () => {
+      // effect
+    };
+  }, [authenticated])
 
   // useEffect(() => {
   //   return () => {
@@ -195,6 +233,9 @@ function App() {
   useEffect(() => {
     // // check if user online
     // NetInfo.addEventListener('connectionChange', handleConnectionChange);
+
+
+
     return () => {
       // // side effect of fonts loaded
       // // console.log('clean up fonts');
@@ -209,81 +250,20 @@ function App() {
   let view = <SpinnerMask />;
 
   if (fontsAreLoaded) {
-    // if (true) { // (!isOnline) {
-    //   // user is offline, show offline page
-    //   view = <Offline />
-    // }
+    
 
-
-    // else {
-    //   // finally, direct user to app
+   
       view = (
         <NetworkProvider>
-        <SwitchNavigator />
+          <SwitchNavigator />
         </NetworkProvider>
       );
-    // }
+    
   }
 
 
 
-  // view = (
-  //   <View
-  //     style={[
-  //       styles.container,
-  //       modalVisible
-  //         ? { backgroundColor: '#b7b7b7' }
-  //         : { backgroundColor: 'white' },
-  //     ]}
-  //   >
-  //     <Button
-  //       title={
-  //         authenticated
-  //           ? 'Reset and begin Authentication again'
-  //           : 'Begin Authentication'
-  //       }
-  //       onPress={() => {
-  //         clearState();
-  //         if (Platform.OS === 'android') {
-  //           setModalVisible(modalVisible);
-  //         } else {
-  //           scanFingerPrint();
-  //         }
-  //       }}
-  //     />
 
-  //     {authenticated && (
-  //       <Text style={styles.text}>Authentication Successful!</Text>
-  //     )}
-
-  //     <Modal
-  //       animationType="slide"
-  //       transparent
-  //       visible={modalVisible}
-  //       onShow={scanFingerPrint}
-  //     >
-  //       <View style={styles.modal}>
-  //         <View style={styles.innerContainer}>
-  //           <Text>Sign in with fingerprint</Text>
-
-  //           {failedCount > 0 && (
-  //             <Text style={{ color: 'red', fontSize: 14 }}>
-  //               Failed to authenticate, press cancel and try again.
-  //             </Text>
-  //           )}
-  //           <TouchableHighlight
-  //             onPress={async () => {
-  //               LocalAuthentication.cancelAuthenticate();
-  //               setModalVisible(modalVisible);
-  //             }}
-  //           >
-  //             <Text style={{ color: 'red', fontSize: 16 }}>Cancel</Text>
-  //           </TouchableHighlight>
-  //         </View>
-  //       </View>
-  //     </Modal>
-  //   </View>
-  // );
 
   return view;
 }

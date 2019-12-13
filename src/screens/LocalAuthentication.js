@@ -9,11 +9,13 @@ import {
   Button,
   Image,
   Platform,
+  AsyncStorage,
 } from 'react-native';
 
 import Constants from 'expo-constants';
 
 import * as LocalAuthentication from 'expo-local-authentication';
+
 
 export default class App extends React.Component {
   state = {
@@ -49,7 +51,13 @@ export default class App extends React.Component {
     }
   };
 
+  // async componentDidMount() {
+
+
+  // }
+
   render() {
+
     return (
       <View
         style={[
