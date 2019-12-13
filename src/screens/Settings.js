@@ -381,7 +381,7 @@ function Settings(props) {
         <View
           style={
             {
-              flex: 1,
+              flex: 1.1,
 
               // top: '55%',
 

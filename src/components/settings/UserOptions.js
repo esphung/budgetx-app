@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
 
-    top: '5%',
+    // top: '5%',
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -162,7 +162,18 @@ function UserOptions(props) {
   }
   const view = (
     <FlatList
-      scrollEnabled={false}
+      scrollEnabled={true}
+
+      style={
+        {
+          flex: 1,
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+
+          // paddingBottom: 50,
+        }
+      }
       contentContainerStyle={styles.container}
       data={[
         { key: 'Customize Categories' },
@@ -171,7 +182,6 @@ function UserOptions(props) {
         { key: 'Change Password/Sign Out' },
         { key: '' },
         { key: 'Contact Support' },
-        { key: 'Terms of Service' },
         { key: 'Passcode' },
         { key: 'Reset Data' },
       ]}
