@@ -48,7 +48,7 @@ function ProfileUserImage() {
 
   // const [userProfileImage, setUserProfileImage] = useState(global.placeholder500x500);
 
-  const [profilePictureName, setProfilePictureName] = useState(null);
+  const [storagePath, setStoragePath] = useState(null);
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -58,7 +58,8 @@ function ProfileUserImage() {
 
   const loadUserProfilePicture = async (imageName) => {
     // retrieve the item
-    const storedImage = await Storage.get(imageName);
+    const storedImage = await Storage.get(`${storagePath}images/profile.jpg`);
+    console.log('Loaded image:', storedImage)
     if (storedImage) {
       setOnlineImageDoesNotExist(false);
     } else {
@@ -69,7 +70,7 @@ function ProfileUserImage() {
   // this handles the image upload to S3
   const handleImagePicked = async (pickerResult) => {
     // const imageName = pickerResult.uri.replace(/^.*[\\\/]/, '');
-    const imageName = profilePictureName;
+    const imageName = storagePath + 'images/' + 'profile.jpg';
 
     const fileType = mime.lookup(pickerResult.uri);
     const access = { level: 'public', contentType: fileType }; // 'image/jpeg'
@@ -90,7 +91,7 @@ function ProfileUserImage() {
       console.log('error: ', err);
     }
 
-    // loadUserProfilePicture(profilePictureName);
+    // loadUserProfilePicture(storagePath);
     setLoading(false);
   };
 
@@ -166,23 +167,35 @@ function ProfileUserImage() {
       .catch((err) => console.log(err));
   }
 
+  const uploadLocalTransactions = async () => {
+    const userObject = await loadUserObject(); // load storage object
+    if (userObject) {
+      console.log(userObject.user.transactions)
+    }
+    // Upload file to S3
+    Storage.put(storagePath + 'test.txt', 'Hello')
+        .then (result => console.log(result)) // {key: "test.txt"}
+        .catch(err => console.log(err));
+
+  }
+
   useEffect(() => {
     getPermissionAsync();
     loadCognitoUser();
   }, []);
 
   useEffect(() => {
-    if (profilePictureName) {
-      loadUserProfilePicture(profilePictureName);
+    if (storagePath) {
+      loadUserProfilePicture(storagePath);
     }
     return () => {
       // effect
     };
-  }, [profilePictureName]);
+  }, [storagePath]);
 
   useEffect(() => {
     if (user) {
-      setProfilePictureName(`images/profile/${user.username}`);
+      setStoragePath(`${user.username}/`);
       // console.log(`Loading images/profile/${user.username}`)
     }
   }, [user]);

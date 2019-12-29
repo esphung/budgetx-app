@@ -14,21 +14,18 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             12/11/2019 02:55 PM |
             12/12/2019 09:43 AM | Pushed to App Store version 1.0.0
                                   Initialized version 1.0.1
+            12/14/2019 02:14 AM | Fixed photos permission, passcode enable
 */
+// import app from 'main/app.json'
+// console.log(app.expo.version);
 
 import React, { useState, useEffect } from 'react';
 
 import {
-  Text,
-  View,
-  StyleSheet,
-  Modal,
-  TouchableHighlight,
-  Button,
-  // Image,
   Platform,
   AsyncStorage,
   NetInfo,
+  Alert,
 } from 'react-native';
 
 // import { NetInfo } from 'react-native';
@@ -38,6 +35,8 @@ import Constants from 'expo-constants';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 import * as Font from 'expo-font';
+
+import { NetworkProvider } from 'react-native-offline';
 
 // Amplify imports and config
 import Amplify from 'aws-amplify'; // '@aws-amplify/core';
@@ -55,55 +54,24 @@ import './globals'; // global values
 
 // import LocalAuthentication from './src/screens/LocalAuthentication';
 
-import { NetworkProvider } from 'react-native-offline';
-
 Amplify.configure(config);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    padding: 8,
-  },
-  modal: {
-    flex: 1,
-    marginTop: '90%',
-    backgroundColor: '#E5E5E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  innerContainer: {
-    marginTop: '30%',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    alignSelf: 'center',
-    fontSize: 22,
-    paddingTop: 20,
-  },
-});
 
 function App() {
   // state hooks
-  const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
+  const [fontsAreLoaded, setFontsAreLoaded] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [authenticated, setAuthenticated] = useState(false);
+  const [isLocallyAuthenticated, setIsLocallyAuthenticated] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const [failedCount, setFailedCount] = useState(0);
 
-  const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(false);
-
+  const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
 
   async function retrieveStoredFonts() {
-    setLoading(true);
+    // setIsLoading(true);
     // load stored fonts
     await Font.loadAsync({
       'SFProDisplay-Regular': global.SFProDisplayRegularFont,
@@ -113,36 +81,52 @@ function App() {
     setFontsAreLoaded(true);
   }
 
-  function clearState() {
-    setAuthenticated(false);
-    setFailedCount(0);
-  }
-
   const scanFingerPrint = async () => {
     try {
       const results = await LocalAuthentication.authenticateAsync();
-      if (results.success) {
+      if (results.success === true) {
         setModalVisible(false);
-        setAuthenticated(true);
+        setIsLocallyAuthenticated(results.success);
+        storeIsLocallyAuthenticated(results.success); // true
         setFailedCount(0);
       } else {
+
         setFailedCount(failedCount + 1);
       }
+      // console.log(results.success);
+      
+
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
-  const storeAuthenticated = async (bool) => {
+  const storeIsLocallyAuthenticated = async (bool) => {
     try {
-      await AsyncStorage.setItem('@MySuperStore:authenticated', bool);
+      await AsyncStorage.setItem(global.isLocallyAuthenticatedKey, JSON.stringify(bool));
     } catch (error) {
       // Error saving data
     }
   };
 
-const retrieveIsPasscodeEnabled = async () => {
+  const retrieveIsLocallyAuthenticated = async () => {
+    try {
+      let bool = await AsyncStorage.getItem(global.isLocallyAuthenticatedKey);
+      if (bool === null) {
+        // store first time user isLocallyAuthenticated value of 'true'
+        // console.log(JSON.stringify(true));
+        // await AsyncStorage.setItem(global.isLocallyAuthenticatedKey, JSON.stringify(true));
+        setIsLocallyAuthenticated(false);
+      } else{
+        setIsLocallyAuthenticated(JSON.parse(bool));
+      }
+    } catch (error) {
+      // Error saving data
+    }
+  };
 
+
+  const retrieveIsPasscodeEnabled = async () => {
     // // Saves to storage as a JSON-string
     // AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(false))
 
@@ -152,19 +136,23 @@ const retrieveIsPasscodeEnabled = async () => {
     // }
 
     // Or if you prefer using Promises
-    await AsyncStorage.getItem('isPasscodeEnabled')
-        .then( function (value) {
-            JSON.parse(value) // boolean false
-            if (value === null) {
-              setIsPasscodeEnabled(false);
-            }
-            if (value) {
-              // setAuthenticated(true);
-              setIsPasscodeEnabled(JSON.parse(value));
-              // console.log(value);
-            }
-        })
+    await AsyncStorage.getItem(global.isPasscodeEnabledKey)
+      .then((value) => {
+        JSON.parse(value); // boolean false
+        if (value === null) {
+          setIsPasscodeEnabled(false);
+        }
+        if (value) {
+          setIsPasscodeEnabled(JSON.parse(value));
+        }
+      });
   };
+
+  function clearState() {
+    // setIsLocallyAuthenticated(false);
+    
+    setFailedCount(0);
+  }
 
   const handleConnectionChange = (connectionInfo) => {
     console.log('connection info: ', connectionInfo);
@@ -178,32 +166,47 @@ const retrieveIsPasscodeEnabled = async () => {
     // console.log('Mount');
     retrieveStoredFonts();
 
-    retrieveIsPasscodeEnabled();
+    retrieveIsLocallyAuthenticated();
 
-    // local authentication
-    // set authenticated
+    
 
+    
 
-    // return () => {
-    //   // effect
-    //   // console.log('unmount');
-    // };
+    clearState();
   }, []);
 
   useEffect(() => {
-    // console.log(authenticated)
-    if (isPasscodeEnabled) {
-      if (Platform.OS === 'android') {
-            setModalVisible(modalVisible);
-          } else {
-            scanFingerPrint();
-      }
+    console.log('isLocallyAuthenticated:', isLocallyAuthenticated);
+    console.log('isPasscodeEnabled:', isPasscodeEnabled);
+
+    if (fontsAreLoaded === true) {
+      setIsLoading(false);
     }
+
+    // display local authentication passcode input modal
+    
+    if (isPasscodeEnabled === true) {
+        if (Platform.OS === 'android') {
+          setModalVisible(modalVisible);
+        } else {
+          scanFingerPrint();
+        }              
+      }
+
+    
 
     // return () => {
     //   // effect
+    //   console.log('clean up');
     // };
-  }, [isPasscodeEnabled])
+  }, [isPasscodeEnabled, fontsAreLoaded]);
+
+  useEffect(() => {
+    if (isLocallyAuthenticated) {
+      retrieveIsPasscodeEnabled();
+      console.log(isLocallyAuthenticated)
+    }
+  }, [isLocallyAuthenticated])
 
   // useEffect(() => {
   //   return () => {
@@ -223,35 +226,17 @@ const retrieveIsPasscodeEnabled = async () => {
   //   };
   // }, [isOnline])
 
-  useEffect(() => {
-    // // check if user online
-    // NetInfo.addEventListener('connectionChange', handleConnectionChange);
 
-
-
-    return () => {
-      // // side effect of fonts loaded
-      // // console.log('clean up fonts');
-      // NetInfo.isConnected.removeEventListener(
-      //   'connectionChange',
-      //   handleConnectionChange,
-      // );
-      setLoading(false);
-    };
-  }, [fontsAreLoaded]);
 
   let view = <SpinnerMask />;
 
-  if (fontsAreLoaded) {
-    
-
+  if (!isLoading && isLocallyAuthenticated) {
    
       view = (
         <NetworkProvider>
           <SwitchNavigator />
         </NetworkProvider>
       );
-    
   }
 
 

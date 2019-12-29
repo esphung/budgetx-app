@@ -3,6 +3,8 @@
 
 // global.screenWidth = Math.round(Dimensions.get('window').width);
 
+import app from 'main/app.json';
+
 global.SFProDisplayRegularFont = require('./assets/fonts/SF-Pro-Display-Regular.otf');
 
 global.SFProDisplaySemiboldFont = require('./assets/fonts/SF-Pro-Display-Semibold.otf');
@@ -28,11 +30,11 @@ global.appIcon = require('./assets/icon.png');
 
 global.maxAmountLength = 9;
 
-global.appVersion = '1.0.4';
+global.appVersion = app.expo.version;
 
 global.adminEmailAddress = 'esphung@gmail.com';
 
-global.appName = 'Financely';
+global.appName = app.expo.name; // 'Financely';
 
 global.appDeveloper = 'Eric Phung';
 
@@ -41,6 +43,11 @@ global.appDesigner = 'Andrey Nasanov';
 global.privacyLink = 'www.google.com';
 
 global.latestReleaseDate = '12/12/2019 02:09 AM';
+
+// local storage keys
+global.isPasscodeEnabledKey = 'isPasscodeEnabled';
+
+global.isLocallyAuthenticatedKey = 'isLocallyAuthenticatedKey';
 
 // validation
 // var usernameRegex = /^[a-zA-Z0-9]+$/;

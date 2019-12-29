@@ -25,7 +25,7 @@ import {
 } from 'react-native';
 
 // AWS Amplify
-import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+import { Auth, Storage } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 import { NavigationEvents } from 'react-navigation';
 
@@ -163,13 +163,55 @@ const HeaderLeftView = () => {
     // }
   };
 
+  const uploadLocalTransactions = async () => {
+    const userObject = await loadUserObject(); // load storage object
+    if (userObject) {
+      console.log(userObject.user._id)
+    
+      // Upload file to S3
+      Storage.put(`@${userObject.user._id}/data.json`, JSON.stringify(userObject))
+          .then (result => {
+          console.log(result);
+          // console.log('User transactions uploaded to the cloud')
+      }) // {key: "test.txt"}
+          .catch(err => console.log(err));
+
+
+    }
+
+
+   
+
+
+     
+
+  }
+
+
+  
+
+
   async function loadCognitoUser() {
-    await Auth.currentAuthenticatedUser()
+    await uploadLocalTransactions();
+
+
+Storage.get('test.txt', { level: 'protected' })
+    .then(result => console.log(result))
+    .catch(err => console.log(err));
+     // Storage.get('test.text')
+     //    .then(result => console.log(JSON(result)))
+     //    .catch(err => console.log(err));
+
+    Auth.currentAuthenticatedUser()
       .then((cognitoUser) => {
         // setUserToken(user.signInUserSession.accessToken.jwtToken);
         // console.log('username:', cognitoUser.username);
 
+
         setUser(cognitoUser);
+
+        console.log(cognitoUser.username);
+        console.log(cognitoUser.transactions)
       })
       .catch((err) => console.log(err));
   }
@@ -200,7 +242,7 @@ const HeaderLeftView = () => {
 
       // setEmail(user.attributes.email);
 
-      setBoldMessage(`Welcome Back, ${user.username}`);
+      setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
 
       setNormalMessage(`Logged in as ${user.attributes.email}`);
     }

@@ -224,6 +224,15 @@ function Settings(props) {
     }
   };
 
+  const storeIsLocallyAuthenticated = async (bool) => {
+    try {
+      await AsyncStorage.setItem(global.isLocallyAuthenticatedKey, JSON.stringify(bool));
+    } catch (error) {
+      // Error saving data
+    }
+  };
+
+
   const retrieveIsPasscodeEnabled = async () => {
 
     // // Saves to storage as a JSON-string
@@ -241,7 +250,7 @@ function Settings(props) {
             if (value === null) {
               setIsPasscodeEnabled(false);
             }
-            if (value) {
+            else if (value) {
               // setAuthenticated(true);
               setIsPasscodeEnabled(JSON.parse(value));
               // console.log(value);
@@ -253,6 +262,7 @@ function Settings(props) {
     if (isPasscodeEnabled !== null) {
       // Saves to storage as a JSON-string
       AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(isPasscodeEnabled));
+      storeIsLocallyAuthenticated(JSON.stringify(!isPasscodeEnabled));
     }
   };
 
@@ -482,7 +492,7 @@ Settings.navigationOptions = ({ navigation }) => {
   const signOutAlert = async () => {
     await Alert.alert(
       'Sign Out',
-      'Are you sure you want to sign out from the app?',
+      'Are you sure you want to sign out from the app? You will need internet access to sign back in and recover your data!',
       [
         {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
         // Calling signOut
