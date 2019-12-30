@@ -8,26 +8,35 @@ UPDATED:   12/11/2019 10:09 PM
 
 import colors from 'main/colors';
 
-function checkColor(color) {
-  return color !== 'dark' && color !== 'darkTwo'  && color !== 'darkGreyBlue'
-  
+function Category(name, color, type) {
+  const currentDate = new Date();
+  this.id = `${Date.now(currentDate)}`;
+  this.created = currentDate;
+  this.name = (name) ? name : 'None';
+  this.color = color ? color : colors.white; // randomProperty(colors);
+  this.type = type ? type.toLowerCase() : 'expense';
 }
 
-const randomProperty = (obj) => {
-  const keys = Object.keys(obj);
+// // create user from some properties
+// Category.fromColor = function(color) {
+//   const category = new Category('New Category');
+//   category.color = color;
+//   return category;
+// };
 
-  // console.log(keys.filter(checkColor))
+// function checkColor(color) {
+//   return color !== 'dark' && color !== 'darkTwo'  && color !== 'darkGreyBlue'
 
-  return obj[keys.filter(checkColor)[Math.floor(Math.random() * keys.length)]];
-};
+// }
 
-function Category(name, color) {
-  this.id = Date.now();
-  this.created = new Date();
-  this.name = name;
-  this.color = color; // randomProperty(colors);
-  this.type = 'expense';
-}
+// const randomProperty = (obj) => {
+//   const keys = Object.keys(obj);
+
+//   // console.log(keys.filter(checkColor))
+
+//   return obj[keys.filter(checkColor)[Math.floor(Math.random() * keys.length)]];
+// };
+
 
 // var category = new Category('Insurance', '#fff');
 // console.log(category);

@@ -10,12 +10,13 @@ import defaultCategories from '../data/categories';
 
 // User function with multiple constructors
 function User(email) {
-  this._id = `${Date.now()}`;
+  const currentDate = new Date();
+  this.id = `${Date.now(currentDate)}`;
   this.username = '';
   this.password = '';
   this.email = email;
   this.transactions = [];
-  this.created = new Date();
+  this.created = currentDate;
   this.given = ''; // first name
   this.surname = '';
 

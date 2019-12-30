@@ -53,13 +53,13 @@ function WelcomeScreen(props) {
 
 
   const clearState = () => {
-    NetInfo.getConnectionInfo().then((connectionInfo) => {
-      setConnectionType(connectionInfo.type);
-      // console.log(
-      //   'Initial, type: ' +
-      //     connectionInfo.type,
-      // );
-    });
+    // NetInfo.getConnectionInfo().then((connectionInfo) => {
+    //   setConnectionType(connectionInfo.type);
+    //   // console.log(
+    //   //   'Initial, type: ' +
+    //   //     connectionInfo.type,
+    //   // );
+    // });
     // NetInfo.addEventListener('connectionChange', handleFirstConnectivityChange);
   };
 

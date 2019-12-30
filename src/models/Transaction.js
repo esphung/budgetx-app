@@ -8,25 +8,44 @@ UPDATED:    11/25/2019 02:11 PM  | added header prop
             11/26/2019 11:01 PM
 */
 
-function Transaction(date, amount, payee, category, type) {
-  this.id = `${Date.now()}`;
-  this.date = date;
-  this.amount = amount;
-  this.payee = {};
-  this.category = category;
-  this.type = type;
+import Payee from './Payee';
+
+import Category from './Category';
+
+import colors from 'main/colors';
+
+function Transaction(date, amount, payee, category, type, note) {
+  const currentDate = new Date();
+
+  this.id = `${Date.now(currentDate)}`;
+  this.date = (date) ? date : currentDate;
+  this.amount = amount ? amount : Number.parseFloat(0).toFixed(2);
+  this.payee = payee ? payee : new Payee();
+  this.category = (category) ? category : new Category();
+  this.type = (type) ? type: this.category.type;
+
+
+  this.created = currentDate;
+  this.note = note ? note : '';
 }
 
-Transaction.prototype = {
-  id: `${Date.now()}`
-}
+// Transaction.prototype = {
+//   id: `${Date.now()}`
+// }
 
 module.exports = Transaction;
 
 
+//  TESTING
+// const o = new Transaction(new Date(), 2218.33, new Payee(), new Category('Test', colors.white), 'expense')
+// console.log(o)
+// // console.log(typeof o.created);
 
+const transaction = new Transaction()
 
+console.log(transaction)
 
+// console.log(typeof transaction.amount)
 
 // module.exports = Transaction;
 
@@ -121,15 +140,6 @@ module.exports = Transaction;
 // }
 
 // module.exports = Transaction;
-
-
-// //  TESTING
-
-// // const o = new Transaction(12, new Date(), 2218.33)
-
-// // // const o = new Transaction()
-
-// // console.log(o.getTitle())
 
 
 // // // console.log(o)
