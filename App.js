@@ -15,6 +15,7 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             12/12/2019 09:43 AM | Pushed to App Store version 1.0.0
                                   Initialized version 1.0.1
             12/14/2019 02:14 AM | Fixed photos permission, passcode enable
+            12/30/2019 07:46 AM | AWS Appsync
 */
 // import app from 'main/app.json'
 // console.log(app.expo.version);
@@ -30,7 +31,7 @@ import {
 
 // import { NetInfo } from 'react-native';
 
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 
 import * as LocalAuthentication from 'expo-local-authentication';
 
@@ -70,6 +71,8 @@ function App() {
 
   const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
 
+  // const [isOnline, setIsOnline] = useState(null);
+
   async function retrieveStoredFonts() {
     // setIsLoading(true);
     // load stored fonts
@@ -87,16 +90,14 @@ function App() {
       if (results.success === true) {
         setModalVisible(false);
         setIsLocallyAuthenticated(results.success);
-        storeIsLocallyAuthenticated(results.success); // true
+        // storeIsLocallyAuthenticated(results.success);
         setFailedCount(0);
       } else {
-
         setFailedCount(failedCount + 1);
       }
       // console.log(results.success);
-      
-
     } catch (e) {
+      Alert.alert(e);
       // console.log(e);
     }
   };
@@ -111,20 +112,28 @@ function App() {
 
   const retrieveIsLocallyAuthenticated = async () => {
     try {
-      let bool = await AsyncStorage.getItem(global.isLocallyAuthenticatedKey);
+      const bool = await AsyncStorage.getItem(global.isLocallyAuthenticatedKey);
       if (bool === null) {
         // store first time user isLocallyAuthenticated value of 'true'
         // console.log(JSON.stringify(true));
         // await AsyncStorage.setItem(global.isLocallyAuthenticatedKey, JSON.stringify(true));
         setIsLocallyAuthenticated(false);
-      } else{
+      } else {
         setIsLocallyAuthenticated(JSON.parse(bool));
       }
     } catch (error) {
+      Alert.alert(error);
       // Error saving data
     }
   };
 
+  const storeIsPasscodeEnabled = async (bool) => {
+    try {
+      await AsyncStorage.setItem(global.isPasscodeEnabledKey, JSON.stringify(bool));
+    } catch (error) {
+      // Error saving data
+    }
+  };
 
   const retrieveIsPasscodeEnabled = async () => {
     // // Saves to storage as a JSON-string
@@ -150,74 +159,79 @@ function App() {
 
   function clearState() {
     // setIsLocallyAuthenticated(false);
-    
     setFailedCount(0);
   }
 
-  const handleConnectionChange = (connectionInfo) => {
-    console.log('connection info: ', connectionInfo);
-    NetInfo.isConnected.fetch().then((isConnected) => {
-      setIsOnline(isConnected);
-    });
-  };
+  // const handleConnectionChange = (connectionInfo) => {
+  //   // console.log('connection info: ', connectionInfo);
+  //   NetInfo.isConnected.fetch().then((isConnected) => {
+  //     setIsOnline(isConnected);
+  //   });
+  // };
 
   // component did mount
   useEffect(() => {
     // console.log('Mount');
     retrieveStoredFonts();
 
+    retrieveIsPasscodeEnabled();
+
     retrieveIsLocallyAuthenticated();
-
-    
-
-    
 
     clearState();
   }, []);
 
   useEffect(() => {
-    console.log('isLocallyAuthenticated:', isLocallyAuthenticated);
-    console.log('isPasscodeEnabled:', isPasscodeEnabled);
+    // console.log('isLocallyAuthenticated:', isLocallyAuthenticated);
+    // console.log('isPasscodeEnabled:', isPasscodeEnabled);
+
+    /*
+    * > if passcode is enabled, display local authentication passcode input modal
+    */
+    if (isPasscodeEnabled === true) {
+      if (Platform.OS === 'android') {
+        setModalVisible(modalVisible);
+      } else {
+        scanFingerPrint();
+      }
+    }
 
     if (fontsAreLoaded === true) {
       setIsLoading(false);
     }
 
-    // display local authentication passcode input modal
-    
-    if (isPasscodeEnabled === true) {
-        if (Platform.OS === 'android') {
-          setModalVisible(modalVisible);
-        } else {
-          scanFingerPrint();
-        }              
+    return () => {
+      // effect
+      if (isLocallyAuthenticated !== null) {
+        storeIsLocallyAuthenticated(isLocallyAuthenticated);
+        // console.log('Stored isLocallyAuthenticated:', isLocallyAuthenticated);
       }
-
-    
-
-    // return () => {
-    //   // effect
-    //   console.log('clean up');
-    // };
-  }, [isPasscodeEnabled, fontsAreLoaded]);
-
-  useEffect(() => {
-    if (isLocallyAuthenticated) {
-      retrieveIsPasscodeEnabled();
-      console.log(isLocallyAuthenticated)
-    }
-  }, [isLocallyAuthenticated])
+      if (isPasscodeEnabled !== null) {
+        storeIsPasscodeEnabled(isPasscodeEnabled);
+        // console.log('Stored isPasscodeEnabled:', isPasscodeEnabled);
+      }
+      // console.log('clean up');
+    };
+  }, [isPasscodeEnabled, fontsAreLoaded, isLocallyAuthenticated, modalVisible, scanFingerPrint]);
 
   // useEffect(() => {
+  //   if (isLocallyAuthenticated) {
+  //     storeIsLocallyAuthenticated(isLocallyAuthenticated);
+  //     console.log('Stored isLocallyAuthenticated as:', isLocallyAuthenticated);
+  //   }
+  // }, [isLocallyAuthenticated])
+
+  // useEffect(() => {
+  //   // console.log('Mount connection change');
   //   return () => {
   //     // effect
-  //     console.log('clean up connectionChange');
+  //     // console.log('clean up connectionChange');
   //     NetInfo.isConnected.removeEventListener(
   //       'connectionChange',
   //       handleConnectionChange
   //     );
   //   };
-  // }, [handleConnectionChange])
+  // }, [handleConnectionChange]);
 
   // useEffect(() => {
   //   console.log('isOnline:', isOnline);
@@ -226,17 +240,14 @@ function App() {
   //   };
   // }, [isOnline])
 
-
-
   let view = <SpinnerMask />;
 
-  if (!isLoading && isLocallyAuthenticated) {
-   
-      view = (
-        <NetworkProvider>
-          <SwitchNavigator />
-        </NetworkProvider>
-      );
+  if (!isLoading) {
+    view = (
+      <NetworkProvider>
+        <SwitchNavigator />
+      </NetworkProvider>
+    );
   }
 
 

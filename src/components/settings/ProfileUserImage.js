@@ -59,7 +59,7 @@ function ProfileUserImage() {
   const loadUserProfilePicture = async (imageName) => {
     // retrieve the item
     const storedImage = await Storage.get(`${storagePath}images/profile.jpg`);
-    console.log('Loaded image:', storedImage)
+    // console.log('Loaded image:', storedImage)
     if (storedImage) {
       setOnlineImageDoesNotExist(false);
     } else {
@@ -88,7 +88,8 @@ function ProfileUserImage() {
 
       // seretrtIsImageLoaded(true);
     } catch (err) {
-      console.log('error: ', err);
+      // console.log('error: ', err);
+      Alert.alert(err);
     }
 
     // loadUserProfilePicture(storagePath);
@@ -164,18 +165,26 @@ function ProfileUserImage() {
 
         setUser(cognitoUser);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        Alert.alert(err);
+        // console.log(err);
+      });
   }
 
   const uploadLocalTransactions = async () => {
     const userObject = await loadUserObject(); // load storage object
-    if (userObject) {
-      console.log(userObject.user.transactions)
-    }
+    // if (userObject) {
+    //   console.log(userObject.user.transactions)
+    // }
     // Upload file to S3
     Storage.put(storagePath + 'test.txt', 'Hello')
-        .then (result => console.log(result)) // {key: "test.txt"}
-        .catch(err => console.log(err));
+        .then (result => {
+        // console.log(result);
+        }) // {key: "test.txt"}
+        .catch(err => {
+          // console.log(err);
+          Alert.alert(err);
+        });
 
   }
 

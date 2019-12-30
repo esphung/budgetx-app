@@ -14,21 +14,18 @@ import AuthStackNavigator from './AuthStackNavigator';
 
 import AppStackNavigator from './AppStackNavigator';
 
-import Offline from './src/components/Offline';
+// import OfflineScreen from './src/screens/OfflineScreen';
 
-import LocalAuthentication from './src/screens/LocalAuthentication';
-
-
-
+// import LocalAuthentication from './src/screens/LocalAuthentication';
 
 const SwitchNavigator = createSwitchNavigator({
   // screen: name
   // LocalAuthentication: LocalAuthentication,
   AuthLoading: AuthLoadingScreen,
   Auth: AuthStackNavigator, // Auth stack
-  App: AppStackNavigator, // the App stack
+  App: AppStackNavigator, // the App stack,
 
-  Offline: Offline,
+
 });
 
 const AppContainer = createAppContainer(SwitchNavigator);

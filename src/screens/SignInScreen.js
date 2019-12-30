@@ -4,6 +4,10 @@ import PropTypes from 'prop-types';
 
 import { Ionicons } from 'expo-vector-icons';
 
+import { NetworkConsumer } from 'react-native-offline';
+
+import OfflineScreen from '../screens/OfflineScreen';
+
 import {
   // StyleSheet,
   View,
@@ -84,11 +88,11 @@ function SignInScreen(props) {
     // console.log('key:', key);
     // console.log('value:', value);
 
-    if (key === 'username') {
-      setUsername(value);
+if (key === 'username') {
+      setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'password') {
-      setPassword(value);
-    }
+      setPassword(value.replace(' ', ''));
+    } 
     // this.setState({[key]: value})
   }
 
@@ -107,8 +111,7 @@ function SignInScreen(props) {
     };
   }, [username, password]);
 
-  return (
-
+  const signin = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
@@ -129,6 +132,8 @@ function SignInScreen(props) {
                     onSubmitEditing={() => handleUsernameInputSubmit()}
                     onChangeText={(value) => onChangeText('username', value)}
 
+                    value={username}
+
                     keyboardAppearance="dark"
                   />
                 </Item>
@@ -145,6 +150,8 @@ function SignInScreen(props) {
                     ref={passwordInputRef}
                     onSubmitEditing={() => handlePasswordInputSubmit()}
                     onChangeText={(value) => onChangeText('password', value)}
+
+                    value={password}
 
                     keyboardAppearance="dark"
                   />
@@ -165,6 +172,17 @@ function SignInScreen(props) {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
+
+  const offline = <OfflineScreen />;
+
+  const view = (
+    <NetworkConsumer>
+      {
+        ({ isConnected }) => (isConnected ? signin : offline)
+      }
+    </NetworkConsumer>
+  );
+  return view;
 }
 
 SignInScreen.navigationOptions = () => {

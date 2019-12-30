@@ -21,7 +21,7 @@ export function isValidPhoneNumber(phoneNumber) {
 
 export function getButtonStyle(bool) {
   // console.log(bool);
-  if (bool) {
+  if (bool === true) {
     return {
       alignItems: 'center',
       backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
@@ -29,12 +29,12 @@ export function getButtonStyle(bool) {
       marginBottom: 20,
       borderRadius: 26, // 24,
 
-      borderWidth: 1,
-      borderColor: colors.white,
-      borderStyle: 'solid',   
+      // borderWidth: 1,
+      // borderColor: colors.white,
+      // borderStyle: 'solid',   
     }
   }
-  else  {
+  else if (bool === false) {
     return {
       alignItems: 'center',
       backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
@@ -43,9 +43,9 @@ export function getButtonStyle(bool) {
       borderRadius: 26, // 24,
       opacity: 0.4,
 
-      borderWidth: 1,
-      borderColor: colors.white,
-      borderStyle: 'solid',   
+      // borderWidth: 1,
+      // borderColor: colors.white,
+      // borderStyle: 'solid',   
     }
   }
 }

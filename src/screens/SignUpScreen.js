@@ -1,14 +1,19 @@
 /*
 FILENAME:  SignUpScreen.js
 PURPOSE:   Sign Up Screen for budget x app
-AUTHOR:    Eric Phung
-CREATED:   12/10/2019 02:26 PM
-UPDATED:   12/10/2019 02:26 PM
+AUTHOR:     Eric Phung
+CREATED:    12/10/2019 02:26 PM
+UPDATED:    12/10/2019 02:26 PM
+            12/30/2019 02:48 AM | Offline screen redirect
 */
 
 import React, { useState, useEffect, useRef } from 'react';
 
 import { Ionicons } from 'expo-vector-icons';
+
+import { NetworkConsumer } from 'react-native-offline';
+
+import OfflineScreen from '../screens/OfflineScreen';
 
 // import PropTypes from 'prop-types';
 
@@ -26,7 +31,8 @@ import {
   Modal,
   FlatList,
   // Animated,
-  TextInput,
+  // TextInput,
+  Image,
 } from 'react-native';
 
 import {
@@ -34,10 +40,6 @@ import {
   Item,
   Input,
 } from 'native-base';
-
-import { NetworkConsumer } from 'react-native-offline';
-
-import Offline from '../components/Offline';
 
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
@@ -47,6 +49,8 @@ import countries from 'main/Countries';
 import colors from 'main/colors';
 
 import styles from './styles';
+
+import Offline from '../components/Offline';
 
 import { isValidUsername, isValidPhoneNumber, getButtonStyle } from './functions';
 
@@ -80,6 +84,10 @@ function SignUpScreen(props) {
 
   const [isAuthCodeInputEnabled, setIsAuthCodeInputEnabled] = useState(true);
 
+  function isValidEmail(string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(string);
+  }
+
   /*
   * > Input Refs
   */
@@ -92,6 +100,12 @@ function SignUpScreen(props) {
   const phoneNumberInputRef = useRef(null);
 
   const authCodeInputRef = useRef(null);
+
+  const clearState = () => {
+    setIsConfirmSignUpBtnEnabled(false);
+    setIsResendCodeBtnEnabled(false);
+    setIsAuthCodeInputEnabled(true);
+  };
 
   useEffect(() => {
     // Default render of country flag
@@ -106,25 +120,33 @@ function SignUpScreen(props) {
   }, []);
 
   useEffect(() => {
-    if (username) {
-      console.log(username)
+    if (authCode) {
+      // console.log(username);
+      setIsConfirmSignUpBtnEnabled(true);
       setIsResendCodeBtnEnabled(true);
     }
-    if (username && isValidUsername(username) && password && isValidEmail(email) && isValidPhoneNumber(phoneNumber)) {
-      console.log(phoneNumber)
+
+    if (
+      username
+      && isValidUsername(username)
+      && password
+      && isValidEmail(email)
+      && isValidPhoneNumber(phoneNumber)
+    ) {
+      // console.log(phoneNumber);
       setIsSignUpBtnEnabled(true);
-      setIsConfirmSignUpBtnEnabled(true);
+      // setIsConfirmSignUpBtnEnabled(true);
 
       // console.log('Sign up available');
     } else {
       setIsSignUpBtnEnabled(false);
-      setIsConfirmSignUpBtnEnabled(false);
+      // setIsConfirmSignUpBtnEnabled(false);
       // setIsResendCodeBtnEnabled(false);
     }
     return () => {
       // effect
     };
-  }, [username, password, email, phoneNumber])
+  }, [username, password, email, phoneNumber, authCode]);
 
   /*
   * > Handlers
@@ -134,15 +156,17 @@ function SignUpScreen(props) {
     // console.log('value:', value);
 
     if (key === 'username') {
-      setUsername(value);
+      setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'password') {
-      setPassword(value);
+      setPassword(value.replace(' ', ''));
     } else if (key === 'email') {
-      setEmail(value);
+      var re = /^(((\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      // return re.test(String(email).toLowerCase());
+      setEmail(value.replace(/^[` ~!#$%^&*()|+\=?;:'",<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'phoneNumber') {
-      setPhoneNumber(value);
+      setPhoneNumber(value.replace(/[A-z]|[` ~!@#$%^&*()_|\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''));
     } else if (key === 'authCode') {
-      setAuthCode(value);
+      setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
     }
   }
 
@@ -183,7 +207,9 @@ function SignUpScreen(props) {
   function hideModal() {
     setModalVisible(false);
     // Refocus on the Input field after selecting the country code
-    phoneNumberInputRef.current._root.focus();
+
+    // phoneNumberInputRef.current._root.focus();
+    
   }
 
   async function selectCountry(country) {
@@ -203,10 +229,14 @@ function SignUpScreen(props) {
 
       setFlag(countryFlag);
 
+      setPhoneNumber(countryCode);
+      
+
       // this.setState({ phoneNumber: countryCode, flag: countryFlag })
-      await hideModal();
+      hideModal();
     } catch (err) {
-      console.log(err);
+      // console.log(err);
+      Alert.alert(err);
     }
   }
 
@@ -214,11 +244,27 @@ function SignUpScreen(props) {
     const modal = (
       <Modal
         animationType="slide"
-        transparent={false}
+        // transparent={false}
+        transparent
         visible={modalVisible}
       >
-        <View style={{ flex: 1, backgroundColor: colors.dark }}>
-          <View style={{ height: '80%', marginTop: 80 }}>
+        <View style={
+            {
+            flex: 1,
+            backgroundColor: colors.darkTwo,
+            opacity: 0.7,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        }>
+          <View style={
+            {
+              // height: '100%',
+              marginTop: 80,
+            }
+          }>
             {/*
             * > Render the list of countries
             */}
@@ -234,9 +280,7 @@ function SignUpScreen(props) {
                       <Text style={styles.textStyle}>
                         {item.flag}
                         {item.name}
-                        (
-                        {item.dial_code}
-                        )
+                        ({item.dial_code})
                       </Text>
                     </View>
                   </TouchableWithoutFeedback>
@@ -245,7 +289,10 @@ function SignUpScreen(props) {
             />
           </View>
           <TouchableOpacity
-            onPress={() => hideModal()}
+            onPress={() => {
+              hideModal();
+              Alert.alert('Ayye!')
+            }}
             style={styles.closeButtonStyle}
           >
             <Text style={styles.textStyle}>
@@ -257,10 +304,6 @@ function SignUpScreen(props) {
     );
     return modal;
   };
-
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
 
   /*
   * > User Sign Up Methods
@@ -275,12 +318,12 @@ function SignUpScreen(props) {
       attributes: { email, phone_number },
     })
       .then(() => {
-        console.log('Sign up successful!');
+        // console.log('Sign up successful!');
         Alert.alert('Enter the confirmation code you received.');
       })
       .catch((err) => {
         if (!err.message) {
-          console.log('Error when signing up: ', err.message);
+          // console.log('Error when signing up: ', err.message);
           Alert.alert('Error when signing up: ', err.message);
         }
       });
@@ -288,19 +331,25 @@ function SignUpScreen(props) {
 
   // Confirm users and redirect them to the SignIn page
   async function confirmSignUp() {
-    if (authCode != null) {
+    if (authCode !== null) {
       // const { username, authCode } = this.state;
+      if (!username) {
+        usernameInputRef.current._root.focus();
+        Alert.alert('Please provide a username');
+        return
+      }
       await Auth.confirmSignUp(username, authCode)
         .then(() => {
           props.navigation.navigate('SignIn');
-          console.log('Confirm sign up successful');
+          // console.log('Confirm sign up successful');
+          // Alert.alert('Confirm sign up successful');
         })
         .catch((err) => {
           if (!err.message) {
-            console.log('Error when entering confirmation code: ', err);
+            // console.log('Error when entering confirmation code: ', err);
             Alert.alert('Error when entering confirmation code: ', err);
           } else {
-            console.log('Error when entering confirmation code: ', err.message);
+            // console.log('Error when entering confirmation code: ', err.message);
             Alert.alert('Error when entering confirmation code: ', err.message);
           }
         });
@@ -310,35 +359,77 @@ function SignUpScreen(props) {
   // Resend code if not received already
   async function resendSignUp() {
     // const { username } = this.state;
+    if (!username) {
+      usernameInputRef.current._root.focus();
+      Alert.alert('Please provide a username');
+      return
+    }
     await Auth.resendSignUp(username)
-      .then(() => console.log('Confirmation code resent successfully'))
+      .then(() => {
+        Alert.alert('Confirmation code resent successfully!');
+        // console.log('Confirmation code resent successfully');
+      })
       .catch((err) => {
         if (!err.message) {
-          console.log('Error requesting new confirmation code: ', err);
+          // console.log('Error requesting new confirmation code: ', err);
           Alert.alert('Error requesting new confirmation code: ', err);
         } else {
-          console.log('Error requesting new confirmation code: ', err.message);
+          // console.log('Error requesting new confirmation code: ', err.message);
           Alert.alert('Error requesting new confirmation code: ', err.message);
         }
       });
   }
 
   /*
-  * > return component
+  * > return view component
   */
-  const view = (
+  const signup = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
       <KeyboardAvoidingView
         style={styles.container}
         behavior="padding"
+        keyboardVerticalOffset={30}
         enabled={isKeyboardAvoidEnabled}
       >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
-                {/* username section  */}
+{/*
+                <View
+                  style={
+                    {
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+
+                      // width: '100%',
+
+                      // borderWidth: 1,
+                      // borderColor: 'white',
+                      // borderStyle: 'dashed',
+                    }
+                  }
+                >
+                  <Image
+                    style={{
+                      height: '50%',
+                      width: '50%',
+                      opacity: 0.7,
+                      // borderRadius: 12,
+                      // backgroundColor: 'pink',
+
+                      // borderWidth: 1,
+                      // borderColor: 'white',
+                    }}
+                    resizeMode="contain"
+                    // source={global.noWifiImage}
+                    source={global.avatar}
+                  />
+
+                </View>*/}
+
                 <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-person" style={styles.iconStyle} />
                   <Input
@@ -352,6 +443,8 @@ function SignUpScreen(props) {
                     onSubmitEditing={() => handleUsernameInputSubmit()}
                     ref={usernameInputRef}
                     onChangeText={(value) => onChangeText('username', value)}
+
+                    value={username}
 
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
@@ -393,6 +486,8 @@ function SignUpScreen(props) {
                     onSubmitEditing={() => handleEmailInputSubmit()}
                     onChangeText={(value) => onChangeText('email', value)}
 
+                    value={email}
+
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
                     maxLength={26}
@@ -430,34 +525,33 @@ function SignUpScreen(props) {
                   </TouchableOpacity>
 
 
-                    <Input
-                      style={styles.input}
-                      placeholder={`+12345678910`}
-                      placeholderTextColor={colors.offWhite}
-                      keyboardType="phone-pad"
-                      returnKeyType="done"
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      secureTextEntry={false}
-                      ref={phoneNumberInputRef}
-                      value={phoneNumber}
-                      onEndEditing={() => setPhoneNumber(`${dialCode}${phoneNumber}`)}
-                      onSubmitEditing={() => handlePhoneNumberInputSubmit()}
-                      onChangeText={(val) => onChangeText('phoneNumber', val)}
+                  <Input
+                    style={styles.input}
+                    placeholder="+12345678910"
+                    placeholderTextColor={colors.offWhite}
+                    keyboardType="phone-pad"
+                    returnKeyType="done"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={false}
+                    ref={phoneNumberInputRef}
+                    value={phoneNumber}
+                    onEndEditing={() => setPhoneNumber(`${phoneNumber}`)}
+                    onSubmitEditing={() => handlePhoneNumberInputSubmit()}
+                    onChangeText={(val) => onChangeText('phoneNumber', val)}
 
-                      keyboardAppearance="dark"
-                      onFocus={() => {
-                        setPhoneNumber('');
-                        setIsKeyboardAvoidEnabled(false);
-                      }}
-                      maxLength={12}
-                    />
+                    value={phoneNumber}
+
+                    keyboardAppearance="dark"
+                    onFocus={() => {
+                      // setPhoneNumber('');
+                      setIsKeyboardAvoidEnabled(true);
+                    }}
+                    maxLength={12}
+                  />
                 </Item>
 
 
-      <NetworkConsumer>
-        {({ isConnected }) => (
-          isConnected ? (
             <View>
             <TouchableOpacity
               onPress={signUp}
@@ -511,27 +605,7 @@ function SignUpScreen(props) {
               </TouchableOpacity>
               </View>
 
-          ) : (
-
-            <View 
-              style={
-                {
-                  flex: 0.5,
-                  // alignItems: 'center',
-                }
-              }
-            >
-            <Offline />
-            </View>
-          )
-        )}
-      </NetworkConsumer>
-
-
-                
-
                 {/* code confirmation section  */}
-                
 
               </View>
             </Container>
@@ -540,6 +614,17 @@ function SignUpScreen(props) {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
+
+  const offline = <OfflineScreen />;
+
+  const view = (
+    <NetworkConsumer>
+      {
+        ({ isConnected }) => (isConnected ? signup : offline)
+      }
+    </NetworkConsumer>
+  );
+
   return view;
 }
 

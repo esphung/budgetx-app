@@ -10,19 +10,22 @@ import SignInScreen from './src/screens/SignInScreen';
 
 import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
+import OfflineScreen from './src/screens/OfflineScreen';
+
 // import ScreenName from './src/components/ScreenName';
 
-import LocalAuthentication from './src/screens/LocalAuthentication';
+// import LocalAuthentication from './src/screens/LocalAuthentication';
 
 // Auth stack
 const AuthStackNavigator = createStackNavigator({
   // LocalAuthentication: {
   //   screen: LocalAuthentication,
   // },
+
   Welcome: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
-      title: `Welcome to ${global.appName}`, // ScreenName, // for the header screen // `Welcome to this App`
+      title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
       headerBackTitle: 'Back',
     }),
   },
@@ -44,6 +47,14 @@ const AuthStackNavigator = createStackNavigator({
       title: 'Create a New Password',
     }),
   },
+
+  OfflineScreen: {
+    screen: OfflineScreen,
+    navigationOptions: () => ({
+      title: 'Device Offline',
+    }),
+  },
+
 });
 
 const AppContainer = createAppContainer(AuthStackNavigator);

@@ -28,6 +28,10 @@ global.avatar = require('./assets/avatar.png');
 
 global.appIcon = require('./assets/icon.png');
 
+global.wifiSymbolHighResolution = require('./assets/wifi-symbol-high-resolution.png');
+
+global.noWifiImage = require('./assets/no-wifi-image.png');
+
 global.maxAmountLength = 9;
 
 global.appVersion = app.expo.version;

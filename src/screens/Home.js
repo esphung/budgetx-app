@@ -256,9 +256,9 @@ function Home() {
     // console.log('mount Home');
     retrieveStoredUser();
 
-    return () => {
-      // console.log('Clean up Home');
-    };
+    // return () => {
+    //   // console.log('Clean up Home');
+    // };
   }, []);
 
   useEffect(() => {
@@ -271,10 +271,10 @@ function Home() {
     const spent = (calculateMonthSpent(transactions));
     setCurrentSpent(spent);
 
-    return () => {
-      // effect
-      // console.log('Clean up transactions');
-    };
+    // return () => {
+    //   // effect
+    //   // console.log('Clean up transactions');
+    // };
   }, [transactions]);
 
   // current transaction updates
@@ -288,10 +288,10 @@ function Home() {
     } else {
       hideSlideView();
     }
-    return () => {
-      // effect
-      // console.log('clean up current transaction');
-    };
+    // return () => {
+    //   // effect
+    //   // console.log('clean up current transaction');
+    // };
   }, [currentTransaction, hideSlideView, showSlideView]);
 
   // actions

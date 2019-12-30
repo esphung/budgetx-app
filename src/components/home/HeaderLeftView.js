@@ -22,6 +22,7 @@ import {
   ActivityIndicator,
   Platform,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 
 // AWS Amplify
@@ -140,12 +141,12 @@ const HeaderLeftView = () => {
       setIsStorageLoaded(true);
     } catch (e) {
       // statements
-      console.log('Could not load storage');
+      Alert.alert('Could not load storage');
     }
   }
 
   function clearState() {
-    loadCognitoUser();
+    // loadCognitoUser();
     // retrieveStoredUserImage(); // load stored user
   }
 
@@ -166,55 +167,49 @@ const HeaderLeftView = () => {
   const uploadLocalTransactions = async () => {
     const userObject = await loadUserObject(); // load storage object
     if (userObject) {
-      console.log(userObject.user._id)
+      // console.log(userObject.user._id);
     
       // Upload file to S3
       Storage.put(`@${userObject.user._id}/data.json`, JSON.stringify(userObject))
           .then (result => {
-          console.log(result);
+          // console.log(result);
           // console.log('User transactions uploaded to the cloud')
       }) // {key: "test.txt"}
-          .catch(err => console.log(err));
-
-
+          .catch(err => Alert.alert(err));
     }
-
-
-   
-
-
-     
-
   }
-
-
-  
-
 
   async function loadCognitoUser() {
     await uploadLocalTransactions();
 
-
-Storage.get('test.txt', { level: 'protected' })
-    .then(result => console.log(result))
-    .catch(err => console.log(err));
-     // Storage.get('test.text')
-     //    .then(result => console.log(JSON(result)))
-     //    .catch(err => console.log(err));
-
-    Auth.currentAuthenticatedUser()
-      .then((cognitoUser) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-
-
-        setUser(cognitoUser);
-
-        console.log(cognitoUser.username);
-        console.log(cognitoUser.transactions)
+    Storage.get('test.txt', { level: 'protected' })
+      .then(result => {
+        // console.log(result)
       })
-      .catch((err) => console.log(err));
-  }
+      .catch(err => {
+        Alert.alert(err);
+        // console.log(err);
+      });
+       // Storage.get('test.text')
+       //    .then(result => console.log(JSON(result)))
+       //    .catch(err => console.log(err));
+
+      Auth.currentAuthenticatedUser()
+        .then((cognitoUser) => {
+          // setUserToken(user.signInUserSession.accessToken.jwtToken);
+          // console.log('username:', cognitoUser.username);
+
+
+          setUser(cognitoUser);
+
+          // console.log(cognitoUser.username);
+          // console.log(cognitoUser.transactions)
+        })
+        .catch((err) => {
+          // console.log(err);
+          Alert.alert(err);
+        });
+    }
 
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
@@ -244,7 +239,7 @@ Storage.get('test.txt', { level: 'protected' })
 
       setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
 
-      setNormalMessage(`Logged in as ${user.attributes.email}`);
+      setNormalMessage(`Logged in as ${user.username}`);
     }
   });
 
