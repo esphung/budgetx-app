@@ -13,6 +13,7 @@ function User(email) {
   const currentDate = new Date();
   this.id = `${Date.now(currentDate)}`;
   this.username = '';
+  this.phoneNumber = '';
   this.password = '';
   this.email = email;
   this.transactions = [];
@@ -20,57 +21,43 @@ function User(email) {
   this.given = ''; // first name
   this.surname = '';
 
-  this.profileImage = null;
-
-  this.isLoggedIn = false;
+  this.profileImage = global.avatar;
 
   this.categories = defaultCategories;
 
-  this.getFullName = () => {
-    if (this.given || this.surname) {
-      return `${this.given} ${this.surname}`;
-    } else {
-      // var s = this.email;
-      // s = s.substring(0, s.indexOf('@'));
-      // return `${s}`;
-      return '';
-    }
-  }
-
-  this.setTransactions = (transactions) => {
-    this.transactions = transactions;
-  }
-
-  this.setEmail = (email) => {
-    this.email = email;
-  }
 } // end user function def
 
-// // null prototype (no properties)
-// User.prototype = {
-//   _id: `${Date.now()}`,
-//   username: null,
-//   password: null,
-//   // email: null,
-//   // transactions: [],
-//   created: new Date()
-// }; // end user prototype def
+// null prototype (no properties)
+User.prototype = {
+  id: Date.now(),
+  username: null,
+  password: null,
+  // email: null,
+  // transactions: [],
+  created: new Date()
+}; // end user prototype def
 
-// // create user from some properties
-// User.fromComponents = function(foo, bar) {
-//     var username = `${foo} ${bar}` ;
-//     return new User(username);
-// };
+// create user from some properties
+User.fromComponents = function(foo, bar) {
+    var username = `${foo} ${bar}` ;
+    return new User(username);
+};
 
 // create user from login
-User.fromLoginCredentials = function(username, password) {
-  const _id = `${Date.now()}`;
-  const message = `User created from login credentials: ${_id}
-  username: ${username}
-  password: ${password}`;
-  console.log(message)
+User.fromCognitoUser = function(cognito) {
+  // const _id = `${Date.now()}`;
+  // const message = `User created from attributes: ${_id}
+  // username: ${username}
+  // email: ${email}`;
+  // console.log(message)
 
-  const user = new User(username);
+  // console.log(cognito.username);
+
+  const user = new User(cognito.attributes.email);
+  user.username = cognito.username;
+  user.phoneNumber = cognito.attributes.phoneNumber;
+
+  // console.log(user);
   return user;
 }; // end create user from login creds definition
 

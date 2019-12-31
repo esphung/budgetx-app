@@ -27,6 +27,76 @@ import {
   Animated,
 } from 'react-native';
 
+import { AppLoading } from 'expo';
+
+// // Amplify imports and config
+// import Amplify from 'aws-amplify'; // '@aws-amplify/core';
+// import awsConfig from 'main/aws-exports';
+
+// import ApolloClient from 'apollo-boost';
+
+// // import {Rehydrated} from 'aws-appsync-react'
+// import { ApolloProvider } from 'react-apollo'
+// import Client from 'aws-appsync'
+// // import AppSyncConfig from 'main/AppSync'
+
+// const client = new ApolloClient({
+//   // uri: 'https://48p1r2roz4.sse.codesandbox.io',
+//   uri: awsConfig.aws_appsync_graphqlEndpoint,
+//   // region: awsConfig.aws_appsync_region,
+//   // auth: {
+//   //   type: awsConfig.aws_appsync_authenticationType,
+//   //   jwtToken: async () => (await Auth.currentSession()).getIdToken().getJwtToken()
+//   // }
+// });
+
+// console.log(client)
+
+// import { gql } from 'apollo-boost'; // or you can use `import gql from 'graphql-tag';` instead
+
+// // client
+// //   .query({
+// //     query: gql`
+// //       {
+// //         rates(currency: "USD") {
+// //           currency
+// //         }
+// //       }
+// //     `
+// //   })
+// //   .then(result => console.log(result.length));
+
+
+
+
+// // AWS Amplify
+// // import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+
+// // import * as queries from 'main/src/graphql/queries';
+// // import * as mutations from 'main/src/graphql/mutations';
+// // import * as subscriptions from 'main/src/graphql/subscriptions';
+
+// Amplify.configure(awsConfig);
+
+
+// Auth.currentAuthenticatedUser()
+//   .then((cognitoUser) => {
+//     // setUserToken(user.signInUserSession.accessToken.jwtToken);
+//     console.log('username:', cognitoUser.username);
+
+
+//     // setUser(cognitoUser);
+
+//     // console.log(cognitoUser.username);
+//     // console.log(cognitoUser.transactions)
+//     jwtToken = cognitoUser.attributes.jwtToken
+//   })
+//   .catch((err) => {
+//     // console.log(err);
+//     Alert.alert(err);
+//   });
+
+
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
@@ -83,6 +153,8 @@ function Home() {
 
   const [isCurrentTransaction] = useState(false);
 
+  const [isReady, setIsReady] = useState(false);
+
   // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   async function retrieveStoredUser() {
@@ -115,6 +187,7 @@ function Home() {
     setSlideViewBounceValue(new Animated.Value(300));
 
     setIsSlideViewHidden(true);
+
   };
 
   async function removeUserTransaction(transaction) {
@@ -331,15 +404,9 @@ function Home() {
     }
   };
 
-  // return component
-  let view = (
-    <View style={styles.container}>
-      <SpinnerMask />
-    </View>
-  );
 
+  const view = (
 
-  view = (
     <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
@@ -396,8 +463,22 @@ function Home() {
       />
 
     </ScrollView>
+
   );
-  return view;
+
+  const appLoading = (
+    <AppLoading
+      startAsync={clearState}
+      onFinish={() => setIsReady(true)}
+      onError={console.warn}
+    />
+  );
+
+  if (!isReady) {
+    return appLoading;
+  } else {
+    return view;
+  }
 }
 
 Home.navigationOptions = ({ navigation }) => {
@@ -410,5 +491,8 @@ Home.navigationOptions = ({ navigation }) => {
   return header;
 };
 
+// const TransactionsList = compose(
+//     // GraphQL.operations.FetchTransactions
+// )(Home);
 
-export default Home;
+export default Home; // TransactionsList; // Home;

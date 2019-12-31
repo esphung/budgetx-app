@@ -18,7 +18,7 @@ import {
   TouchableOpacity,
   Image,
   Text,
-  TextInput,
+  // TextInput,
   ActivityIndicator,
   Platform,
   SafeAreaView,
@@ -30,6 +30,12 @@ import { Auth, Storage } from 'aws-amplify'; // import Auth from '@aws-amplify/a
 
 import { NavigationEvents } from 'react-navigation';
 
+import { NetworkConsumer } from 'react-native-offline';
+
+import { Asset } from 'expo-asset';
+
+import { AppLoading } from 'expo';
+
 // ui colors
 import colors from 'main/colors';
 
@@ -37,6 +43,8 @@ import {
   loadUserObject,
   // saveUserObject,
 } from '../../storage/UserStorage';
+
+import avatarPicture from 'main/assets/avatar.png';
 
 const isValidEmail = require('../../functions/isValidEmail');
 
@@ -95,25 +103,11 @@ const styles = StyleSheet.create({
 
 
 const HeaderLeftView = () => {
-  // const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
+  const [boldMessage, setBoldMessage] = useState(`Welcome to ${global.appName} ${global.appVersion}`);
 
-  const [text, setText] = useState('');
+  const [normalMessage, setNormalMessage] = useState(`Sign up for cross-sync devices`);
 
-  const [boldMessage, setBoldMessage] = useState('');
-
-  const [normalMessage, setNormalMessage] = useState('');
-
-  // const [isInputEnabled, setIsInputEnabled] = useState(true);
-
-  const [user, setUser] = useState(null);
-
-  const [isStorageLoaded, setIsStorageLoaded] = useState(false);
-
-  const [userProfileImage, setUserProfileImage] = useState(null); // useState(global.placeholder500x500);
-
-  const [username, setUsername] = useState('');
-
-  const [email, setEmail] = useState('');
+  const [image, setImage] = useState(null);
 
   const [isReady, setIsReady] = useState(false);
 
@@ -122,94 +116,114 @@ const HeaderLeftView = () => {
     try {
       const userObject = await loadUserObject();
 
-      // setUser(userObject.user)
-
-
-      // REPLACE THIS IN SETTINGS USER PROFILE IMAGE COMP !!!!!
-
       // set stored user image
       if (userObject.user.profileImage) {
-        setUserProfileImage(userObject.user.profileImage);
-      } else {
-        setUserProfileImage(global.avatar);
+        setImage(userObject.user.profileImage);
       }
 
-      // setBoldMessage(`Hello ${userObject.user.username}`);
-
-      // setNormalMessage(`${userObject.user.email}`);
-
-      setIsStorageLoaded(true);
+      //  set current userr info
+      Auth.currentAuthenticatedUser({
+          bypassCache: false
+      }).then((user) => {
+        // console.log(user);
+        setBoldMessage(`Your are logged in as ${user.username}!`);
+        setNormalMessage(`Welcome to ${global.appName} ${global.appVersion} :D`);
+      })
+        .catch((err) => console.log(err));
     } catch (e) {
       // statements
-      Alert.alert('Could not load storage');
+      Alert.alert('Could not load image');
     }
   }
+
+  async function _cacheResourcesAsync() {
+    const images = [require('main/assets/avatar.png')];
+
+    const cacheImages = images.map(image => {
+      return Asset.fromModule(image).downloadAsync();
+    });
+
+    // setIsReady(true);
+    // return Promise.all(cacheImages);
+  }
+
+  async function retrieveImages() {
+    await Asset.loadAsync([
+      avatarPicture,
+      // video2,
+      // ...
+    ]);
+   // this.setState({ ready: true });
+   // setIsReady(true);s
+  }
+
 
   function clearState() {
-    // loadCognitoUser();
-    // retrieveStoredUserImage(); // load stored user
+    setBoldMessage('') // (`${global.appName} ${global.appVersion}`);
+    setNormalMessage('') // (`Get device cross-sync!`);
+
+    retrieveStoredUserImage(); // load stored user
   }
 
-  const handleTextChange = (value) => {
-    setText(value);
-    // console.log(text);
-  };
+  // const handleTextChange = (value) => {
+  //   setText(value);
+  //   // console.log(text);
+  // };
 
-  const submitBtnPressed = (value) => {
-    setText(value);
-    // if (isValidEmail(text)) {
-    //   // create new user with text email
-    //   // console.log(text);
-    //   setUser(new User(text));
-    // }
-  };
+  // const submitBtnPressed = (value) => {
+  //   setText(value);
+  //   // if (isValidEmail(text)) {
+  //   //   // create new user with text email
+  //   //   // console.log(text);
+  //   //   setUser(new User(text));
+  //   // }
+  // };
 
-  const uploadLocalTransactions = async () => {
-    const userObject = await loadUserObject(); // load storage object
-    if (userObject) {
-      // console.log(userObject.user._id);
-    
-      // Upload file to S3
-      Storage.put(`@${userObject.user._id}/data.json`, JSON.stringify(userObject))
-          .then (result => {
-          // console.log(result);
-          // console.log('User transactions uploaded to the cloud')
-      }) // {key: "test.txt"}
-          .catch(err => Alert.alert(err));
-    }
-  }
+  // const uploadLocalTransactions = async () => {
+  //   const userObject = await loadUserObject(); // load storage object
+  //   if (userObject) {
+  //     // console.log(userObject.user._id);
+  //     // Upload file to S3
+  //     Storage.put(`@${userObject.user._id}/data.json`, JSON.stringify(userObject))
+  //         .then (result => {
+  //         // console.log(result);
+  //         // console.log('User transactions uploaded to the cloud')
+  //     }) // {key: "test.txt"}
+  //         .catch(err => Alert.alert(err));
+  //   }
+  // }
 
-  async function loadCognitoUser() {
-    await uploadLocalTransactions();
+  // async function loadCognitoUser() {
+  //   // await uploadLocalTransactions();
 
-    Storage.get('test.txt', { level: 'protected' })
-      .then(result => {
-        // console.log(result)
-      })
-      .catch(err => {
-        Alert.alert(err);
-        // console.log(err);
-      });
-       // Storage.get('test.text')
-       //    .then(result => console.log(JSON(result)))
-       //    .catch(err => console.log(err));
+  //   // Storage.get('test.txt', { level: 'protected' })
+  //   //   .then(result => {
+  //   //     // console.log(result)
+  //   //   })
+  //   //   .catch(err => {
+  //   //     Alert.alert(err);
+  //   //     // console.log(err);
+  //   //   });
+  //   //    // Storage.get('test.text')
+  //   //    //    .then(result => console.log(JSON(result)))
+  //   //    //    .catch(err => console.log(err));
 
-      Auth.currentAuthenticatedUser()
-        .then((cognitoUser) => {
-          // setUserToken(user.signInUserSession.accessToken.jwtToken);
-          // console.log('username:', cognitoUser.username);
+  //   Auth.currentAuthenticatedUser()
+  //     .then((cognitoUser) => {
+  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
+  //       // console.log('username:', cognitoUser.username);
 
 
-          setUser(cognitoUser);
+  //       setUser(cognitoUser);
 
-          // console.log(cognitoUser.username);
-          // console.log(cognitoUser.transactions)
-        })
-        .catch((err) => {
-          // console.log(err);
-          Alert.alert(err);
-        });
-    }
+  //       // console.log(cognitoUser.username);
+  //       // console.log(cognitoUser.transactions)
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //       Alert.alert(err);
+  //     });
+  //   }
 
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
@@ -221,38 +235,67 @@ const HeaderLeftView = () => {
 
   // }, []);
 
+  // useEffect(() => {
+  //   if (username) {
+  //     setNormalMessage(`Logged in as ${user.username}`);
+  //   }
+
+  //   // loadCognitoUser();
+  //   // retrieveStoredUserImage();
+  //   // return () => {
+  //   //   // effect
+  //   // };
+  // }, [username]);
+
   useEffect(() => {
-    loadCognitoUser();
-    // retrieveStoredUserImage();
-    // return () => {
-    //   // effect
-    // };
+    retrieveStoredUserImage();
+    // console.log('Updating Online Info');
   }, []);
 
   useEffect(() => {
-    // console.log('Updating Online Info');
-    if (user) {
-      // console.log(user);
-      // setUsername(user.username);
-
-      // setEmail(user.attributes.email);
-
-      setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
-
-      setNormalMessage(`Logged in as ${user.username}`);
+    if (image) {
+      setIsReady(true);
     }
-  });
+    return () => {
+      // effect
+    };
+  }, [image])
 
-  useEffect(() => {
-    // cognito user could not be retrieved
-    retrieveStoredUserImage();
+  // useEffect(() => {
+  //   if (user) {
+  //     // console.log(user);
 
-    setBoldMessage('Offline Mode');
+  //     if (user.username) {
+  //       setUsername(user.username);
+  //     } else  {
+  //       setNormalMessage(`User ${user.id}`);
+  //     }
 
-    setNormalMessage('Using local storage');
+  //     // setEmail(user.attributes.email);
 
-    setIsReady(true);
-  }, [user]);
+  //           // set stored user image
+  //     setImage(user.profileImage);
+
+  //     setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
+
+  //     // setNormalMessage(`Logged in as user ${user.id}`);
+      
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [user])
+
+  // useEffect(() => {
+  //   // cognito user could not be retrieved
+  //   // retrieveStoredUserImage();
+
+  //   setBoldMessage('Offline Mode');
+
+  //   setNormalMessage('Using local storage');
+
+  //   setIsReady(true);
+  // }, [user]);
 
   // // mount user
   // useEffect(() => {
@@ -272,17 +315,45 @@ const HeaderLeftView = () => {
   //   // };
   // }, [user]);
 
-
-  const spinnerView = (
-    <View style={{ marginLeft: 15, marginTop: 20, backgroundColor: colors.darkTwo }}>
-      <ActivityIndicator size="large" color={colors.offWhite} />
-    </View>
+  const appLoading = (
+    <AppLoading
+      startAsync={_cacheResourcesAsync}
+      onFinish={() => setIsReady(true)}
+      onError={console.warn}
+    />
   );
 
-  let view = spinnerView;
+  imageView =
+    <NetworkConsumer>
+      {({ isConnected }) => (
+        isConnected ? (
+          <TouchableOpacity
+          disabled={true}
+          style={styles.userImageMaskView}
+        >
+          <Image
+            resizeMode="contain"
+            style={styles.userImage}
+            source={image} // {global.placeholder500x500}
+          />
+        </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+          disabled={true}
+          style={styles.userImageMaskView}
+        >
+          <Image
+            resizeMode="contain"
+            style={styles.userImage}
+            source={global.noWifiImage}
+          />
+        </TouchableOpacity>
+        )
+      )}
+    </NetworkConsumer>
 
-  if (isReady || isStorageLoaded) {
-    view = (
+  if (isReady) {
+    return (
       <SafeAreaView style={styles.container}>
 
         <NavigationEvents
@@ -294,16 +365,7 @@ const HeaderLeftView = () => {
           // onDidBlur={payload => console.log('did blur',payload)}
         />
 
-        <TouchableOpacity
-          disabled={true}
-          style={styles.userImageMaskView}
-        >
-          <Image
-            resizeMode="contain"
-            style={styles.userImage}
-            source={userProfileImage} // {global.placeholder500x500}
-          />
-        </TouchableOpacity>
+        { imageView }
 
         <View style={styles.userMessageView}>
           <Text style={
@@ -312,7 +374,7 @@ const HeaderLeftView = () => {
               fontSize: 15,
               fontStyle: 'normal',
               letterSpacing: 0.12,
-              color: '#ffffff',
+              color: colors.white,
               fontWeight: '600',
             }
 
@@ -322,63 +384,26 @@ const HeaderLeftView = () => {
 
           </Text>
 
-          <TextInput
+          <Text
             style={
               {
                 fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
                 fontSize: 15,
                 fontStyle: 'normal',
-                letterSpacing: 0.1,
-                color: '#ffffff',
+                letterSpacing: 0.12,
+                color: colors.white,
               }
-            }
-
-            placeholder={normalMessage}
-
-            placeholderTextColor="#ffffff"
-
-            autoCompleteType="email" // android
-
-            keyboardAppearance="dark" // ios
-
-            textContentType="emailAddress" // ios
-
-            keyboardType="email-address"
-
-            returnKeyType="next"
-
-            autoCorrect={false}
-
-            autoCapitalize="none"
-
-            maxLength={22}
-
-            onSubmitEditing={() => submitBtnPressed(text)}
-
-            onChangeText={handleTextChange}
-
-            editable={false} // {isInputEnabled}
-
-            value={text}
-
-            onEndEditing={() => {
-              if (isValidEmail(text) === true) {
-                // send email ??
-                // create user to send aws cred
-              } else {
-                // clear text field
-                setText('');
-                // console.log('Ended:', text);
-              }
-            }}
-          />
+            }>
+            { normalMessage }
+            </Text>
 
         </View>
 
       </SafeAreaView>
     );
+  } else {
+    return appLoading;
   }
-  return view;
 };
 
 export default HeaderLeftView;

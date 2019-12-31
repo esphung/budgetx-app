@@ -10,8 +10,7 @@
       "requireFullScreen": true,
       "isTabletOnly": false,
       "infoPlist": {
-         "NSPhotoLibraryUsageDescription": "Financely needs access to use photos you select.",
-         "NSFaceIDUsageDescription": "Financely would like to to access your FaceID Description to log you in using facial recognition."
+         "NSPhotoLibraryUsageDescription": "Financely needs access to use photos you select."
       }
     },
     "name": "Financely",
@@ -33,6 +32,6 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "1.0.1"
+    "version": "1.0.2"
   }
 }

@@ -29,21 +29,40 @@ function Transaction(date, amount, payee, category, type, note) {
   this.note = note ? note : '';
 }
 
-// Transaction.prototype = {
-//   id: `${Date.now()}`
-// }
-
 module.exports = Transaction;
 
 
-//  TESTING
-// const o = new Transaction(new Date(), 2218.33, new Payee(), new Category('Test', colors.white), 'expense')
-// console.log(o)
-// // console.log(typeof o.created);
+// //  TESTING
+// // const o = new Transaction(new Date(), 2218.33, new Payee(), new Category('Test', colors.white), 'expense')
+// // console.log(o)
+// // // console.log(typeof o.created);
 
-const transaction = new Transaction()
+// const transaction = new Transaction()
 
-console.log(transaction)
+// console.log(transaction)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // console.log(typeof transaction.amount)
 

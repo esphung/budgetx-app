@@ -15,6 +15,8 @@ import { NetworkConsumer } from 'react-native-offline';
 
 import OfflineScreen from '../screens/OfflineScreen';
 
+import SpinnerMask from 'main/src/components/SpinnerMask';
+
 // import PropTypes from 'prop-types';
 
 import {
@@ -41,6 +43,9 @@ import {
   Input,
 } from 'native-base';
 
+
+import { AppLoading } from 'expo';
+
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
@@ -58,6 +63,8 @@ function SignUpScreen(props) {
   /*
   * > Hooks
   */
+  const [isLoading, setIsLoading] = useState(false);
+
   const [username, setUsername] = useState(null);
 
   const [password, setPassword] = useState(null);
@@ -105,6 +112,8 @@ function SignUpScreen(props) {
     setIsConfirmSignUpBtnEnabled(false);
     setIsResendCodeBtnEnabled(false);
     setIsAuthCodeInputEnabled(true);
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -186,6 +195,9 @@ function SignUpScreen(props) {
   }
 
   function handlePhoneNumberInputSubmit() {
+    if (!phoneNumber.includes(dialCode)) {
+      setPhoneNumber(`${dialCode}${phoneNumber}`);
+    }
     // console.log(`${dialCode}${phoneNumber}`);
     // setPhoneNumber(`${dialCode}${phoneNumber}`);
     // authCodeInputRef.current._root.focus();
@@ -291,7 +303,7 @@ function SignUpScreen(props) {
           <TouchableOpacity
             onPress={() => {
               hideModal();
-              Alert.alert('Ayye!')
+              // Alert.alert('Ayye!');
             }}
             style={styles.closeButtonStyle}
           >
@@ -310,6 +322,7 @@ function SignUpScreen(props) {
   */
   // Sign up user with AWS Amplify Auth
   async function signUp() {
+    setIsLoading(true);
     // rename variable to conform with Amplify Auth field phone attribute
     const phone_number = phoneNumber; // +01234567890 format
     await Auth.signUp({
@@ -327,6 +340,8 @@ function SignUpScreen(props) {
           Alert.alert('Error when signing up: ', err.message);
         }
       });
+
+    setIsLoading(false);
   }
 
   // Confirm users and redirect them to the SignIn page
@@ -625,7 +640,24 @@ function SignUpScreen(props) {
     </NetworkConsumer>
   );
 
-  return view;
+  // return view;
+
+  if (!isLoading) {
+    return view;
+  }
+  else if (isLoading === true) {
+    return (
+      <SpinnerMask>
+        <AppLoading
+          autoHideSplash
+          // startAsync={_cacheResourcesAsync}
+          onFinish={() => setIsLoading(false)}
+          onError={console.warn}
+        />
+      </SpinnerMask>
+
+    );
+  }
 }
 
 /*

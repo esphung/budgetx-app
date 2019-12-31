@@ -31,19 +31,22 @@ import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen'
 
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 
+//Import HOC component that instantiates the connection to the AppSync API
+import ApolloProviderHOC from './src/components/ApolloProviderHOC';
+
 const StackNavigator = createStackNavigator({
   // Login: {
   //   screen: Login,
   // },
   Home: {
-    screen: Home,
+    screen: Home, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
       title: '',
       headerBackTitle: null,
     }),
   },
   Settings: {
-    screen: Settings,
+    screen: Settings, // ApolloProviderHOC(Settings),
     navigationOptions: () => ({
       title: 'Settings',
       headerBackTitle: null,
@@ -61,7 +64,7 @@ const StackNavigator = createStackNavigator({
     screen: ChangePasswordScreen,
   },
   CustomizeCategoriesScreen: {
-    screen: CustomizeCategoriesScreen,
+    screen: CustomizeCategoriesScreen, // ApolloProviderHOC(CustomizeCategoriesScreen),
     navigationOptions: () => ({
       title: 'Customize Categories',
       headerBackTitle: '',

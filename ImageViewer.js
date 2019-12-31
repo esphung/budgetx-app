@@ -1,29 +1,24 @@
 import React from 'react';
-import { Image, Button, Text, View } from 'react-native';
-import { NetworkConsumer } from 'react-native-offline';
+import {
+  Image,
+  View,
+} from 'react-native';
 
-const ImageViewer = (props) => {
-
+const ImageViewer = () => {
   const downloadImage = () => {
-    // return global.walletFilledMoneyToolIcon;
-  }
+    const image = global.avatar;
 
-  console.log(props)
+    // do stuff online
+    return image;
+  };
+
+  // console.log(props);
 
   return (
     <View>
-      <Image source={global.avatar} />
-      <NetworkConsumer>
-        {({ isConnected }) => (
-          isConnected ? (
-            <Button title="Download image" onPress={downloadImage} />
-          ) : (
-            <Text>Downloading images is disabled since you are offline</Text>
-          )
-        )}
-      </NetworkConsumer>
+      <Image source={downloadImage} />
     </View>
-  )
+  );
 };
 
 export default ImageViewer;

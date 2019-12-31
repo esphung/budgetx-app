@@ -4,7 +4,16 @@ import React, {
   useRef,
 } from 'react';
 
+import { AppLoading } from 'expo';
+
 import { Ionicons } from 'expo-vector-icons';
+
+import { NetworkConsumer } from 'react-native-offline';
+
+import OfflineScreen from '../screens/OfflineScreen';
+
+import SpinnerMask from 'main/src/components/SpinnerMask';
+
 
 import {
   TouchableOpacity,
@@ -53,6 +62,8 @@ function ForgotPasswordScreen(props) {
 
   const [isConfirmNewPasswordBtnEnabled, setIsConfirmNewPasswordBtnEnabled] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     if (username && isValidUsername(username)) {
       setIsSendCodeBtnEnabled(true);
@@ -80,11 +91,14 @@ function ForgotPasswordScreen(props) {
     // console.log('key:', key);
     // console.log('value:', value);
     if (key === 'username') {
-      setUsername(value);
+      // setUsername(value);
+      setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'authCode') {
-      setAuthCode(value);
+      setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
+      // setAuthCode(value);
     } else if (key === 'newPassword') {
-      setNewPassword(value);
+      // setNewPassword(value);
+      setNewPassword(value.replace(' ', ''));
     }
   }
 
@@ -130,6 +144,7 @@ function ForgotPasswordScreen(props) {
   * > Request a new password
   */
   async function forgotPassword() {
+    setIsLoading(true);
     // const { username } = this.state;
     await Auth.forgotPassword(username)
       .then((data) => {
@@ -145,10 +160,13 @@ function ForgotPasswordScreen(props) {
           Alert.alert('Error while setting up the new password: ', err.message);
         }
       });
+
+    setIsLoading(false);
   }
 
   // Upon confirmation redirect the user to the Sign In page
   async function forgotPasswordSubmit() {
+    setIsLoading(true);
     // const { username, authCode, newPassword } = this.state;
     await Auth.forgotPasswordSubmit(username, authCode, newPassword)
       .then(() => {
@@ -165,6 +183,8 @@ function ForgotPasswordScreen(props) {
           Alert.alert('Error while confirming the new password: ', err.message);
         }
       });
+
+    setIsLoading(false);
   }
 
   function getButtonStyle(bool) {
@@ -190,7 +210,7 @@ function ForgotPasswordScreen(props) {
     }
   }
 
-  const view = (
+  const forgot = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
       <KeyboardAvoidingView
@@ -217,6 +237,8 @@ function ForgotPasswordScreen(props) {
                     autoCorrect={false}
                     onSubmitEditing={() => handleUsernameInputSubmit()}
                     onChangeText={(value) => onChangeText('username', value)}
+
+                    value={username}
 
                     keyboardAppearance="dark"
                   />
@@ -246,6 +268,10 @@ function ForgotPasswordScreen(props) {
 
                     onChangeText={(value) => onChangeText('newPassword', value)}
 
+                    value={newPassword}
+
+                    maxLength={16}
+
                     keyboardAppearance="dark"
                   />
                 </Item>
@@ -264,6 +290,10 @@ function ForgotPasswordScreen(props) {
                     ref={authCodeInputRef}
                     onSubmitEditing={() => handleAuthCodeInputSubmit()}
                     onChangeText={(value) => onChangeText('authCode', value)}
+
+                    value={authCode}
+
+                    maxLength={6}
 
                     keyboardAppearance="dark"
                   />
@@ -284,7 +314,33 @@ function ForgotPasswordScreen(props) {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-  return view;
+
+  const offline = <OfflineScreen />;
+
+  const view = (
+    <NetworkConsumer>
+      {
+        ({ isConnected }) => (isConnected ? forgot : offline)
+      }
+    </NetworkConsumer>
+  );
+
+  if (!isLoading) {
+    return view;
+  }
+  else if (isLoading === true) {
+    return (
+      <SpinnerMask>
+        <AppLoading
+          autoHideSplash
+          // startAsync={_cacheResourcesAsync}
+          onFinish={() => setIsLoading(false)}
+          onError={console.warn}
+        />
+      </SpinnerMask>
+
+    );
+  }
 }
 
 

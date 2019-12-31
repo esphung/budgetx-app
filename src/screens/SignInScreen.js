@@ -8,6 +8,8 @@ import { NetworkConsumer } from 'react-native-offline';
 
 import OfflineScreen from '../screens/OfflineScreen';
 
+import SpinnerMask from 'main/src/components/SpinnerMask';
+
 import {
   // StyleSheet,
   View,
@@ -29,6 +31,15 @@ import {
   Input,
 } from 'native-base';
 
+import {
+  loadUserObject,
+  saveUserObject,
+} from 'main/src/storage/UserStorage';
+
+import { Asset } from 'expo-asset';
+
+import { AppLoading } from 'expo';
+
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
@@ -38,8 +49,16 @@ import styles from './styles';
 
 import { isValidUsername, getButtonStyle } from './functions';
 
+
+const messages = {
+  emptyUsernameOrPassword: 'Enter username and password',
+  mustPressSubmitBtn: 'Hit the submit button',
+}
+
 function SignInScreen(props) {
   // state hooks
+  const usernameInputRef = useRef(null);
+
   const passwordInputRef = useRef(null);
 
   const [username, setUsername] = useState(null);
@@ -48,10 +67,80 @@ function SignInScreen(props) {
 
   const [isSignInBtnEnabled, setIsSignInBtnEnabled] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [helpMessage, setHelpMessage] = useState(null);
+
+  const [isMessageVisible, setIsMessageVisible] = useState(false);
+
+  const [isHelpIconVisible, setIsHelpIconVisible] = useState(true);
+
+  const [helpIcon, setHelpIcon] = useState('md-help');
+
+  const [user, setUser] = useState(null);
+
   // const [user, setUser] = useState(null);
+
+  // async _cacheResourcesAsync() {
+  //   const images = [require('./assets/snack-icon.png')];
+
+  //   const cacheImages = images.map(image => {
+  //     return Asset.fromModule(image).downloadAsync();
+  //   }); 
+  //   return Promise.all(cacheImages);
+  // }import React from 'react'
+
+  function handleHelpBtnPressed() {
+    if (helpMessage) {
+      setHelpMessage(null);
+      setHelpIcon('md-help');
+    } else if (!username) {
+      usernameInputRef.current._root.focus();
+      setHelpMessage(messages.emptyUsernameOrPassword);
+    } else if (!password) {
+      passwordInputRef.current._root.focus();
+      setHelpMessage(messages.emptyUsernameOrPassword);
+    } else if ((isValidUsername(username)) && password) {
+      setHelpMessage(messages.mustPressSubmitBtn);
+    }
+  }
+  
+  const clearState = () => {
+    setIsMessageVisible(false);
+    setHelpMessage(null);
+    setIsLoading(false);
+    setIsSignInBtnEnabled(false);
+    setPassword(null);
+    setUsername(null);
+    setIsHelpIconVisible(true);
+
+    setHelpIcon('md-help');
+  }
+
+  useEffect(() => {
+
+    if (helpMessage) {
+      if (!username) {
+        // setHelpIcon('md-help')
+        setHelpIcon('md-checkbox-outline');
+      } else if (helpMessage && username && (!password)) {
+        setHelpIcon('md-checkbox-outline');
+        setHelpMessage(messages.emptyUsernameOrPassword);
+      }
+      else {
+        setHelpIcon('md-checkbox');
+      }    
+    }
+
+    // return () => {
+    //   effect
+    // };
+  }, [isHelpIconVisible, helpMessage, username])
+
 
   // methods
   const signIn = async () => {
+    setIsLoading(true);
     // const userTokenValue = '123456789';
     // await AsyncStorage.setItem('userToken', userTokenValue);
     // // console.log('userToken set:', userTokenValue);
@@ -59,18 +148,23 @@ function SignInScreen(props) {
     await Auth.signIn(username, password)
       .then((cognitoUser) => {
         // setUser(cognitoUser);
-        // console.log(cognitoUser);
+        console.log(cognitoUser);
+
+        setUser(cognitoUser)
+
+
+
         props.navigation.navigate('AuthLoading');
       })
       .catch((err) => {
-        if (!err.message) {
-          console.log('Error when signing in: ', err);
-          Alert.alert('Error when signing in: ', err);
-        } else {
-          console.log('Error when signing in: ', err.message);
-          Alert.alert('Error when signing in: ', err.message);
-        }
+        // console.log('Error when signing in: ', err.message);
+        // Alert.alert('Error when signing in: ', err.message);
+        setHelpMessage(err.message);
       });
+    
+
+
+    // setIsLoading(false);
   };
 
   // user input handlers
@@ -88,7 +182,7 @@ function SignInScreen(props) {
     // console.log('key:', key);
     // console.log('value:', value);
 
-if (key === 'username') {
+  if (key === 'username') {
       setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'password') {
       setPassword(value.replace(' ', ''));
@@ -96,20 +190,30 @@ if (key === 'username') {
     // this.setState({[key]: value})
   }
 
+  async function retrieveLocalUser() {
+    const localUserObject = await loadUserObject();
+    
+
+    setUser(localUserObject)
+  }
+
   useEffect(() => {
     // console.log('username:', username);
     // console.log('password:', password);
 
+    
+
     if (username && isValidUsername(username) && password) {
       setIsSignInBtnEnabled(true);
       // console.log(username);
+      setIsHelpIconVisible(false);
     } else {
       setIsSignInBtnEnabled(false);
     }
     return () => {
       // effect
     };
-  }, [username, password]);
+  }, [username, password, isLoading]);
 
   const signin = (
     <SafeAreaView style={styles.container}>
@@ -132,6 +236,8 @@ if (key === 'username') {
                     onSubmitEditing={() => handleUsernameInputSubmit()}
                     onChangeText={(value) => onChangeText('username', value)}
 
+                    ref={usernameInputRef}
+
                     value={username}
 
                     keyboardAppearance="dark"
@@ -153,6 +259,8 @@ if (key === 'username') {
 
                     value={password}
 
+                    maxLength={16}
+
                     keyboardAppearance="dark"
                   />
                 </Item>
@@ -165,6 +273,45 @@ if (key === 'username') {
                     Sign In
                   </Text>
                 </TouchableOpacity>
+
+                <Item style={
+                  [styles.itemStyle, {
+                     borderColor: 'transparent',
+                  }]}
+                  >
+                <View style={
+                  {
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+
+                    alignItems: 'center',
+
+
+                  }
+                }>
+                  <View style={
+                    {
+                      flex: 0.1,
+                      position: 'absolute',
+                    }
+                  }>
+                
+                  <Text
+                    style={
+                      [
+                        styles.textStyle,
+                        {
+                          opacity: 0.3,
+                        }
+                      ]
+                    }
+                  >
+                    { helpMessage }
+                  </Text>
+                  </View>
+                  </View>
+                </Item>
               </View>
             </Container>
           </View>
@@ -182,7 +329,22 @@ if (key === 'username') {
       }
     </NetworkConsumer>
   );
-  return view;
+
+  if (isLoading === true) {
+    return (
+      <SpinnerMask>
+        <AppLoading
+          autoHideSplash
+          // startAsync={_cacheResourcesAsync}
+          onFinish={() => setIsLoading(false)}
+          onError={console.warn}
+        />
+      </SpinnerMask>
+
+    );
+  } else {
+    return view;
+  }
 }
 
 SignInScreen.navigationOptions = () => {
