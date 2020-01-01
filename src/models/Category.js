@@ -12,9 +12,9 @@ function Category(name, color, type) {
   const currentDate = new Date();
   this.id = `${Date.now(currentDate)}`;
   this.created = currentDate;
-  this.name = (name) ? name : 'None';
+  this.name = (name) ? name : '';
   this.color = color ? color : colors.white; // randomProperty(colors);
-  this.type = type ? type.toLowerCase() : 'expense';
+  this.type = (name.toLowerCase() === 'income') ? 'income' : 'expense';
 }
 
 // // create user from some properties

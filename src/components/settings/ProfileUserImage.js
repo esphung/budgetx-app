@@ -68,7 +68,7 @@ function ProfileUserImage() {
   const handleImagePicked = async (pickerResult) => {
     const imageName = `@${user.username}/picture.jpg`;
     const fileType = mime.lookup(pickerResult.uri);
-    const access = { level: 'private', contentType: fileType }; // 'image/jpeg'
+    const access = { level: 'public', contentType: fileType }; // 'image/jpeg'
     const imageData = await fetch(pickerResult.uri);
     const blobData = await imageData.blob();
 
@@ -84,9 +84,12 @@ function ProfileUserImage() {
   };
 
   async function saveProfileImage(newImage) {
+    setIsReady(false);
     const userObject = await loadUserObject(); // load storage objects
     userObject.user.profileImage = newImage;
     saveUserObject(userObject);
+
+    setIsReady(true)
   }
 
   async function retrieveStoredUserImage() {
@@ -98,20 +101,13 @@ function ProfileUserImage() {
       if (userObject.user.profileImage) {
         setImage(userObject.user.profileImage);
       }
-
-      //  set current userr info
-      Auth.currentAuthenticatedUser({
-        bypassCache: false
-      }).then((cognito) => {
-        // console.log(cognito);
-        setUser(cognito);
-      })
       
       //   .catch((err) => console.log(err));
     } catch (e) {
       // statements
       // Alert.alert('Could not load image');
     }
+    loadCognitoUser();
   }
   async function getPermissionAsync() {
     if (Constants.platform.ios) {
@@ -146,7 +142,7 @@ function ProfileUserImage() {
         setUser(cognitoUser);
       })
       .catch((err) => {
-        Alert.alert(err);
+        // Alert.alert(err);
         // console.log(err);
       });
   }
@@ -170,8 +166,6 @@ function ProfileUserImage() {
 
   useEffect(() => {
     getPermissionAsync();
-
-    loadCognitoUser();
 
     retrieveStoredUserImage();
   }, []);

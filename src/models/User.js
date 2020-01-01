@@ -27,39 +27,39 @@ function User(email) {
 
 } // end user function def
 
-// null prototype (no properties)
-User.prototype = {
-  id: Date.now(),
-  username: null,
-  password: null,
-  // email: null,
-  // transactions: [],
-  created: new Date()
-}; // end user prototype def
+// // null prototype (no properties)
+// User.prototype = {
+//   id: Date.now(),
+//   username: null,
+//   password: null,
+//   // email: null,
+//   // transactions: [],
+//   created: new Date()
+// }; // end user prototype def
 
-// create user from some properties
-User.fromComponents = function(foo, bar) {
-    var username = `${foo} ${bar}` ;
-    return new User(username);
-};
+// // create user from some properties
+// User.fromComponents = function(foo, bar) {
+//     var username = `${foo} ${bar}` ;
+//     return new User(username);
+// };
 
-// create user from login
-User.fromCognitoUser = function(cognito) {
-  // const _id = `${Date.now()}`;
-  // const message = `User created from attributes: ${_id}
-  // username: ${username}
-  // email: ${email}`;
-  // console.log(message)
+// // create user from login
+// User.fromCognitoUser = function(cognito) {
+//   // const _id = `${Date.now()}`;
+//   // const message = `User created from attributes: ${_id}
+//   // username: ${username}
+//   // email: ${email}`;
+//   // console.log(message)
 
-  // console.log(cognito.username);
+//   // console.log(cognito.username);
 
-  const user = new User(cognito.attributes.email);
-  user.username = cognito.username;
-  user.phoneNumber = cognito.attributes.phoneNumber;
+//   const user = new User(cognito.attributes.email);
+//   user.username = cognito.username;
+//   user.phoneNumber = cognito.attributes.phoneNumber;
 
-  // console.log(user);
-  return user;
-}; // end create user from login creds definition
+//   // console.log(user);
+//   return user;
+// }; // end create user from login creds definition
 
 
 module.exports = User;

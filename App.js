@@ -15,10 +15,8 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             12/12/2019 09:43 AM | Pushed to App Store version 1.0.0
                                   Initialized version 1.0.1
             12/14/2019 02:14 AM | Fixed photos permission, passcode enable
-            12/30/2019 07:46 AM | AWS Appsync beginning
+            12/30/2019 07:46 AM | AWS Appsync
 */
-// import app from 'main/app.json'
-// console.log(app.expo.version);
 
 import React, { useState, useEffect } from 'react';
 
@@ -37,11 +35,11 @@ import { NetworkProvider } from 'react-native-offline';
 import { AppLoading } from 'expo';
 
 // Amplify imports and config
-import Amplify from 'aws-amplify'; // '@aws-amplify/core';
-import awsConfig from './aws-exports';
-Amplify.configure(awsConfig);
+import Amplify from '@aws-amplify/core';
+import config from './aws-exports';
+Amplify.configure(config);
 
-// import SpinnerMask from './src/components/SpinnerMask';
+// import API, { graphqlOperation } from '@aws-amplify/api';
 
 import SwitchNavigator from './SwitchNavigator';
 
@@ -114,18 +112,18 @@ function App() {
 
 
   const appLoading = (
-      <AppLoading
-        startAsync={_cacheResourcesAsync}
-        onFinish={() => setIsLoading(false)}
-        onError={console.warn}
-      />
+    <AppLoading
+      startAsync={_cacheResourcesAsync}
+      onFinish={() => setIsLoading(false)}
+      onError={console.warn}
+    />
   );
 
   let app = (
-      <NetworkProvider>
-        <SwitchNavigator />
-      </NetworkProvider>
-    );
+    <NetworkProvider>
+      <SwitchNavigator />
+    </NetworkProvider>
+  );
 
   if (!isLoading) {
     return app;

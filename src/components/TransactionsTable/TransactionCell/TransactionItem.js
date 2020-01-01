@@ -27,6 +27,13 @@ function TransactionItem(props) {
       currentTransaction
     } = props;
 
+    if (!item.category) {
+      item.category = {
+        name: 'Category',
+        color: colors.white,
+      }
+    }
+
     let textColor = colors.offWhite // 'rgba(255, 255, 255, 0.5)';
 
     if (currentTransaction === item) {

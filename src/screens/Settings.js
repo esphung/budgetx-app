@@ -190,14 +190,13 @@ function Settings(props) {
 
   const sendTransactionsMail = async () => {
     const userObject = await loadUserObject();
-
     const { transactions, email } = userObject.user;
 
-    transactions.reverse();
+    // transactions.reverse();
 
-    MailComposer.composeAsync({
+    await MailComposer.composeAsync({
       recipients: [email],
-      subject: `${userObject.user.username} Exported Transactions ${getShortDate(new Date())}`,
+      subject: `${userObject.user.username} Exported Transactions`,
       body: getTransactionsHTML(transactions),
       // attachments: [],
       isHtml: true,

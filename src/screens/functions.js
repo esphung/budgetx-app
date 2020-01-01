@@ -119,7 +119,8 @@ export const calculateBalance = (array) => {
       }
     }
   }
-  return balance.toFixed(2);
+  // return balance.toFixed(2);
+  return balance;
 };
 
 export const calculateMonthSpent = (array) => {
@@ -182,5 +183,6 @@ export const calculateMonthSpent = (array) => {
       }
     }
   }
-  return balance.toFixed(2);
+  // return balance.toFixed(2);
+  return balance;
 };

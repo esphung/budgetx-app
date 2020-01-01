@@ -25,8 +25,12 @@ function Transaction(date, amount, payee, category, type, note) {
   this.type = (type) ? type: this.category.type;
 
 
-  this.created = currentDate;
+  // this.created = currentDate;
   this.note = note ? note : '';
+
+  if (this.type !== 'income') {
+    this.amount = this.amount * -1.0
+  }
 }
 
 module.exports = Transaction;

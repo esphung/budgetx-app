@@ -19,7 +19,7 @@ import {
   Image,
   Text,
   // TextInput,
-  ActivityIndicator,
+  // ActivityIndicator,
   Platform,
   SafeAreaView,
   Alert,
@@ -46,7 +46,7 @@ import {
 
 import avatarPicture from 'main/assets/avatar.png';
 
-const isValidEmail = require('../../functions/isValidEmail');
+// const isValidEmail = require('../../functions/isValidEmail');
 
 const styles = StyleSheet.create({
   container: {
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 const HeaderLeftView = () => {
   const [boldMessage, setBoldMessage] = useState(`Welcome to ${global.appName} ${global.appVersion}`);
 
-  const [normalMessage, setNormalMessage] = useState(`Sign up for cross-sync devices`);
+  const [normalMessage, setNormalMessage] = useState('Get cross-device sync');
 
   const [image, setImage] = useState(null);
 
@@ -123,13 +123,13 @@ const HeaderLeftView = () => {
 
       //  set current userr info
       Auth.currentAuthenticatedUser({
-          bypassCache: false
+        bypassCache: false,
       }).then((user) => {
         // console.log(user);
-        setBoldMessage(`Your are logged in as ${user.username}!`);
-        setNormalMessage(`Welcome to ${global.appName} ${global.appVersion} :D`);
+        setNormalMessage(`Your are logged in as ${user.username}`);
+        setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
       })
-        .catch((err) => console.log(err));
+        .catch((err) => Alert.alert(err));
     } catch (e) {
       // statements
       Alert.alert('Could not load image');

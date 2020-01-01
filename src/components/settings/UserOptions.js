@@ -187,7 +187,7 @@ function UserOptions(props) {
       ]}
 
       renderItem={({ item }) => renderItem(item)}
-      ItemSeparatorComponent={(item) => renderSeparator(item)}
+      // ItemSeparatorComponent={(item) => renderSeparator(item)}
     />
   );
   return view;

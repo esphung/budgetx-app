@@ -43,6 +43,10 @@ import { Auth } from 'aws-amplify';
 
 import Category from '../models/Category';
 
+import InfoBox from '../components/InfoBox';
+
+import NewCategoryButton from './NewCategoryButton';
+
 // ui colors
 import colors from 'main/colors';
 
@@ -209,7 +213,7 @@ function CellItem({
 
   const itemIconName = selected ? 'md-unlock' : 'md-lock';
 
-  const isEditable = selected ? true : false;
+  const isEditable = !name ? true : false;
 
   // const handleNameEndEditing = (text) => {
   //   console.log(text);
@@ -359,7 +363,7 @@ function CellItem({
           }
         } />
 
-        <Ionicons active name={itemIconName} style={styles.iconStyle} />
+        {/*<Ionicons active name={itemIconName} style={styles.iconStyle} />*/}
         
         {/*<Text style={styles.arrow}>X</Text>*/}
       
@@ -618,13 +622,17 @@ const CustomizeCategoriesScreen = (props) => {
     return view;
   }
 
-  const onSelect = useCallback(
-    (id) => {
-      const newSelected = new Map(selected);
-      newSelected.set(id, !selected.get(id));
+  function onSelect() {
 
-      setSelected(newSelected);
-    }, [selected]);
+  }
+
+  // const onSelect = useCallback(
+  //   (id) => {
+  //     const newSelected = new Map(selected);
+  //     newSelected.set(id, !selected.get(id));
+
+  //     setSelected(newSelected);
+  //   }, [selected]);
 
   // useEffect(() => {
   //   console.log(selected);
@@ -727,7 +735,8 @@ const CustomizeCategoriesScreen = (props) => {
 
         />
 
-        <Button title="Add New" onPress={() => addCategory('')} />
+        {/*<Button title="Add New" onPress={() => addCategory('')} />*/}
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}><NewCategoryButton onPress={() => addCategory('')} /></View>
       </SafeAreaView>
     );
     

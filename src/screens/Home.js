@@ -16,6 +16,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             12/04/2019 04:41 PM | Hide HeaderLeft and Hide Search btn
             12/05/2019 12:45 PM | Added Hooks eslinter
             12/10/2019 12:22 AM
+            01/01/2020 03:28 PM | AppSync Settings
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -23,11 +24,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
-  ScrollView,
+  // ScrollView,
   Animated,
+  Alert,
 } from 'react-native';
 
 import { AppLoading } from 'expo';
+
+import API, { graphqlOperation } from '@aws-amplify/api'; // AppSync Query GraphQL
 
 // // Amplify imports and config
 // import Amplify from 'aws-amplify'; // '@aws-amplify/core';
@@ -66,9 +70,6 @@ import { AppLoading } from 'expo';
 // //   })
 // //   .then(result => console.log(result.length));
 
-
-
-
 // // AWS Amplify
 // // import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
@@ -100,7 +101,7 @@ import { AppLoading } from 'expo';
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../colors';
 
 import {
   loadUserObject,
@@ -116,10 +117,13 @@ import ScrollingPillCategoriesView from '../components/home/ScrollingPillCategor
 import AmountInputView from '../components/home/AmountInputView';
 import KeypadView from '../components/home/KeypadView';
 import SlideUpView from '../components/home/SlideUpView';
-import SpinnerMask from '../components/SpinnerMask';
 
 // data models
 import Transaction from '../models/Transaction';
+
+import Payee from '../models/Payee';
+
+import Category from '../models/Category';
 
 import { calculateBalance, calculateMonthSpent } from './functions';
 
@@ -131,65 +135,150 @@ const styles = StyleSheet.create({
   },
 });
 
+
+const AddTransaction = `
+mutation ($amount: Float! $date: String! $note: String $type: String) {
+  createTransaction(input: {
+    amount: $amount
+    date: $date
+    note: $note
+    type: $type
+  }) {
+    id amount date note type
+  }
+}
+`;
+
+const ListTransactions = `
+query {
+  listTransactions {
+    items {
+      id
+      date
+      amount
+      payee {
+        id
+        name
+      }
+      category {
+        id
+        name
+        color
+        type
+      }
+      note
+    }
+  }
+}
+`;
+
+async function storeUserTransaction(transaction) {
+  const userObject = await loadUserObject(); // load user object
+  userObject.user.transactions.unshift(transaction);
+  saveUserObject(userObject);
+}
+
+const initialState = {
+  currentDate: new Date(),
+  currentAmount: 0.00,
+  currentCategory: null,
+  transactions: [],
+  slideViewBounceValue: new Animated.Value(300),
+  currentBalance: 0.00,
+  currentSpent: 0.00,
+  currentPayee: null,
+  currentTransaction: null,
+  currentNote: '',
+  isReady: false,
+  currentType: '',
+  isSlideViewHidden: true,
+  isCurrentTransaction: false,
+};
+
 function Home() {
   // hooks
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState(initialState.transactions);
+  const [currentBalance, setCurrentBalance] = useState(initialState.currentBalance);
+  const [currentSpent, setCurrentSpent] = useState(initialState.currentSpent);
+  const [currentTransaction, setCurrentTransaction] = useState(initialState.currentTransaction);
+  const [currentCategory, setCurrentCategory] = useState(initialState.currentCategory);
+  const [currentType, setCurrentType] = useState(initialState.currentType);
+  const [currentAmount, setCurrentAmount] = useState(initialState.currentAmount);
+  const [currentDate, setCurrentDate] = useState(initialState.currentDate);
+  const [currentPayee, setCurrentPayee] = useState(initialState.currentPayee);
+  const [currentNote, setCurrentNote] = useState(initialState.currentNote);
+  const [slideViewBounceValue, setSlideViewBounceValue] = useState(initialState.slideViewBounceValue);
+  const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
+  // const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
+  const [isReady, setIsReady] = useState(initialState.isReady);
 
-  const [currentBalance, setCurrentBalance] = useState(0);
-
-  const [currentSpent, setCurrentSpent] = useState(null);
-
-  const [currentTransaction, setCurrentTransaction] = useState(null);
-
-  const [currentCategory, setCurrentCategory] = useState(null);
-
-  const [currentType, setCurrentType] = useState(null);
-
-  const [currentAmount, setCurrentAmount] = useState(null);
-
-  const [slideViewBounceValue, setSlideViewBounceValue] = useState(new Animated.Value(300));
-
-  const [isSlideViewHidden, setIsSlideViewHidden] = useState(true);
-
-  const [isCurrentTransaction] = useState(false);
-
-  const [isReady, setIsReady] = useState(false);
-
-  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-
-  async function retrieveStoredUser() {
-    // load stored user transactions
+  async function retrieveStoredTransactions() {
+    // setIsReady(false);
     try {
       const userObject = await loadUserObject();
-      // console.log(await getIsUserLoggedIn())
-
-      // setIsUserLoggedIn(await global.getIsStoredUserLoggedIn());
-
       // set stored user's transactions
       await setTransactions(userObject.user.transactions);
+      // setIsReady(true);
     } catch (e) {
       // statements
-      // console.log('Could not load stored user');
+      Alert.alert('Could not load stored transactions');
     }
+
+    // try {
+    //   const items = await API.graphql(graphqlOperation(ListTransactions));
+    //   console.log('items: ', items.data.listTransactions.items);
+    //   // this.setState({ items: items.data.listBooks.items });
+    //   setTransactions(items.data.listTransactions.items);
+    // } catch (err) {
+    //   console.log('error: ', err);
+    // }
+
+    // setIsReady(true);
   }
 
   const clearState = () => {
-    retrieveStoredUser(); // load stored user
+    setCurrentDate(initialState.currentDate);
+    setCurrentAmount(initialState.currentAmount);
+    setCurrentCategory(initialState.currentCategory);
+    setCurrentTransaction(initialState.currentTransaction);
+    setCurrentType(initialState.currentType);
+    setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
+    setIsSlideViewHidden(initialState.isSlideViewHidden);
+    // setIsCurrentTransaction(initialState.isCurrentTransaction);
 
-    setCurrentAmount(0.00);
-
-    setCurrentCategory(null);
-
-    setCurrentTransaction(null);
-
-    setCurrentType(null);
-
-    setSlideViewBounceValue(new Animated.Value(300));
-
-    setIsSlideViewHidden(true);
-
+    retrieveStoredTransactions(); // load stored user
   };
 
+  const addTransaction = async () => {
+    if (!currentAmount || !currentCategory) return;
+    // const transaction = { amount: currentAmount, category: currentCategory };
+    const transaction = new Transaction(
+      currentDate, // date
+      Number(currentAmount).toFixed(2) / 100, // amount
+      currentPayee, // payee
+      currentCategory, // category
+      currentType, // type
+      currentNote, // note
+    );
+    console.log(transaction);
+
+    // try {
+    //   const list = [transaction, ...transactions];
+    //   // console.log(list);
+    //   setTransactions(list);
+    //   setCurrentAmount(0.00);
+    //   setCurrentCategory(null);
+    //   setCurrentDate(new Date());
+
+    //   await API.graphql(graphqlOperation(AddTransaction, transaction));
+    //   console.log('Success!');
+    // } catch (err) {
+    //   console.log('error: ', err);
+    // }
+
+    await storeUserTransaction(transaction);
+    clearState();
+  };
   async function removeUserTransaction(transaction) {
     const userObject = await loadUserObject();
 
@@ -201,16 +290,6 @@ function Home() {
         userObject.user.transactions.splice(i, 1);
       }
     }
-    saveUserObject(userObject);
-
-    clearState();
-  }
-
-  async function storeUserTransaction(transaction) {
-    const userObject = await loadUserObject(); // load user object
-
-    userObject.user.transactions.unshift(transaction);
-
     saveUserObject(userObject);
 
     clearState();
@@ -263,46 +342,40 @@ function Home() {
     handleChange(newValue);
   };
 
-  const createNewTransaction = () => {
-    let transaction = null;
+  // const createNewTransaction = () => {
+  //   let transaction = null;
 
-    // check if category is selected and amount is provided by user
-    if ((currentCategory) && (currentAmount > 0) && currentType) {
-      // do date stuff here
+  //   // check if category is selected and amount is provided by user
+  //   if ((currentCategory) && (currentAmount > 0) && currentType) {
+  //     // do date stuff here
 
-      // convert amount to money format
-      let amount = currentAmount / 100;
-      amount = (currentType === 'income') ? amount : amount * -1; // income/expense
+  //     // convert amount to money format
+  //     let amount = currentAmount / 100;
+  //     amount = (currentType === 'income') ? amount : amount * -1; // income/expense
 
-      // do payee stuff here
-      transaction = new Transaction(
-        // currentTransactions.length, // id
-        new Date(), // current date
-        amount, // current camount
-        {}, // payee obj
-        currentCategory, // category object
-        currentCategory.type, // type
-      );
-      // console.log(transaction);
-    }
-    return transaction;
-  };
+  //     // do payee stuff here
+  //     transaction = new Transaction(
+  //       // currentTransactions.length, // id
+  //       new Date(), // current date
+  //       amount, // current camount
+  //       {}, // payee obj
+  //       currentCategory, // category object
+  //       currentCategory.type, // type
+  //     );
+  //     // console.log(transaction);
+  //   }
+  //   return transaction;
+  // };
 
   const addTransactionBtnPressed = () => {
-    const transaction = createNewTransaction();
-    if (transaction) {
-      storeUserTransaction(transaction); // add new transaction to existing storage
-    }
-    // console.log(transaction);
+    addTransaction();
   };
 
   const backspaceBtnPressed = () => {
-    // check for null, NaN, undefined, ''
     if (currentAmount) {
       const strValue = String(currentAmount);
       // pop last char from string value
       const newStr = strValue.substring(0, strValue.length - 1);
-
       handleChange(newStr);
     }
   };
@@ -325,17 +398,17 @@ function Home() {
   // useEffect(fn, [these, states])
 
   // component did mount
-  useEffect(() => {
-    // console.log('mount Home');
-    retrieveStoredUser();
+  // useEffect(() => {
+  //   // console.log('mount Home');
+  //   // retrieveStoredTransactions();
 
-    // return () => {
-    //   // console.log('Clean up Home');
-    // };
-  }, []);
+  //   // return () => {
+  //   //   // console.log('Clean up Home');
+  //   // };
+  // }, []);
 
+  // current transaction updates
   useEffect(() => {
-    // console.log('mount transactions');
     // calculate balances
     const balance = (calculateBalance(transactions));
     setCurrentBalance(balance);
@@ -343,29 +416,49 @@ function Home() {
     // calculate spent
     const spent = (calculateMonthSpent(transactions));
     setCurrentSpent(spent);
-
-    // return () => {
-    //   // effect
-    //   // console.log('Clean up transactions');
-    // };
   }, [transactions]);
 
-  // current transaction updates
   useEffect(() => {
-    // console.log('Mount current transaction');
-    // console.log(currentTransaction);
+    if (currentCategory) {
+      setCurrentType(currentCategory.type);
+    }
+    // return () => {
+    //   //
+    //   console.log('clean up');
+    //   setCurrentType(initialState.currentType);
+    // }
+  }, [currentCategory]);
 
+  useEffect(() => {
     // toggle slideup view
     if (currentTransaction) {
       showSlideView();
-    } else {
-      hideSlideView();
+
+      // setCurrentAmount(Math.abs(currentTransaction.amount * 100));
+      // setCurrentCategory(currentTransaction.category);
+
+      // categoryBtnPressed(currentTransaction.category);
+      // console.log(currentCategory)
     }
-    // return () => {
-    //   // effect
-    //   // console.log('clean up current transaction');
-    // };
+    return () => {
+      // effect
+      hideSlideView();
+
+      // setCurrentAmount(initialState.currentAmount);
+      // setCurrentCategory(initialState.currentCategory);
+    };
   }, [currentTransaction, hideSlideView, showSlideView]);
+
+  // async function didMount() {
+  //   try {
+  //       const items = await API.graphql(graphqlOperation(ListBooks));
+  //       console.log('items: ', items);
+  //       // this.setState({ items: items.data.listBooks.items });
+  //       setTransactions(items.data.listBooks.items);
+  //   } catch (err) {
+  //       console.log('error: ', err);
+  //   }
+  // }
 
   // actions
   const transactionBtnPressed = (transaction) => {
@@ -398,16 +491,21 @@ function Home() {
       // set new current category
       setCurrentCategory(category); // set other
     }
-    // set current type from category
-    if (category.type) {
-      setCurrentType(category.type);
-    }
+    // // set current type from category
+    // if (category.type) {
+    //   setCurrentType(category.type);
+    // }
   };
 
 
   const view = (
 
-    <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+    <View
+      // scrollEnabled={false}
+      // contentContainerStyle={styles.container}>
+      style={styles.container}
+    >
+      
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         onWillFocus={clearState} // {(payload) => clearState()}
@@ -432,7 +530,7 @@ function Home() {
 
         onPress={(transaction) => transactionBtnPressed(transaction)}
         deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
-        isCurrentTransaction={isCurrentTransaction}
+        // isCurrentTransaction={isCurrentTransaction}
       />
 
       <ScrollingPillCategoriesView
@@ -462,7 +560,7 @@ function Home() {
         transaction={currentTransaction}
       />
 
-    </ScrollView>
+    </View>
 
   );
 

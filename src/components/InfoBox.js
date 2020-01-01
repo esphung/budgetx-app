@@ -3,6 +3,7 @@ import React from 'react';
 import {
   View,
   Text,
+  TouchableOpacity
 } from 'react-native';
 
 // import { Container, Header, Content, Button, Text } from 'native-base';
@@ -11,7 +12,9 @@ import colors from 'main/colors';
 
 const InfoBox = (props) => {
   const view = (
-    <View style={
+    <TouchableOpacity
+    onPress={props.onPress}
+    style={
       {
         justifyContent: 'center',
         alignItems: 'center',
@@ -60,7 +63,7 @@ const InfoBox = (props) => {
       >
         { props.title }
       </Text>
-    </View>
+    </TouchableOpacity>
   );
   return view;
 };
