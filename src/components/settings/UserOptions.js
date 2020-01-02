@@ -10,6 +10,8 @@ import {
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { SwipeListView } from 'react-native-swipe-list-view';
+
 // ui colors
 import colors from 'main/colors';
 
@@ -75,11 +77,11 @@ function UserOptions(props) {
         <View
           style={{
             flex: 1,
-            // backgroundColor: 'transparent',
+            backgroundColor: colors.dark, // 'transparent',
 
-            borderWidth: 1,
-            borderColor: colors.dark,
-            borderStyle: 'solid',
+            // borderWidth: 1,
+            // borderColor: colors.dark,
+            // borderStyle: 'solid',
           }}
         >
           <View
@@ -88,9 +90,9 @@ function UserOptions(props) {
 
                 width: '90%', // 346,
                 alignSelf: 'center',
-                height: 0.5,
+                // height: 0.5,
 
-                borderWidth: 1,
+                borderWidth: 0.5,
                 borderColor: colors.darkTwo,
                 borderStyle: 'solid',
               }
@@ -161,20 +163,21 @@ function UserOptions(props) {
     return view;
   }
   const view = (
-    <FlatList
+    <SwipeListView
       scrollEnabled={true}
+      style={styles.table}
 
-      style={
-        {
-          flex: 1,
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
+      // style={
+      //   {
+      //     flex: 1,
+      //     // borderWidth: 1,
+      //     // borderColor: 'white',
+      //     // borderStyle: 'solid',
 
-          // paddingBottom: 50,
-        }
-      }
-      contentContainerStyle={styles.container}
+      //     // paddingBottom: 50,
+      //   }
+      // }
+      // contentContainerStyle={styles.container}
       data={[
         { key: 'Customize Categories' },
         { key: 'Export Transactions' },
@@ -182,12 +185,12 @@ function UserOptions(props) {
         { key: 'Change Password/Sign Out' },
         { key: '' },
         { key: 'Contact Support' },
-        { key: 'Passcode' },
+        // { key: 'Passcode' },
         { key: 'Reset Data' },
       ]}
 
       renderItem={({ item }) => renderItem(item)}
-      // ItemSeparatorComponent={(item) => renderSeparator(item)}
+      ItemSeparatorComponent={(item) => renderSeparator(item)}
     />
   );
   return view;

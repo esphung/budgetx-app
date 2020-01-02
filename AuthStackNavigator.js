@@ -25,7 +25,7 @@ const AuthStackNavigator = createStackNavigator({
   Welcome: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
-      title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
+      title: `Welcome to ${global.appName}`, // ScreenName, // for the header screen // `Welcome to this App`
       headerBackTitle: 'Back',
     }),
   },

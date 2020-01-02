@@ -28,7 +28,9 @@ global.avatar = require('./assets/avatar.png');
 
 global.appIcon = require('./assets/icon.png');
 
-global.wifiSymbolHighResolution = require('./assets/wifi-symbol-high-resolution.png');
+global.wifiSymbol = require('./assets/wifi-symbol-high-resolution.png');
+
+global.wifiImage = require('./assets/wifi-image.png');
 
 global.noWifiImage = require('./assets/no-wifi-image.png');
 
@@ -52,6 +54,8 @@ global.latestReleaseDate = '12/12/2019 02:09 AM';
 global.isPasscodeEnabledKey = 'isPasscodeEnabled';
 
 global.isLocallyAuthenticatedKey = 'isLocallyAuthenticatedKey';
+
+global.isColorChangedPurchased  = false;
 
 // validation
 // var usernameRegex = /^[a-zA-Z0-9]+$/;

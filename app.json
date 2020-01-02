@@ -7,10 +7,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ericphung.financely",
-      "requireFullScreen": true,
+      "requireFullScreen": false,
       "isTabletOnly": false,
       "infoPlist": {
-         "NSPhotoLibraryUsageDescription": "Financely needs access to use photos you select."
+         "NSPhotoLibraryUsageDescription": "Financely lets you choose an image for your profile."
       }
     },
     "name": "Financely",
@@ -25,7 +25,7 @@
     "slug": "budgetx-app",
     "splash": {
       "image": "./assets/splashscreen-budgetx.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#18202f",
       "userInterfaceStyle": "dark"
     },

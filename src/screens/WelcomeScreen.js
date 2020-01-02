@@ -16,40 +16,33 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   NetInfo,
+  Image,
 } from 'react-native';
 
 import {
   Container,
 } from 'native-base';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
 import styles from './styles';
-
-// import OfflineScreen from '../screens/OfflineScreen';
 
 function WelcomeScreen(props) {
   const [connectionType, setConnectionType] = useState(null);
 
   const handleRoute = async (destination) => {
-    // check for connection and reroute to OfflineScreen
-    if (connectionType !== 'none' && connectionType !== 'unknown') {
-      props.navigation.navigate(destination);
-    } else {
-      props.navigation.navigate('OfflineScreen');
-    }
-    // await props.navigation.navigate(destination); // original single code line
+    await props.navigation.navigate(destination); // original single code line
   };
 
-  // function handleFirstConnectivityChange(connectionInfo) {
-  //   // console.log(
-  //   //   'Connection changed to type: ' +
-  //   //     connectionInfo.type
-  //   //     // +
-  //   //     // ', effectiveType: ' +
-  //   //     // connectionInfo.effectiveType,
-  //   // );
-  // }
+  function handleFirstConnectivityChange(connectionInfo) {
+    console.log(
+      'Connection changed to type: ' +
+        connectionInfo.type
+        // +
+        // ', effectiveType: ' +
+        // connectionInfo.effectiveType,
+    );
+  }
 
 
   const clearState = () => {
@@ -65,6 +58,15 @@ function WelcomeScreen(props) {
 
   useEffect(() => {
     clearState();
+    NetInfo.getConnectionInfo().then((connectionInfo) => {
+      setConnectionType(connectionInfo.type);
+      // console.log(
+      //   'Initial, type: ' +
+      //     connectionInfo.type,
+      // );
+    });
+    NetInfo.addEventListener('connectionChange', handleFirstConnectivityChange);
+
   }, []);
 
   // useEffect(() => {
@@ -144,6 +146,17 @@ WelcomeScreen.navigationOptions = () => {
   const navbar = {
     headerTransparent: {},
     headerTintColor: colors.white,
+    headerRight: <View style={
+      {
+        // flex: 1,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }
+    }><Image source={global.wifiImage} resizeMode="contain" /></View>
   };
   return navbar;
 };

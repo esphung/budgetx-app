@@ -190,14 +190,22 @@ function Settings(props) {
 
   const sendTransactionsMail = async () => {
     const userObject = await loadUserObject();
-    const { transactions, email } = userObject.user;
 
-    // transactions.reverse();
+    // const { transactions, email } = userObject.user;
 
-    await MailComposer.composeAsync({
-      recipients: [email],
-      subject: `${userObject.user.username} Exported Transactions`,
-      body: getTransactionsHTML(transactions),
+    // // transactions.reverse();
+
+    // try {
+    //   // statements
+    // } catch(e) {
+    //   // statements
+    //   console.log(e);
+    // }
+
+    MailComposer.composeAsync({
+      recipients: [userObject.user.email],
+      subject: `Exported Transactions`,
+      body:  getTransactionsHTML(userObject.user.transactions),
       // attachments: [],
       isHtml: true,
     });
@@ -390,7 +398,7 @@ function Settings(props) {
         <View
           style={
             {
-              flex: 1.1,
+              flex: 1,
 
               // top: '55%',
 
@@ -401,10 +409,12 @@ function Settings(props) {
               // borderStyle: 'solid',
             }
           }
-        ><UserOptions
-          onPress={onPress}
-          isPasscodeEnabled={isPasscodeEnabled}
-        /></View>
+        >
+          <UserOptions
+            onPress={onPress}
+            isPasscodeEnabled={isPasscodeEnabled}
+          />
+        </View>
 
         <View
           style={

@@ -233,7 +233,19 @@ function Home() {
     //   console.log('error: ', err);
     // }
 
+
     // setIsReady(true);
+  }
+
+  async function retrieveCognitoTransactions() {
+    try {
+      const items = await API.graphql(graphqlOperation(ListTransactions));
+      console.log('items: ', items.data.listTransactions.items);
+      // this.setState({ items: items.data.listBooks.items });
+      setTransactions(items.data.listTransactions.items);
+    } catch (err) {
+      console.log('error: ', err);
+    }
   }
 
   const clearState = () => {

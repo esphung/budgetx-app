@@ -151,16 +151,16 @@ const styles = StyleSheet.create({
 
   text: {
     flex: 1,
-    opacity: 0.6,
+    // width: 67,
+    // height: 20,
     fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    // lineHeight: 28,
-    letterSpacing: 0.17,
-    textAlign: 'left',
-    color: 'rgba(255, 255, 255, 0.5)',
-    paddingLeft: 12, // 'rgba(255, 255, 255, 0.5)',
+    letterSpacing: 0.13,
+    color: colors.white, // '#ffffff',
+
+    paddingLeft: 12,
   },
 
 });
@@ -187,7 +187,7 @@ function search(nameKey, myArray) {
   for (i; i < myArray.length; i += 1) {
     // console.log(myArray[i].name, nameKey);
     if (myArray[i].name.toLowerCase().trim() === nameKey.toLowerCase().trim()) {
-      console.log(nameKey)
+      // console.log(nameKey)
       obj = myArray[i];
     }
   }
@@ -211,7 +211,9 @@ function CellItem({
 
   // const deleteIconName = selected ? 'md-remove-circle-outline' : 'md-remove-circle';
 
-  const itemIconName = selected ? 'md-unlock' : 'md-lock';
+  // const itemIconName = selected ? 'md-unlock' : 'md-lock';
+
+  const itemIconName = (global.isColorChangePurchased) ? 'md-unlock' : 'md-lock';
 
   const isEditable = !name ? true : false;
 
@@ -239,8 +241,13 @@ function CellItem({
     setText(value)
   }
 
+  const colorSelect = (id) => {
+    alert('Please Purchase Category Color Change');
+    console.log(id);
+  }
+
   const handleTextSubmit = async (value) => {
-    setIsLoading(true);
+    // setIsLoading(true);
 
     // load stored user
     const userObject = await loadUserObject(); // load storage object
@@ -253,7 +260,8 @@ function CellItem({
       // clean scrub name
 
       //  create new payee
-      addCategory(value, randomColor);
+      // addCategory(value, randomColor);
+      addCategory(value, colors.white);
 
       // // add payee to list
       // userObject.user.categories.unshift(category);
@@ -284,18 +292,18 @@ function CellItem({
     }
 
     // console.log('Submitted:', value);
-    setIsLoading(false);
+    // setIsLoading(false);
   }
 
-  useEffect(() => {
-    setText(name)
-    return () => {
-      // effect
-    };
-  }, [])
+  // useEffect(() => {
+  //   setText(name);
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [])
 
   useEffect(() => {
-    console.log(text);
+    // console.log(text);
     return () => {
       // effect
     };
@@ -330,9 +338,9 @@ function CellItem({
             ]
           }
 
-          placeholder=""
+          placeholder={name}
 
-          placeholderTextColor={colors.offWhite}
+          placeholderTextColor={color}
 
           editable={isEditable}
 
@@ -348,7 +356,7 @@ function CellItem({
 
           onSubmitEditing={() => handleTextSubmit(text)}
 
-          // onEndEditing={() => setText(name)}
+          onEndEditing={(text) => setText(text)}
 
           maxLength={14}
 
@@ -363,7 +371,7 @@ function CellItem({
           }
         } />
 
-        {/*<Ionicons active name={itemIconName} style={styles.iconStyle} />*/}
+        {/*<TouchableOpacity onPress={() => colorSelect(id)}><Ionicons active name={itemIconName} style={styles.iconStyle} /></TouchableOpacity>*/}
         
         {/*<Text style={styles.arrow}>X</Text>*/}
       
@@ -623,7 +631,7 @@ const CustomizeCategoriesScreen = (props) => {
   }
 
   function onSelect() {
-
+    // alert('Purchase category color change');
   }
 
   // const onSelect = useCallback(
@@ -732,7 +740,6 @@ const CustomizeCategoriesScreen = (props) => {
 
           leftOpenValue={0}
           rightOpenValue={-75}
-
         />
 
         {/*<Button title="Add New" onPress={() => addCategory('')} />*/}

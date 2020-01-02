@@ -2,19 +2,18 @@ import React from 'react';
 
 import {
   // TouchableOpacity,
-  Text
+  Text,
 } from 'react-native';
 
 import {
- // TouchableNativeFeedback,
- // TouchableHighlight,
- TouchableOpacity,
- // TouchableWithoutFeedback
-} from 'react-native-gesture-handler'
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
+
+import colors from '../../../colors';
 
 // arbitrary size limits
 const MAX_PILL_WIDTH = 156;
-const MIN_PILL_WIDTH = 73;
+const MIN_PILL_WIDTH = 54;
 // const MAX_PILL_HEIGHT = 32;
 
 
@@ -35,12 +34,16 @@ const CategoryPill = (props) => {
   let backgroundColor = 'transparent';
 
   if (isSelected) {
-    textColor = 'white';
     backgroundColor = color;
+    textColor = 'white';
+    if (backgroundColor == colors.white) {
+      textColor = colors.dark;
+    }
+    
     // isEnabled = !isEnabled;  // disable current category pill
   }
 
-  return (
+  const view = (
     <TouchableOpacity
       disabled={!isEnabled}
       style={
@@ -90,8 +93,12 @@ const CategoryPill = (props) => {
 
         { name }
       </Text>
+
+      
     </TouchableOpacity>
   );
-}
+
+  return view;
+};
 
 export default CategoryPill;
