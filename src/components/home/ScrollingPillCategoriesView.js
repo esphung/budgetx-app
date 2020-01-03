@@ -17,6 +17,10 @@ import {
   View
 } from 'react-native';
 
+import { AppLoading } from 'expo';
+
+import Auth from '@aws-amplify/auth';
+
 // ui colors
 import colors from '../../../colors';
 
@@ -29,10 +33,15 @@ import { NavigationEvents } from 'react-navigation';
 //   // saveCategories
 // } from '../../storage/CategoriesStorage';
 
+// import {
+//   loadUserObject,
+//   // saveUserObject
+// } from '../../storage/UserStorage';
+
 import {
-  loadUserObject,
-  // saveUserObject
-} from '../../storage/UserStorage';
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../storage/SettingsStorage';
 
 
 const ScrollingPillCategoriesView = (props) => {
@@ -48,7 +57,7 @@ const ScrollingPillCategoriesView = (props) => {
 
   const [categories, setCategories] = useState(null);
 
-  const [isStoredUserLoaded, setIsStoredUserLoaded] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const [currentCategory, setCurrentCategory] = useState(null);
 
@@ -56,21 +65,37 @@ const ScrollingPillCategoriesView = (props) => {
 
   const [transactions, setTransactions] = useState(null);
 
-  const retrieveStoredUser = async () => {
-    // load stored user
+  const [storageKey, setStorageKey] = useState(null);
+
+  async function retrieveCognitoUserKey() {
+    // console.log('loading');
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        setStorageKey(cognito.username);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
+  }
+
+  const retrieveStoredCategories = async (key) => {
+    // console.log(key);
+    // load stored user categories
     try {
-      const userObject = await loadUserObject();
+      const userObject = await loadSettingsStorage(key);
 
       // user categories from stored user
-      setCategories(userObject.user.categories);
-      // console.log('User:', userObject.user.categories);
+      setCategories(userObject.categories);
+      // console.log('User:', userObject.categories);
 
-      setTransactions(userObject.user.transactions);
+      // setCurrentCategory(props.currentCategory);
 
-      setIsStoredUserLoaded(true);
+      // setCurrentCategories(props.currentCategories);
+
     } catch (e) {
       // statements
-      // console.log('Could not retrieve stored user.');
+      console.log('Could not retrieve stored user categories.');
     }
   };
 
@@ -95,54 +120,71 @@ const ScrollingPillCategoriesView = (props) => {
     }
   };
 
-  const clearState = () => {
-    // setShadowOffset(props.shadowOffset);
-    // setShadowRadius(props.shadowRadius);
-    // setShadowOpacity(props.shadowOpacity);
-    // setTopPosition(props.topPosition);
-    // setZIndex(props.zIndex);
-
-    retrieveStoredUser(); // for user categories
-  };
-
-  useEffect(() => {
-    // console.log('Mount pills');
-
+  async function clearState() {
     setShadowOffset(props.shadowOffset);
     setShadowRadius(props.shadowRadius);
     setShadowOpacity(props.shadowOpacity);
     setTopPosition(props.topPosition);
     setZIndex(props.zIndex);
 
-    // retrieveStoredUser(); // for user categories
-    // return () => {
-    //   // effect
-    //   console.log('Clean up pills');
+    retrieveCognitoUserKey();
+    // console.log('Finished');
+  };
 
-    clearState();
+  // useEffect(() => {
+  //   // console.log('Mount pills');
 
-    // };
-  }, []);
+  //   // setShadowOffset(props.shadowOffset);
+  //   // setShadowRadius(props.shadowRadius);
+  //   // setShadowOpacity(props.shadowOpacity);
+  //   // setTopPosition(props.topPosition);
+  //   // setZIndex(props.zIndex);
+
+  //   retrieveCognitoUserKey();
+
+  //   // retrieveStoredCategories(); // for user categories
+  //   // return () => {
+  //   //   // effect
+  //   //   console.log('Clean up pills');
+
+  //   clearState();
+  //   // };
+  // }, []);
+
+  useEffect(() => {
+    if (storageKey) {
+      retrieveStoredCategories(storageKey); // for user categories
+    }
+    return () => {
+      // effect
+    };
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (categories) {
+      setIsReady(true);
+    }
+    return () => {
+      // effect
+    };
+  }, [categories])
 
   useEffect(() => {
     // console.log('mount');
     // console.log(currentCategories.length)
 
-    setCurrentCategory(props.currentCategory);
-    setCurrentCategories(props.currentCategories);
-
     return () => {
       // effect
       // console.log('clean up')
     };
-  }, [categoryBtnPressed])
+  }, [categoryBtnPressed]);
 
 
   const getCategoryPill = (items) => {
     // const { isEnabled } = this.props;
     // console.log(isEnabled)
     let view = <View />;
-    if (items && isStoredUserLoaded) {
+    if (items) {
       view = items.map((item) => (
         <CategoryPill
           item={item}
@@ -160,6 +202,19 @@ const ScrollingPillCategoriesView = (props) => {
     }
     return view;
   };
+
+  const appLoading = (
+    <AppLoading
+      startAsync={clearState}
+      onFinish={() => {}}
+      // onFinish={() => {}}
+      onError={console.warn}
+    />
+  );
+
+  if (!isReady) {
+    return appLoading;
+  } else {
 
 
   return (
@@ -212,6 +267,7 @@ const ScrollingPillCategoriesView = (props) => {
       </ScrollView>
     </SafeAreaView>
   );
+}
 };
 
 

@@ -156,32 +156,32 @@ function WelcomeScreen(props) {
 }
 
 WelcomeScreen.navigationOptions = () => {
-  const headerRight = (
-    <NetworkConsumer>
-      {
-        ({ isConnected }) => (isConnected ? <Image style={{ width: 50 }} source={global.wifiImage} resizeMode="contain" /> : <Image style={{ width: 50 }} source={global.noWifiImage} resizeMode="contain" />)
-      }
-    </NetworkConsumer>
-  );
+  // const headerRight = (
+  //   <NetworkConsumer>
+  //     {
+  //       ({ isConnected }) => (isConnected ? <Image style={{ width: 50 }} source={global.wifiImage} resizeMode="contain" /> : <Image style={{ width: 50 }} source={global.noWifiImage} resizeMode="contain" />)
+  //     }
+  //   </NetworkConsumer>
+  // );
   const navbar = {
     headerTransparent: {},
     headerTintColor: colors.white,
-    headerRight: (
-      <View style={
-        {
-          flex: 1,
-          // justifyContent: 'center',
-          // alignItems: 'center',
+    // headerRight: (
+    //   <View style={
+    //     {
+    //       flex: 1,
+    //       // justifyContent: 'center',
+    //       // alignItems: 'center',
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }
-      }
-      >
-        { headerRight }
-      </View>
-    ),
+    //       // borderWidth: 1,
+    //       // borderColor: 'white',
+    //       // borderStyle: 'solid',
+    //     }
+    //   }
+    //   >
+    //     { headerRight }
+    //   </View>
+    // ),
   };
   return navbar;
 };

@@ -29,6 +29,13 @@ import {
   // Icon,
 } from 'native-base';
 
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../storage/SettingsStorage';
+
+import Auth from '@aws-amplify/auth';
+
 import { NavigationEvents } from 'react-navigation';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -52,12 +59,12 @@ import NewCategoryButton from './NewCategoryButton';
 // ui colors
 import colors from 'main/colors';
 
-import {
-  loadUserObject,
-  saveUserObject,
-  // saveUserCategories,
-  // loadUserCategories,
-} from '../storage/UserStorage';
+// import {
+//   loadUserObject,
+//   saveUserObject,
+//   // saveUserCategories,
+//   // loadUserCategories,
+// } from '../storage/UserStorage';
 
 const styles = StyleSheet.create({
   container: {
@@ -214,6 +221,8 @@ function CellItem({
   addCategory,
 }) {
 
+
+
   const [text, setText] = useState(null);
 
   // const [isLoading, setIsLoading] = useState(false);
@@ -226,6 +235,23 @@ function CellItem({
   const itemIconName = (global.isColorChangePurchased) ? 'md-unlock' : 'md-lock';
 
   const isEditable = !name ? true : false;
+
+  const [storageKey, setStorageKey] = useState(null);
+
+  async function retrieveCognitoUserKey() {
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        setStorageKey(cognito.username);
+
+        // setEmail(cognito.attributes.email);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
+  }
 
   // const handleNameEndEditing = (text) => {
   //   console.log(text);
@@ -259,9 +285,9 @@ function CellItem({
     // setIsLoading(true);
 
     // load stored user
-    const userObject = await loadUserObject(); // load storage object
+    const userObject = await loadSettingsStorage(storageKey);
 
-    const previousObj = search(value, userObject.user.categories);
+    const previousObj = search(value, userObject.categories);
 
     const randomColor = randomKeyFrom(colors)
 
@@ -303,6 +329,13 @@ function CellItem({
     // console.log('Submitted:', value);
     // setIsLoading(false);
   }
+
+  useEffect(() => {
+    retrieveCognitoUserKey();
+    return () => {
+      // effect
+    };
+  }, [])
 
   // useEffect(() => {
   //   setText(name);
@@ -405,12 +438,29 @@ const CustomizeCategoriesScreen = (props) => {
 
   const [user, setUser] = useState(null);
 
+  const [storageKey, setStorageKey] = useState(null);
+
+  async function retrieveCognitoUserKey() {
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        setStorageKey(cognito.username);
+
+        // setEmail(cognito.attributes.email);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
+  }
+
   async function removeCategoryByName(name) {
     // setIsLoading(true);
-    const userObject = await loadUserObject();
+    const userObject = await loadSettingsStorage(storageKey);
 
     // console.log(list)
-    const list = userObject.user.categories;
+    const list = userObject.categories;
 
     let obj = await search(name, list);
 
@@ -432,9 +482,9 @@ const CustomizeCategoriesScreen = (props) => {
   }
 
   async function updateCategoryByName(name) {
-    const userObject = await loadUserObject();
+    const userObject = await loadSettingsStorage(storageKey);
 
-    const list = userObject.user.categories;
+    const list = userObject.categories;
     // console.log(list)
     let obj = await search(name, list);
 
@@ -456,10 +506,10 @@ const CustomizeCategoriesScreen = (props) => {
 
   const addCategory = async (name, color) => {
     // const list = await loadUserCategories();
-    const userObject = await loadUserObject();
+    const userObject = await loadSettingsStorage(storageKey);
     // console.log(userObject.user.categories);
 
-    const list = userObject.user.categories;
+    const list = userObject.categories;
     // console.log(list)
     // console.log(list.length);
 
@@ -471,11 +521,12 @@ const CustomizeCategoriesScreen = (props) => {
 
       list.unshift(obj);
 
-      userObject.user.categories = list;
+      userObject.categories = list;
 
       // console.log(userObject)
 
-      await saveUserObject(userObject);
+      // await saveUserObject(userObject);
+      saveSettingsStorage(storageKey, userObject);
 
       
 
@@ -492,22 +543,25 @@ const CustomizeCategoriesScreen = (props) => {
   const storeUserCategories = async (list) => {
     // setIsLoading(true);
 
-    const userObject = await loadUserObject();
+    const userObject = await loadSettingsStorage(storageKey);
 
-    userObject.user.categories = list;
+    userObject.categories = list;
 
-    saveUserObject(userObject);
+    // saveUserObject(userObject);
+    saveSettingsStorage(storageKey, userObject);
 
     // setIsLoading(false);
   };
 
-  const retrieveStoredUser = async (key) => {
+  const retrieveStoredUser = async () => {
     // setIsLoading(true);
-    const userObject = await loadUserObject();
+    const userObject = await loadSettingsStorage(storageKey);
+
+    console.log(userObject);
 
     // setUser(userObject.user);
 
-    setData(userObject.user.categories);
+    setData(userObject.categories);
 
     // setIsLoading(false);
   }
@@ -656,10 +710,20 @@ const CustomizeCategoriesScreen = (props) => {
   //   };
   // }, [selected]);
 
-  const clearState = () => {
-    retrieveStoredUser();
-    // console.log('Cleared state');
-  };
+  async function clearState() {
+    // retrieveStoredUser();
+    retrieveCognitoUserKey();
+    console.log('Cleared state');
+  }
+
+  useEffect(() => {
+    if (storageKey) {
+      retrieveStoredUser()
+    }
+    return () => {
+      // effect
+    };
+  }, [storageKey])
 
   // useEffect(() => {
   //   clearState();
@@ -724,7 +788,7 @@ const CustomizeCategoriesScreen = (props) => {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo }}>
         <ActivityIndicator size="large" color={colors.offWhite} />
         <AppLoading
-          startAsync={retrieveStoredUser}
+          startAsync={clearState}
           onFinish={() => setIsLoading(false)}
           onError={console.warn}
         />
@@ -735,7 +799,7 @@ const CustomizeCategoriesScreen = (props) => {
       <SafeAreaView style={styles.container}>
         <NavigationEvents
           // try only this. and your component will auto refresh when this is the active component
-          onWillFocus={() => clearState()} // {(payload) => clearState()}
+          onWillFocus={clearState} // {(payload) => clearState()}
           // other props
           // onDidFocus={payload => console.log('did focus',payload)}
           // onWillBlur={payload => console.log('will blur',payload)}

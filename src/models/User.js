@@ -9,21 +9,34 @@ UPDATED:
 import defaultCategories from '../data/categories';
 
 // User function with multiple constructors
-function User(email) {
+function User(username) {
   const currentDate = new Date();
   this.id = `${Date.now(currentDate)}`;
-  this.username = '';
-  this.phoneNumber = '';
-  this.password = '';
-  this.email = email;
-  this.transactions = [];
-  this.created = currentDate;
-  this.given = ''; // first name
-  this.surname = '';
+  this.username = username;
+  this.email = '' // email;
+  // this.phoneNumber = '';
+  // this.password = '';
+  
+  // this.transactions = [];
 
-  this.profileImage = global.avatar;
 
-  this.categories = defaultCategories;
+
+
+  
+  // this.created = currentDate;
+  // this.given = ''; // first name
+  // this.surname = '';
+
+
+
+
+
+  // this.profileImage = global.avatar;
+
+  // this.categories = defaultCategories;
+
+
+
 
 } // end user function def
 
@@ -32,9 +45,9 @@ function User(email) {
 //   id: Date.now(),
 //   username: null,
 //   password: null,
-//   // email: null,
+//   email: null,
 //   // transactions: [],
-//   created: new Date()
+//   // created: new Date(),
 // }; // end user prototype def
 
 // // create user from some properties

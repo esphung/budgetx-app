@@ -38,7 +38,7 @@ import * as MailComposer from 'expo-mail-composer';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-// import { NavigationEvents } from 'react-navigation';
+import { NavigationEvents } from 'react-navigation';
 
 import ProfileRectangle from '../components/settings/ProfileRectangle';
 
@@ -63,10 +63,17 @@ import {
   htmlBottom,
 } from '../components/settings/exportHTML';
 
+// import {
+//   loadUserObject,
+//   // saveUserObject,
+// } from '../storage/UserStorage';
+
 import {
-  loadUserObject,
-  // saveUserObject,
-} from '../storage/UserStorage';
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../storage/SettingsStorage';
+
+import Auth from '@aws-amplify/auth';
 
 // ui colors
 import colors from '../../colors';
@@ -159,8 +166,51 @@ function Settings(props) {
 
   const [user, setUser] = useState(null);
 
-  const retrieveUser = async () => {
-    const userObject = await loadUserObject();
+  const [email, setEmail] = useState(null);
+
+  const [transactions, setTransactions] = useState([]);
+
+  const [storageKey, setStorageKey] = useState(null);
+
+  async function retrieveCognitoUser() {
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        setStorageKey(cognito.username);
+
+        setEmail(cognito.attributes.email);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
+  }
+
+
+  async function retrieveStoredSettingsTransactions(user_storage_key) {
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(user_storage_key);
+
+      // set stored user transactions
+      if (storageObj) {
+        // console.log('stored user settings transactions:', storageObj.transactions);
+        if (storageObj.transactions) {
+          // found stored image
+          // console.log(storageObj.transactions);
+          setTransactions(storageObj.transactions);
+        }
+      }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not load settings');
+      // console.log(e);
+    }
+  }
+
+  const retrieveUser = async (key) => {
+    const userObject = await loadSettingsStorage(key);
     setUser(userObject.user);
   };
 
@@ -214,7 +264,7 @@ function Settings(props) {
 
       
       MailComposer.composeAsync({
-        recipients: [user.email],
+        recipients: [email],
         subject: 'Exported Transactions',
         body: html,
         attachments: [],
@@ -332,8 +382,8 @@ function Settings(props) {
 
   function exportBtnPressed() {
     // console.log('Export btn pressed');
-    if (user.transactions.length > 0) {
-      sendTransactionsMail(user.transactions);
+    if (transactions.length > 0) {
+      sendTransactionsMail(transactions);
     } else {
       Alert.alert('You have no transactions')
     }
@@ -364,10 +414,24 @@ function Settings(props) {
     }
   }
 
+  async function clearState() {
+    retrieveCognitoUser();
+    // console.log('Cleared');
+  }
+
   useEffect(() => {
-    // retrieveIsPasscodeEnabled();
-    retrieveUser();
-  }, [])
+    if (storageKey) {
+      retrieveStoredSettingsTransactions(storageKey);
+    }
+    return () => {
+      // effect
+    };
+  }, [storageKey]);
+
+  // useEffect(() => {
+  //   // retrieveIsPasscodeEnabled();
+  //   // retrieveUser();
+  // }, [])
 
   // useEffect(() => {
   //   if (isPasscodeEnabled !== null) {
@@ -385,15 +449,14 @@ function Settings(props) {
       style={styles.container}
     >
       
-{/*        <NavigationEvents
+        <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
-            onWillFocus={() => console.log('Settings')} // {(payload) => clearState()}
+            onWillFocus={clearState} // {(payload) => clearState()}
             // other props
             // onDidFocus={payload => console.log('did focus',payload)}
             // onWillBlur={payload => console.log('will blur',payload)}
             // onDidBlur={payload => console.log('did blur',payload)}
           />
-      */}
 
         <View style={rectangle5} />
 

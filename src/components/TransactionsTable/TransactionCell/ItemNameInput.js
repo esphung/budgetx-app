@@ -3,21 +3,30 @@ import React, { Component } from 'react';
 import {
   TextInput,
   View,
-  Platform
+  Platform,
+  Alert,
 } from 'react-native';
 
+import Auth from '@aws-amplify/auth';
+
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../../colors';
 
 // import {
 //   loadTransactionsObject,
 //   saveTransactionsObject
 // } from '../../storage/TransactionsStorage';
 
+// import {
+//   loadUserObject,
+//   saveUserObject
+// } from '../../../storage/UserStorage';
+
 import {
-  loadUserObject,
-  saveUserObject
-} from '../../../storage/UserStorage';
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../../storage/SettingsStorage';
+
 
 import {
   loadPayees,
@@ -47,7 +56,8 @@ class ItemNameInput extends Component {
 
     this.state = {
       text: '',
-      payee: payee
+      payee: payee,
+      storageKey: null,
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -57,11 +67,22 @@ class ItemNameInput extends Component {
     // this.endEditing = this.endEditing.bind(this);
   }
 
-  componentDidMount() {
+
+  async componentDidMount() {
     const { payee } = this.state;
     if (payee) {
       this.setState({ text: payee.name });
     }
+
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setStorageKey(cognito.username);
+        this.setState({ storageKey: cognito.username });
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
   }
 
   // endEditing() {
@@ -87,20 +108,22 @@ class ItemNameInput extends Component {
     const previousPayee = search(text, payees);
 
     if (previousPayee) {
+      // const { storageKey } = this.state;
       // load stored user
-      const userObject = await loadUserObject(); // load storage object
+      const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
 
       // find current transaction fromm user transactions list
-      let i = userObject.user.transactions.length - 1;
+      let i = userObject.transactions.length - 1;
       for (i; i >= 0; i -= 1) {
-        if (userObject.user.transactions[i].id === item.id) {
+        if (userObject.transactions[i].id === item.id) {
           // set user transaction payee
-          userObject.user.transactions[i].payee = previousPayee;
+          userObject.transactions[i].payee = previousPayee;
 
           // console.log(transactions[i]);
 
           // save transactions list
-          saveUserObject(userObject);
+          // saveUserObject(userObject);
+          saveSettingsStorage(this.state.storageKey, userObject);
 
           // return from here
           return;
@@ -120,19 +143,20 @@ class ItemNameInput extends Component {
       savePayees(payeesObject);
 
       // load user saved transactions
-      const userObject = await loadUserObject(); // load storage object
+      const userObject = await loadSettingsStorage(this.state.storageKey);
 
       // // find current transaction from list
-      let i = userObject.user.transactions.length - 1;
+      let i = userObject.transactions.length - 1;
       for (i; i >= 0; i -= 1) {
-        if (userObject.user.transactions[i].id === item.id) {
+        if (userObject.transactions[i].id === item.id) {
           // set transaction payee
-          userObject.user.transactions[i].payee = payee;
+          userObject.transactions[i].payee = payee;
 
           // console.log(transactions[i]);
 
           // save transactions list
-          saveUserObject(userObject);
+          // saveUserObject(userObject);
+          saveSettingsStorage(this.state.storageKey, userObject);
 
           // return from here
           return;
@@ -190,7 +214,7 @@ class ItemNameInput extends Component {
 
           returnKeyType="done"
 
-          autoCorrect={true}
+          autoCorrect
 
           autoCapitalize="sentences" // "words"
 

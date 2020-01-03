@@ -23,30 +23,24 @@ import { AppLoading } from 'expo';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-// AWS Amplify
-import { Auth, Storage } from 'aws-amplify';
-
 import mime from 'mime-types';
+
+import SpinnerMask from '../SpinnerMask';
 
 // import SpinnerMask from '../SpinnerMask';
 
 // ui colors
 import colors from '../../../colors';
 
-// import avatarPicture from 'main/assets/avatar.png';
-
-// import Storage from '@aws-amplify/storage'
-//
-// to store an item
-// await Storage.put('test.txt', 'Hello World!')
-//
-// retrieve an item
-// const image = await Storage.get('welcome.png')
-
 import {
-  loadUserObject,
-  saveUserObject,
-} from '../../storage/UserStorage';
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../storage/SettingsStorage';
+
+import Auth from '@aws-amplify/auth';
+
+import Storage from '@aws-amplify/storage'
+
 
 function ProfileUserImage() {
   const [image, setImage] = useState(null);
@@ -54,6 +48,33 @@ function ProfileUserImage() {
   const [user, setUser] = useState(null);
 
   const [isReady, setIsReady] = useState(false);
+
+  const [storageKey, setStorageKey] = useState(null);
+
+  async function clearState() {
+    setIsReady(false);
+    setStorageKey(null);
+    setImage(null);
+    setUser(null);
+
+    // retrieveCognitoUser();
+    _cacheResourcesAsync();
+  }
+
+  async function retrieveCognitoUser() {
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        setStorageKey(cognito.username);
+
+        // setEmail(cognito.attributes.email);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
+  }
 
   // const loadUserProfilePicture = async () => {
   //   // retrieve the item
@@ -68,7 +89,7 @@ function ProfileUserImage() {
 
   // this handles the image upload to S3
   const handleImagePicked = async (pickerResult) => {
-    const imageName = `@${user.username}/picture.jpg`;
+    const imageName = `@${storageKey}/picture.jpg`;
     const fileType = mime.lookup(pickerResult.uri);
     const access = { level: 'public', contentType: fileType }; // 'image/jpeg'
     const imageData = await fetch(pickerResult.uri);
@@ -83,25 +104,30 @@ function ProfileUserImage() {
     }
 
     setImage(pickerResult);
+
+    saveProfileImage(pickerResult);
   };
 
   async function saveProfileImage(newImage) {
-    setIsReady(false);
-    const userObject = await loadUserObject(); // load storage objects
-    userObject.user.profileImage = newImage;
-    saveUserObject(userObject);
+    // setIsReady(false);
+    const userObject = await loadSettingsStorage(storageKey);
+    userObject.image = newImage;
+    // saveUserObject(userObject);
+    // console.log(userObject.image);
 
-    setIsReady(true)
+    saveSettingsStorage(storageKey, userObject);
+
+    // setIsReady(true);
   }
 
   async function retrieveStoredUserImage() {
     // load stored user transactions
     try {
-      const userObject = await loadUserObject();
+      const userObject = await loadSettingsStorage(storageKey);
 
       // set stored user image
-      if (userObject.user.profileImage) {
-        setImage(userObject.user.profileImage);
+      if (userObject.image) {
+        setImage(userObject.image);
       }
       
       //   .catch((err) => console.log(err));
@@ -109,7 +135,7 @@ function ProfileUserImage() {
       // statements
       // Alert.alert('Could not load image');
     }
-    loadCognitoUser();
+    // loadCognitoUser();
   }
   async function getPermissionAsync() {
     if (Constants.platform.ios) {
@@ -166,72 +192,73 @@ function ProfileUserImage() {
 
   // }
 
+  async function retrieveStoredSettingsImage(user_storage_key) {
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(user_storage_key);
+
+      // set stored user image
+      if (storageObj) {
+        // console.log('stored user settings image:', storageObj.image);
+        if (storageObj.image) {
+          // found stored image
+          setImage(storageObj.image);
+        }
+      }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not load settings');
+      // console.log(e);
+    }
+  }
+
+
+
   useEffect(() => {
     getPermissionAsync();
-
-    retrieveStoredUserImage();
   }, []);
-
-  // useEffect(() => {
-  //   if (storagePath) {
-  //     loadUserProfilePicture(storagePath);
-  //   }
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [storagePath]);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     setStoragePath(`${user.username}/`);
-  //     // console.log(`Loading images/profile/${user.username}`)
-  //   }
-  // }, [user]);
 
   useEffect(() => {
     // console.log('Image updated');
     if (image) {
       // console.log(image);
-      saveProfileImage(image);
-      // setIsImageLoaded(true);
+      setIsReady(true);
     }
-    // return () => {
-    //   // effect
-    //   console.log('Clean up image');
-
-    //   // console.log(image)
-    // };
   }, [image]);
+
+  useEffect(() => {
+    if (storageKey) {
+      retrieveStoredSettingsImage(storageKey);
+    }
+  }, [storageKey])
 
 
   async function _cacheResourcesAsync() {
-    const images = [
-      require('main/assets/no-wifi-image.png'),
-      require('main/assets/avatar.png')
-    ];
-
-    const cacheImages = images.map(image => {
-      return Asset.fromModule(image).downloadAsync();
-    });
-
-    setIsReady(true);
-    // return Promise.all(cacheImages);
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        setStorageKey(cognito.username);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
   }
-
-  async function retrieveImages() {
-    await Asset.loadAsync([
-      avatarPicture,
-      // video2,
-      // ...
-    ]);
-   // this.setState({ ready: true });
-   setIsReady(true);
-  }
+  // async function retrieveImages() {
+  //   await Asset.loadAsync([
+  //     avatarPicture,
+  //     // video2,
+  //     // ...
+  //   ]);
+  //  // this.setState({ ready: true });
+  //  setIsReady(true);
+  // }
 
   const appLoading = (
     <AppLoading
-      startAsync={_cacheResourcesAsync}
-      onFinish={() => setIsReady(true)}
+      startAsync={clearState}
+      onFinish={() => {}}
       onError={console.warn}
     />
   );
@@ -269,7 +296,7 @@ function ProfileUserImage() {
   //   </NetworkConsumer>
 
   if (isReady) {
-    return  <View style={styles.container}>
+    return <View style={styles.container}>
         <TouchableOpacity
 
           onPress={pickImage}
@@ -284,6 +311,7 @@ function ProfileUserImage() {
         </View>
   } else {
     return appLoading;
+    // return <SpinnerMask />;
   }
 }
 

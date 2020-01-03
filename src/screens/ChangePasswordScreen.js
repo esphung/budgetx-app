@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Ionicons } from 'expo-vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import {
   // AsyncStorage,

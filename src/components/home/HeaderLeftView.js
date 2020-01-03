@@ -26,7 +26,7 @@ import {
 } from 'react-native';
 
 // AWS Amplify
-import { Auth, Storage } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+import Auth from '@aws-amplify/auth';
 
 import { NavigationEvents } from 'react-navigation';
 
@@ -39,12 +39,17 @@ import { AppLoading } from 'expo';
 // ui colors
 import colors from '../../../colors';
 
-import {
-  loadUserObject,
-  // saveUserObject,
-} from '../../storage/UserStorage';
+// import {
+//   loadUserObject,
+//   // saveUserObject,
+// } from '../../storage/UserStorage';
 
-import avatarPicture from '../../../assets/avatar.png';
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../storage/SettingsStorage';
+
+// import avatarPicture from '../../../assets/avatar.png';
 
 // const isValidEmail = require('../../functions/isValidEmail');
 
@@ -111,246 +116,120 @@ const HeaderLeftView = () => {
 
   const [isReady, setIsReady] = useState(false);
 
-  async function retrieveStoredUserImage() {
-    // load stored user transactions
-    try {
-      const userObject = await loadUserObject();
+  const [storageKey, setStorageKey] = useState(null);
 
-      // set stored user image
-      if (userObject.user.profileImage) {
-        setImage(userObject.user.profileImage);
-      }
+  // async function retrieveStoredUserImage() {
+  //   // load stored user transactions
+  //   try {
+  //     const userObject = await loadUserObject();
 
-      //  set current userr info
-      Auth.currentAuthenticatedUser({
-        bypassCache: false,
-      }).then((user) => {
-        // console.log(user);
-        setNormalMessage(`Your are logged in as ${user.username}`);
-        setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
-      })
-        .catch((err) => Alert.alert(err));
-    } catch (e) {
-      // statements
-      Alert.alert('Could not load image');
-    }
-  }
+  //     // set stored user image
+  //     if (userObject.user.profileImage) {
+  //       setImage(userObject.user.profileImage);
+  //     }
 
-  async function _cacheResourcesAsync() {
-    const images = [require('main/assets/avatar.png')];
-
-    const cacheImages = images.map(image => {
-      return Asset.fromModule(image).downloadAsync();
-    });
-
-    // setIsReady(true);
-    // return Promise.all(cacheImages);
-  }
-
-  async function retrieveImages() {
-    await Asset.loadAsync([
-      avatarPicture,
-      // video2,
-      // ...
-    ]);
-   // this.setState({ ready: true });
-   // setIsReady(true);
-  }
-
-
-  function clearState() {
-    // setBoldMessage('') // (`${global.appName} ${global.appVersion}`);
-    // setNormalMessage('') // (`Get device cross-sync!`);
-
-    retrieveStoredUserImage(); // load stored user
-  }
-
-  // const handleTextChange = (value) => {
-  //   setText(value);
-  //   // console.log(text);
-  // };
-
-  // const submitBtnPressed = (value) => {
-  //   setText(value);
-  //   // if (isValidEmail(text)) {
-  //   //   // create new user with text email
-  //   //   // console.log(text);
-  //   //   setUser(new User(text));
-  //   // }
-  // };
-
-  // const uploadLocalTransactions = async () => {
-  //   const userObject = await loadUserObject(); // load storage object
-  //   if (userObject) {
-  //     // console.log(userObject.user._id);
-  //     // Upload file to S3
-  //     Storage.put(`@${userObject.user._id}/data.json`, JSON.stringify(userObject))
-  //         .then (result => {
-  //         // console.log(result);
-  //         // console.log('User transactions uploaded to the cloud')
-  //     }) // {key: "test.txt"}
-  //         .catch(err => Alert.alert(err));
+  //     // //  set current userr info
+  //     // Auth.currentAuthenticatedUser({
+  //     //   bypassCache: false,
+  //     // }).then((user) => {
+  //     //   // console.log(user);
+  //     //   setNormalMessage(`Your are logged in as ${user.username}`);
+  //     //   setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
+  //     // })
+  //     //   .catch((err) => Alert.alert(err));
+  //   } catch (e) {
+  //     // statements
+  //     Alert.alert('Could not load image');
   //   }
   // }
 
-  // async function loadCognitoUser() {
-  //   // await uploadLocalTransactions();
+  function _cacheResourcesAsync() {
+    // console.log('loading');
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        setStorageKey(cognito.username);
 
-  //   // Storage.get('test.txt', { level: 'protected' })
-  //   //   .then(result => {
-  //   //     // console.log(result)
-  //   //   })
-  //   //   .catch(err => {
-  //   //     Alert.alert(err);
-  //   //     // console.log(err);
-  //   //   });
-  //   //    // Storage.get('test.text')
-  //   //    //    .then(result => console.log(JSON(result)))
-  //   //    //    .catch(err => console.log(err));
+        setBoldMessage(`Welcome to ${global.appName}`);
 
-  //   Auth.currentAuthenticatedUser()
-  //     .then((cognitoUser) => {
-  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //       // console.log('username:', cognitoUser.username);
+        setNormalMessage(`Logged into ${cognito.username}`)
 
-
-  //       setUser(cognitoUser);
-
-  //       // console.log(cognitoUser.username);
-  //       // console.log(cognitoUser.transactions)
-  //     })
-  //     .catch((err) => {
-  //       // console.log(err);
-  //       Alert.alert(err);
-  //     });
-  //   }
-
-  // useEffect(fn) // all state
-  // useEffect(fn, []) // no state
-  // useEffect(fn, [these, states])
-
-  // useEffect(() => {
-  //   // retrieveFonts();
-  //   retrieveStoredUserImage();
-
-  // }, []);
-
-  // useEffect(() => {
-  //   if (username) {
-  //     setNormalMessage(`Logged in as ${user.username}`);
-  //   }
-
-  //   // loadCognitoUser();
-  //   // retrieveStoredUserImage();
-  //   // return () => {
-  //   //   // effect
-  //   // };
-  // }, [username]);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
+  }
 
   useEffect(() => {
-    retrieveStoredUserImage();
-    // console.log('Updating Online Info');
-  }, []);
+    if (storageKey) {
+      // load user storage
+      retrieveStoredSettingsImage(storageKey);
+    }
+    return () => {
+      // effect
+    };
+  }, [storageKey])
 
   useEffect(() => {
     if (image) {
       setIsReady(true);
     }
-    return () => {
-      // effect
-    };
   }, [image])
-
-  // useEffect(() => {
-  //   if (user) {
-  //     // console.log(user);
-
-  //     if (user.username) {
-  //       setUsername(user.username);
-  //     } else  {
-  //       setNormalMessage(`User ${user.id}`);
-  //     }
-
-  //     // setEmail(user.attributes.email);
-
-  //           // set stored user image
-  //     setImage(user.profileImage);
-
-  //     setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
-
-  //     // setNormalMessage(`Logged in as user ${user.id}`);
-      
-  //   }
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [user])
-
-  // useEffect(() => {
-  //   // cognito user could not be retrieved
-  //   // retrieveStoredUserImage();
-
-  //   setBoldMessage('Offline Mode');
-
-  //   setNormalMessage('Using local storage');
-
-  //   setIsReady(true);
-  // }, [user]);
-
-  // // mount user
-  // useEffect(() => {
-  //   if (user) {
-  //     const fullName = user.getFullName();
-  //     setBoldMessage(`Welcome ${fullName}`);
-  //     setNormalMessage(user.email);
-  //     // console.log(user)
-  //   }
-
-  //   // return () => {
-  //   //   // console.log('user clean up');
-  //   //   // setBoldMessage('Enter a name')//user.getFullName());
-  //   //   // setNormalMessage(user.email);
-
-  //   //   // setIsInputEnabled(false);
-  //   // };
-  // }, [user]);
 
   const appLoading = (
     <AppLoading
-      startAsync={_cacheResourcesAsync}
-      onFinish={setIsReady}
+      startAsync={clearState}
+      onFinish={() => {}}
       onError={console.warn}
     />
   );
 
-  imageView =
-    <NetworkConsumer>
-      {({ isConnected }) => (
-        isConnected ? (
-          <TouchableOpacity
-          disabled={true}
-          style={styles.userImageMaskView}
-        >
-          <Image
-            resizeMode="contain"
-            style={styles.userImage}
-            source={image} // {global.placeholder500x500}
-          />
-        </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-          disabled={true}
-          style={styles.userImageMaskView}
-        >
-          <Image
-            resizeMode="contain"
-            style={styles.userImage}
-            source={global.noWifiImage}
-          />
-        </TouchableOpacity>
-        )
-      )}
-    </NetworkConsumer>
+  async function clearState() {
+    setBoldMessage('');
+    setNormalMessage('');
+    setIsReady(false);
+    setStorageKey(null);
+    setImage(null);
+
+    _cacheResourcesAsync();
+    // console.log('Cleared HeaderLeft');
+  }
+
+
+  async function retrieveStoredSettingsImage(user_storage_key) {
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(user_storage_key);
+
+      // set stored user image
+      if (storageObj) {
+        // console.log('stored user settings image:', storageObj.image);
+        if (storageObj.image) {
+          // found stored image
+          setImage(storageObj.image);
+        }
+      }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not load settings');
+      // console.log(e);
+    }
+  }
+
+  const imageView = (
+    <TouchableOpacity
+    disabled={true}
+    style={styles.userImageMaskView}
+  >
+    <Image
+      resizeMode="contain"
+      style={styles.userImage}
+      source={image} // {global.placeholder500x500}
+    />
+  </TouchableOpacity>
+  )
 
   if (isReady) {
     return (
@@ -358,7 +237,7 @@ const HeaderLeftView = () => {
 
         <NavigationEvents
           // try only this. and your component will auto refresh when this is the active component
-          onWillFocus={() => clearState()} // {(payload) => clearState()}
+          onWillFocus={clearState} // {(payload) => clearState()}
           // other props
           // onDidFocus={payload => console.log('did focus',payload)}
           // onWillBlur={payload => console.log('will blur',payload)}

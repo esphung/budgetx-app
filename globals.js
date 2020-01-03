@@ -9,18 +9,13 @@ global.SFProDisplayRegularFont = require('./assets/fonts/SF-Pro-Display-Regular.
 
 global.SFProDisplaySemiboldFont = require('./assets/fonts/SF-Pro-Display-Semibold.otf');
 
-// placeholder images
-global.placeholderUserImage = require('./assets/user-placeholder-200x250.png');
-
-global.placeholder500x500 = require('./assets/placeholder500x500.png');
-
 global.searchIcon = require('./assets/search-icon.png');
 
 global.settingsIcon = require('./assets/settings-icon.png');
 
 global.xIconWhite = require('./assets/x-icon-white.png');
 
-global.walletFilledMoneyToolIcon = require('./assets/wallet-filled-money-tool.png');
+// global.walletFilledMoneyToolIcon = require('./assets/wallet-filled-money-tool.png');
 
 global.avatar = require('./assets/avatar.png');
 

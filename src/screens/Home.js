@@ -29,6 +29,8 @@ import {
   Alert,
 } from 'react-native';
 
+import Auth from '@aws-amplify/auth';
+
 import { AppLoading } from 'expo';
 
 import API, { graphqlOperation } from '@aws-amplify/api'; // AppSync Query GraphQL
@@ -103,10 +105,15 @@ import { NavigationEvents } from 'react-navigation';
 // ui colors
 import colors from '../../colors';
 
+// import {
+//   loadUserObject,
+//   saveUserObject,
+// } from '../storage/UserStorage';
+
 import {
-  loadUserObject,
-  saveUserObject,
-} from '../storage/UserStorage';
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../storage/SettingsStorage';
 
 // import my custom view components
 import HeaderLeftView from '../components/home/HeaderLeftView';
@@ -172,32 +179,11 @@ query {
 }
 `;
 
-async function storeUserTransaction(transaction) {
-  const userObject = await loadUserObject(); // load user object
-  userObject.user.transactions.unshift(transaction);
-  saveUserObject(userObject);
-}
-
-async function removeUserTransaction(transaction) {
-  const userObject = await loadUserObject();
-
-  // loop thru stored transactions and splice transaction from it
-  let i = userObject.user.transactions.length - 1;
-
-  for (i; i >= 0; i -= 1) {
-    if (userObject.user.transactions[i].id === transaction.id) {
-      userObject.user.transactions.splice(i, 1);
-    }
-  }
-  saveUserObject(userObject);
-}
-
-
 const initialState = {
   currentDate: new Date(),
   currentAmount: 0.00,
   currentCategory: null,
-  transactions: [],
+  transactions: null,
   slideViewBounceValue: new Animated.Value(300),
   currentBalance: 0.00,
   currentSpent: 0.00,
@@ -227,30 +213,97 @@ function Home() {
   // const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
   const [isReady, setIsReady] = useState(initialState.isReady);
 
-  async function retrieveStoredTransactions() {
-    // setIsReady(false);
-    try {
-      const userObject = await loadUserObject();
-      // set stored user's transactions
-      await setTransactions(userObject.user.transactions);
-      // setIsReady(true);
-    } catch (e) {
-      // statements
-      Alert.alert('Could not load stored transactions');
-    }
-
-    // try {
-    //   const items = await API.graphql(graphqlOperation(ListTransactions));
-    //   console.log('items: ', items.data.listTransactions.items);
-    //   // this.setState({ items: items.data.listBooks.items });
-    //   setTransactions(items.data.listTransactions.items);
-    // } catch (err) {
-    //   console.log('error: ', err);
-    // }
+  const [storageKey, setStorageKey] = useState(null);
 
 
-    // setIsReady(true);
+  async function clearState() {
+    setTransactions(null);
+    setCurrentBalance(0.00);
+    setCurrentSpent(0.00);
+    setCurrentPayee(null);
+    setCurrentNote('');
+
+
+
+    setCurrentDate(initialState.currentDate);
+    setCurrentAmount(initialState.currentAmount);
+    setCurrentCategory(initialState.currentCategory);
+    setCurrentTransaction(initialState.currentTransaction);
+    setCurrentType(initialState.currentType);
+    setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
+    setIsSlideViewHidden(initialState.isSlideViewHidden);
+    // setIsCurrentTransaction(initialState.isCurrentTransaction);
+
+    setStorageKey(null);
+
+    // retrieveStoredTransactions(); // load stored user
+    _cacheResourcesAsync();
+    // console.log('Cleared');
+  };
+
+  async function _cacheResourcesAsync() {
+    // console.log('loading');
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        setStorageKey(cognito.username);
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
   }
+
+  async function storeUserTransaction(transaction) {
+    const userObject = await loadSettingsStorage(storageKey); // load user object
+    userObject.transactions.unshift(transaction);
+    // saveUserObject(userObject);
+    saveSettingsStorage(storageKey, userObject);
+
+    clearState();
+  }
+
+  async function removeUserTransaction(transaction) {
+    const userObject = await loadSettingsStorage(storageKey);
+
+    // loop thru stored transactions and splice transaction from it
+    let i = userObject.transactions.length - 1;
+
+    for (i; i >= 0; i -= 1) {
+      if (userObject.transactions[i].id === transaction.id) {
+        userObject.transactions.splice(i, 1);
+      }
+    }
+    saveSettingsStorage(storageKey, userObject);
+
+    clearState();
+  }
+
+  // async function retrieveStoredTransactions() {
+  //   // setIsReady(false);
+  //   try {
+  //     const userObject = await loadUserObject();
+  //     // set stored user's transactions
+  //     await setTransactions(userObject.user.transactions);
+  //     // setIsReady(true);
+  //   } catch (e) {
+  //     // statements
+  //     Alert.alert('Could not load stored transactions');
+  //   }
+
+  //   // try {
+  //   //   const items = await API.graphql(graphqlOperation(ListTransactions));
+  //   //   console.log('items: ', items.data.listTransactions.items);
+  //   //   // this.setState({ items: items.data.listBooks.items });
+  //   //   setTransactions(items.data.listTransactions.items);
+  //   // } catch (err) {
+  //   //   console.log('error: ', err);
+  //   // }
+
+
+  //   // setIsReady(true);
+  // }
 
   async function retrieveCognitoTransactions() {
     try {
@@ -263,18 +316,6 @@ function Home() {
     }
   }
 
-  const clearState = () => {
-    setCurrentDate(initialState.currentDate);
-    setCurrentAmount(initialState.currentAmount);
-    setCurrentCategory(initialState.currentCategory);
-    setCurrentTransaction(initialState.currentTransaction);
-    setCurrentType(initialState.currentType);
-    setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
-    setIsSlideViewHidden(initialState.isSlideViewHidden);
-    // setIsCurrentTransaction(initialState.isCurrentTransaction);
-
-    retrieveStoredTransactions(); // load stored user
-  };
 
   const addTransaction = async () => {
     if (!currentAmount || !currentCategory) return;
@@ -404,6 +445,27 @@ function Home() {
     }
   };
 
+  async function retrieveStoredSettingsTransactions(user_storage_key) {
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(user_storage_key);
+
+      // set stored user transactions
+      if (storageObj) {
+        // console.log('stored user settings transactions:', storageObj.transactions);
+        if (storageObj.transactions) {
+          // found stored image
+          // console.log(storageObj.transactions);
+          setTransactions(storageObj.transactions);
+        }
+      }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not load settings');
+      // console.log(e);
+    }
+  }
+
   // useEffect(fn) // all state
   // useEffect(fn, []) // no state
   // useEffect(fn, [these, states])
@@ -418,15 +480,32 @@ function Home() {
   //   // };
   // }, []);
 
+  useEffect(() => {
+    if (storageKey) {
+      // load user storage
+      retrieveStoredSettingsTransactions(storageKey)
+    } else {
+      setIsReady(false);
+    }
+    return () => {
+      // effect
+    };
+  }, [storageKey])
+
   // current transaction updates
   useEffect(() => {
-    // calculate balances
-    const balance = (calculateBalance(transactions));
-    setCurrentBalance(balance);
 
-    // calculate spent
-    const spent = (calculateMonthSpent(transactions));
-    setCurrentSpent(spent);
+    if (transactions) {
+      // calculate balances
+      const balance = (calculateBalance(transactions));
+      setCurrentBalance(balance);
+
+      // calculate spent
+      const spent = (calculateMonthSpent(transactions));
+      setCurrentSpent(spent);
+
+      setIsReady(true);
+    }
   }, [transactions]);
 
   useEffect(() => {
@@ -579,7 +658,8 @@ function Home() {
   const appLoading = (
     <AppLoading
       startAsync={clearState}
-      onFinish={() => setIsReady(true)}
+      onFinish={() => {}}
+      // onFinish={() => {}}
       onError={console.warn}
     />
   );
