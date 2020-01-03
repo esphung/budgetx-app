@@ -13,7 +13,7 @@ export function Share(props) {
         {
           // alignSelf: 'center',
           // justifyContent: 'center',
-          width: '38%', // 133,
+          width: 133,
           height: 46,
           borderRadius: 23,
           backgroundColor: colors.azure,
@@ -39,9 +39,9 @@ export function Share(props) {
               fontStyle: 'normal',
               letterSpacing: 0.13,
               textAlign: 'center',
-              color: '#ffffff',
+              color: colors.white,
 
-              alignSelf: 'center',
+              // alignSelf: 'center',
 
               // borderWidth: 1,
               // borderColor: 'white',

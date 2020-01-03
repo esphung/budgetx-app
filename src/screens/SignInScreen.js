@@ -2,11 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import PropTypes from 'prop-types';
 
-import { Ionicons } from 'expo-vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
-
-import OfflineScreen from '../screens/OfflineScreen';
 
 import SpinnerMask from 'main/src/components/SpinnerMask';
 
@@ -46,6 +44,8 @@ import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 import colors from 'main/colors';
 
 import styles from './styles';
+
+import OfflineScreen from '../screens/OfflineScreen';
 
 import { isValidUsername, getButtonStyle } from './functions';
 

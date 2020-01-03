@@ -178,6 +178,21 @@ async function storeUserTransaction(transaction) {
   saveUserObject(userObject);
 }
 
+async function removeUserTransaction(transaction) {
+  const userObject = await loadUserObject();
+
+  // loop thru stored transactions and splice transaction from it
+  let i = userObject.user.transactions.length - 1;
+
+  for (i; i >= 0; i -= 1) {
+    if (userObject.user.transactions[i].id === transaction.id) {
+      userObject.user.transactions.splice(i, 1);
+    }
+  }
+  saveUserObject(userObject);
+}
+
+
 const initialState = {
   currentDate: new Date(),
   currentAmount: 0.00,
@@ -272,7 +287,7 @@ function Home() {
       currentType, // type
       currentNote, // note
     );
-    console.log(transaction);
+    // console.log(transaction);
 
     // try {
     //   const list = [transaction, ...transactions];
@@ -291,22 +306,6 @@ function Home() {
     await storeUserTransaction(transaction);
     clearState();
   };
-  async function removeUserTransaction(transaction) {
-    const userObject = await loadUserObject();
-
-    // loop thru stored transactions and splice transaction from it
-    let i = userObject.user.transactions.length - 1;
-
-    for (i; i >= 0; i -= 1) {
-      if (userObject.user.transactions[i].id === transaction.id) {
-        userObject.user.transactions.splice(i, 1);
-      }
-    }
-    saveUserObject(userObject);
-
-    clearState();
-  }
-
   const showSlideView = useCallback(
     () => {
       Animated.spring(
@@ -490,6 +489,7 @@ function Home() {
 
   const deleteBtnPressed = (transaction) => {
     removeUserTransaction(transaction);
+    clearState();
   };
 
   const categoryBtnPressed = (category) => {

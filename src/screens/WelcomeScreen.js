@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
-import { NavigationEvents } from 'react-navigation';
+// import { NavigationEvents } from 'react-navigation';
+
+import { NetworkConsumer } from 'react-native-offline';
 
 // import { NetworkConsumer } from 'react-native-offline';
 
@@ -15,59 +17,68 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
-  NetInfo,
+  // NetInfo,
   Image,
 } from 'react-native';
 
-import {
-  Container,
-} from 'native-base';
+// import NetInfo from '@react-native-community/netinfo';
+
+// import {
+//   Container,
+// } from 'native-base';
 
 import colors from '../../colors';
 
 import styles from './styles';
 
 function WelcomeScreen(props) {
-  const [connectionType, setConnectionType] = useState(null);
+  // const [connectionType, setConnectionType] = useState(null);
 
   const handleRoute = async (destination) => {
     await props.navigation.navigate(destination); // original single code line
   };
 
-  function handleFirstConnectivityChange(connectionInfo) {
-    console.log(
-      'Connection changed to type: ' +
-        connectionInfo.type
-        // +
-        // ', effectiveType: ' +
-        // connectionInfo.effectiveType,
-    );
-  }
+  // function handleFirstConnectivityChange(connectionInfo) {
+  //   console.log(
+  //     'Connection changed to type: ' +
+  //       connectionInfo.type
+  //       // +
+  //       // ', effectiveType: ' +
+  //       // connectionInfo.effectiveType,
+  //   );
+  // }
 
 
-  const clearState = () => {
-    // NetInfo.getConnectionInfo().then((connectionInfo) => {
-    //   setConnectionType(connectionInfo.type);
-    //   // console.log(
-    //   //   'Initial, type: ' +
-    //   //     connectionInfo.type,
-    //   // );
-    // });
-    // NetInfo.addEventListener('connectionChange', handleFirstConnectivityChange);
-  };
+  // const clearState = () => {
+  //   // NetInfo.getConnectionInfo().then((connectionInfo) => {
+  //   //   setConnectionType(connectionInfo.type);
+  //   //   // console.log(
+  //   //   //   'Initial, type: ' +
+  //   //   //     connectionInfo.type,
+  //   //   // );
+  //   // });
+  //   // NetInfo.addEventListener('connectionChange', handleFirstConnectivityChange);
 
-  useEffect(() => {
-    clearState();
-    NetInfo.getConnectionInfo().then((connectionInfo) => {
-      setConnectionType(connectionInfo.type);
-      // console.log(
-      //   'Initial, type: ' +
-      //     connectionInfo.type,
-      // );
-    });
-    NetInfo.addEventListener('connectionChange', handleFirstConnectivityChange);
+  //   // NetInfo.fetch().then((state) => {
+  //   //   console.log("Connection type", state.type);
+  //   //   console.log("Is connected?", state.isConnected);
+  //   // });
 
-  }, []);
+  // };
+
+  // useEffect(() => {
+  //   clearState();
+
+  //   // NetInfo.getConnectionInfo().then((connectionInfo) => {
+  //   //   setConnectionType(connectionInfo.type);
+  //   //   // console.log(
+  //   //   //   'Initial, type: ' +
+  //   //   //     connectionInfo.type,
+  //   //   // );
+  //   // });
+  //   // NetInfo.addEventListener(handleFirstConnectivityChange);
+
+  // }, []);
 
   // useEffect(() => {
   //   if (connectionType) {
@@ -86,20 +97,22 @@ function WelcomeScreen(props) {
 
   const welcome = (
     <SafeAreaView style={styles.container}>
+      {/*
       <NavigationEvents
-        // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={clearState} // {(payload) => clearState()}
-        // other props
-        // onDidFocus={payload => console.log('did focus',payload)}
-        // onWillBlur={payload => console.log('will blur',payload)}
-        // onDidBlur={payload => console.log('did blur',payload)}
-      />
+          // try only this. and your component will auto refresh when this is the active component
+          // onWillFocus={clearState} // {(payload) => clearState()}
+          // other props
+          // onDidFocus={payload => console.log('did focus',payload)}
+          // onWillBlur={payload => console.log('will blur',payload)}
+          // onDidBlur={payload => console.log('did blur',payload)}
+        />
+      */}
       <StatusBar />
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         {/* App Logo */}
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <Container style={styles.infoContainer}>
+            <View style={styles.infoContainer}>
               <View style={styles.container}>
                 <TouchableOpacity
                   onPress={() => handleRoute('SignUp')}
@@ -120,7 +133,7 @@ function WelcomeScreen(props) {
                   <Text style={styles.buttonText}>Forget password ?</Text>
                 </TouchableOpacity>
               </View>
-            </Container>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -143,28 +156,40 @@ function WelcomeScreen(props) {
 }
 
 WelcomeScreen.navigationOptions = () => {
+  const headerRight = (
+    <NetworkConsumer>
+      {
+        ({ isConnected }) => (isConnected ? <Image style={{ width: 50 }} source={global.wifiImage} resizeMode="contain" /> : <Image style={{ width: 50 }} source={global.noWifiImage} resizeMode="contain" />)
+      }
+    </NetworkConsumer>
+  );
   const navbar = {
     headerTransparent: {},
     headerTintColor: colors.white,
-    headerRight: <View style={
-      {
-        // flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
+    headerRight: (
+      <View style={
+        {
+          flex: 1,
+          // justifyContent: 'center',
+          // alignItems: 'center',
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }
       }
-    }><Image source={global.wifiImage} resizeMode="contain" /></View>
+      >
+        { headerRight }
+      </View>
+    ),
   };
   return navbar;
 };
 
-WelcomeScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
+// WelcomeScreen.propTypes = {
+//   navigation: PropTypes.shape({
+//     navigate: PropTypes.func.isRequired,
+//   }).isRequired,
+// };
 
 export default WelcomeScreen;

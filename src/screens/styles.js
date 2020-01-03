@@ -7,22 +7,19 @@ import colors from 'main/colors';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    // height: '100%',
-    // width: '100%',
     backgroundColor: colors.darkTwo, // '#aa73b7',
     justifyContent: 'center',
-    flexDirection: 'column',
+    // flexDirection: 'column',
   },
   input: {
     alignItems: 'center',
     fontSize: 17,
-    // fontWeight: 'bold',
+    fontWeight: 'bold',
     color: colors.white, // '#5a52a5',
 
     fontFamily: 'SFProDisplay-Regular',
     fontWeight: 'normal',
     fontStyle: 'normal',
-    // lineHeight: 28,
     letterSpacing: 0.17,
     textAlign: 'left',
 
@@ -35,7 +32,7 @@ export default StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    height: '100%', // 200,
+    // height: '100%', // 200,
     // top: '5%',
     // bottom: '0%', // '5%', // 25,
     flexDirection: 'row',

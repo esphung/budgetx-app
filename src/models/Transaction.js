@@ -17,6 +17,16 @@ import colors from 'main/colors';
 function Transaction(date, amount, payee, category, type, note) {
   const currentDate = new Date();
 
+  if (category) {
+    const id = category.id
+    const created = category.created;
+    category = new Category(category.name, category.color, category.type);
+    category.created = category.created
+    category.id = id;
+  }
+
+  // console.log(category);
+
   this.id = `${Date.now(currentDate)}`;
   this.date = (date) ? date : currentDate;
   this.amount = amount ? amount : Number.parseFloat(0).toFixed(2);

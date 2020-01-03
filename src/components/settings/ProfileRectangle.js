@@ -39,7 +39,7 @@ function ProfileRectangle() {
       >
         <View style={
           {
-            // flex: 1,
+            flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
 
@@ -47,7 +47,9 @@ function ProfileRectangle() {
             // borderColor: 'orange',
             // borderStyle: 'solid',
           }
-        }><ProfileUserImage /></View>
+        }>
+          <ProfileUserImage />
+        </View>
       </View>
 
       <UserNameEmailInput />

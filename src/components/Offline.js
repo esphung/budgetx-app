@@ -35,7 +35,7 @@ Thank you for downloading ${global.appName}! Version ${global.appVersion}
 import offlineWifiSymbolImage from 'main/assets/no-wifi-image.png';
 // import video2 from './assets/videos/2.mp4';
 
-const Offline = (props) => {
+const Offline = () => {
   const [isReady, setIsReady] = useState(false);
 
   async function _cacheResourcesAsync() {
@@ -45,7 +45,9 @@ const Offline = (props) => {
       return Asset.fromModule(image).downloadAsync();
     });
 
-    setIsReady(true);
+    retrieveImages();
+
+    // setIsReady(true);
     return Promise.all(cacheImages);
   }
 
@@ -68,17 +70,16 @@ const Offline = (props) => {
   }, []);
 
   const view = (
-    <ScrollView
-      scrollEnabled={false}
-      contentContainerStyle={{
+    <View
+      style={{
         flex: 1,
         // flexDirection: 'column',
         // justifyContent: 'center',
         // alignItems: 'stretch',
         // alignItems: 'center',
-        justifyContent: 'space-around',
+        // justifyContent: 'space-around',
 
-        backgroundColor: 'transparent',
+        // backgroundColor: 'transparent',
 
         // borderWidth: 1,
         // borderColor: 'white',
@@ -86,25 +87,11 @@ const Offline = (props) => {
       }}
     >
 
-      <View
-        style={
-          {
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
 
-            // width: '100%',
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'dashed',
-          }
-        }
-      >
-        <Image
+{/*        <Image
           style={{
-            height: '50%',
-            width: '50%',
+            height: '30%',
+            width: '30%',
             opacity: 0.7,
             // borderRadius: 12,
             // backgroundColor: 'pink',
@@ -116,9 +103,7 @@ const Offline = (props) => {
           source={global.noWifiImage}
           // source={global.wifiSymbolHighResolution}
         />
-
-      </View>
-
+*/}
 
       <View
         style={
@@ -171,14 +156,14 @@ const Offline = (props) => {
           { message }
         </Text>
       </View>
-    </ScrollView>
+    </View>
   );
 
   if (isReady) {
     return view;  
   } else {
     return <AppLoading
-          startAsync={this._cacheResourcesAsync}
+          startAsync={_cacheResourcesAsync}
           onFinish={() => setIsReady(true)}
           onError={console.warn}
         />;

@@ -13,7 +13,8 @@ function RateUsButton(props) {
     <View
       style={
         {
-          width: '38%', // 133,
+          width: 133,
+
           height: 46,
           borderRadius: 23,
           backgroundColor: colors.azure,
@@ -42,7 +43,7 @@ function RateUsButton(props) {
               textAlign: 'center',
               color: '#ffffff',
 
-              alignSelf: 'center',
+              // alignSelf: 'center',
 
               // borderWidth: 1,
               // borderColor: 'white',

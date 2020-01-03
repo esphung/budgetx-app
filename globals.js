@@ -3,7 +3,7 @@
 
 // global.screenWidth = Math.round(Dimensions.get('window').width);
 
-import app from 'main/app.json';
+import app from './app.json';
 
 global.SFProDisplayRegularFont = require('./assets/fonts/SF-Pro-Display-Regular.otf');
 
@@ -20,7 +20,7 @@ global.settingsIcon = require('./assets/settings-icon.png');
 
 global.xIconWhite = require('./assets/x-icon-white.png');
 
-global.walletFilledMoneyToolIcon = require('./assets/wallet-filled-money-tool.png'); // 261 × 252
+global.walletFilledMoneyToolIcon = require('./assets/wallet-filled-money-tool.png');
 
 global.avatar = require('./assets/avatar.png');
 
@@ -33,6 +33,8 @@ global.wifiSymbol = require('./assets/wifi-symbol-high-resolution.png');
 global.wifiImage = require('./assets/wifi-image.png');
 
 global.noWifiImage = require('./assets/no-wifi-image.png');
+
+global.bankImageGreen = require('./assets/bank-image-green.png');
 
 global.maxAmountLength = 9;
 

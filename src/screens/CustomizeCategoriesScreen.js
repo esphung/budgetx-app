@@ -1,23 +1,25 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
+
+import { AppLoading } from 'expo';
 
 import {
   StyleSheet,
   View,
-  ScrollView,
+  // ScrollView,
   // Button,
   // TouchableOpacity,
-  Text,
+  // Text,
   TextInput,
-  Image,
+  // Image,
   // TextInput
   SafeAreaView,
-  AsyncStorage,
-  Alert,
-  FlatList,
+  // AsyncStorage,
+  // Alert,
+  // FlatList,
   ActivityIndicator,
-  Button,
+  // Button,
 } from 'react-native';
 
 import {
@@ -39,11 +41,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import Constants from 'expo-constants';
 
-import { Auth } from 'aws-amplify';
+// import { Auth } from 'aws-amplify';
 
 import Category from '../models/Category';
 
-import InfoBox from '../components/InfoBox';
+// import InfoBox from '../components/InfoBox';
 
 import NewCategoryButton from './NewCategoryButton';
 
@@ -59,17 +61,25 @@ import {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    height: '100%',
+    flex: 1,
+    // alignItems: 'stretch',
+    // justifyContent: 'center',
+
+    // top: '2%',
+
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // height: '100%',
+    // width: '100%',
+
     backgroundColor: colors.darkTwo,
-    
 
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',
   },
   table: {
-    // flex: 1,
+    flex: 1,
 
     top: '10%',
     // backgroundColor: colors.darkTwo,
@@ -206,7 +216,7 @@ function CellItem({
 
   const [text, setText] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
 
   // const deleteIconName = selected ? 'md-remove-circle-outline' : 'md-remove-circle';
@@ -222,7 +232,6 @@ function CellItem({
   // }
 
   function checkColor(color) {
-
     return color !== 'dark' | color !== 'darkTwo' | color !== 'darkGreyBlue' | color !== 'offWhite'
     
   }
@@ -302,31 +311,33 @@ function CellItem({
   //   };
   // }, [])
 
-  useEffect(() => {
-    // console.log(text);
-    return () => {
-      // effect
-    };
-  }, [text])
-  
+  // useEffect(() => {
+  //   // console.log(text);
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [text]);
+
   return (
     <TouchableOpacity
       onPress={() => onSelect(id)}
       activeOpacity={1}
       style={[
         styles.item,
-        { 
+        {
           backgroundColor: selected ? colors.darkGreyBlue : colors.dark,
         },
       ]}
     >
       <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        style={
+          {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }
+      }
+      >
         <TextInput
           style={
             [
@@ -352,11 +363,11 @@ function CellItem({
 
           autoCorrect
 
-          onChangeText={(text) => handleTextChange(text)}
+          onChangeText={(value) => handleTextChange(value)}
 
           onSubmitEditing={() => handleTextSubmit(text)}
 
-          onEndEditing={(text) => setText(text)}
+          onEndEditing={(value) => setText(value)}
 
           maxLength={14}
 
@@ -384,16 +395,18 @@ function CellItem({
 const CustomizeCategoriesScreen = (props) => {
   const [selected, setSelected] = useState(new Map());
 
+  // const [isReady, setIsReady] = useState(false);
+
   // const [storageKey, setStorageKey] = useState(null);
 
   const [data, setData] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [user, setUser] = useState(null);
 
   async function removeCategoryByName(name) {
-    setIsLoading(true);
+    // setIsLoading(true);
     const userObject = await loadUserObject();
 
     // console.log(list)
@@ -437,7 +450,7 @@ const CustomizeCategoriesScreen = (props) => {
     // console.log(list.length);
 
     // console.log(obj);
-    setIsLoading(false);
+    // setIsLoading(false);
     return obj;
   }
 
@@ -477,7 +490,7 @@ const CustomizeCategoriesScreen = (props) => {
 
 
   const storeUserCategories = async (list) => {
-    setIsLoading(true);
+    // setIsLoading(true);
 
     const userObject = await loadUserObject();
 
@@ -485,24 +498,25 @@ const CustomizeCategoriesScreen = (props) => {
 
     saveUserObject(userObject);
 
-    setIsLoading(false);
+    // setIsLoading(false);
   };
 
   const retrieveStoredUser = async (key) => {
-    setIsLoading(true);
-
+    // setIsLoading(true);
     const userObject = await loadUserObject();
 
-    setUser(userObject.user);
+    // setUser(userObject.user);
 
-    setIsLoading(false);
+    setData(userObject.user.categories);
+
+    // setIsLoading(false);
   }
 
   const deleteBtnPressed = async (item) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     await removeCategoryByName(item.name);
     // console.log('Deleted:', await loadUserCategories());
-    setIsLoading(false);
+    // setIsLoading(false);
   };
 
   const onPress = (item) => {
@@ -540,6 +554,7 @@ const CustomizeCategoriesScreen = (props) => {
         </View>
       );
     }
+
     return view;
   }
 
@@ -547,29 +562,22 @@ const CustomizeCategoriesScreen = (props) => {
     let rowHeight = 45;
     let backgroundColor = colors.dark;
     let isDisabled = false;
-    let caret = '>';
+    // let caret = '>';
 
-    if (item.key === '') {
-      rowHeight = 20;
-      backgroundColor = colors.darkTwo;
-      isDisabled = true;
-      caret = '';
-      // console.log(item);
-    }
 
     // console.log(item);
     const view = (
       <CellItem
         style={
           {
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            // width: 370,
-            height: rowHeight, // 46,
-            backgroundColor, // colors.dark,
+            // alignItems: 'center',
+            // justifyContent: 'center',
+            // width: '100%',
+            // // width: 370,
+            // // height: 46,
+            // backgroundColor, // colors.dark,
 
-            // borderWidth: 1,
+            // // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'dotted',
           }
@@ -594,20 +602,19 @@ const CustomizeCategoriesScreen = (props) => {
 
   function renderHiddenItem({ item }) {
     const { header } = item;
-    let view = <View />;
     if (header) {
-      view = (
+      return (
         <View style={{
-          flex: 1,
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-          backgroundColor: colors.dark,
+          // flex: 1,
+          // // borderWidth: 1,
+          // // borderColor: 'white',
+          // // borderStyle: 'solid',
+          // backgroundColor: colors.dark,
         }}
         />
       );
-    } else if (!header) {
-      view = (
+    } else {
+      return (
         <View style={{ flexDirection: 'row', flex: 1 }}>
           <View style={{
             flex: 1,
@@ -627,7 +634,7 @@ const CustomizeCategoriesScreen = (props) => {
       );
     }
 
-    return view;
+    // return view;
   }
 
   function onSelect() {
@@ -654,21 +661,21 @@ const CustomizeCategoriesScreen = (props) => {
     // console.log('Cleared state');
   };
 
-  useEffect(() => {
-    clearState();
-    return () => {
-      // effect
-    };
-  }, []);
+  // useEffect(() => {
+  //   clearState();
+  //   return () => {
+  //     // effect
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    if (user) {
-      setData(user.categories);
-    }
-    // return () => {
-    //   // effect
-    // };
-  }, [user])
+  // useEffect(() => {
+  //   if (user) {
+  //     setData(user.categories);
+  //   }
+  //   // return () => {
+  //   //   // effect
+  //   // };
+  // }, [user])
 
   useEffect(() => {
     // console.log('Data changed.. saved data');
@@ -702,15 +709,29 @@ const CustomizeCategoriesScreen = (props) => {
   //   };
   // }, [])
 
+  // if {
+  //     view = (
+  //      <AppLoading
+  //       startAsync={retrieveStoredUser}
+  //       onFinish={() => setIsReady(true)}
+  //       onError={console.warn}
+  //     />
+  //     );
+  //   }
 
-  let view = (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo }}>
-      <ActivityIndicator size="large" color={colors.offWhite} />
-    </View>
-  );
-
-  if (!isLoading) {
-     view = (
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo }}>
+        <ActivityIndicator size="large" color={colors.offWhite} />
+        <AppLoading
+          startAsync={retrieveStoredUser}
+          onFinish={() => setIsLoading(false)}
+          onError={console.warn}
+        />
+      </View>
+    );
+  } else {
+     return (
       <SafeAreaView style={styles.container}>
         <NavigationEvents
           // try only this. and your component will auto refresh when this is the active component
@@ -743,19 +764,22 @@ const CustomizeCategoriesScreen = (props) => {
         />
 
         {/*<Button title="Add New" onPress={() => addCategory('')} />*/}
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}><NewCategoryButton onPress={() => addCategory('')} /></View>
+        <View style={{ flex: 0.25, justifyContent: 'flex-end', alignItems: 'center', margin: 12 }}>
+          <NewCategoryButton onPress={() => addCategory('')} />
+        </View>
       </SafeAreaView>
     );
-    
-  };
-  return view;
+
+  }
+
+    // return view;
 
 }
 
 
 CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   const navbar = {
-    headerTransparent: {},
+    // headerTransparent: {},
     headerStyle: {
       backgroundColor: colors.dark,
     },
@@ -768,18 +792,18 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   return navbar;
 }
 
-CustomizeCategoriesScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
+// CustomizeCategoriesScreen.propTypes = {
+//   navigation: PropTypes.shape({
+//     navigate: PropTypes.func.isRequired,
+//   }).isRequired,
+// };
 
-CellItem.propTypes = {
-  id: PropTypes.string.isRequired,
-  name: PropTypes.string,
-  selected: PropTypes.bool.isRequired,
-  onSelect: PropTypes.func.isRequired,
-};
+// CellItem.propTypes = {
+//   id: PropTypes.string.isRequired,
+//   name: PropTypes.string,
+//   selected: PropTypes.bool.isRequired,
+//   onSelect: PropTypes.func.isRequired,
+// };
 
 // const styles = StyleSheet.create({
 //   container: {

@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
-  ScrollView,
+  // ScrollView,
   // Button,
   // TouchableOpacity,
   Text,
@@ -38,7 +38,7 @@ import * as MailComposer from 'expo-mail-composer';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { NavigationEvents } from 'react-navigation';
+// import { NavigationEvents } from 'react-navigation';
 
 import ProfileRectangle from '../components/settings/ProfileRectangle';
 
@@ -71,16 +71,24 @@ import {
 // ui colors
 import colors from '../../colors';
 
-import { getShortDate } from './functions';
+// import { getShortDate } from './functions';
 
 // AWS Amplify
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'stretch',
-    backgroundColor: colors.darkTwo,
+    // top: '5%',
+    // alignItems: 'stretch',
+    // justifyContent: 'center',
+    // backgroundColor: colors.darkTwo,
+
+    // marginTop: '5%',
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
   backBtnImage: {
     width: '100%',
@@ -96,10 +104,14 @@ const styles = StyleSheet.create({
 
 // header rectangle
 const rectangle5 = {
-  flex: 0.15,
-  backgroundColor: colors.dark,
+  flex: 0.05,
+  // backgroundColor: colors.dark,
 
-  marginBottom: '5%',
+  // marginBottom: '35%',
+
+  // borderWidth: 1,
+  // borderColor: 'white',
+  // borderStyle: 'solid',
 };
 
 // right X header btn
@@ -120,6 +132,7 @@ const combinedShape = {
 
 
 function getTransactionsHTML(data) {
+  // console.log(data);
   let html = '';
 
   const keys = `${getObjectKeysHTML(data)}`;
@@ -142,11 +155,29 @@ ${getHTMLObjectRows(data)}
 }
 
 function Settings(props) {
+  // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
 
-  const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const retrieveUser = async () => {
+    const userObject = await loadUserObject();
+    setUser(userObject.user);
+  };
 
   const clearAsyncStorage = async () => {
-      AsyncStorage.clear();
+    await AsyncStorage.clear();
+  };
+
+  /*
+  * > reset data from the app
+  */
+  const resetData = async () => {
+    await clearAsyncStorage()
+      .then(() => {
+        // console.log('Reset complete');
+        props.navigation.navigate('AuthLoading');
+      })
+      .catch((err) => console.log('Error while signing out!', err));
   };
 
   /*
@@ -157,24 +188,12 @@ function Settings(props) {
       'Reset Data',
       'Are you sure you want to reset all data from the app?',
       [
-        {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
+        { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
         // Calling resetData
-        {text: 'OK', onPress: () => resetData()}, 
+        { text: 'OK', onPress: () => resetData() },
       ],
-      { cancelable: false }
-    )
-  };
-  
-  /*
-  * > reset data from the app
-  */
-  const resetData = async () => {
-    await clearAsyncStorage()
-    .then(() => {
-      console.log('Reset complete');
-      props.navigation.navigate('AuthLoading');
-    })
-    .catch((err) => console.log('Error while signing out!', err))
+      { cancelable: false },
+    );
   };
 
   const send = () => {
@@ -188,27 +207,33 @@ function Settings(props) {
     });
   };
 
-  const sendTransactionsMail = async () => {
-    const userObject = await loadUserObject();
+  const sendTransactionsMail = (transactions) => {
+    try {
+      // statements
+      const html = getTransactionsHTML(transactions);
 
-    // const { transactions, email } = userObject.user;
+      
+      MailComposer.composeAsync({
+        recipients: [user.email],
+        subject: 'Exported Transactions',
+        body: html,
+        attachments: [],
+        isHtml: true,
+      });
 
-    // // transactions.reverse();
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
 
-    // try {
-    //   // statements
-    // } catch(e) {
-    //   // statements
-    //   console.log(e);
-    // }
 
-    MailComposer.composeAsync({
-      recipients: [userObject.user.email],
-      subject: `Exported Transactions`,
-      body:  getTransactionsHTML(userObject.user.transactions),
-      // attachments: [],
-      isHtml: true,
-    });
+    // MailComposer.composeAsync({
+    //   recipients: [user.email],
+    //   subject: 'Exported Transactions',
+    //   body: html,
+    //   // attachments: [],
+    //   isHtml: true,
+    // });
   };
 
   const onShare = async () => {
@@ -231,52 +256,52 @@ function Settings(props) {
     }
   };
 
-  const storeIsLocallyAuthenticated = async (bool) => {
-    try {
-      await AsyncStorage.setItem(global.isLocallyAuthenticatedKey, JSON.stringify(bool));
-    } catch (error) {
-      // Error saving data
-    }
-  };
+  // const storeIsLocallyAuthenticated = async (bool) => {
+  //   try {
+  //     await AsyncStorage.setItem(global.isLocallyAuthenticatedKey, JSON.stringify(bool));
+  //   } catch (error) {
+  //     // Error saving data
+  //   }
+  // };
 
 
-  const retrieveIsPasscodeEnabled = async () => {
+  // const retrieveIsPasscodeEnabled = async () => {
 
-    // // Saves to storage as a JSON-string
-    // AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(false))
+  //   // // Saves to storage as a JSON-string
+  //   // AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(false))
 
-    // Retrieves from storage as boolean
-    // AsyncStorage.getItem('isPasscodeEnabled', function (err, value) {
-    //     JSON.parse(value) // boolean false
-    // }
+  //   // Retrieves from storage as boolean
+  //   // AsyncStorage.getItem('isPasscodeEnabled', function (err, value) {
+  //   //     JSON.parse(value) // boolean false
+  //   // }
 
-    // Or if you prefer using Promises
-    await AsyncStorage.getItem('isPasscodeEnabled')
-        .then( function (value) {
-            JSON.parse(value) // boolean false
-            if (value === null) {
-              setIsPasscodeEnabled(false);
-            }
-            else if (value) {
-              // setAuthenticated(true);
-              setIsPasscodeEnabled(JSON.parse(value));
-              // console.log(value);
-            }
-        })
-  };
+  //   // Or if you prefer using Promises
+  //   await AsyncStorage.getItem('isPasscodeEnabled')
+  //       .then( function (value) {
+  //           JSON.parse(value) // boolean false
+  //           if (value === null) {
+  //             setIsPasscodeEnabled(false);
+  //           }
+  //           else if (value) {
+  //             // setAuthenticated(true);
+  //             setIsPasscodeEnabled(JSON.parse(value));
+  //             // console.log(value);
+  //           }
+  //       })
+  // };
 
-  const storeIsPasscodeEnabled = () => {
-    if (isPasscodeEnabled !== null) {
-      // Saves to storage as a JSON-string
-      AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(isPasscodeEnabled));
-      storeIsLocallyAuthenticated(JSON.stringify(!isPasscodeEnabled));
-    }
-  };
+  // const storeIsPasscodeEnabled = () => {
+  //   if (isPasscodeEnabled !== null) {
+  //     // Saves to storage as a JSON-string
+  //     AsyncStorage.setItem('isPasscodeEnabled', JSON.stringify(isPasscodeEnabled));
+  //     storeIsLocallyAuthenticated(JSON.stringify(!isPasscodeEnabled));
+  //   }
+  // };
 
-  async function passcodeBtnPressed() {
-    setIsPasscodeEnabled(!isPasscodeEnabled);
-    // storeIsPasscodeEnabled();
-  }
+  // async function passcodeBtnPressed() {
+  //   setIsPasscodeEnabled(!isPasscodeEnabled);
+  //   // storeIsPasscodeEnabled();
+  // }
 
   function customizeCategoriesBtnPressed() {
     props.navigation.navigate('CustomizeCategoriesScreen');
@@ -307,7 +332,11 @@ function Settings(props) {
 
   function exportBtnPressed() {
     // console.log('Export btn pressed');
-    sendTransactionsMail();
+    if (user.transactions.length > 0) {
+      sendTransactionsMail(user.transactions);
+    } else {
+      Alert.alert('You have no transactions')
+    }
   }
 
   function changePasswordBtnPressed() {
@@ -336,35 +365,27 @@ function Settings(props) {
   }
 
   useEffect(() => {
-    retrieveIsPasscodeEnabled();
+    // retrieveIsPasscodeEnabled();
+    retrieveUser();
   }, [])
 
-  useEffect(() => {
-    if (isPasscodeEnabled !== null) {
-      console.log('passcode:',isPasscodeEnabled);
-      storeIsPasscodeEnabled();
-    }
+  // useEffect(() => {
+  //   if (isPasscodeEnabled !== null) {
+  //     console.log('passcode:',isPasscodeEnabled);
+  //     storeIsPasscodeEnabled();
+  //   }
     
-    return () => {
-      // effect
-    };
-  }, [isPasscodeEnabled])
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [isPasscodeEnabled])
 
   return (
     <SafeAreaView
-      style={
-        {
-          flex: 1,
-          backgroundColor: colors.dark,
-        }
-      }
+      style={styles.container}
     >
-      <ScrollView
-        scrollEnabled={false}
-        contentContainerStyle={styles.container}
-      >
       
-        <NavigationEvents
+{/*        <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={() => console.log('Settings')} // {(payload) => clearState()}
             // other props
@@ -372,26 +393,37 @@ function Settings(props) {
             // onWillBlur={payload => console.log('will blur',payload)}
             // onDidBlur={payload => console.log('did blur',payload)}
           />
-      
+      */}
 
         <View style={rectangle5} />
 
         <View
           style={
             {
-              flex: 0.25,
-
-              // top: '55%',
+              flex: 0.3,
 
               // borderWidth: 1,
               // borderColor: 'white',
               // borderStyle: 'solid',
             }
           }
-        ><ProfileRectangle />
+        >
+          <ProfileRectangle />
         </View>
 
-        <SubscriptionRect />
+        <View
+          style={
+            {
+              flex: 0.3,
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }
+          }
+        >
+          <SubscriptionRect />
+        </View>
 
         {/* User Options */}
 
@@ -399,10 +431,9 @@ function Settings(props) {
           style={
             {
               flex: 1,
+              // justifyContent: 'center',
 
               // top: '55%',
-
-              // paddingTop: '10%',
 
               // borderWidth: 1,
               // borderColor: 'white',
@@ -412,16 +443,17 @@ function Settings(props) {
         >
           <UserOptions
             onPress={onPress}
-            isPasscodeEnabled={isPasscodeEnabled}
+            // isPasscodeEnabled={isPasscodeEnabled}
           />
         </View>
 
         <View
           style={
             {
-              flex: 0.5,
+              flex: 0.4,
+              alignItems: 'center',
 
-              // top: '55%',
+              // justifyContent: 'space-around',
 
               // borderWidth: 1,
               // borderColor: 'white',
@@ -429,12 +461,21 @@ function Settings(props) {
             }
           }
         >
+        <View style={
+          {
+            width: '90%',
+            // height: 0.1,
+            borderStyle: 'solid',
+            borderWidth: 0.5,
+            borderColor: colors.dark
+          }
+        } />
           <View
             style={
               {
-                flex: 1,
-                justifyContent: 'center',
-
+                // flex: 1,
+                // justifyContent: 'space-around',
+                // justifyContent: 'center',
 
                 // borderWidth: 1,
                 // borderColor: 'white',
@@ -449,39 +490,54 @@ function Settings(props) {
 
           </View>
 
-          <View
-            style={
-              {
-                flex: 1,
-                flexDirection: 'row',
+          <View style={{
+            flex: 1,
+            // justifyContent: 'center',
+            // alignItems: 'center',
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }}>
+            <View
+              style={
+                {
+                  flex: 1,
+                  width: 340,
+                  flexDirection: 'row',
 
-                alignItems: 'center',
-                justifyContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
 
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
+                  // justifyContent: 'space-around',
+
+                  // borderWidth: 1,
+                  // borderColor: 'white',
+                  // borderStyle: 'solid',
+                }
               }
-            }
-          >
-           
+            >
+             
 
-            <RateUsButton onPress={() => rateUsBtnPressed()} />
+              <RateUsButton onPress={() => rateUsBtnPressed()} />
 
-            {/*<ShareButton onPress={() => shareBtnPressed()} />*/}
+              {/*<ShareButton onPress={() => shareBtnPressed()} />*/}
 
+            </View>
           </View>
 
           <View style={{
             flex: 0.5,
             justifyContent: 'center',
+
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
           }}
           >
             <VersionCredit />
           </View>
         </View>
-
-      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -505,88 +561,93 @@ Settings.navigationOptions = ({ navigation }) => {
       [
         {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
         // Calling signOut
-        {text: 'OK', onPress: () => signOut()}, 
+        { text: 'OK', onPress: () => signOut() }, 
       ],
-      { cancelable: false }
+      { cancelable: false },
     )
   }
   // Confirm sign out
   const signOut = async () => {
     await Auth.signOut()
-    .then(() => {
-      console.log('Sign out complete');
-      navigation.navigate('AuthLoading');
-    })
-    .catch((err) => console.log('Error while signing out!', err))
-  }
+      .then(() => {
+        console.log('Sign out complete');
+        navigation.navigate('AuthLoading');
+      })
+      .catch((err) => console.log('Error while signing out!', err))
+  };
 
   const navbar = {
     title: 'Settings',
-    headerTransparent: {},
+    // headerTransparent: {},
+    headerStyle: {
+      backgroundColor: colors.dark,
+
+    },
     headerTintColor: colors.white,
 
-    // headerRight: (
-    //   <View
-    //     style={{
-    //       flex: 1,
-    //       justifyContent: 'center',
-    //       alignItems: 'center',
-    //       marginHorizontal: 8,
-    //       width: '100%',
-    //       height: '100%',
-    //     }}
-    //   >
-    //     <TouchableOpacity style={styles.backBtn} onPress={() => backBtnPressed()}>
-    //       <View style={combinedShape}>
-    //         <Image source={global.xIconWhite} style={styles.backBtnImage} />
-    //       </View>
-    //     </TouchableOpacity>
-    //   </View>
-    // ),
 
+/*    headerRight: (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginHorizontal: 8,
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        <TouchableOpacity style={styles.backBtn} onPress={() => backBtnPressed()}>
+          <View style={combinedShape}>
+            <Image source={global.xIconWhite} style={styles.backBtnImage} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    ),
+*/
     // headerTitleStyle: {
     //   // borderWidth: 1,
     //   // borderColor: 'white',
     //   // borderStyle: 'solid',
     // },
 
-    // headerLeft: (
-    //   <View style={
-    //     {
-    //       width: '100%',
-    //       height: '100%',
+/*    headerLeft: (
+      <View style={
+        {
+          // width: '100%',
+          // height: '100%',
 
-    //       justifyContent: 'center',
-    //       // alignItems: 'center',
+          justifyContent: 'center',
+          // alignItems: 'center',
 
-    //       marginHorizontal: 14,
+          marginHorizontal: 14,
 
-    //       // borderWidth: 1,
-    //       // borderColor: 'white',
-    //       // borderStyle: 'solid',
-    //     }
-    //   }
-    //   >
-    //     <TouchableOpacity onPress={signOutAlert}>
-    //       <Text
-    //         style={
-    //           {
-    //             // width: 42,
-    //             height: 20,
-    //             fontFamily: 'SFProDisplay-Regular',
-    //             fontSize: 17,
-    //             fontWeight: 'normal',
-    //             fontStyle: 'normal',
-    //             letterSpacing: 0.13,
-    //             color: colors.pinkRed,
-    //           }
-    //         }
-    //       >
-    //         Log Out
-    //       </Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // ),
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }
+      }
+      >
+        <TouchableOpacity onPress={signOutAlert}>
+          <Text
+            style={
+              {
+                // width: 42,
+                height: 20,
+                fontFamily: 'SFProDisplay-Regular',
+                fontSize: 17,
+                fontWeight: 'normal',
+                fontStyle: 'normal',
+                letterSpacing: 0.13,
+                color: colors.pinkRed,
+              }
+            }
+          >
+            Log Out
+          </Text>
+        </TouchableOpacity>
+      </View>
+    ),*/
 
     // headerLeft: null,
 

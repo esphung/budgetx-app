@@ -9,7 +9,7 @@ UPDATED:    12/10/2019 02:26 PM
 
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Ionicons } from 'expo-vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 
@@ -34,7 +34,7 @@ import {
   FlatList,
   // Animated,
   // TextInput,
-  Image,
+  // Image,
 } from 'react-native';
 
 import {
@@ -49,9 +49,9 @@ import { AppLoading } from 'expo';
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import countries from 'main/Countries';
+import countries from '../../Countries';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
 import styles from './styles';
 

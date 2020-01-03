@@ -37,14 +37,14 @@ import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
 import {
   loadUserObject,
   // saveUserObject,
 } from '../../storage/UserStorage';
 
-import avatarPicture from 'main/assets/avatar.png';
+import avatarPicture from '../../../assets/avatar.png';
 
 // const isValidEmail = require('../../functions/isValidEmail');
 
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 
 
 const HeaderLeftView = () => {
-  const [boldMessage, setBoldMessage] = useState(`Welcome to ${global.appName} ${global.appVersion}`);
+  const [boldMessage, setBoldMessage] = useState(`Welcome to ${global.appName}`);
 
   const [normalMessage, setNormalMessage] = useState('Get cross-device sync');
 
@@ -154,13 +154,13 @@ const HeaderLeftView = () => {
       // ...
     ]);
    // this.setState({ ready: true });
-   // setIsReady(true);s
+   // setIsReady(true);
   }
 
 
   function clearState() {
-    setBoldMessage('') // (`${global.appName} ${global.appVersion}`);
-    setNormalMessage('') // (`Get device cross-sync!`);
+    // setBoldMessage('') // (`${global.appName} ${global.appVersion}`);
+    // setNormalMessage('') // (`Get device cross-sync!`);
 
     retrieveStoredUserImage(); // load stored user
   }
@@ -318,7 +318,7 @@ const HeaderLeftView = () => {
   const appLoading = (
     <AppLoading
       startAsync={_cacheResourcesAsync}
-      onFinish={() => setIsReady(true)}
+      onFinish={setIsReady}
       onError={console.warn}
     />
   );

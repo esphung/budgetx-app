@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   View,
   Text,
-  SafeAreaView,
+  // SafeAreaView,
   Image,
 } from 'react-native';
 
@@ -14,7 +14,8 @@ import colors from '../../../colors';
 
 // text style
 const copy3 = {
-  width: 215,
+  // width: 215,
+  width: '80%',
   // height: 40,
   fontFamily: 'SFProDisplay-Semibold',
   fontSize: 17,
@@ -22,6 +23,8 @@ const copy3 = {
   fontStyle: 'normal',
   letterSpacing: 0.13,
   color: colors.shamrockGreen,
+
+  textAlign: 'center',
 
   paddingHorizontal: 6,
 
@@ -42,9 +45,10 @@ const oval2 = {
 
 // view rectangle
 const mask = {
+  // flex: 1,
   flexDirection: 'row',
   width: '93%',
-  height: '100%',
+  // height: '100%',
   borderRadius: 9,
   backgroundColor: colors.dark,
   shadowColor: '#0f1725',
@@ -60,68 +64,35 @@ const mask = {
   // borderStyle: 'solid',
 };
 
+const message = `Thank you for using ${global.appName} version ${global.appVersion}!`;
 
 function SubscriptionRect() {
-  const [message, setMessage] = useState(`Thank you for using ${global.appName} version ${global.appVersion}!`);
   const view = (
-    <SafeAreaView
-      style={
-        {
-          flex: 0.35,
+    <View
+      style={{
+        flex: 1,
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }
-      }
+        padding: 14,
+
+        alignItems: 'center',
+        justifyContent: 'center',
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }}
     >
 
-      <View
-        style={{
-          flex: 0.2,
-          width: '100%',
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }}
-      />
-
-      <View
-        style={{
-          flex: 1,
-          width: '100%',
-
-          alignItems: 'center',
-          justifyContent: 'center',
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }}
-      >
-
-        <TouchableOpacity disabled style={mask}>
-          <View
-            style={
-              {
-                flex: 0.25,
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
-              }
-
-            }
-          >
-            <View>
-              <Image resizeMode="cover" style={oval2} source={global.appIcon} />
-            </View>
-          </View>
-          <View style={
+      <TouchableOpacity disabled style={mask}>
+        <View
+          style={
             {
-              flex: 0.75,
-              alignItems: 'center',
-              justifyContent: 'center',
+              flex: 0.25,
+              backgroundColor: colors.shamrockGreen,
+
+              padding: 10,
+
+              // opacity: 0.77,
 
               // borderWidth: 1,
               // borderColor: 'white',
@@ -129,27 +100,35 @@ function SubscriptionRect() {
             }
 
           }
-          >
-            <Text style={copy3}>
-              { message }
-            </Text>
+        >
+          <View>
+            <Image
+              resizeMode="contain"
+              style={oval2}
+              source={global.bankImageGreen}
+            />
           </View>
-        </TouchableOpacity>
+        </View>
+        <View style={
+          {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
 
-      </View>
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
 
-      <View
-        style={{
-          flex: 0.2,
-          width: '100%',
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }}
-      />
+        }
+        >
+          <Text style={copy3}>
+            { message }
+          </Text>
+        </View>
+      </TouchableOpacity>
 
-
-    </SafeAreaView>
+    </View>
   );
   return view;
 }

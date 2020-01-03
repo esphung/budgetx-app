@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
 const VersionCredit = () => {
   const view = (

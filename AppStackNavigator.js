@@ -8,8 +8,6 @@ UPDATED:    11/27/2019 12:40 AM
             12/11/2019 05:34 PM | added Customize Categories Screen
 */
 
-
-
 // function truncateString(str, num) {
 //   if (str.length <= num) {
 //     return str
@@ -27,17 +25,14 @@ import Settings from './src/screens/Settings';
 // import Search from './src/screens/Search';
 import Terms from './src/screens/Terms';
 
-import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen'
+import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen';
 
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 
-//Import HOC component that instantiates the connection to the AppSync API
-import ApolloProviderHOC from './src/components/ApolloProviderHOC';
+import colors from './colors';
 
 const StackNavigator = createStackNavigator({
-  // Login: {
-  //   screen: Login,
-  // },
+
   Home: {
     screen: Home, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
@@ -70,6 +65,12 @@ const StackNavigator = createStackNavigator({
       headerBackTitle: '',
     }),
   },
+},
+{
+  headerMode: 'screen', 
+  cardStyle: {
+    backgroundColor: colors.darkTwo,
+  }
 
   // Search: {
   //   screen: Search,

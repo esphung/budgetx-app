@@ -16,120 +16,68 @@ UPDATED:    Fri Nov  1 13:20:51 2019
                                   Initialized version 1.0.1
             12/14/2019 02:14 AM | Fixed photos permission, passcode enable
             12/30/2019 07:46 AM | AWS Appsync
+            01/02/2020 12:47 PM | Uploaded buggy 1.0.36, no user image on load
 */
 
+// console.disableYellowBox = true;
+
 import React, { useState, useEffect } from 'react';
-
-// import {
-//   Platform,
-//   AsyncStorage,
-//   Alert,
-// } from 'react-native';
-
-// import * as LocalAuthentication from 'expo-local-authentication';
 
 import * as Font from 'expo-font';
 
 import { NetworkProvider } from 'react-native-offline';
+
+import { Asset } from 'expo-asset';
 
 import { AppLoading } from 'expo';
 
 // Amplify imports and config
 import Amplify from '@aws-amplify/core';
 import config from './aws-exports';
-Amplify.configure(config);
-
-// import API, { graphqlOperation } from '@aws-amplify/api';
 
 import SwitchNavigator from './SwitchNavigator';
 
 import './globals'; // global values
 
+Amplify.configure(config);
+
+// import API, { graphqlOperation } from '@aws-amplify/api';
+
 function App() {
   // state hooks
-  const [fontsAreLoaded, setFontsAreLoaded] = useState(null);
+  // const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
-  async function _cacheResourcesAsync() {
+  async function cacheResourcesAsync() {
+    // fonts
     try {
       await Font.loadAsync({
         'SFProDisplay-Regular': global.SFProDisplayRegularFont,
         'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
       });
       // stored fonts have been loaded
-      setFontsAreLoaded(true);
+      // setFontsAreLoaded(true);
     } catch (err) {
       // console.log('error: ', err);
     }
   }
 
-  useEffect(() => {
-    // console.log('isLocallyAuthenticated:', isLocallyAuthenticated);
-    // console.log('isPasscodeEnabled:', isPasscodeEnabled);
-    /*
-    * > if passcode is enabled, display local authentication passcode input modal
-    */
-    // if (isPasscodeEnabled === true) {
-    //   if (Platform.OS === 'android') {
-    //     setModalVisible(modalVisible);
-    //   } else {
-    //     scanFingerPrint();
-    //   }
-    // }
+  if (!isReady) {
+    return (
+      <AppLoading
+        startAsync={cacheResourcesAsync}
+        onFinish={() => setIsReady(true)}
+        onError={console.warn}
+      />
+    );
+  }
 
-    if (fontsAreLoaded === true) {
-      setIsLoading(false);
-    }
-
-  }, [fontsAreLoaded]);
-
-  // useEffect(() => {
-  //   if (isLocallyAuthenticated) {
-  //     storeIsLocallyAuthenticated(isLocallyAuthenticated);
-  //     console.log('Stored isLocallyAuthenticated as:', isLocallyAuthenticated);
-  //   }
-  // }, [isLocallyAuthenticated])
-
-  // useEffect(() => {
-  //   // console.log('Mount connection change');
-  //   return () => {
-  //     // effect
-  //     // console.log('clean up connectionChange');
-  //     NetInfo.isConnected.removeEventListener(
-  //       'connectionChange',
-  //       handleConnectionChange
-  //     );
-  //   };
-  // }, [handleConnectionChange]);
-
-  // useEffect(() => {
-  //   console.log('isOnline:', isOnline);
-  //   return () => {
-  //     // isOnline side effect
-  //   };
-  // }, [isOnline])
-
-
-  const appLoading = (
-    <AppLoading
-      startAsync={_cacheResourcesAsync}
-      onFinish={() => setIsLoading(false)}
-      onError={console.warn}
-    />
-  );
-
-  let app = (
+  return (
     <NetworkProvider>
       <SwitchNavigator />
     </NetworkProvider>
   );
-
-  if (!isLoading) {
-    return app;
-  } else {
-    return appLoading;
-  }
 }
 
 export default App;

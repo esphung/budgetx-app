@@ -6,7 +6,7 @@ import React, {
 
 import { AppLoading } from 'expo';
 
-import { Ionicons } from 'expo-vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 

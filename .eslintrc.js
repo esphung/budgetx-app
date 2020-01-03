@@ -11,7 +11,7 @@ module.exports = {
     'comma-dangle': 'off'
   },
   'globals': {
-    "fetch": false
+    "fetch": true
   },
   "plugins": [
     // ...
@@ -27,8 +27,9 @@ module.exports = {
   //   "import/extensions": 0,
   //   "no-underscore-dangle": ["error", { "allow": ["current", "_root"] }]
   // }
-    "rules": {
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
-    }
+    // "rules": {
+    //     "react-hooks/rules-of-hooks": "error",
+    //     "react-hooks/exhaustive-deps": "warn",
+    //     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    // }
 }
