@@ -187,7 +187,7 @@ const initialState = {
   slideViewBounceValue: new Animated.Value(300),
   currentBalance: 0.00,
   currentSpent: 0.00,
-  currentPayee: null,
+  currentPayee: '',
   currentTransaction: null,
   currentNote: '',
   isReady: false,
@@ -210,7 +210,7 @@ function Home() {
   const [currentNote, setCurrentNote] = useState(initialState.currentNote);
   const [slideViewBounceValue, setSlideViewBounceValue] = useState(initialState.slideViewBounceValue);
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
-  // const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
+  const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
   const [isReady, setIsReady] = useState(initialState.isReady);
 
   const [storageKey, setStorageKey] = useState(null);
@@ -223,8 +223,6 @@ function Home() {
     setCurrentPayee(null);
     setCurrentNote('');
 
-
-
     setCurrentDate(initialState.currentDate);
     setCurrentAmount(initialState.currentAmount);
     setCurrentCategory(initialState.currentCategory);
@@ -232,16 +230,18 @@ function Home() {
     setCurrentType(initialState.currentType);
     setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
     setIsSlideViewHidden(initialState.isSlideViewHidden);
-    // setIsCurrentTransaction(initialState.isCurrentTransaction);
+    setIsCurrentTransaction(initialState.isCurrentTransaction);
 
     setStorageKey(null);
+    // setIsReady(false);
 
     // retrieveStoredTransactions(); // load stored user
-    _cacheResourcesAsync();
+    cacheResourcesAsync();
     // console.log('Cleared');
-  };
+  }
 
-  async function _cacheResourcesAsync() {
+
+  async function cacheResourcesAsync() {
     // console.log('loading');
     Auth.currentAuthenticatedUser()
       .then((cognito) => {
@@ -345,7 +345,7 @@ function Home() {
     // }
 
     await storeUserTransaction(transaction);
-    clearState();
+    // clearState();
   };
   const showSlideView = useCallback(
     () => {
@@ -480,15 +480,16 @@ function Home() {
   //   // };
   // }, []);
 
+
+
   useEffect(() => {
     if (storageKey) {
       // load user storage
       retrieveStoredSettingsTransactions(storageKey)
-    } else {
-      setIsReady(false);
     }
     return () => {
       // effect
+      setIsReady(false);
     };
   }, [storageKey])
 

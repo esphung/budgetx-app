@@ -5,8 +5,7 @@ import {
   Alert,
   StyleSheet,
   View,
-  // ActivityIndicator,
-  ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -15,9 +14,9 @@ import Constants from 'expo-constants';
 
 import * as Permissions from 'expo-permissions';
 
-import { NetworkConsumer } from 'react-native-offline';
+// import { NetworkConsumer } from 'react-native-offline';
 
-import { Asset } from 'expo-asset';
+// import { Asset } from 'expo-asset';
 
 import { AppLoading } from 'expo';
 
@@ -25,7 +24,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import mime from 'mime-types';
 
-import SpinnerMask from '../SpinnerMask';
+import Storage from '@aws-amplify/storage'
+
+import Auth from '@aws-amplify/auth';
 
 // import SpinnerMask from '../SpinnerMask';
 
@@ -37,58 +38,30 @@ import {
   saveSettingsStorage,
 } from '../../storage/SettingsStorage';
 
-import Auth from '@aws-amplify/auth';
-
-import Storage from '@aws-amplify/storage'
-
 
 function ProfileUserImage() {
   const [image, setImage] = useState(null);
-
-  const [user, setUser] = useState(null);
 
   const [isReady, setIsReady] = useState(false);
 
   const [storageKey, setStorageKey] = useState(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   async function clearState() {
     setIsReady(false);
     setStorageKey(null);
     setImage(null);
-    setUser(null);
+    // setUser(null);
+    setIsLoading(false);
 
     // retrieveCognitoUser();
-    _cacheResourcesAsync();
+    retrieveCognitoUserKey();
   }
-
-  async function retrieveCognitoUser() {
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-        setStorageKey(cognito.username);
-
-        // setEmail(cognito.attributes.email);
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
-  }
-
-  // const loadUserProfilePicture = async () => {
-  //   // retrieve the item
-  //   const storedImage = await Storage.get(`${storagePath}images/profile.jpg`);
-  //   // console.log('Loaded image:', storedImage)
-  //   if (storedImage) {
-  //     setOnlineImageDoesNotExist(false);
-  //   } else {
-  //     setOnlineImageDoesNotExist(true);
-  //   }
-  // };
 
   // this handles the image upload to S3
   const handleImagePicked = async (pickerResult) => {
+    setIsLoading(true);
     const imageName = `@${storageKey}/picture.jpg`;
     const fileType = mime.lookup(pickerResult.uri);
     const access = { level: 'public', contentType: fileType }; // 'image/jpeg'
@@ -106,6 +79,8 @@ function ProfileUserImage() {
     setImage(pickerResult);
 
     saveProfileImage(pickerResult);
+
+    setIsLoading(false);
   };
 
   async function saveProfileImage(newImage) {
@@ -120,28 +95,30 @@ function ProfileUserImage() {
     // setIsReady(true);
   }
 
-  async function retrieveStoredUserImage() {
-    // load stored user transactions
-    try {
-      const userObject = await loadSettingsStorage(storageKey);
+  // async function retrieveStoredUserImage() {
+  //   // load stored user transactions
+  //   try {
+  //     const userObject = await loadSettingsStorage(storageKey);
 
-      // set stored user image
-      if (userObject.image) {
-        setImage(userObject.image);
-      }
-      
-      //   .catch((err) => console.log(err));
-    } catch (e) {
-      // statements
-      // Alert.alert('Could not load image');
-    }
-    // loadCognitoUser();
-  }
+  //     // set stored user image
+  //     if (userObject.image) {
+  //       setImage(userObject.image);
+  //     }
+  //     //   .catch((err) => console.log(err));
+  //   } catch (e) {
+  //     // statements
+  //     // Alert.alert('Could not load image');
+  //   }
+  //   // loadCognitoUser();
+  // }
+
   async function getPermissionAsync() {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
         Alert.alert('Sorry, we need camera roll permissions to make this work!');
+      } else {
+        pickImage();
       }
     }
   }
@@ -153,49 +130,16 @@ function ProfileUserImage() {
       aspect: [4, 3],
       quality: 1,
     });
-
     // console.log(result);
-
     if (!result.cancelled) {
       handleImagePicked(result);
     }
   }
 
-  async function loadCognitoUser() {
-    await Auth.currentAuthenticatedUser()
-      .then((cognitoUser) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-
-        setUser(cognitoUser);
-      })
-      .catch((err) => {
-        // Alert.alert(err);
-        // console.log(err);
-      });
-  }
-
-  // const uploadLocalTransactions = async () => {
-  //   const userObject = await loadUserObject(); // load storage object
-  //   // if (userObject) {
-  //   //   console.log(userObject.user.transactions)
-  //   // }
-  //   // Upload file to S3
-  //   Storage.put(storagePath + 'test.txt', 'Hello')
-  //       .then (result => {
-  //       // console.log(result);
-  //       }) // {key: "test.txt"}
-  //       .catch(err => {
-  //         // console.log(err);
-  //         Alert.alert(err);
-  //       });
-
-  // }
-
-  async function retrieveStoredSettingsImage(user_storage_key) {
+  async function retrieveStoredSettingsImage(key) {
     // load stored user transactions
     try {
-      const storageObj = await loadSettingsStorage(user_storage_key);
+      const storageObj = await loadSettingsStorage(key);
 
       // set stored user image
       if (storageObj) {
@@ -212,11 +156,9 @@ function ProfileUserImage() {
     }
   }
 
-
-
-  useEffect(() => {
-    getPermissionAsync();
-  }, []);
+  // useEffect(() => {
+  //   getPermissionAsync();
+  // }, []);
 
   useEffect(() => {
     // console.log('Image updated');
@@ -230,10 +172,10 @@ function ProfileUserImage() {
     if (storageKey) {
       retrieveStoredSettingsImage(storageKey);
     }
-  }, [storageKey])
+  }, [storageKey]);
 
 
-  async function _cacheResourcesAsync() {
+  async function retrieveCognitoUserKey() {
     Auth.currentAuthenticatedUser()
       .then((cognito) => {
         // setUserToken(user.signInUserSession.accessToken.jwtToken);
@@ -263,26 +205,39 @@ function ProfileUserImage() {
     />
   );
 
-  const imageView = (
-    <TouchableOpacity
-      onPress={pickImage}
+  // const imageView = (
+  //   <TouchableOpacity
+  //     onPress={pickImage}
+  //     style={
+  //      styles.userImageMaskView
+  //     }
+  //   >
+  //     <Image
+  //       // source={global.placeholderUserImage}
+  //       source={image}
+  //       style={
+  //         {
+  //           width: '100%',
+  //           height: '100%',
+  //           borderRadius: 26,
+  //         }
+  //       }
+  //     />
+  //   </TouchableOpacity>
+  // );
+
+  const spinnerView = (
+    <View
       style={
-       styles.userImageMaskView
+        {
+          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent',
+        }
       }
     >
-      <Image
-        // source={global.placeholderUserImage}
-        source={image}
-        style={
-          {
-            width: '100%',
-            height: '100%',
-            borderRadius: 26,
-          }
-        }
-      />
-    </TouchableOpacity>
+      <ActivityIndicator size="large" color={colors.offWhite} />
+    </View>
   );
+
 
   // const view =
   //   <NetworkConsumer>
@@ -290,28 +245,33 @@ function ProfileUserImage() {
   //       isConnected ? (
   //         imageView
   //       ) : (
-              
   //       )
   //     )}
   //   </NetworkConsumer>
 
-  if (isReady) {
-    return <View style={styles.container}>
-        <TouchableOpacity
-
-          onPress={pickImage}
-          style={styles.userImageMaskView}
-        >
-          <Image
-
-            style={styles.userImage}
-            source={image} // {global.placeholder500x500}
-          />
-        </TouchableOpacity>
-        </View>
+  if (isLoading) {
+    return spinnerView;
   } else {
-    return appLoading;
-    // return <SpinnerMask />;
+    if (isReady) {
+      return (
+        <View style={styles.container}>
+          <TouchableOpacity
+
+            onPress={getPermissionAsync}
+            style={styles.userImageMaskView}
+          >
+            <Image
+
+              style={styles.userImage}
+              source={image} // {global.placeholder500x500}
+            />
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return appLoading;
+      // return <SpinnerMask />;
+    }
   }
 }
 

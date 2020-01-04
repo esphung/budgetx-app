@@ -6,6 +6,13 @@ CREATED:   12/01/2019 12:35 AM
 UPDATED:
 */
 
+// type User @model {
+//   id: ID!
+//   name: String!
+//   avatar: String
+//   # friends: [User] @connection(name: "friends")
+// }
+
 import defaultCategories from '../data/categories';
 
 // User function with multiple constructors
@@ -22,7 +29,7 @@ function User(username) {
 
 
 
-  
+
   // this.created = currentDate;
   // this.given = ''; // first name
   // this.surname = '';

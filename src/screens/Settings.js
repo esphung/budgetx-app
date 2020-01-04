@@ -71,6 +71,7 @@ import {
 import {
   loadSettingsStorage,
   saveSettingsStorage,
+  clearSettingsStorage,
 } from '../storage/SettingsStorage';
 
 import Auth from '@aws-amplify/auth';
@@ -222,12 +223,13 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
-    await clearAsyncStorage()
-      .then(() => {
-        // console.log('Reset complete');
-        props.navigation.navigate('AuthLoading');
-      })
-      .catch((err) => console.log('Error while signing out!', err));
+    clearSettingsStorage(storageKey);
+    // await clearAsyncStorage()
+    //   .then(() => {
+    //     // console.log('Reset complete');
+    //     props.navigation.navigate('AuthLoading');
+    //   })
+    //   .catch((err) => console.log('Error while signing out!', err));
   };
 
   /*
@@ -513,7 +515,7 @@ function Settings(props) {
         <View
           style={
             {
-              flex: 0.4,
+              flex: 0.5,
               alignItems: 'center',
 
               // justifyContent: 'space-around',
@@ -524,7 +526,7 @@ function Settings(props) {
             }
           }
         >
-        <View style={
+{/*        <View style={
           {
             width: '90%',
             // height: 0.1,
@@ -532,7 +534,7 @@ function Settings(props) {
             borderWidth: 0.5,
             borderColor: colors.dark
           }
-        } />
+        } />*/}
           <View
             style={
               {

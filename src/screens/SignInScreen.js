@@ -12,14 +12,14 @@ import {
   // StyleSheet,
   View,
   Text,
-  AsyncStorage,
+  // AsyncStorage,
   TouchableOpacity,
   TouchableWithoutFeedback,
   SafeAreaView,
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
-  Alert,
+  // Alert,
   // Animated,
 } from 'react-native';
 
@@ -29,31 +29,25 @@ import {
   Input,
 } from 'native-base';
 
-import {
-  loadUserObject,
-  saveUserObject,
-} from 'main/src/storage/UserStorage';
+// import {
+//   loadUserObject,
+//   saveUserObject,
+// } from 'main/src/storage/UserStorage';
 
-import { Asset } from 'expo-asset';
+// import { Asset } from 'expo-asset';
 
-import { AppLoading } from 'expo';
+// import { AppLoading } from 'expo';
 
 // AWS Amplify
-import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+import Auth from '@aws-amplify/auth';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
 import styles from './styles';
 
-import OfflineScreen from '../screens/OfflineScreen';
+import OfflineScreen from './OfflineScreen';
 
 import { isValidUsername, getButtonStyle } from './functions';
-
-
-const messages = {
-  emptyUsernameOrPassword: 'Enter username and password',
-  mustPressSubmitBtn: 'Hit the submit button',
-}
 
 function SignInScreen(props) {
   // state hooks
@@ -71,73 +65,6 @@ function SignInScreen(props) {
 
   const [helpMessage, setHelpMessage] = useState(null);
 
-  const [isMessageVisible, setIsMessageVisible] = useState(false);
-
-  const [isHelpIconVisible, setIsHelpIconVisible] = useState(true);
-
-  const [helpIcon, setHelpIcon] = useState('md-help');
-
-  const [user, setUser] = useState(null);
-
-  // const [user, setUser] = useState(null);
-
-  // async _cacheResourcesAsync() {
-  //   const images = [require('./assets/snack-icon.png')];
-
-  //   const cacheImages = images.map(image => {
-  //     return Asset.fromModule(image).downloadAsync();
-  //   }); 
-  //   return Promise.all(cacheImages);
-  // }import React from 'react'
-
-  function handleHelpBtnPressed() {
-    if (helpMessage) {
-      setHelpMessage(null);
-      setHelpIcon('md-help');
-    } else if (!username) {
-      usernameInputRef.current._root.focus();
-      setHelpMessage(messages.emptyUsernameOrPassword);
-    } else if (!password) {
-      passwordInputRef.current._root.focus();
-      setHelpMessage(messages.emptyUsernameOrPassword);
-    } else if ((isValidUsername(username)) && password) {
-      setHelpMessage(messages.mustPressSubmitBtn);
-    }
-  }
-  
-  const clearState = () => {
-    setIsMessageVisible(false);
-    setHelpMessage(null);
-    setIsLoading(false);
-    setIsSignInBtnEnabled(false);
-    setPassword(null);
-    setUsername(null);
-    setIsHelpIconVisible(true);
-
-    setHelpIcon('md-help');
-  }
-
-  useEffect(() => {
-
-    if (helpMessage) {
-      if (!username) {
-        // setHelpIcon('md-help')
-        setHelpIcon('md-checkbox-outline');
-      } else if (helpMessage && username && (!password)) {
-        setHelpIcon('md-checkbox-outline');
-        setHelpMessage(messages.emptyUsernameOrPassword);
-      }
-      else {
-        setHelpIcon('md-checkbox');
-      }    
-    }
-
-    // return () => {
-    //   effect
-    // };
-  }, [isHelpIconVisible, helpMessage, username])
-
-
   // methods
   const signIn = async () => {
     setIsLoading(true);
@@ -146,25 +73,21 @@ function SignInScreen(props) {
     // // console.log('userToken set:', userTokenValue);
     // props.navigation.navigate('AuthLoading');
     await Auth.signIn(username, password)
-      .then((cognitoUser) => {
-        // setUser(cognitoUser);
-        console.log(cognitoUser);
+      .then((cognito) => {
+        // console.log(cognito);
 
-        setUser(cognitoUser)
-
-
-
-        props.navigation.navigate('AuthLoading');
+        if (cognito) {
+          // set username key here!
+          props.navigation.navigate('AuthLoading');
+          // setIsLoading(false);
+        }
       })
       .catch((err) => {
         // console.log('Error when signing in: ', err.message);
         // Alert.alert('Error when signing in: ', err.message);
         setHelpMessage(err.message);
+        setIsLoading(false);
       });
-    
-
-
-    // setIsLoading(false);
   };
 
   // user input handlers
@@ -182,43 +105,45 @@ function SignInScreen(props) {
     // console.log('key:', key);
     // console.log('value:', value);
 
-  if (key === 'username') {
+    if (key === 'username') {
+      if (value.length < 6) {
+        setHelpMessage('Username too short');
+      } else {
+        setHelpMessage(null);
+      }
       setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'password') {
       setPassword(value.replace(' ', ''));
-    } 
-    // this.setState({[key]: value})
-  }
-
-  async function retrieveLocalUser() {
-    const localUserObject = await loadUserObject();
-    
-
-    setUser(localUserObject)
+    }
   }
 
   useEffect(() => {
     // console.log('username:', username);
     // console.log('password:', password);
 
-    
+    if (!username) {
+      setHelpMessage(null);
+    } else if (username && username.length < 6) {
+      setIsSignInBtnEnabled(false);
+    }
 
-    if (username && isValidUsername(username) && password) {
+    else if (username.length >= 6 && isValidUsername(username) && password) {
       setIsSignInBtnEnabled(true);
       // console.log(username);
-      setIsHelpIconVisible(false);
+      // setIsHelpIconVisible(false);
     } else {
       setIsSignInBtnEnabled(false);
     }
-    return () => {
-      // effect
-    };
+    // return () => {
+    //   // effect
+    //   // console.log('clean up');
+    // };
   }, [username, password, isLoading]);
 
   const signin = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled={false}>
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
             <Container style={styles.infoContainer}>
@@ -241,6 +166,9 @@ function SignInScreen(props) {
                     value={username}
 
                     keyboardAppearance="dark"
+
+                    maxLength={24}
+
                   />
                 </Item>
                 <Item rounded style={styles.itemStyle}>
@@ -274,44 +202,51 @@ function SignInScreen(props) {
                   </Text>
                 </TouchableOpacity>
 
+
                 <Item style={
                   [styles.itemStyle, {
-                     borderColor: 'transparent',
-                  }]}
-                  >
-                <View style={
-                  {
-                    flex: 1,
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-
-                    alignItems: 'center',
-
-
-                  }
-                }>
+                    borderColor: 'transparent',
+                  }]
+                }
+                >
                   <View style={
                     {
-                      flex: 0.1,
-                      position: 'absolute',
+                      flex: 1,
+                      flexDirection: 'row',
+                      justifyContent: 'space-around',
+
+                      alignItems: 'center',
+
+
                     }
-                  }>
-                
+                  }
+                  />
+                </Item>
+                <View style={
+                    {
+                      flex: 0.12,
+                      // position: 'absolute',
+
+                      // borderWidth: 1,
+                      // borderColor: 'white',
+                      // borderStyle: 'solid',
+                    }
+                  }
+                >
                   <Text
                     style={
                       [
                         styles.textStyle,
                         {
-                          opacity: 0.3,
+                          // opacity: 0.3,
+                          // color: 'white',
                         }
                       ]
                     }
                   >
                     { helpMessage }
                   </Text>
-                  </View>
-                  </View>
-                </Item>
+                </View>
               </View>
             </Container>
           </View>
@@ -331,20 +266,9 @@ function SignInScreen(props) {
   );
 
   if (isLoading === true) {
-    return (
-      <SpinnerMask>
-        <AppLoading
-          autoHideSplash
-          // startAsync={_cacheResourcesAsync}
-          onFinish={() => setIsLoading(false)}
-          onError={console.warn}
-        />
-      </SpinnerMask>
-
-    );
-  } else {
-    return view;
+    return <SpinnerMask />;
   }
+    return view;
 }
 
 SignInScreen.navigationOptions = () => {

@@ -45,7 +45,7 @@ Amplify.configure(config);
 
 function App() {
   // state hooks
-  // const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
+  const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
   const [isReady, setIsReady] = useState(false);
 
@@ -57,7 +57,10 @@ function App() {
         'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
       });
       // stored fonts have been loaded
-      // setFontsAreLoaded(true);
+      setFontsAreLoaded(true);
+
+      setIsReady(true)
+
     } catch (err) {
       // console.log('error: ', err);
     }
@@ -67,17 +70,19 @@ function App() {
     return (
       <AppLoading
         startAsync={cacheResourcesAsync}
-        onFinish={() => setIsReady(true)}
+        onFinish={() => {}}
         onError={console.warn}
       />
     );
-  }
-
-  return (
+  } else {
+    return (
     <NetworkProvider>
       <SwitchNavigator />
     </NetworkProvider>
   );
+  }
+
+  
 }
 
 export default App;

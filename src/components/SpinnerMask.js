@@ -21,7 +21,7 @@ function SpinnerMask() {
     <View
       style={
         {
-          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent',
+          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo,
         }
       }
     >

@@ -24,6 +24,16 @@ export const saveSettingsStorage = (key, settings) => {
   AsyncStorage.setItem(key, JSON.stringify(settings));
 };
 
+export const clearSettingsStorage = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+    return true;
+  }
+  catch(exception) {
+    return false;
+  }
+}
+
 // LOAD VALUE USERDEFAULTCATEGORIES
 const DEFAULT_SETTINGS = function(key) {
   const settings = {

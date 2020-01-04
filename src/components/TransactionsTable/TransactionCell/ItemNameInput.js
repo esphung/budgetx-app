@@ -218,9 +218,9 @@ class ItemNameInput extends Component {
 
           autoCapitalize="sentences" // "words"
 
-          maxLength={14}
+          maxLength={24}
 
-          onSubmitEditing={() => this.submitBtnPressed(text)}
+          onSubmitEditing={(event) => this.submitBtnPressed(event.nativeEvent.text)}
 
           onChangeText={this.handleTextChange}
 

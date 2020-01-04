@@ -16,6 +16,12 @@ function ItemCategory(props) {
     textColor
   } = props;
 
+  let name = item.category.name;
+
+  if (name.length > 10) {
+    name = item.category.name.replace(/^(.{6}[^\s]*).*/, '$1');
+  }
+
   return (
     <View style={{
       flex: 1,
@@ -42,7 +48,7 @@ function ItemCategory(props) {
       >
 
         {
-          item.category.name.replace(/^(.{1}[^\s]*).*/, '$1')
+          name
         }
 
       </Text>
