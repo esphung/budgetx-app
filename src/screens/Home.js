@@ -261,6 +261,14 @@ function Home() {
     // saveUserObject(userObject);
     saveSettingsStorage(storageKey, userObject);
 
+    // setTransactions(userObject.transactions);
+
+    // setStorageKey(null);
+    // setIsReady(false);
+
+    // retrieveStoredTransactions(); // load stored user
+    // cacheResourcesAsync();
+
     clearState();
   }
 
@@ -344,7 +352,7 @@ function Home() {
     //   console.log('error: ', err);
     // }
 
-    await storeUserTransaction(transaction);
+    storeUserTransaction(transaction);
     // clearState();
   };
   const showSlideView = useCallback(
@@ -486,11 +494,10 @@ function Home() {
     if (storageKey) {
       // load user storage
       retrieveStoredSettingsTransactions(storageKey)
-    }
-    return () => {
-      // effect
+    } else if (!storageKey) {
       setIsReady(false);
-    };
+    }
+
   }, [storageKey])
 
   // current transaction updates
@@ -569,7 +576,7 @@ function Home() {
 
   const deleteBtnPressed = (transaction) => {
     removeUserTransaction(transaction);
-    clearState();
+    // clearState();
   };
 
   const categoryBtnPressed = (category) => {
