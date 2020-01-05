@@ -21,6 +21,7 @@ import {
   ActivityIndicator,
   Button,
   Alert,
+  Platform,
 } from 'react-native';
 
 // import {
@@ -61,6 +62,10 @@ import colors from '../../colors';
 import NewCategoryButton from './NewCategoryButton';
 
 import defaultCategories from '../data/categories';
+
+import Dialog from "react-native-dialog";
+
+const MAX_NAME_LENGTH = 15;
 
 // import {
 //   loadUserObject,
@@ -408,7 +413,9 @@ const CustomizeCategoriesScreen = () => {
 
   // const [typeInputValue, setTypeInputValue] = useState(null);
 
-  // const [nameInputValue, setNameInputValue] = useState(null);
+  const [nameInputValue, setNameInputValue] = useState(null);
+
+  const [shouldShowDialog, setShowDialogBox] = useState(false);
 
   async function retrieveCognitoUserKey() {
     Auth.currentAuthenticatedUser()
@@ -718,7 +725,8 @@ const CustomizeCategoriesScreen = () => {
 
   async function clearState() {
     // setTypeInputValue(null);
-    // setNameInputValue(null);
+    setNameInputValue(null);
+    setShowDialogBox(false);
 
     // retrieveStoredUser();
     retrieveCognitoUserKey();
@@ -799,6 +807,111 @@ const CustomizeCategoriesScreen = () => {
   //     );
   //   }
 
+  // const dialogBox = (
+  //   <View>
+  //     <Dialog.Container visible={true}>
+  //       <Dialog.Title>Account delete</Dialog.Title>
+  //       <Dialog.Description>
+  //         Do you want to delete this account? You cannot undo this action.
+  //       </Dialog.Description>
+  //       <Dialog.Button label="Cancel" />
+  //       <Dialog.Button label="Delete" />
+  //     </Dialog.Container>
+  //   </View>
+  // );
+
+  const cancelBtnPressed = () => {
+    setShowDialogBox(false);
+  };
+
+  const dialogBox = (
+    <View>
+      <Dialog.Container style={{
+        // backgroundColor: colors.dark,
+      }} visible={shouldShowDialog}>
+        <Dialog.Title style={{
+            color: colors.dark,
+            // width: 153,
+            // height: 36,
+            fontFamily: 'SFProDisplay-Semibold',
+            fontSize: 17,
+            fontWeight: 'normal',
+            fontStyle: 'normal',
+            letterSpacing: 0.1,
+            // color: "#ffffff"
+          }}>Choose a name</Dialog.Title>
+        <Dialog.Description style={{
+            color: colors.darkTwo,
+
+            // width: 153,
+            // height: 36,
+            fontFamily: 'SFProDisplay-Regular',
+            fontSize: 15,
+            fontWeight: 'normal',
+            fontStyle: 'normal',
+            letterSpacing: 0.1,
+            // color: "#ffffff"
+          }}>
+          A new expense will be created
+        </Dialog.Description>
+        <Dialog.Input
+          style={{
+            // backgroundColor: colors.darkTwo,
+            textAlign: 'center',
+            borderWidth: 1,
+            borderColor: colors.dark,
+            borderStyle: 'solid',
+            borderRadius: 19,
+          }}
+          onChangeText={(text) => setNameInputValue(text)}
+          maxLength={MAX_NAME_LENGTH}
+          autoCorrect
+        />
+        <Dialog.Button
+          style={{
+            color: colors.dark,
+
+            // width: 153,
+            // height: 36,
+            fontFamily: 'SFProDisplay-Regular',
+            fontSize: 15,
+            fontWeight: 'normal',
+            fontStyle: 'normal',
+            letterSpacing: 0.1,
+            // color: "#ffffff"
+          }}
+          onPress={cancelBtnPressed}
+          label="Cancel"
+        />
+        <Dialog.Button
+          style={{
+            color: colors.dark,
+
+            // width: 153,
+            // height: 36,
+            fontFamily: 'SFProDisplay-Regular',
+            fontSize: 15,
+            fontWeight: 'normal',
+            fontStyle: 'normal',
+            letterSpacing: 0.1,
+            // color: "#ffffff"
+          }}
+          onPress={() => {
+            if (nameInputValue) {
+              addCategory(nameInputValue, colors.white, 'expense');
+            }
+            setShowDialogBox(false);
+          }}
+          label="Ok"
+        />
+      </Dialog.Container>
+    </View>
+  );
+
+  if (shouldShowDialog) {
+    return dialogBox;
+  }
+
   if (isLoading) {
     return (
       <View
@@ -859,7 +972,10 @@ const CustomizeCategoriesScreen = () => {
         >
           <NewCategoryButton onPress={() => {
             // promptUserForCategoryType();
-            promptUserForCategoryName();
+            // promptUserForCategoryName(); // ios
+            // setShowDialogBox(true); // android
+
+            Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
           }}
           />
         </View>
@@ -910,6 +1026,8 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   //   // setIsLoading(false);
   // };
 
+
+
   const promptUserForCategoryReset = async () => {
     await new Promise(() => {
       const title = 'Are You Sure?';
@@ -923,7 +1041,6 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
           }
         }
       ];
-
       Alert.alert(title, message, buttons);
     });
   };

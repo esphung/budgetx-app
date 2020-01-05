@@ -5,12 +5,14 @@ import {
   StyleSheet,
   View,
   Text,
-  SafeAreaView
+  // SafeAreaView,
 } from 'react-native';
 
-import { TouchableOpacity } from 'react-native-gesture-handler';
+// import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import SpinnerMask from '../SpinnerMask';
+// import SpinnerMask from '../SpinnerMask';
+
+import SlideViewSeparator from '../SlideViewSeparator';
 
 // ui colors
 import colors from '../../../colors';
@@ -28,20 +30,10 @@ const SlideUpTransactionRect = (props) => {
 
   const [transaction, setTransaction] = useState(null);
 
-  const retrieveData = async () => {
-    // load fonts
-    // await Font.loadAsync({
-    //   'SFProDisplay-Regular': global.SFProDisplayRegularFont,
-    //   'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont
-    // });
-    setTransaction(props.transaction);
-
-    setDataIsLoaded(true);
-  };
 
   useEffect(() => {
     // console.log('Mount');
-    retrieveData();
+    setTransaction(props.transaction);
 
     if (transaction) {
       // console.log('transaction');
@@ -51,42 +43,28 @@ const SlideUpTransactionRect = (props) => {
       setDate(transaction.date);
 
       setTextLabel(`${getFormattedDateString(date)}`); // 'Amount Spent on'
+
+      setDataIsLoaded(true);
     }
-    return () => {
-      // effect
-      // console.log('clean up');
-    };
+    // return () => {
+    //   // effect
+    //   // console.log('clean up');
+    // };
   });
 
-  let view = <SpinnerMask />;
+  // let view = <SpinnerMask />;
+  let view = <View />;
 
   if (dataIsLoaded && transaction) {
     view = (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
 
-        <View style={
-              {
-                alignSelf: 'center',
-                width: 134,
-                height: 5,
-
-                margin: 13,
-
-                borderRadius: 100,
-                backgroundColor: colors.white,
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
-              }
-            }/>
+        <SlideViewSeparator />
 
         <View style={styles.dateAmountRectangle}>
 
-          
-
-
           <Text style={dateLabel}>{ textLabel }</Text>
+
           <Text style={amountLabel}>
             <Text style={{ color: colors.offWhite }}>
               {`${getCurrencySymbol(amount)}`}
@@ -168,7 +146,7 @@ const SlideUpTransactionRect = (props) => {
           </TouchableOpacity>
           */}
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
   return view;
@@ -177,19 +155,21 @@ const SlideUpTransactionRect = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
     alignItems: 'center',
 
-    // borderWidth: 1,
-    // borderColor: 'white',
+
+    // // borderWidth: 3,
+    // borderColor: 'pink',
     // borderStyle: 'dashed',
   },
-  dateAmountRectangle: {
-    justifyContent: 'center',
-    width: '93%', // 346,
-    height: '35%', // 74,
 
-    top: '5%',
+  dateAmountRectangle: {
+
+    justifyContent: 'center',
+    width: '95%', // 346,
+    height: '50%', // 74,
+
+    // marginTop: '5%',
 
     borderRadius: 9,
     backgroundColor: colors.dark,
@@ -212,8 +192,11 @@ const dateLabel = {
   // width: 242,
   // height: 18,
 
-  width: '100%',
-  height: '50%',
+  flex: 1,
+
+
+  // width: '100%',
+  // height: '50%',
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 15,
   fontWeight: 'normal',
@@ -222,7 +205,7 @@ const dateLabel = {
   textAlign: 'center',
   color: colors.tangerine,
 
-  paddingVertical: 8,
+  paddingTop: 10,
 
   // borderWidth: 1,
   // borderColor: 'white',
@@ -234,15 +217,21 @@ const amountLabel = {
   // width: 66,
   // height: 30,
 
-  width: '100%',
-  height: '50%',
+  flex: 1,
+
+
+  // width: '100%',
+  // height: '50%',
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 25,
   fontWeight: 'normal',
   fontStyle: 'normal',
   letterSpacing: 0.29,
   textAlign: 'center',
-  color: '#ffffff',
+  color: colors.white,
+
+  paddingBottom: 10,
+  paddingTop: 6,
 
   // borderWidth: 1,
   // borderColor: 'white',

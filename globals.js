@@ -31,7 +31,7 @@ global.noWifiImage = require('./assets/no-wifi-image.png');
 
 global.bankImageGreen = require('./assets/bank-image-green.png');
 
-global.maxAmountLength = 9;
+global.maxAmountLength = 8;
 
 global.appVersion = app.expo.version;
 
@@ -48,11 +48,11 @@ global.privacyLink = 'www.google.com';
 global.latestReleaseDate = '12/12/2019 02:09 AM';
 
 // local storage keys
-global.isPasscodeEnabledKey = 'isPasscodeEnabled';
+// global.isPasscodeEnabledKey = 'isPasscodeEnabled';
 
-global.isLocallyAuthenticatedKey = 'isLocallyAuthenticatedKey';
+// global.isLocallyAuthenticatedKey = 'isLocallyAuthenticatedKey';
 
-global.isColorChangedPurchased  = false;
+// global.isColorChangedPurchased  = false;
 
 // validation
 // var usernameRegex = /^[a-zA-Z0-9]+$/;

@@ -99,14 +99,7 @@ const ScrollingPillCategoriesView = (props) => {
     }
   };
 
-  const isCurrentCategory = (category) => {
-    if (currentCategory !== category) { // (!currentCategories.includes(category)) {
-      return false;
-    }
-    if (currentCategory === category) { // || (currentCategories.includes(category))) {
-      return true;
-    }
-  };
+
 
   const categoryBtnPressed = (item) => {
     props.onPress(item);
@@ -194,8 +187,8 @@ const ScrollingPillCategoriesView = (props) => {
           textColor={item.color}
           key={item.id}
           onPress={() => categoryBtnPressed(item)}
-          currentCategory={currentCategory}
-          isSelected={isCurrentCategory(item)}
+          // currentCategory={currentCategory}
+          isSelected={props.isSelected(item)}
           isEnabled={true}
         />
       ));
@@ -248,7 +241,7 @@ const ScrollingPillCategoriesView = (props) => {
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         // onWillBlur={payload => console.log('will blur',payload)}
-        // onDidBlur={payload => console.log('did blur',payload)}
+        onDidBlur={payload => console.log('did blur',payload)}
       />
       <ScrollView
         contentContainerStyle={{

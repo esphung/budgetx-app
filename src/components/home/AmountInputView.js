@@ -48,6 +48,7 @@ class AmountInputView extends Component {
           isEditable={isEditable}
           style={
           styles.input
+          
 
         }
         />

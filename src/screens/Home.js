@@ -17,6 +17,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             12/05/2019 12:45 PM | Added Hooks eslinter
             12/10/2019 12:22 AM
             01/01/2020 03:28 PM | AppSync Settings
+            01/04/2020 08:25 AM | Released version 1.1.0 to App Store!
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -33,82 +34,12 @@ import Auth from '@aws-amplify/auth';
 
 import { AppLoading } from 'expo';
 
-import API, { graphqlOperation } from '@aws-amplify/api'; // AppSync Query GraphQL
-
-// // Amplify imports and config
-// import Amplify from 'aws-amplify'; // '@aws-amplify/core';
-// import awsConfig from 'main/aws-exports';
-
-// import ApolloClient from 'apollo-boost';
-
-// // import {Rehydrated} from 'aws-appsync-react'
-// import { ApolloProvider } from 'react-apollo'
-// import Client from 'aws-appsync'
-// // import AppSyncConfig from 'main/AppSync'
-
-// const client = new ApolloClient({
-//   // uri: 'https://48p1r2roz4.sse.codesandbox.io',
-//   uri: awsConfig.aws_appsync_graphqlEndpoint,
-//   // region: awsConfig.aws_appsync_region,
-//   // auth: {
-//   //   type: awsConfig.aws_appsync_authenticationType,
-//   //   jwtToken: async () => (await Auth.currentSession()).getIdToken().getJwtToken()
-//   // }
-// });
-
-// console.log(client)
-
-// import { gql } from 'apollo-boost'; // or you can use `import gql from 'graphql-tag';` instead
-
-// // client
-// //   .query({
-// //     query: gql`
-// //       {
-// //         rates(currency: "USD") {
-// //           currency
-// //         }
-// //       }
-// //     `
-// //   })
-// //   .then(result => console.log(result.length));
-
-// // AWS Amplify
-// // import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
-
-// // import * as queries from 'main/src/graphql/queries';
-// // import * as mutations from 'main/src/graphql/mutations';
-// // import * as subscriptions from 'main/src/graphql/subscriptions';
-
-// Amplify.configure(awsConfig);
-
-
-// Auth.currentAuthenticatedUser()
-//   .then((cognitoUser) => {
-//     // setUserToken(user.signInUserSession.accessToken.jwtToken);
-//     console.log('username:', cognitoUser.username);
-
-
-//     // setUser(cognitoUser);
-
-//     // console.log(cognitoUser.username);
-//     // console.log(cognitoUser.transactions)
-//     jwtToken = cognitoUser.attributes.jwtToken
-//   })
-//   .catch((err) => {
-//     // console.log(err);
-//     Alert.alert(err);
-//   });
-
+// import API, { graphqlOperation } from '@aws-amplify/api'; // AppSync Query GraphQL
 
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
 import colors from '../../colors';
-
-// import {
-//   loadUserObject,
-//   saveUserObject,
-// } from '../storage/UserStorage';
 
 import {
   loadSettingsStorage,
@@ -215,31 +146,143 @@ function Home() {
 
   const [storageKey, setStorageKey] = useState(null);
 
+  // find previous obj if exists
+  function searchByID(key, myArray) {
+    // console.log(nameKey);
+    let obj = null;
+    let i = 0;
+    for (i; i < myArray.length; i += 1) {
+      // console.log(myArray[i].id, nameKey);
+      if (myArray[i].id === key) {
+        obj = myArray[i];
+      }
+    }
+    return obj;
+  }
+
+
+  const updateStoredTransactionNote = async (string) => {
+    console.log(string);
+
+    console.log(currentTransaction.id);
+
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(storageKey);
+      
+      // console.log(transaction);
+      var found = searchByID(currentTransaction.id, storageObj.transactions);
+
+      // set stored user image
+      // console.log('stored user settings image:', storageObj.image);
+      if (found) {
+        // found stored image
+        // setImage(storageObj.image);
+        // found.note = note;
+        console.log('previous note:', found.note);
+
+        found.note = string;
+        console.log('new note:', found.note);
+
+        let i = storageObj.transactions.length - 1;
+        for (i; i >= 0; i -= 1) {
+          if (storageObj.transactions[i].id === found.id) {
+            // set user transaction payee
+            storageObj.transactions[i] = found;
+
+            // console.log(storageObj.transactions[i]);
+
+            // save transactions list
+            // saveUserObject(userObject);
+            // saveSettingsStorage(this.state.storageKey, userObject);
+
+            saveSettingsStorage(storageKey, storageObj);
+
+            setTransactions(storageObj.transactions);
+
+            setCurrentPayee(null);
+            setCurrentNote(null);
+            setCurrentAmount(initialState.currentAmount);
+            setCurrentCategory(initialState.currentCategory);
+            setCurrentTransaction(initialState.currentTransaction);
+            setCurrentType(initialState.currentType);
+
+
+            // return from here
+            return;
+          }
+        }
+
+
+
+        // found.note = note;
+
+        // // save stored transactions
+        // console.log(found);
+
+        // saveSettingsStorage(storageKey, storageObj);
+
+              // find current transaction fromm user transactions list
+        // let i = storageObj.transactions.length - 1;
+        // for (i; i >= 0; i -= 1) {
+        //   if (storageObj.transactions[i].id === transaction.id) {
+        //     // set user transaction payee
+        //     storageObj.transactions[i].note = string
+
+        //     console.log(storageObj.transactions[i]);
+
+        //     // save transactions list
+        //     // saveUserObject(userObject);
+        //     // saveSettingsStorage(this.state.storageKey, userObject);
+
+        //     saveSettingsStorage(storageKey, storageObj);
+
+        //     // setTransaction(storageObj.transactions[i]);
+
+        //     props.clearState();
+
+        //     // return from here
+        //     return;
+        //   }
+        // }
+
+        }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not load settings');
+      console.log(e);
+    }
+
+  }
 
   async function clearState() {
+    setIsReady(false);
+    hideSlideView();
+
+    // add/remove transactions
     setTransactions(null);
     setCurrentBalance(0.00);
     setCurrentSpent(0.00);
     setCurrentPayee(null);
-    setCurrentNote('');
-
+    setCurrentNote(null);
     setCurrentDate(initialState.currentDate);
     setCurrentAmount(initialState.currentAmount);
     setCurrentCategory(initialState.currentCategory);
     setCurrentTransaction(initialState.currentTransaction);
     setCurrentType(initialState.currentType);
+
+
     setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
     setIsSlideViewHidden(initialState.isSlideViewHidden);
     setIsCurrentTransaction(initialState.isCurrentTransaction);
 
     setStorageKey(null);
-    // setIsReady(false);
+    
 
     // retrieveStoredTransactions(); // load stored user
     cacheResourcesAsync();
     // console.log('Cleared');
   }
-
 
   async function cacheResourcesAsync() {
     // console.log('loading');
@@ -256,20 +299,28 @@ function Home() {
   }
 
   async function storeUserTransaction(transaction) {
+    // setIsReady(false);
     const userObject = await loadSettingsStorage(storageKey); // load user object
     userObject.transactions.unshift(transaction);
     // saveUserObject(userObject);
     saveSettingsStorage(storageKey, userObject);
 
-    // setTransactions(userObject.transactions);
+    setTransactions(userObject.transactions);
+
+    setCurrentPayee(null);
+    setCurrentNote(null);
+    setCurrentAmount(initialState.currentAmount);
+    setCurrentCategory(initialState.currentCategory);
+    setCurrentTransaction(initialState.currentTransaction);
+    setCurrentType(initialState.currentType);
 
     // setStorageKey(null);
-    // setIsReady(false);
+    // setIsReady(true);
 
     // retrieveStoredTransactions(); // load stored user
     // cacheResourcesAsync();
 
-    clearState();
+    // clearState();
   }
 
   async function removeUserTransaction(transaction) {
@@ -285,7 +336,14 @@ function Home() {
     }
     saveSettingsStorage(storageKey, userObject);
 
-    clearState();
+    setTransactions(userObject.transactions);
+
+    setCurrentPayee(null);
+    setCurrentNote(null);
+    setCurrentAmount(initialState.currentAmount);
+    setCurrentCategory(initialState.currentCategory);
+    setCurrentTransaction(initialState.currentTransaction);
+    setCurrentType(initialState.currentType);
   }
 
   // async function retrieveStoredTransactions() {
@@ -376,7 +434,7 @@ function Home() {
       Animated.spring(
         slideViewBounceValue,
         {
-          toValue: 300,
+          toValue: 400,
           velocity: 30,
           tension: 2,
           friction: 8,
@@ -537,6 +595,8 @@ function Home() {
 
       // categoryBtnPressed(currentTransaction.category);
       // console.log(currentCategory)
+    } else if (!currentTransaction) {
+      hideSlideView();
     }
     return () => {
       // effect
@@ -596,6 +656,19 @@ function Home() {
     // }
   };
 
+  // const handleNoteChange = (note) => {
+  //   // setCurrentNote(note);
+  //   console.log(note);
+  // }
+
+  const isCurrentCategory = (category) => {
+    if (currentCategory !== category) { // (!currentCategories.includes(category)) {
+      return false;
+    }
+    if (currentCategory === category) { // || (currentCategories.includes(category))) {
+      return true;
+    }
+  };
 
   const view = (
 
@@ -610,7 +683,7 @@ function Home() {
         onWillFocus={clearState} // {(payload) => clearState()}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
-        // onWillBlur={payload => console.log('will blur',payload)}
+        onWillBlur={clearState} // console.log('will blur',payload)}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
       <BalanceView
@@ -644,6 +717,8 @@ function Home() {
         shadowOpacity={1}
 
         currentCategories={[]}
+
+        isSelected={isCurrentCategory}
       />
 
       <AmountInputView
@@ -657,6 +732,9 @@ function Home() {
       <SlideUpView
         slideViewBounceValue={slideViewBounceValue}
         transaction={currentTransaction}
+        // handleNoteChange={handleNoteChange}
+        clearState={clearState}
+        updateStoredTransactionNote={updateStoredTransactionNote}
       />
 
     </View>

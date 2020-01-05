@@ -10,7 +10,7 @@ import {
 
 import * as ImagePicker from 'expo-image-picker';
 
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 
 import * as Permissions from 'expo-permissions';
 
@@ -113,14 +113,14 @@ function ProfileUserImage() {
   // }
 
   async function getPermissionAsync() {
-    if (Constants.platform.ios) {
+    // if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
         Alert.alert('Sorry, we need camera roll permissions to make this work!');
       } else {
         pickImage();
       }
-    }
+    // }
   }
 
   async function pickImage() {
