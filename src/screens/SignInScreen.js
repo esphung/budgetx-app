@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
 
@@ -7,6 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { NetworkConsumer } from 'react-native-offline';
 
 import SpinnerMask from 'main/src/components/SpinnerMask';
+
+import HelpMessage from '../components/HelpMessage';
 
 import {
   // StyleSheet,
@@ -19,7 +21,7 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
-  // Alert,
+  Alert,
   // Animated,
 } from 'react-native';
 
@@ -49,21 +51,235 @@ import OfflineScreen from './OfflineScreen';
 
 import { isValidUsername, getButtonStyle } from './functions';
 
+import Dialog from "react-native-dialog";
+
 function SignInScreen(props) {
   // state hooks
-  const usernameInputRef = useRef(null);
+  // const usernameInputRef = useRef(null);
 
-  const passwordInputRef = useRef(null);
+  // const passwordInputRef = useRef(null);
 
   const [username, setUsername] = useState(null);
 
   const [password, setPassword] = useState(null);
+
+  const [authCode, setAuthCode] = useState(null);
 
   const [isSignInBtnEnabled, setIsSignInBtnEnabled] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [helpMessage, setHelpMessage] = useState(null);
+
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+
+  const [isKeyboardAvoidEnabled, setIsKeyboardAvoidEnabled] = useState(false);
+
+  const [isAuthCodeInputEnabled, setIsAuthCodeInputEnabled] = useState(true);
+
+  // const authCodeInputRef = useRef(null);
+
+  const [isConfirmSignUpBtnEnabled, setIsConfirmSignUpBtnEnabled] = useState(false);
+
+  const [isResendCodeBtnEnabled, setIsResendCodeBtnEnabled] = useState(false);
+
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+
+  const [dialogMessage, setDialogMessage] = useState('');
+
+  const [dialogTitle, setDialogTitle] = useState('');
+
+  function okDialogueBtnPressed() {
+    setIsDialogVisible(false);
+  }
+
+
+  const confirmationDialog = (
+    <View>
+      <Dialog.Container visible={isDialogVisible}>
+        <Dialog.Title>{ dialogTitle }</Dialog.Title>
+        <Dialog.Description>
+          { dialogMessage }
+        </Dialog.Description>
+        <Dialog.Button label="Cancel" onPress={() => setIsDialogVisible(false)} />
+        <Dialog.Button label="Ok" onPress={okDialogueBtnPressed} />
+      </Dialog.Container>
+    </View>
+  );
+
+
+  // Resend code if not received already
+  async function resendSignUp() {
+    // let isSuccessful = false;
+    // const { username } = this.state;
+    if (!username) {
+      // usernameInputRef.current._root.focus();
+      // Alert.alert('Please provide a username');
+      setHelpMessage('Please provide a username');
+      // setDialogTitle('Please provide a username');
+      // setIsDialogVisible(true);
+      // isSuccessful = true;
+      return;
+    }
+    await Auth.resendSignUp(username)
+      .then(() => {
+        // Alert.alert('Confirmation code resent successfully!');
+        setHelpMessage('Confirmation code resent successfully!');
+        // setDialogTitle('Confirmation code resent successfully!');
+        // setIsDialogVisible(true);
+        // console.log('Confirmation code resent successfully');
+      })
+      .catch((err) => {
+        if (!err.message) {
+          // console.log('Error requesting new confirmation code: ', err);
+          // Alert.alert('Error requesting new confirmation code: ', err);
+          setHelpMessage('Error requesting new confirmation code');
+          // setDialogMessage(err);
+          // setIsDialogVisible(true);
+
+        }
+        // else {
+        //   // console.log('Error requesting new confirmation code: ', err.message);
+        //   // Alert.alert('Error requesting new confirmation code: ', err.message);
+        //   setHelpMessage('Error requesting new confirmation code: ', err);
+        //   // setDialogTitle(err);
+        //   // setDialogMessage(err.message);
+        //   // setIsDialogVisible(true);
+        // }
+      });
+  }
+
+
+    // Confirm users and redirect them to the SignIn page
+  async function confirmSignUp() {
+    let isSuccessful = false;
+    if (authCode !== null) {
+      // const { username, authCode } = this.state;
+      if (!username) {
+        // usernameInputRef.current._root.focus();
+        // Alert.alert('Please provide a username');
+        setHelpMessage('Please provide a username');
+        return;
+      }
+
+      await Auth.confirmSignUp(username, authCode)
+        .then(() => {
+          isSuccessful = true;
+          // props.navigation.navigate('SignIn');
+          setHelpMessage('Confirm successful!');
+          // console.log('Confirm sign up successful');
+          // Alert.alert('Confirm sign up successful');
+        })
+        .catch((err) => {
+          if (!err.message) {
+            // console.log('Error when entering confirmation code: ', err);
+            // Alert.alert('Error when entering confirmation code: ', err);
+            setHelpMessage('Error when entering confirmation code');
+          }
+        });
+    }
+    if (isSuccessful) {
+      setIsConfirmVisible(false);
+    }
+  }
+
+  function handleAuthCodeInputSubmit(value) {
+    // emailInputRef.current._root.focus();
+    setAuthCode(value.nativeEvent.text.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
+    // console.log(value.nativeEvent.text)
+  }
+
+    const confirm = (
+    <SafeAreaView style={styles.container}>
+      <StatusBar />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        // keyboardVerticalOffset={80}
+        enabled={isKeyboardAvoidEnabled}
+      >
+
+        <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <Container style={styles.infoContainer}>
+              <View style={styles.container}>
+
+              <Item rounded style={styles.itemStyle}>
+                  <Ionicons active name="md-person" style={styles.iconStyle} />
+                  <Input
+                    style={styles.input}
+                    placeholder={`Username (mininum length of ${global.minUsernameLength})`}
+                    placeholderTextColor={colors.offWhite} // "#adb4bc"
+                    keyboardType="email-address"
+                    returnKeyType="next"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    onSubmitEditing={(value) => handleUsernameInputSubmit(value.nativeEvent.text)}
+                    // ref={usernameInputRef}
+                    onChangeText={(value) => onChangeText('username', value)}
+
+                    value={username}
+
+                    maxLength={global.maxUsernameLength}
+
+                    keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                  />
+                </Item>
+
+                <Item rounded style={styles.itemStyle}>
+                  <Ionicons active name="md-apps" style={styles.iconStyle} />
+                  <Input
+                    disabled={!isAuthCodeInputEnabled}
+                    style={styles.input}
+                    placeholder="Confirmation code"
+                    placeholderTextColor={colors.offWhite}
+                    keyboardType="numeric"
+                    returnKeyType="done"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={false}
+                    // ref={authCodeInputRef}
+                    onSubmitEditing={handleAuthCodeInputSubmit}
+                    onChangeText={(value) => onChangeText('authCode', value)}
+
+                    value={authCode}
+
+                    keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(true)}
+
+                    maxLength={global.maxAuthCodeLength}
+                  />
+                </Item>
+                <TouchableOpacity
+                  disabled={!isConfirmSignUpBtnEnabled}
+                  onPress={confirmSignUp}
+                  style={getButtonStyle(isConfirmSignUpBtnEnabled)}
+                >
+                  <Text style={styles.buttonText}>
+                    Confirm Sign Up
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  disabled={!isResendCodeBtnEnabled}
+                  onPress={resendSignUp}
+                  style={getButtonStyle(isResendCodeBtnEnabled)}
+                >
+                  <Text style={styles.buttonText}>
+                    Resend code
+                  </Text>
+                </TouchableOpacity>
+
+                {/* help message section  */}
+                <HelpMessage message={helpMessage} />
+              </View>
+            </Container>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 
   // methods
   const signIn = async () => {
@@ -87,12 +303,35 @@ function SignInScreen(props) {
         // Alert.alert('Error when signing in: ', err.message);
         setHelpMessage(err.message);
         setIsLoading(false);
+
+        if (err.message.includes('User is not confirmed.')) {
+          setDialogTitle(err.message);
+          setDialogMessage('Please enter the verification code we sent you or have us send it to you again.')
+          setIsDialogVisible(true);
+
+          setIsResendCodeBtnEnabled(true);
+
+          setIsConfirmVisible(true);
+        }
       });
   };
 
+  // function onChangeText(key, value) {
+  //   // console.log('key:', key);
+  //   // console.log('value:', value);
+
+  //   if (key === 'username') {
+  //     setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
+  //   } else if (key === 'password') {
+  //     setPassword(value.replace(' ', ''));
+  //   } else if (key === 'authCode') {
+  //     setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
+  //   }
+  // }
+
   // user input handlers
   function handleUsernameInputSubmit() {
-    passwordInputRef.current._root.focus();
+    // passwordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
@@ -102,8 +341,8 @@ function SignInScreen(props) {
   }
 
   function onChangeText(key, value) {
-    // console.log('key:', key);
-    // console.log('value:', value);
+    console.log('key:', key);
+    console.log('value:', value);
 
     if (key === 'username') {
       if (value.length < 6) {
@@ -114,6 +353,8 @@ function SignInScreen(props) {
       setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'password') {
       setPassword(value.replace(' ', ''));
+    } else if (key === 'authCode') {
+      setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
     }
   }
 
@@ -138,7 +379,18 @@ function SignInScreen(props) {
     //   // effect
     //   // console.log('clean up');
     // };
-  }, [username, password, isLoading]);
+  }, [username, password, isLoading, helpMessage]);
+
+  useEffect(() => {
+    if (!authCode || !username) {
+      setIsConfirmSignUpBtnEnabled(false);
+    } else {
+      setIsConfirmSignUpBtnEnabled(true);
+    }
+    return () => {
+      // effect
+    };
+  }, [authCode, username])
 
   const signin = (
     <SafeAreaView style={styles.container}>
@@ -161,7 +413,7 @@ function SignInScreen(props) {
                     onSubmitEditing={() => handleUsernameInputSubmit()}
                     onChangeText={(value) => onChangeText('username', value)}
 
-                    ref={usernameInputRef}
+                    // ref={usernameInputRef}
 
                     value={username}
 
@@ -181,7 +433,7 @@ function SignInScreen(props) {
                     autoCapitalize="none"
                     autoCorrect={false}
                     secureTextEntry
-                    ref={passwordInputRef}
+                    // ref={passwordInputRef}
                     onSubmitEditing={() => handlePasswordInputSubmit()}
                     onChangeText={(value) => onChangeText('password', value)}
 
@@ -222,31 +474,7 @@ function SignInScreen(props) {
                   }
                   />
                 </Item>
-                <View style={
-                    {
-                      flex: 0.12,
-                      // position: 'absolute',
-
-                      // borderWidth: 1,
-                      // borderColor: 'white',
-                      // borderStyle: 'solid',
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      [
-                        styles.textStyle,
-                        {
-                          // opacity: 0.3,
-                          // color: 'white',
-                        }
-                      ]
-                    }
-                  >
-                    { helpMessage }
-                  </Text>
-                </View>
+                <HelpMessage message={helpMessage} />
               </View>
             </Container>
           </View>
@@ -264,6 +492,14 @@ function SignInScreen(props) {
       }
     </NetworkConsumer>
   );
+
+  if (isDialogVisible) {
+    return confirmationDialog;
+  }
+
+  if (isConfirmVisible) {
+    return confirm;
+  }
 
   if (isLoading === true) {
     return <SpinnerMask />;

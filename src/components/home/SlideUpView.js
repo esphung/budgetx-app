@@ -4,6 +4,8 @@ import {
   StyleSheet,
   Animated,
   View,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 
 // ui colors
@@ -56,6 +58,12 @@ function SlideUpView(props) {
     <Animated.View
       style={[styles.container, { transform: [{ translateY: slideViewBounceValue }] }]}
     >
+{/*     <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        // keyboardVerticalOffset={80}
+        enabled={isKeyboardAvoidEnabled}
+      >*/}
         <View
           style={
             {

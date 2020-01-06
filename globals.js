@@ -5,6 +5,15 @@
 
 import app from './app.json';
 
+// max min lengths
+global.maxAuthCodeLength = 6;
+
+global.maxUsernameLength = 24;
+
+global.minUsernameLength = 6;
+
+global.minPasswordLength = 6;
+
 global.SFProDisplayRegularFont = require('./assets/fonts/SF-Pro-Display-Regular.otf');
 
 global.SFProDisplaySemiboldFont = require('./assets/fonts/SF-Pro-Display-Semibold.otf');
@@ -30,8 +39,6 @@ global.wifiImage = require('./assets/wifi-image.png');
 global.noWifiImage = require('./assets/no-wifi-image.png');
 
 global.bankImageGreen = require('./assets/bank-image-green.png');
-
-global.maxAmountLength = 8;
 
 global.appVersion = app.expo.version;
 

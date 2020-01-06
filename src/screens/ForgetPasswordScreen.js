@@ -14,6 +14,7 @@ import OfflineScreen from '../screens/OfflineScreen';
 
 import SpinnerMask from 'main/src/components/SpinnerMask';
 
+import HelpMessage from '../components/HelpMessage';
 
 import {
   TouchableOpacity,
@@ -64,27 +65,44 @@ function ForgotPasswordScreen(props) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (username && isValidUsername(username)) {
-      setIsSendCodeBtnEnabled(true);
-    } else {
-      setIsSendCodeBtnEnabled(false);
-    }
-    return () => {
-      // effect
-    };
-  }, [username])
+  const [isKeyboardAvoidEnabled, setIsKeyboardAvoidEnabled] = useState(false);
+
+  const [helpMessage, setHelpMessage] = useState(null);
 
   useEffect(() => {
-    if (authCode) {
-      setIsConfirmNewPasswordBtnEnabled(true);
+    if (!username || username.length < 6 || !isValidUsername(username)) {
+      setIsSendCodeBtnEnabled(false);
     } else {
-      setIsConfirmNewPasswordBtnEnabled(false);
+      setIsSendCodeBtnEnabled(true);      
     }
     return () => {
       // effect
     };
-  }, [authCode])
+  }, [username]);
+
+  useEffect(() => {
+    if (!authCode || !newPassword || !username) {
+
+      // if (!username) {
+      //   setHelpMessage('Username required');
+      // }
+
+      // if (!newPassword) {
+      //   setHelpMessage('New password required');
+      // }
+
+      // if (!authCode) {
+      //   setHelpMessage('Confirmation code required');
+      // }
+
+      setIsConfirmNewPasswordBtnEnabled(false);
+    } else {
+      setIsConfirmNewPasswordBtnEnabled(true);
+    }
+    return () => {
+      // effect
+    };
+  });
 
   // input handlers
   function onChangeText(key, value) {
@@ -92,6 +110,11 @@ function ForgotPasswordScreen(props) {
     // console.log('value:', value);
     if (key === 'username') {
       // setUsername(value);
+       if (value.length < 6) {
+        setHelpMessage('Username too short');
+      } else {
+        setHelpMessage(null);
+      }
       setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'authCode') {
       setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
@@ -216,7 +239,7 @@ function ForgotPasswordScreen(props) {
       <KeyboardAvoidingView
         style={styles.container}
         behavior="padding"
-        enabled
+        enabled={isKeyboardAvoidEnabled}
         // keyboardVerticalOffset={23}
       >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
@@ -241,6 +264,7 @@ function ForgotPasswordScreen(props) {
                     value={username}
 
                     keyboardAppearance="dark"
+                    // onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
                 </Item>
                 <TouchableOpacity
@@ -273,6 +297,7 @@ function ForgotPasswordScreen(props) {
                     maxLength={16}
 
                     keyboardAppearance="dark"
+                    // onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
                 </Item>
                 {/* Code confirmation section  */}
@@ -293,9 +318,10 @@ function ForgotPasswordScreen(props) {
 
                     value={authCode}
 
-                    maxLength={6}
+                    maxLength={global.maxAuthCodeLength}
 
                     keyboardAppearance="dark"
+                    // onFocus={() => setIsKeyboardAvoidEnabled(true)}
                   />
                 </Item>
                 <TouchableOpacity
@@ -307,6 +333,8 @@ function ForgotPasswordScreen(props) {
                     Confirm the new password
                   </Text>
                 </TouchableOpacity>
+
+                <HelpMessage message={helpMessage} />
               </View>
             </Container>
           </View>

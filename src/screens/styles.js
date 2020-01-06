@@ -10,15 +10,18 @@ export default StyleSheet.create({
     backgroundColor: colors.darkTwo, // '#aa73b7',
     justifyContent: 'center',
     // flexDirection: 'column',
+
+    marginTop: 15, // '5%',
+    marginBottom: 5,
   },
   input: {
     alignItems: 'center',
     fontSize: 17,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: colors.white, // '#5a52a5',
 
     fontFamily: 'SFProDisplay-Regular',
-    fontWeight: 'normal',
+    // fontWeight: 'normal',
     fontStyle: 'normal',
     letterSpacing: 0.17,
     textAlign: 'left',
@@ -29,7 +32,7 @@ export default StyleSheet.create({
     // borderStyle: 'solid',
   },
   infoContainer: {
-    position: 'absolute',
+    // position: 'absolute',
     left: 0,
     right: 0,
     // height: '100%', // 200,
@@ -46,7 +49,7 @@ export default StyleSheet.create({
     // borderStyle: 'solid',
   },
   itemStyle: {
-    marginBottom: 20,
+    marginBottom: 20
     // flexDirection: 'row',
     // justifyContent: 'center',
     // alignItems: 'center',

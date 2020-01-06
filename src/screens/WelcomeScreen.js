@@ -17,6 +17,8 @@ import colors from '../../colors';
 
 import styles from './styles';
 
+// import Dialog from "react-native-dialog";
+
 function WelcomeScreen(props) {
   const handleRoute = async (destination) => {
     await props.navigation.navigate(destination);
