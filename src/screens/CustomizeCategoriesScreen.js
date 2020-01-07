@@ -592,7 +592,7 @@ const CustomizeCategoriesScreen = () => {
   // };
 
   const promptUserForCategoryName = async () => {
-    await Alert.prompt('Enter a name', 'Category customization coming soon for our premium members!', (name) => addCategory(name, colors.white, 'expense'));
+    await Alert.prompt('Add New Category', 'Enter a name for your new category', (name) => addCategory(name, colors.white, 'expense'));
   };
 
 

@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 
 
 const HeaderLeftView = () => {
-  const [boldMessage, setBoldMessage] = useState(`Welcome to ${global.appName}`);
+  const [boldMessage, setBoldMessage] = useState(`${global.appName}`);
 
   const [normalMessage, setNormalMessage] = useState('Get cross-device sync');
 

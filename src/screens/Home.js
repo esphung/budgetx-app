@@ -146,6 +146,11 @@ function Home() {
 
   const [storageKey, setStorageKey] = useState(null);
 
+
+  const [shouldShowScrollingPills, setShouldShowScrollingPills] = useState(true);
+  const [shouldShowAmountInput, setShouldShowAmountInput] = useState(true);
+  const [shouldShowKeypad, setShouldShowKeypad] = useState(true);
+
   // find previous obj if exists
   function searchByID(key, myArray) {
     // console.log(nameKey);
@@ -586,6 +591,21 @@ function Home() {
   }, [currentCategory]);
 
   useEffect(() => {
+    if (!isSlideViewHidden) {
+      setShouldShowScrollingPills(false);
+      setShouldShowAmountInput(false);
+      setShouldShowKeypad(false);
+    } else {
+      setShouldShowScrollingPills(true);
+      setShouldShowAmountInput(true);
+      setShouldShowKeypad(true);
+    }
+    return () => {
+      // effect
+    };
+  }, [isSlideViewHidden])
+
+  useEffect(() => {
     // toggle slideup view
     if (currentTransaction) {
       showSlideView();
@@ -670,8 +690,47 @@ function Home() {
     }
   };
 
-  const view = (
+  let scrollingPills = (
+    <ScrollingPillCategoriesView
+      onPress={(category) => categoryBtnPressed(category)}
+      currentCategory={currentCategory}
+      topPosition="57%"
+      shadowOffset={{
+        width: 1,
+        height: 1,
+      }}
+      shadowRadius={26}
+      shadowOpacity={1}
 
+      currentCategories={[]}
+
+      isSelected={isCurrentCategory}
+    />
+  );
+
+  let amountInput = (
+    <AmountInputView
+      isEditable={false}
+      value={currentAmount}
+      handleChange={handleChange}
+    />
+  );
+
+  let keypad = <KeypadView handlePress={handlePress} />;
+
+  if (!shouldShowScrollingPills) {
+    scrollingPills = null;
+  }
+
+  if (!shouldShowAmountInput) {
+    amountInput = null;
+  }
+
+  if (!shouldShowKeypad) {
+    keypad = null;
+  }
+
+  const view = (
     <View
       // scrollEnabled={false}
       // contentContainerStyle={styles.container}>
@@ -683,7 +742,7 @@ function Home() {
         onWillFocus={clearState} // {(payload) => clearState()}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
-        onWillBlur={clearState} // console.log('will blur',payload)}
+        // onWillBlur={clearState} // console.log('will blur',payload)}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
       <BalanceView
@@ -705,29 +764,11 @@ function Home() {
         // isCurrentTransaction={isCurrentTransaction}
       />
 
-      <ScrollingPillCategoriesView
-        onPress={(category) => categoryBtnPressed(category)}
-        currentCategory={currentCategory}
-        topPosition="57%"
-        shadowOffset={{
-          width: 1,
-          height: 1,
-        }}
-        shadowRadius={26}
-        shadowOpacity={1}
+      { scrollingPills }
 
-        currentCategories={[]}
+      { amountInput }
 
-        isSelected={isCurrentCategory}
-      />
-
-      <AmountInputView
-        isEditable={false}
-        value={currentAmount}
-        handleChange={handleChange}
-      />
-
-      <KeypadView handlePress={handlePress} />
+      { keypad }
 
       <SlideUpView
         slideViewBounceValue={slideViewBounceValue}

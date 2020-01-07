@@ -184,10 +184,12 @@ function UserOptions(props) {
         { key: 'Export Transactions' },
         // { key: 'Passcode' },
         { key: 'Change Password/Sign Out' },
+        // { key: 'Backup Data' },
         { key: '' },
         { key: 'Contact Support' },
         // { key: 'Passcode' },
         { key: 'Reset Data' },
+
       ]}
 
       renderItem={({ item }) => renderItem(item)}
