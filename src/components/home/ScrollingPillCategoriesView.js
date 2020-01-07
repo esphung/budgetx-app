@@ -241,7 +241,7 @@ const ScrollingPillCategoriesView = (props) => {
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         // onWillBlur={payload => console.log('will blur',payload)}
-        onDidBlur={payload => console.log('did blur',payload)}
+        // onDidBlur={payload => console.log('did blur',payload)}
       />
       <ScrollView
         contentContainerStyle={{

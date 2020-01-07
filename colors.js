@@ -6,7 +6,7 @@ DATE:       Fri Nov  1 12:08:40 2019
             11/11/2019 10:03 AM
 */
 
-// UI Colors
+// Financcely UI Colors
 const colors = {
   darkGreyBlue: '#314054',
   pinkRed: '#ff004b',
@@ -18,7 +18,7 @@ const colors = {
   dark: '#202e40',
   darkTwo: '#18202f',
 
-  // custom colors
+  // basic colors
   offWhite: '#ffffff7f',
   white: '#ffffff',
 };

@@ -10,19 +10,23 @@ import {
   // ScrollView,
   // Button,
   // TouchableOpacity,
-  // Text,
+  Text,
   TextInput,
   // Image,
   // TextInput
   SafeAreaView,
   // AsyncStorage,
   // Alert,
-  // FlatList,
+  FlatList,
   ActivityIndicator,
   Button,
   Alert,
   Platform,
+  // BlurViewIOS,
+  // BlurView,
 } from 'react-native';
+
+// import { BlurView } from 'expo-blur';
 
 // import {
 //   Container,
@@ -41,6 +45,8 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import Dialog from "react-native-dialog";
+
 // import Constants from 'expo-constants';
 
 import {
@@ -49,6 +55,10 @@ import {
 } from '../storage/SettingsStorage';
 
 import CustomSwipeCell from '../components/CustomSwipeCell';
+
+import SwipeDelete from '../components/SwipeDelete';
+
+import SwipeEdit from '../components/SwipeEdit';
 
 // import { Auth } from 'aws-amplify';
 
@@ -61,9 +71,11 @@ import colors from '../../colors';
 
 import NewCategoryButton from './NewCategoryButton';
 
-import defaultCategories from '../data/categories';
+import HelpMessage from '../components/HelpMessage';
 
-import Dialog from "react-native-dialog";
+// import ColorDialog from '../components/ColorDialog';
+
+import defaultCategories from '../data/categories';
 
 const MAX_NAME_LENGTH = 15;
 
@@ -87,7 +99,8 @@ const styles = StyleSheet.create({
     // height: '100%',
     // width: '100%',
 
-    backgroundColor: colors.darkTwo,
+    // backgroundColor: colors.darkTwo,
+    backgroundColor: 'transparent',
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -96,7 +109,7 @@ const styles = StyleSheet.create({
   table: {
     flex: 1,
 
-    top: '10%',
+    // top: '10%',
     // backgroundColor: colors.darkTwo,
     // backgroundColor: colors.dark,
 
@@ -158,16 +171,21 @@ const styles = StyleSheet.create({
     // borderColor: 'pink',
     // borderStyle: 'solid',
   },
+  rowBackLeft: {
+    flex: 1,
+    backgroundColor: colors.azure,
+  },
+  rowBackRight: {
+    flex: 1,
+    backgroundColor: colors.pinkRed,
+  },
   rowBack: {
     flex: 1,
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     alignItems: 'center',
 
-    width: '50%',
-    // left: '500%',
-    height: '100%', // 37,
-
-    backgroundColor: colors.pinkRed,
+    // width: '50%',
+    // height: '100%', // 37,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -175,7 +193,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    flex: 1,
+    // flex: 1,
     // width: 67,
     // height: 20,
     fontFamily: 'SFProDisplay-Regular',
@@ -190,7 +208,7 @@ const styles = StyleSheet.create({
 
 });
 
-// let DATA = [
+// let COLORS_DATA = [
 //   {
 //     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
 //     name: 'First Item',
@@ -206,12 +224,25 @@ const styles = StyleSheet.create({
 // ];
 
 // find previous obj if exists
-function search(nameKey, myArray) {
+function searchByName(nameKey, myArray) {
   let obj = null;
   let i = 0;
   for (i; i < myArray.length; i += 1) {
     // console.log(myArray[i].name, nameKey);
     if (myArray[i].name.toLowerCase().trim() === nameKey.toLowerCase().trim()) {
+      // console.log(nameKey)
+      obj = myArray[i];
+    }
+  }
+  return obj;
+}
+
+function searchByID(key, myArray) {
+  let obj = null;
+  let i = 0;
+  for (i; i < myArray.length; i += 1) {
+    // console.log(myArray[i].name, nameKey);
+    if (myArray[i].id === key) {
       // console.log(nameKey)
       obj = myArray[i];
     }
@@ -291,7 +322,7 @@ function CellItem({
     // load stored user settings
     const userObject = await loadSettingsStorage(storageKey);
 
-    const previousObj = search(value, userObject.categories);
+    const previousObj = searchByName(value, userObject.categories);
 
     // const randomColor = randomKeyFrom(colors)
 
@@ -325,7 +356,8 @@ function CellItem({
 
   return (
     <TouchableOpacity
-      onPress={() => onSelect(id)}
+      // onPress={() => onSelect(id)}
+      // onPress={() => console.log(id)}
       activeOpacity={1}
       style={[
         styles.item,
@@ -377,8 +409,6 @@ function CellItem({
           maxLength={14}
 
           value={text}
-
-          // onEndEditing={(text) => handleNameEndEditing(text)}
         />
 
         <View style={
@@ -417,14 +447,29 @@ const CustomizeCategoriesScreen = () => {
 
   const [shouldShowDialog, setShowDialogBox] = useState(false);
 
+  const [shouldShowColorBox, setShouldShowColorBox] = useState(false);
+
+  const [currentCategory, setCurrentCategory] = useState(null);
+
+  const [helpMessage, setHelpMessage] = useState('Swipe left or right');
+
+  // static methods
+  CustomizeCategoriesScreen.resetCategories = async (key) => {
+    // console.log(key);
+    const storageObj = await loadSettingsStorage(key);
+
+    storageObj.categories = defaultCategories;
+
+    saveSettingsStorage(storageKey, storageObj);
+
+    setData(storageObj.categories);
+  };
+
+  // fetch aws method
   async function retrieveCognitoUserKey() {
     Auth.currentAuthenticatedUser()
       .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
         setStorageKey(cognito.username);
-
-        // setEmail(cognito.attributes.email);
       })
       .catch((err) => {
         // console.log(err);
@@ -432,82 +477,22 @@ const CustomizeCategoriesScreen = () => {
       });
   }
 
-  async function removeCategoryByName(name) {
+  // private methods
+  const removeCategoryByName = async (name) => {
     // setIsLoading(true);
-    const userObject = await loadSettingsStorage(storageKey);
+    const storage = await loadSettingsStorage(storageKey);
 
-    // console.log(list)
-    const list = userObject.categories;
-
-    const obj = await search(name, list);
-
-    // console.log(list.length);
-
-    // var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+    const obj = searchByName(name, storage.categories);
 
     let i = 0;
-    for (i; i < list.length; i += 1) {
-      if (list[i] === obj) {
-        list.splice(i, 1);
+    for (i; i < storage.categories.length; i += 1) {
+      if (storage.categories[i] === obj) {
+        storage.categories.splice(i, 1);
       }
     }
-
-    // console.log(list.length);
-
-    // console.log(obj);
-
-    setData(list);
-    return obj;
+    setData(storage.categories);
+    // setIsLoading(false);
   }
-
-  // async function updateCategoryByName(name) {
-  //   const userObject = await loadSettingsStorage(storageKey);
-
-  //   const list = userObject.categories;
-  //   // console.log(list)
-  //   let obj = await search(name, list);
-
-  //   // console.log(list.length);
-
-  //   // var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-  //   for( var i = 0; i < list.length; i++){ 
-  //      if ( list[i] === obj) {
-  //        list[i] = obj;
-  //      }
-  //   }
-
-  //   // console.log(list.length);
-
-  //   // console.log(obj);
-  //   // setIsLoading(false);
-  //   return obj;
-  // }
-
-  // const promptUserForCategoryType = async () => {
-  //   const selection = await new Promise((resolve) => {
-  //   const title = 'Choose a type';
-  //   const message = 'Please make your selection.';
-  //   const buttons = [
-  //       { text: 'Cancel', type: 'cancel' },
-  //       { text: 'Income', onPress: () => {
-  //         setTypeInputValue('income');
-  //       }},
-  //       { text: 'Expense', onPress: () => {
-  //         setTypeInputValue('expense');
-  //       }
-  //     }
-  //   ];
-  //       Alert.alert(title, message, buttons);
-  //   })
-    
-  //   if (selection) {
-  //       setTypeInputValue(selection);
-  //   }
-  // };
-
-  const promptUserForCategoryName = async () => {
-    Alert.prompt('Enter a name', 'Category customization coming soon for our premium members!', (name) => addCategory(name, colors.white, 'expense'));
-  };
 
   const addCategory = async (name, color, type) => {
     // const list = await loadUserCategories();
@@ -518,7 +503,7 @@ const CustomizeCategoriesScreen = () => {
     // console.log(list)
     // console.log(list.length);
 
-    let obj = search(name, list);
+    let obj = searchByName(name, list);
 
     if (obj) {
       if (obj.type === type) {
@@ -561,35 +546,73 @@ const CustomizeCategoriesScreen = () => {
     return obj;
   };
 
+  // async function updateCategoryByName(name) {
+  //   const userObject = await loadSettingsStorage(storageKey);
+
+  //   const list = userObject.categories;
+  //   // console.log(list)
+  //   let obj = await searchByName(name, list);
+
+  //   // console.log(list.length);
+
+  //   // var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+  //   for( var i = 0; i < list.length; i++){ 
+  //      if ( list[i] === obj) {
+  //        list[i] = obj;
+  //      }
+  //   }
+
+  //   // console.log(list.length);
+
+  //   // console.log(obj);
+  //   // setIsLoading(false);
+  //   return obj;
+  // }
+
+  // const promptUserForCategoryType = async () => {
+  //   const selection = await new Promise((resolve) => {
+  //   const title = 'Choose a type';
+  //   const message = 'Please make your selection.';
+  //   const buttons = [
+  //       { text: 'Cancel', type: 'cancel' },
+  //       { text: 'Income', onPress: () => {
+  //         setTypeInputValue('income');
+  //       }},
+  //       { text: 'Expense', onPress: () => {
+  //         setTypeInputValue('expense');
+  //       }
+  //     }
+  //   ];
+  //       Alert.alert(title, message, buttons);
+  //   })
+    
+  //   if (selection) {
+  //       setTypeInputValue(selection);
+  //   }
+  // };
+
+  const promptUserForCategoryName = async () => {
+    await Alert.prompt('Enter a name', 'Category customization coming soon for our premium members!', (name) => addCategory(name, colors.white, 'expense'));
+  };
+
 
   const storedUserCategories = async (list) => {
     // setIsLoading(true);
+    const storage = await loadSettingsStorage(storageKey);
 
-    const userObject = await loadSettingsStorage(storageKey);
+    storage.categories = list;
 
-    userObject.categories = list;
-
-    // saveUserObject(userObject);
-    saveSettingsStorage(storageKey, userObject);
-
+    saveSettingsStorage(storageKey, storage);
     // setIsLoading(false);
   };
 
-  const retrieveStoredUser = async () => {
-    // setIsLoading(true);
-    const userObject = await loadSettingsStorage(storageKey);
-    setData(userObject.categories);
+  const retrieveStoredCategories = async () => {
+    const storage = await loadSettingsStorage(storageKey);
+    setData(storage.categories);
   };
 
   const deleteBtnPressed = async (item) => {
-    // setIsLoading(true);
     await removeCategoryByName(item.name);
-    // console.log('Deleted:', await loadUserCategories());
-    // setIsLoading(false);
-  };
-
-  const onPress = () => {
-    // console.log(item);
   };
 
   function renderSeparator(item) {
@@ -630,7 +653,7 @@ const CustomizeCategoriesScreen = () => {
   function renderItem({ item }) {
     const rowHeight = 45;
     const backgroundColor = colors.dark;
-    const isDisabled = false;
+    // const isDisabled = false;
     // let caret = '>';
 
 
@@ -651,13 +674,14 @@ const CustomizeCategoriesScreen = () => {
             // borderStyle: 'dotted',
           }
         }
-        disabled={isDisabled}
+        // disabled={isDisabled}
+
         onPress={() => onPress(item)}
 
-        id={String(item.id)}
+        id={item.id}
         name={item.name}
-        selected={!!selected.get(String(item.id))}
-        onSelect={onSelect}
+        // selected={!!selected.get(item.id)}
+        onSelect={() => onSelect(searchByID(item.id, data))}
 
         color={item.color}
 
@@ -668,44 +692,34 @@ const CustomizeCategoriesScreen = () => {
   }
 
   function renderHiddenItem({ item }) {
-    const { header } = item;
-    if (header) {
-      return (
-        <View style={{
-          // flex: 1,
-          // // borderWidth: 1,
-          // // borderColor: 'white',
-          // // borderStyle: 'solid',
-          // backgroundColor: colors.dark,
-        }}
-        />
-      );
-    } else {
-      return (
-        <View style={{ flexDirection: 'row', flex: 1 }}>
-          <View style={{
-            flex: 1,
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-            // backgroundColor: colors.dark,
-          }}
-          />
-          <View style={styles.rowBack}>
-            <CustomSwipeCell
-              // keyExtractor={() => String(index)}
-              onDeleteBtnPress={() => deleteBtnPressed(item)}
-            />
-          </View>
-        </View>
-      );
-    }
+    const hidden = (
+      <View style={styles.rowBack}>
 
-    // return view;
+        <View style={styles.rowBackLeft}>
+          <SwipeEdit
+            keyExtractor={item.id}
+            onPress={() => {
+              setCurrentCategory(searchByID(item.id, data));
+              setShouldShowColorBox(true);
+              // console.log('Edited', item);
+            }}
+          />
+        </View>
+        <View style={styles.rowBackRight}>
+          <SwipeDelete
+            keyExtractor={item.id}
+            onDeleteBtnPress={() => deleteBtnPressed(item)}
+          />
+        </View>
+      </View>
+    );
+    return hidden;
   }
 
-  function onSelect() {
-    // alert('Purchase category color change');
+  function onSelect(category) {
+    // Alert.alert('Purchase category color change');
+    setCurrentCategory(category);
+    setShouldShowColorBox(true);
   }
 
   // const onSelect = useCallback(
@@ -728,18 +742,18 @@ const CustomizeCategoriesScreen = () => {
     setNameInputValue(null);
     setShowDialogBox(false);
 
-    // retrieveStoredUser();
+    // retrieveStoredCategories();
     retrieveCognitoUserKey();
     // console.log('Cleared state');
   }
 
   useEffect(() => {
     if (storageKey) {
-      retrieveStoredUser();
+      retrieveStoredCategories();
     }
-    return () => {
-      // effect
-    };
+    // return () => {
+    //   // effect
+    // };
   }, [storageKey]);
 
   // useEffect(() => {
@@ -762,11 +776,16 @@ const CustomizeCategoriesScreen = () => {
     // console.log('Data changed.. saved data');
     if (data) {
       storedUserCategories(data.filter((item) => { return item.name }));
-
-      setIsLoading(false);
+      
+    }
+    if (data && data.length < 1) {
+      setHelpMessage('No categories available.');
     }
     return () => {
       // effect
+      // setHelpMessage('Swipe left or right to edit');
+      setIsLoading(false);
+      setHelpMessage(null);
     };
   }, [data]);
 
@@ -800,7 +819,7 @@ const CustomizeCategoriesScreen = () => {
   // if {
   //     view = (
   //      <AppLoading
-  //       startAsync={retrieveStoredUser}
+  //       startAsync={retrieveStoredCategories}
   //       onFinish={() => setIsReady(true)}
   //       onError={console.warn}
   //     />
@@ -824,11 +843,24 @@ const CustomizeCategoriesScreen = () => {
     setShowDialogBox(false);
   };
 
+  // const blurComponentIOS = 
+  //   <BlurView
+  //     style={StyleSheet.absoluteFill}
+  //     blurType="xlight"
+  //     blurAmount={50}
+  //   />
+  
+
   const dialogBox = (
     <View>
-      <Dialog.Container style={{
-        // backgroundColor: colors.dark,
-      }} visible={shouldShowDialog}>
+      <Dialog.Container
+        // blurComponentIOS={blurComponentIOS}
+        headerStyle={{
+          backgroundColor: 'pink'
+        }}
+        style={{
+          // backgroundColor: colors.dark,
+        }} visible={shouldShowDialog}>
         <Dialog.Title style={{
             color: colors.dark,
             // width: 153,
@@ -908,8 +940,146 @@ const CustomizeCategoriesScreen = () => {
     </View>
   );
 
+  // console.log(colors);
+
+  // const COLORS_DATA = [
+  //   { key: 'azure' },
+  //   { key: 'brightOrange' },
+  //   // { key: 'dark' },
+  //   // { key: 'darkGreyBlue' },
+  //   // { key: 'darkTwo' },
+  //   { key: 'heliotrope' },
+  //   // { key: 'offWhite' },
+  //   { key: 'pinkRed' },
+  //   { key: 'shamrockGreen' },
+  //   { key: 'tangerine' },
+  //   { key: 'white' },
+  // ];
+
+
+
+  function capitalizeFLetter(string) {
+    return string.replace(/^./, string[0].toUpperCase()); 
+  }
+
+  // function getWords(str) {
+  //   // var str = 'MaEfSdsfSsdfsAdfssdGsdfEsdf';
+  //   var newmsg = str.replace(/[a-z]/g, '');
+  //   var old = str.replace(/[A-Z]/g, '');
+
+  //   let arr = str.split(newmsg, 1);
+
+  //   return arr[0]
+  // }
+
+  function getFlatListDataFromObject(obj) {
+    // console.log(obj);
+    const data = [];
+    let keys = Object.keys(obj);
+    let values = Object.values(obj)
+    // console.log(Object.values(obj));
+    // console.log(Object.keys(obj));
+    // body...
+    keys.forEach( function(key, index) {
+      // statements
+      let item = {
+        'key': key,
+        'value': values[index],
+      }
+      // console.log('id', index, key, values[index]);
+      data.push(item);
+    });
+    return data;
+  }
+
+  // console.log(getFlatListDataFromObject(colors));
+
+
+  function Item({ item, onPress }) {
+    return (
+      <TouchableOpacity onPress={onPress} style={styles.item}>
+        <Text style={[styles.text, {
+          color: colors[item.key]
+        }]}>{
+          capitalizeFLetter(item.key)
+        }</Text>
+      </TouchableOpacity>
+    );
+  }
+
+  const colorHandler = async (name, color) => {
+    // setIsLoading(true);
+    // currentCategory.color = color;
+    // console.log(currentCategory);
+    let isSuccessful = false;
+
+    for (var i = 0; i < data.length; i++) {
+      if (data[i] === currentCategory) {
+        data[i].color = color;
+        isSuccessful = true;
+      }
+    }
+
+    if (isSuccessful !== false) {
+      storedUserCategories(data);
+    }
+
+    setShouldShowColorBox(false);
+    // setIsLoading(false);
+  }
+
+  const colorBox = (
+     <View style={[styles.container, {
+      // backgroundColor: 'pink',
+     }]}>
+{/*      <Dialog.Container
+        visible={shouldShowColorBox}
+        // style={styles.container}
+        style={{
+          // backgroundColor: 'pink',
+        }}
+      >
+        <Dialog.Title style={[styles.text, {
+            // height: 36,
+            fontFamily: 'SFProDisplay-Semibold',
+            fontSize: 17,
+            fontWeight: 'bold',
+            fontStyle: 'normal',
+            letterSpacing: 0.1,
+            color: colors.darkTwo,
+            // color: '#ffffff'
+        }]}>Category Color</Dialog.Title>
+        <Dialog.Description style={[styles.text, {
+          color: colors.darkTwo,
+        }]}>
+          Select a new category color
+        </Dialog.Description>
+*/}
+      
+      <FlatList
+        data={getFlatListDataFromObject(colors)}
+        renderItem={({ item }) => <Item item={item} onPress={() => colorHandler(item.key, colors[item.key])} />}
+        keyExtractor={(item) => item.key}
+      />
+
+
+{/*        <Dialog.Button label="Cancel" onPress={() => {
+          setShouldShowColorBox(false);
+        }} />
+        <Dialog.Button label="Ok" onPress={() => {
+          console.log('Select Pressed');
+          setShouldShowColorBox(false);
+        }} />
+      </Dialog.Container>*/}
+    </View>
+  );
+
   if (shouldShowDialog) {
     return dialogBox;
+  }
+
+  if (shouldShowColorBox) {
+    return colorBox;
   }
 
   if (isLoading) {
@@ -940,9 +1110,29 @@ const CustomizeCategoriesScreen = () => {
           // onWillBlur={payload => console.log('will blur',payload)}
           // onDidBlur={payload => console.log('did blur',payload)}
         />
+        <View style={{
+          flex: 1,
+          // justifyContent: 'center',
+          // alignItems: 'center',
+
+          // width: '100%',
+          // height: '100%',
+
+          marginVertical: '4%',
+
+          // position: 'absolute',
+
+        }} >
+        <View style={{
+          flex: 1,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}>
         <SwipeListView
 
-          style={styles.table}
+          // style={styles.table}
           data={data}
           renderItem={(item) => renderItem(item)}
           // renderItem={({ item }) => (
@@ -958,18 +1148,30 @@ const CustomizeCategoriesScreen = () => {
           ItemSeparatorComponent={(item) => renderSeparator(item)}
           renderHiddenItem={(item) => renderHiddenItem(item)}
 
-          leftOpenValue={0}
+          leftOpenValue={75}
           rightOpenValue={-75}
         />
+        </View>
 
         {/* <Button title="Add New" onPress={() => addCategory('')} /> */}
         <View
           style={
             {
-              flex: 0.25, justifyContent: 'flex-end', alignItems: 'center', margin: 12
+              // flex: 1,
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              // marginVertical: '2%',
+              paddingBottom: 14,
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+
+              backgroundColor: 'transparent',
             }
           }
         >
+          <HelpMessage message={helpMessage} />
           <NewCategoryButton onPress={() => {
             // promptUserForCategoryType();
             // promptUserForCategoryName(); // ios
@@ -979,10 +1181,24 @@ const CustomizeCategoriesScreen = () => {
           }}
           />
         </View>
+        </View>
       </SafeAreaView>
     );
   }
 };
+
+// // static methods
+// CustomizeCategoriesScreen.resetCategories = async () => {
+//   const storageObj = await loadSettingsStorage(storageKey);
+//   storageObj.categories = defaultCategories;
+//   // console.log(storageObj.categories.length);
+//   saveSettingsStorage(storageKey, storageObj);
+
+//   setData(storageObject.categories);
+
+//   // navigation.goBack();
+//   // promptUserForCategoryReset();
+// };
 
 
 CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
@@ -993,6 +1209,7 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   // let categories = null;
 
   let storageKey = retrieveCognitoUserKey();
+
   async function retrieveCognitoUserKey() {
     Auth.currentAuthenticatedUser()
       .then((cognito) => {
@@ -1035,9 +1252,9 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
       const buttons = [
         { text: 'Cancel', type: 'cancel' },
         {
-          text: 'Yes, Delete My Categories',
+          text: 'Reset All of My Categories',
           onPress: () => {
-            resetCategories();
+            CustomizeCategoriesScreen.resetCategories(storageKey);
           }
         }
       ];
@@ -1045,14 +1262,7 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
     });
   };
 
-  const resetCategories = async () => {
-    const storageObj = await loadSettingsStorage(storageKey);
-    storageObj.categories = defaultCategories;
-    // console.log(storageObj.categories.length);
-    await saveSettingsStorage(storageKey, storageObj);
-    navigation.goBack();
-    // promptUserForCategoryReset();
-  };
+
 
   const navbar = {
     // headerTransparent: {},
@@ -1061,7 +1271,10 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
     },
     headerTintColor: colors.white,
 
-    headerRight: <Button title="Reset" onPress={promptUserForCategoryReset} />
+    headerRight: (<Button title="Reset" onPress={promptUserForCategoryReset} />),
+    // resetCategories: () => {
+    //   CustomizeCategoriesScreen.resetCategories(storageKey);
+    // },
   };
   return navbar;
 };

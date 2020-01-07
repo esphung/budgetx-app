@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   StyleSheet,
@@ -6,7 +6,11 @@ import {
   View,
   KeyboardAvoidingView,
   Keyboard,
+  TouchableWithoutFeedback,
+  Text,
 } from 'react-native';
+
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // ui colors
 import colors from '../../../colors';
@@ -17,17 +21,12 @@ import NoteTextInput from '../NoteTextInput';
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    // alignItems: 'center',
+    flex: 1,
     position: 'absolute',
     width: '100%',
-    height: '30%',
-    // bottom: 0,
-    // left: 0,
-    // right: 0,
+    height: '40%',
+    bottom: '0%',
     backgroundColor: colors.darkTwo,
-    // height: '100%',
-
     shadowColor: '#0a101b',
     shadowOffset: {
       width: 1,
@@ -35,9 +34,6 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 26,
     shadowOpacity: 1,
-
-    // top: '69%', // '69%',
-    bottom: '0%',
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -54,20 +50,24 @@ function SlideUpView(props) {
 
   // console.log(transaction);
 
+  const [isKeyboardAvoidEnabled, setIsKeyboardAvoidEnabled] = useState(true);
+
   const view = (
-    <Animated.View
+    
+
+      
+      
+      <Animated.View
       style={[styles.container, { transform: [{ translateY: slideViewBounceValue }] }]}
     >
-{/*     <KeyboardAvoidingView
-        style={styles.container}
-        behavior="padding"
-        // keyboardVerticalOffset={80}
-        enabled={isKeyboardAvoidEnabled}
-      >*/}
         <View
           style={
             {
               flex: 1,
+
+              height: 200,
+
+              // backgroundColor: colors.darkTwo,
 
               // borderWidth: 1,
               // borderColor: 'white',
@@ -81,17 +81,46 @@ function SlideUpView(props) {
         <View
           style={
             {
-              flex: 1,
-              // alignItems: 'center',
-              // alignSelf: 'stretch',
-              // justifyContent: 'center',
+              // flex: 1,
+              alignItems: 'stretch',
+              justifyContent: 'center',
 
               // borderWidth: 1,
               // borderColor: 'white',
               // borderStyle: 'solid',
+
+              
             }
           }
         >
+
+{/*        <TouchableOpacity style={
+          {
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            backgroundColor: colors.dark,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+
+
+          }
+        } onPress={() =>  console.log('Choose Category')}>
+          <Text style={{
+              // width: 67,
+              height: 46,
+              fontFamily: 'SFProDisplay-Regular',
+              fontSize: 17,
+              fontWeight: 'normal',
+              fontStyle: 'normal',
+              letterSpacing: 0.13,
+              color: '#ffffff',
+              textAlign: 'center',
+
+              padding: 12,
+          }}>Category</Text>
+        </TouchableOpacity>*/}
 
           <NoteTextInput
             transaction={transaction}
@@ -100,7 +129,30 @@ function SlideUpView(props) {
           />
 
         </View>
-    </Animated.View>
+
+        <View style={
+          {
+            flex: 1,
+
+            alignItems: 'stretch',
+            justifyContent: 'center',
+
+            // height: 200,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        }
+        >
+        
+        </View>
+
+
+        </Animated.View>
+       
+
+    
   );
 
   return view;

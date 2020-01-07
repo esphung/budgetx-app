@@ -9,17 +9,19 @@ import colors from '../../colors';
 
 import styles from '../screens/styles';
 
-class CustomSwipeCell extends Component {
+class SwipeDelete extends Component {
   render() {
     const { onDeleteBtnPress } = this.props;
     const cellView = (
 
       <TouchableOpacity style={{
-        // flex: 1,
+        flex: 1,
         flexDirection: 'row-reverse',
         // alignSelf: 'stretch',
         justifyContent: 'flex-start',
         margin: 10,
+
+        // backgroundColor: colors.pinkRed,
 
         // borderWidth: 1,
         // borderColor: 'pink',
@@ -37,4 +39,4 @@ class CustomSwipeCell extends Component {
 }
 
 
-export default CustomSwipeCell;
+export default SwipeDelete;

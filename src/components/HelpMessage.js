@@ -9,7 +9,7 @@ export default function HelpMessage(props) {
   return (
     <View style={
         {
-          flex: 0.12,
+          // flex: 0.12,
           // position: 'absolute',
 
           // borderWidth: 1,

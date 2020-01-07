@@ -7,7 +7,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 // import { Ionicons } from 'expo-vector-icons';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../colors';
+
+import styles from './styles';
 
 function NewCategorryButton(props) {
   const { onPress } = props;
@@ -16,9 +18,11 @@ function NewCategorryButton(props) {
       style={
         {
           width: '38%', // 133,
-          height: 46,
-          borderRadius: 23,
-          backgroundColor: colors.azure,
+          backgroundColor: 'transparent',
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
         }
       }
     >
@@ -27,30 +31,15 @@ function NewCategorryButton(props) {
         style={
           {
             width: '100%',
-            height:
-            '100%',
+            height: 46,
             justifyContent: 'center',
+            backgroundColor: colors.azure,
+            borderRadius: 23,
           }
         }
       >
         <Text
-          style={
-            {
-              fontFamily: 'SFProDisplay-Regular',
-              fontSize: 17,
-              fontWeight: 'normal',
-              fontStyle: 'normal',
-              letterSpacing: 0.13,
-              textAlign: 'center',
-              color: '#ffffff',
-
-              alignSelf: 'center',
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
-            }
-          }
+          style={styles.buttonText}
         >
           Add New
         </Text>
