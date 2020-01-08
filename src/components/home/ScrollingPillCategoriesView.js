@@ -14,19 +14,21 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  View
+  View,
+  Alert,
 } from 'react-native';
 
 import { AppLoading } from 'expo';
 
 import Auth from '@aws-amplify/auth';
 
-// ui colors
-import colors from '../../../colors';
 
 import CategoryPill from './CategoryPill';
 
 import { NavigationEvents } from 'react-navigation';
+
+// ui colors
+import colors from 'main/colors';
 
 // import {
 //   loadCategories,
@@ -40,20 +42,20 @@ import { NavigationEvents } from 'react-navigation';
 
 import {
   loadSettingsStorage,
-  saveSettingsStorage,
+  // saveSettingsStorage,
 } from '../../storage/SettingsStorage';
 
 
 const ScrollingPillCategoriesView = (props) => {
-  const [shadowOffset, setShadowOffset] = useState(null); // { width: 1, height: 1 }
+  // const [shadowOffset, setShadowOffset] = useState(null); // { width: 1, height: 1 }
 
-  const [shadowRadius, setShadowRadius] = useState(0); // 26
+  // const [shadowRadius, setShadowRadius] = useState(0); // 26
 
-  const [shadowOpacity, setShadowOpacity] = useState(0); // 1
+  // const [shadowOpacity, setShadowOpacity] = useState(0); // 1
 
-  const [topPosition, setTopPosition] = useState(0); // 57%
+  // const [topPosition, setTopPosition] = useState(0); // 57%
 
-  const [zIndex, setZIndex] = useState(0); // 1
+  // const [zIndex, setZIndex] = useState(0); // 1
 
   const [categories, setCategories] = useState(null);
 
@@ -61,9 +63,9 @@ const ScrollingPillCategoriesView = (props) => {
 
   const [currentCategory, setCurrentCategory] = useState(null);
 
-  const [currentCategories, setCurrentCategories] = useState([]);
+  // const [currentCategories, setCurrentCategories] = useState([]);
 
-  const [transactions, setTransactions] = useState(null);
+  // const [transactions, setTransactions] = useState(null);
 
   const [storageKey, setStorageKey] = useState(null);
 
@@ -75,7 +77,7 @@ const ScrollingPillCategoriesView = (props) => {
       })
       .catch((err) => {
         // console.log(err);
-        Alert.alert(err);
+        console.log(err);
       });
   }
 
@@ -88,17 +90,13 @@ const ScrollingPillCategoriesView = (props) => {
       // user categories from stored user
       setCategories(userObject.categories);
       // console.log('User:', userObject.categories);
-
       // setCurrentCategory(props.currentCategory);
-
       // setCurrentCategories(props.currentCategories);
-
     } catch (e) {
       // statements
-      console.log('Could not retrieve stored user categories.');
+      console.log('Could not retrieve stored user categories\n', e);
     }
   };
-
 
 
   const categoryBtnPressed = (item) => {
@@ -113,16 +111,18 @@ const ScrollingPillCategoriesView = (props) => {
     }
   };
 
-  async function clearState() {
-    setShadowOffset(props.shadowOffset);
-    setShadowRadius(props.shadowRadius);
-    setShadowOpacity(props.shadowOpacity);
-    setTopPosition(props.topPosition);
-    setZIndex(props.zIndex);
+  const clearState = async () => {
+    // setIsReady(false);
+    // setShadowOffset(props.shadowOffset);
+    // setShadowRadius(props.shadowRadius);
+    // setShadowOpacity(props.shadowOpacity);
+    // setTopPosition(props.topPosition);
+    // setZIndex(props.zIndex);
 
     retrieveCognitoUserKey();
     // console.log('Finished');
-  };
+    // setIsReady(true);
+  }
 
   // useEffect(() => {
   //   // console.log('Mount pills');
@@ -160,23 +160,23 @@ const ScrollingPillCategoriesView = (props) => {
     return () => {
       // effect
     };
-  }, [categories])
+  }, [categories]);
 
-  useEffect(() => {
-    // console.log('mount');
-    // console.log(currentCategories.length)
+  // useEffect(() => {
+  //   // console.log('mount');
+  //   // console.log(currentCategories.length)
 
-    return () => {
-      // effect
-      // console.log('clean up')
-    };
-  }, [categoryBtnPressed]);
+  //   return () => {
+  //     // effect
+  //     // console.log('clean up')
+  //   };
+  // }, [categoryBtnPressed]);
 
 
   const getCategoryPill = (items) => {
     // const { isEnabled } = this.props;
     // console.log(isEnabled)
-    let view = <View />;
+    let view = null;
     if (items) {
       view = items.map((item) => (
         <CategoryPill
@@ -199,35 +199,36 @@ const ScrollingPillCategoriesView = (props) => {
   const appLoading = (
     <AppLoading
       startAsync={clearState}
-      onFinish={() => {}}
-      // onFinish={() => {}}
+      onFinish={() => setIsReady(true)}
       onError={console.warn}
     />
   );
 
   if (!isReady) {
     return appLoading;
-  } else {
+  }
 
 
   return (
     <SafeAreaView style={
       {
         width: '100%',
-        height: '6%', // 53,
+        // height: '6%', // 53,
+        height: 53,
+        maxHeight: '6%',
 
         shadowColor: '#0a101b',
-        shadowOffset,
-        shadowRadius,
-        shadowOpacity,
+        shadowOffset: props.shadowOffset,
+        shadowRadius: props.shadowRadius,
+        shadowOpacity: props.shadowOpacity,
 
-        position: 'absolute',
+        // position: 'absolute',
 
-        top: topPosition, // '57%', // 462,
+        top: props.topPosition, // '57%', // 462,
 
         backgroundColor: colors.darkTwo,
 
-        zIndex, // display ontop of datepickerbox
+        zIndex: props.zIndex, // display ontop of datepickerbox
 
         // borderWidth: 1,
         // borderColor: 'white',
@@ -235,17 +236,14 @@ const ScrollingPillCategoriesView = (props) => {
       }
     }
     >
-    <NavigationEvents
-        // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={clearState} // {(payload) => clearState()}
-        // other props
-        // onDidFocus={payload => console.log('did focus',payload)}
-        // onWillBlur={payload => console.log('will blur',payload)}
-        // onDidBlur={payload => console.log('did blur',payload)}
-      />
       <ScrollView
         contentContainerStyle={{
           alignItems: 'center',
+          justifyContent: 'flex-start',
+          flexDirection: 'row',
+          paddingLeft: 10,
+
+          paddingRight: 12,
         }}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -260,7 +258,6 @@ const ScrollingPillCategoriesView = (props) => {
       </ScrollView>
     </SafeAreaView>
   );
-}
 };
 
 

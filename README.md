@@ -16,11 +16,6 @@
                 12/04/2019 04:01 PM
                 12/05/2019 12:19 PM
                 12/12/2019 02:12 AM | Ready for push to App Store
+                01/07/2020 06:39 PM | Released 1.1.4
 
-<hr>
-<img src="designs/Financely-First-Opened.png" alt="Home App Screen" width="100"/>
-<img src="designs/Financely.png" alt="Financely Screen" width="100"/>
-<img src="designs/Financely-2.png" alt="Financely 2 Screen" width="100"/>
-<img src="designs/Financely-3.png" alt="Financely 3 Screen" width="100"/>
-<img src="designs/Financely-Search.png" alt="Financely Search Screen" width="100"/>
-<img src="designs/Financely-Settings.png" alt="Financely Settings Screen" width="100"/>
+

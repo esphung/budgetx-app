@@ -17,17 +17,21 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             12/14/2019 02:14 AM | Fixed photos permission, passcode enable
             12/30/2019 07:46 AM | AWS Appsync
             01/02/2020 12:47 PM | Uploaded buggy 1.0.36, no user image on load
+            01/07/2020 06:49 PM | set AppLoading onFinish to call setIsReady
+                                  started app.json version 1.1.5
+                                  Removed all Network stuff
+                                  Added routes.js
 */
 
 // console.disableYellowBox = true;
 
-import React, { useState, useEffect } from 'react';
+// global.isStorybookModeOn = true;
+
+import React, { useState } from 'react';
 
 import * as Font from 'expo-font';
 
 import { NetworkProvider } from 'react-native-offline';
-
-import { Asset } from 'expo-asset';
 
 import { AppLoading } from 'expo';
 
@@ -42,6 +46,8 @@ import './globals'; // global values
 Amplify.configure(config);
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
+
+import Storybook from './storybook';
 
 function App() {
   // state hooks
@@ -58,31 +64,34 @@ function App() {
       });
       // stored fonts have been loaded
       setFontsAreLoaded(true);
-
-      setIsReady(true)
-
     } catch (err) {
       // console.log('error: ', err);
     }
   }
 
-  if (!isReady) {
+  const navigator = <NetworkProvider><SwitchNavigator /></NetworkProvider>;
+
+  const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
+
+  if (!fontsAreLoaded) {
     return (
       <AppLoading
         startAsync={cacheResourcesAsync}
-        onFinish={() => {}}
+        onFinish={setIsReady}
         onError={console.warn}
       />
     );
-  } else {
-    return (
-    <NetworkProvider>
-      <SwitchNavigator />
-    </NetworkProvider>
-  );
   }
 
-  
+  if (global.isStorybookModeOn) {
+    return storybook;
+  }
+
+  return navigator;
 }
 
 export default App;
+
+
+// export default from './storybook';
+

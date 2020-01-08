@@ -8,6 +8,8 @@ import Auth from '@aws-amplify/auth';
 // ui colors
 import colors from '../../colors';
 
+import styles from 'main/styles';
+
 // import {
 //   loadSettingsStorage,
 //   saveSettingsStorage,
@@ -66,27 +68,20 @@ export default function NoteTextInput(props) {
 
   if (isReady) {
     return (
-      <TextInput
+      <View style={styles.tableItemStyle}>
+        <TextInput
         style={
+          [
+            styles.listItemTitleStyle,
           {
-            height: 45,
-            // flex: 1,
-            // borderColor: 'gray',
-            // borderWidth: 1,
-
-            backgroundColor: colors.dark,
-
-            // height: '100%',
-            fontFamily: 'SFProDisplay-Regular',
-            fontSize: 17,
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            letterSpacing: 0.13,
-            textAlign: 'left',
-            color: colors.white,
-
-            paddingLeft: 10,
-          }
+                      height: 45,
+                      // flex: 1,
+                      // borderColor: 'gray',
+                      // borderWidth: 1,
+          
+                      backgroundColor: colors.dark,
+          
+                    }]
         }
         placeholder="Enter a note"
         placeholderTextColor={colors.offWhite}
@@ -94,8 +89,12 @@ export default function NoteTextInput(props) {
         value={note}
         keyboardAppearance="dark"
         returnKeyType="done"
+        onEndEditing={() => props.updateStoredTransactionNote(note)}
         onSubmitEditing={() => props.updateStoredTransactionNote(note)}
+        autoCompleteType="off"
+        autoCorrect={false}
       />
+      </View>
     );
   }
   return <View />;

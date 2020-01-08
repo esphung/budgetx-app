@@ -16,13 +16,13 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   // ScrollView,
   // Button,
   // TouchableOpacity,
-  Text,
-  Image,
+  // Text,
+  // Image,
   // TextInput
   SafeAreaView,
   AsyncStorage,
@@ -36,7 +36,7 @@ import * as StoreReview from 'expo-store-review';
 
 import * as MailComposer from 'expo-mail-composer';
 
-import { TouchableOpacity } from 'react-native-gesture-handler';
+// import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { NavigationEvents } from 'react-navigation';
 
@@ -46,9 +46,7 @@ import SubscriptionRect from '../components/settings/SubscriptionRect';
 
 import UserOptions from '../components/settings/UserOptions';
 
-import RateUsButton from '../components/settings/RateUsButton';
-
-import ShareButton from '../components/settings/ShareButton';
+import BlueButton from 'main/storybook/stories/BlueButton';
 
 import DeveloperCredit from '../components/settings/DeveloperCredit';
 
@@ -77,38 +75,40 @@ import {
 import Auth from '@aws-amplify/auth';
 
 // ui colors
-import colors from '../../colors';
+import colors from 'main/colors';
+
+import styles from 'main/styles';
 
 // import { getShortDate } from './functions';
 
 // AWS Amplify
 // import Auth from '@aws-amplify/auth';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // top: '5%',
-    // alignItems: 'stretch',
-    // justifyContent: 'center',
-    // backgroundColor: colors.darkTwo,
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     // top: '5%',
+//     // alignItems: 'stretch',
+//     // justifyContent: 'center',
+//     // backgroundColor: colors.darkTwo,
 
-    // marginTop: '5%',
+//     // marginTop: '5%',
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  backBtnImage: {
-    width: '100%',
-    height: '100%',
-  },
-  backBtn: {
-    width: 25,
-    height: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+//     // borderWidth: 1,
+//     // borderColor: 'white',
+//     // borderStyle: 'solid',
+//   },
+//   backBtnImage: {
+//     width: '100%',
+//     height: '100%',
+//   },
+//   backBtn: {
+//     width: 25,
+//     height: 25,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+// });
 
 // header rectangle
 const rectangle5 = {
@@ -173,6 +173,8 @@ function Settings(props) {
 
   const [storageKey, setStorageKey] = useState(null);
 
+  const [isReady, setIsReady] = useState(false);
+
   async function retrieveCognitoUser() {
     Auth.currentAuthenticatedUser()
       .then((cognito) => {
@@ -187,7 +189,6 @@ function Settings(props) {
         Alert.alert(err);
       });
   }
-
 
   async function retrieveStoredSettingsTransactions(user_storage_key) {
     // load stored user transactions
@@ -210,19 +211,87 @@ function Settings(props) {
     }
   }
 
-  const retrieveUser = async (key) => {
-    const userObject = await loadSettingsStorage(key);
-    setUser(userObject.user);
+  const restoreBackedUpData = async () => {
+    let success = false;
+    const backup_key = `${storageKey}_BACKUPSETTINGS`
+    // load stored settings
+    try {
+      const storage = await loadSettingsStorage(backup_key);
+
+      console.log(storage);
+      console.log('Restored from:', backup_key);
+
+      // set stored user transactions
+      if (storage && storageKey !== null) {
+        // console.log('stored user settings transactions:', storageObj.transactions);
+        saveSettingsStorage(storageKey, storage)
+        success = true;
+      }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not back up settings');
+      // console.log(e);
+    }
+
+    // if (success) {
+    //   Alert.alert('Backup data restored successfully');
+    // }
   };
 
-  const clearAsyncStorage = async () => {
-    await AsyncStorage.clear();
+
+
+
+  const backupStoredSettings = async () => {
+    let success = false;
+    const backup_key = `${storageKey}_BACKUPSETTINGS`
+    // load stored settings
+    try {
+      const storage = await loadSettingsStorage(storageKey);
+
+      // console.log(storage);
+      // console.log(backup_key);
+      // console.log('Backed up to:', backup_key);
+
+      // set stored user transactions
+      if (storage && storageKey !== null) {
+        // console.log('stored user settings transactions:', storageObj.transactions);
+        saveSettingsStorage(backup_key, storage);
+        // console.log(key)
+        success = true;
+      }
+    } catch (e) {
+      // statements
+      console.log('Could not back up settings');
+      // console.log(e);
+    }
+
+    // if (success) {
+    //   Alert.alert('Data backed up successfully');
+    // }
   };
+
+  const backupDataAlert = async () => {
+    await Alert.prompt(
+      'Backup Data',
+      'Are you sure you want to backup all data from the app?',
+      [
+        { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
+        // Calling resetData
+        { text: 'OK', onPress: backupStoredSettings },
+      ],
+      { cancelable: false },
+    );
+  };
+
+  // const clearAsyncStorage = async () => {
+  //   await AsyncStorage.clear();
+  // };
 
   /*
   * > reset data from the app
   */
   const resetData = async () => {
+    // console.log(storageKey);
     clearSettingsStorage(storageKey);
     // await clearAsyncStorage()
     //   .then(() => {
@@ -241,12 +310,24 @@ function Settings(props) {
       'Are you sure you want to reset all data from the app?',
       [
         { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-        // Calling resetData
-        { text: 'OK', onPress: () => resetData() },
+        { text: 'OK', onPress: resetData },
       ],
       { cancelable: false },
     );
   };
+
+  const restoreDataAlert = async () => {
+    await Alert.alert(
+      'Restore Data',
+      'Are you sure you want to restore backed up data?',
+      [
+        { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
+        { text: 'OK', onPress: restoreBackedUpData },
+      ],
+      { cancelable: false },
+    );
+  };
+
 
   const send = () => {
     // const userObject = await loadUserObject();
@@ -395,6 +476,17 @@ function Settings(props) {
     props.navigation.navigate('ChangePasswordScreen');
   }
 
+  const backupDataBtnPressed = async () => {
+    // console.log('Backup Data');
+    // await retrieveCognitoUser();
+    // backupStoredSettings(storageKey);
+    backupDataAlert();
+  }
+
+  const restoreBackupDataBtnPressed = async () => {
+    restoreDataAlert();
+  }
+
   function onPress(btn) {
     const name = btn.key;
 
@@ -414,9 +506,15 @@ function Settings(props) {
     } else if (name === 'Customize Categories') {
       customizeCategoriesBtnPressed();
     }
+    else if (name === 'Backup Data') {
+      backupDataBtnPressed();
+    }
+    else if (name === 'Restore Backup') {
+      restoreBackupDataBtnPressed();
+    }
   }
 
-  async function clearState() {
+  const clearState = async () => {
     retrieveCognitoUser();
     // console.log('Cleared');
   }
@@ -429,6 +527,15 @@ function Settings(props) {
       // effect
     };
   }, [storageKey]);
+
+  useEffect(() => {
+    if (transactions) {
+      setIsReady(true);
+    }
+    return () => {
+      // effect
+    };
+  }, [transactions])
 
   // useEffect(() => {
   //   // retrieveIsPasscodeEnabled();
@@ -446,11 +553,10 @@ function Settings(props) {
   //   };
   // }, [isPasscodeEnabled])
 
-  return (
+  const view = (
     <SafeAreaView
       style={styles.container}
     >
-      
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={clearState} // {(payload) => clearState()}
@@ -583,7 +689,7 @@ function Settings(props) {
             >
              
 
-              <RateUsButton onPress={() => rateUsBtnPressed()} />
+              <BlueButton title="Rate Us" onPress={() => rateUsBtnPressed()} />
 
               {/*<ShareButton onPress={() => shareBtnPressed()} />*/}
 
@@ -605,18 +711,11 @@ function Settings(props) {
         </View>
     </SafeAreaView>
   );
+
+  return view;
 }
 
 Settings.navigationOptions = ({ navigation }) => {
-  // async function signOut() {
-  //   // await AsyncStorage.clear()
-  //   await AsyncStorage.removeItem('userToken');
-  //   navigation.navigate('AuthLoading');
-  // }
-
-  const backBtnPressed = () => {
-    navigation.navigate('Home');
-  };
 
   // Sign out from the app
   const signOutAlert = async () => {
@@ -626,19 +725,19 @@ Settings.navigationOptions = ({ navigation }) => {
       [
         {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
         // Calling signOut
-        { text: 'OK', onPress: () => signOut() }, 
+        { text: 'OK', onPress: () => signOut() },
       ],
       { cancelable: false },
-    )
-  }
+    );
+  };
   // Confirm sign out
   const signOut = async () => {
     await Auth.signOut()
       .then(() => {
-        console.log('Sign out complete');
+        // console.log('Sign out complete');
         navigation.navigate('AuthLoading');
       })
-      .catch((err) => console.log('Error while signing out!', err))
+      .catch((err) => console.log('Error while signing out!', err));
   };
 
   const navbar = {

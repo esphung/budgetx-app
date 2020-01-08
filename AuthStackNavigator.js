@@ -2,7 +2,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import { createAppContainer } from 'react-navigation';
 
-import WelcomeScreen from './src/screens/WelcomeScreen';
+import WelcomeScreen from 'main/storybook/stories/Welcome';
 
 import SignUpScreen from './src/screens/SignUpScreen';
 
@@ -12,18 +12,10 @@ import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
 import OfflineScreen from './src/screens/OfflineScreen';
 
-// import ScreenName from './src/components/ScreenName';
-
-// import LocalAuthentication from './src/screens/LocalAuthentication';
-
-import colors from './colors';
+import colors from 'main/colors';
 
 // Auth stack
 const AuthStackNavigator = createStackNavigator({
-  // LocalAuthentication: {
-  //   screen: LocalAuthentication,
-  // },
-
   Welcome: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
@@ -62,15 +54,10 @@ const AuthStackNavigator = createStackNavigator({
   },
 },
 {
-  headerMode: 'screen', 
+  headerMode: 'screen',
   cardStyle: {
     backgroundColor: colors.darkTwo,
   }
-
-  // Search: {
-  //   screen: Search,
-  // },
-  // initialRouteName: 'Home',
 });
 
 const AppContainer = createAppContainer(AuthStackNavigator);

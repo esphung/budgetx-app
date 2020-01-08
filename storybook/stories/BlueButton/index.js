@@ -6,19 +6,22 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // import { Ionicons } from 'expo-vector-icons';
 
+import PropTypes from 'prop-types';
+
 // ui colors
-import colors from '../../colors';
+import colors from 'main/colors';
 
-import styles from './styles';
+import styles from 'main/styles';
 
-function NewCategorryButton(props) {
-  const { onPress } = props;
+function BlueButton(props) {
+  const { onPress, title } = props;
   const view = (
     <View
       style={
         {
           width: '38%', // 133,
-          backgroundColor: 'transparent',
+          height: 46,
+          // backgroundColor: 'tranosparent',
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -31,7 +34,7 @@ function NewCategorryButton(props) {
         style={
           {
             width: '100%',
-            height: 46,
+            height: '100%',
             justifyContent: 'center',
             backgroundColor: colors.azure,
             borderRadius: 23,
@@ -41,7 +44,7 @@ function NewCategorryButton(props) {
         <Text
           style={styles.buttonText}
         >
-          Add New
+          { title }
         </Text>
       </TouchableOpacity>
 
@@ -50,4 +53,9 @@ function NewCategorryButton(props) {
   return view;
 }
 
-export default NewCategorryButton;
+BlueButton.propTypes = {
+  title: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
+};
+
+export default BlueButton;

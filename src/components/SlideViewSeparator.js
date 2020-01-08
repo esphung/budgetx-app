@@ -12,7 +12,7 @@ export default function SlideViewSeparator() {
         {
           alignSelf: 'center',
           width: '35%', // 134,
-          height: '3%', // 5,
+          height: '1%', // 5,
 
           margin: 13,
 

@@ -5,17 +5,35 @@ AUTHOR:    Eric Phung
 CREATED:   12/11/2019 10:09 PM
 UPDATED:   12/11/2019 10:09 PM
 */
+var ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return Math.random().toString(36).substr(2, 9);
+};
 
 import colors from 'main/colors';
 
-function Category(name, color, type) {
-  const currentDate = new Date();
-  this.id = `${Date.now(currentDate)}`;
-  this.created = currentDate;
-  this.name = (name) ? name : '';
-  this.color = color ? color : colors.white; // randomProperty(colors);
-  this.type = (name.toLowerCase() === 'income') ? 'income' : 'expense';
-}
+const Category = (name, color, type) => {
+  // const currentDate = new Date();
+  return {
+    id: ID(), // `${Date.now(currentDate)}`,
+    name: name,
+    color: color,
+    type: type
+  }
+}// end Color definition
+
+module.exports = Category;
+
+// class Category(name, color, type) {
+//   const currentDate = new Date();
+//   this.id = `${Date.now(currentDate)}`;
+//   this.created = currentDate;
+//   this.name = (name) ? name : '';
+//   this.color = color ? color : colors.white; // randomProperty(colors);
+//   this.type = (name) ? name : 'expense';
+// }
 
 // // create user from some properties
 // Category.fromColor = function(color) {
@@ -41,4 +59,4 @@ function Category(name, color, type) {
 // var category = new Category('Insurance', '#fff');
 // console.log(category);
 
-export default Category;
+// export default Category;

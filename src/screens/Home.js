@@ -39,7 +39,7 @@ import { AppLoading } from 'expo';
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
-import colors from '../../colors';
+import colors from 'main/colors';
 
 import {
   loadSettingsStorage,
@@ -59,9 +59,9 @@ import SlideUpView from '../components/home/SlideUpView';
 // data models
 import Transaction from '../models/Transaction';
 
-import Payee from '../models/Payee';
+// import Payee from '../models/Payee';
 
-import Category from '../models/Category';
+// import Category from '../models/Category';
 
 import { calculateBalance, calculateMonthSpent } from './functions';
 
@@ -114,7 +114,7 @@ const initialState = {
   currentDate: new Date(),
   currentAmount: 0.00,
   currentCategory: null,
-  transactions: null,
+  transactions: [],
   slideViewBounceValue: new Animated.Value(300),
   currentBalance: 0.00,
   currentSpent: 0.00,
@@ -142,7 +142,7 @@ function Home() {
   const [slideViewBounceValue, setSlideViewBounceValue] = useState(initialState.slideViewBounceValue);
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
   const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
-  const [isReady, setIsReady] = useState(initialState.isReady);
+  const [isReady, setIsReady] = useState(false);
 
   const [storageKey, setStorageKey] = useState(null);
 
@@ -167,16 +167,15 @@ function Home() {
 
 
   const updateStoredTransactionNote = async (string) => {
-    console.log(string);
+    // console.log(string);
 
-    console.log(currentTransaction.id);
+    // console.log(currentTransaction.id);
 
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(storageKey);
-      
       // console.log(transaction);
-      var found = searchByID(currentTransaction.id, storageObj.transactions);
+      const found = searchByID(currentTransaction.id, storageObj.transactions);
 
       // set stored user image
       // console.log('stored user settings image:', storageObj.image);
@@ -184,10 +183,10 @@ function Home() {
         // found stored image
         // setImage(storageObj.image);
         // found.note = note;
-        console.log('previous note:', found.note);
+        // console.log('previous note:', found.note);
 
         found.note = string;
-        console.log('new note:', found.note);
+        // console.log('new note:', found.note);
 
         let i = storageObj.transactions.length - 1;
         for (i; i >= 0; i -= 1) {
@@ -205,67 +204,31 @@ function Home() {
 
             setTransactions(storageObj.transactions);
 
-            setCurrentPayee(null);
-            setCurrentNote(null);
-            setCurrentAmount(initialState.currentAmount);
-            setCurrentCategory(initialState.currentCategory);
-            setCurrentTransaction(initialState.currentTransaction);
-            setCurrentType(initialState.currentType);
-
+            // setCurrentPayee(null);
+            // setCurrentNote(null);
+            // setCurrentAmount(initialState.currentAmount);
+            // setCurrentCategory(initialState.currentCategory);
+            setCurrentTransaction(storageObj.transactions[i]);
+            // setCurrentType(initialState.currentType);
 
             // return from here
-            return;
+            // return;
           }
         }
-
-
-
-        // found.note = note;
-
-        // // save stored transactions
-        // console.log(found);
-
-        // saveSettingsStorage(storageKey, storageObj);
-
-              // find current transaction fromm user transactions list
-        // let i = storageObj.transactions.length - 1;
-        // for (i; i >= 0; i -= 1) {
-        //   if (storageObj.transactions[i].id === transaction.id) {
-        //     // set user transaction payee
-        //     storageObj.transactions[i].note = string
-
-        //     console.log(storageObj.transactions[i]);
-
-        //     // save transactions list
-        //     // saveUserObject(userObject);
-        //     // saveSettingsStorage(this.state.storageKey, userObject);
-
-        //     saveSettingsStorage(storageKey, storageObj);
-
-        //     // setTransaction(storageObj.transactions[i]);
-
-        //     props.clearState();
-
-        //     // return from here
-        //     return;
-        //   }
-        // }
-
-        }
+      }
     } catch (e) {
       // statements
-      Alert.alert('Could not load settings');
-      console.log(e);
+      // Alert.alert('Could not load settings');
+      // console.log(e);
     }
-
-  }
+  };
 
   async function clearState() {
     setIsReady(false);
     hideSlideView();
 
     // add/remove transactions
-    setTransactions(null);
+    setTransactions([]);
     setCurrentBalance(0.00);
     setCurrentSpent(0.00);
     setCurrentPayee(null);
@@ -282,8 +245,6 @@ function Home() {
     setIsCurrentTransaction(initialState.isCurrentTransaction);
 
     setStorageKey(null);
-    
-
     // retrieveStoredTransactions(); // load stored user
     cacheResourcesAsync();
     // console.log('Cleared');
@@ -376,18 +337,6 @@ function Home() {
   //   // setIsReady(true);
   // }
 
-  async function retrieveCognitoTransactions() {
-    try {
-      const items = await API.graphql(graphqlOperation(ListTransactions));
-      console.log('items: ', items.data.listTransactions.items);
-      // this.setState({ items: items.data.listBooks.items });
-      setTransactions(items.data.listTransactions.items);
-    } catch (err) {
-      console.log('error: ', err);
-    }
-  }
-
-
   const addTransaction = async () => {
     if (!currentAmount || !currentCategory) return;
     // const transaction = { amount: currentAmount, category: currentCategory };
@@ -424,8 +373,8 @@ function Home() {
         slideViewBounceValue,
         {
           toValue: 0,
-          velocity: 30,
-          tension: 2,
+          velocity: 100,
+          tension: 32,
           friction: 8,
         },
       ).start();
@@ -439,9 +388,9 @@ function Home() {
       Animated.spring(
         slideViewBounceValue,
         {
-          toValue: 400,
-          velocity: 30,
-          tension: 2,
+          toValue: 600,
+          velocity: 100,
+          tension: 32,
           friction: 8,
         },
       ).start();
@@ -516,10 +465,10 @@ function Home() {
     }
   };
 
-  async function retrieveStoredSettingsTransactions(user_storage_key) {
+  async function retrieveStoredSettingsTransactions(key) {
     // load stored user transactions
     try {
-      const storageObj = await loadSettingsStorage(user_storage_key);
+      const storageObj = await loadSettingsStorage(key);
 
       // set stored user transactions
       if (storageObj) {
@@ -532,7 +481,7 @@ function Home() {
       }
     } catch (e) {
       // statements
-      Alert.alert('Could not load settings');
+      // Alert.alert('Could not load settings');
       // console.log(e);
     }
   }
@@ -551,21 +500,15 @@ function Home() {
   //   // };
   // }, []);
 
-
-
   useEffect(() => {
     if (storageKey) {
       // load user storage
-      retrieveStoredSettingsTransactions(storageKey)
-    } else if (!storageKey) {
-      setIsReady(false);
+      retrieveStoredSettingsTransactions(storageKey);
     }
-
-  }, [storageKey])
+  }, [storageKey]);
 
   // current transaction updates
   useEffect(() => {
-
     if (transactions) {
       // calculate balances
       const balance = (calculateBalance(transactions));
@@ -575,7 +518,7 @@ function Home() {
       const spent = (calculateMonthSpent(transactions));
       setCurrentSpent(spent);
 
-      setIsReady(true);
+      // setIsReady(true);
     }
   }, [transactions]);
 
@@ -603,7 +546,7 @@ function Home() {
     return () => {
       // effect
     };
-  }, [isSlideViewHidden])
+  }, [isSlideViewHidden]);
 
   useEffect(() => {
     // toggle slideup view
@@ -736,7 +679,6 @@ function Home() {
       // contentContainerStyle={styles.container}>
       style={styles.container}
     >
-      
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         onWillFocus={clearState} // {(payload) => clearState()}
@@ -785,7 +727,7 @@ function Home() {
   const appLoading = (
     <AppLoading
       startAsync={clearState}
-      onFinish={() => {}}
+      onFinish={() => setIsReady(true)}
       // onFinish={() => {}}
       onError={console.warn}
     />
@@ -793,9 +735,8 @@ function Home() {
 
   if (!isReady) {
     return appLoading;
-  } else {
-    return view;
   }
+  return view;
 }
 
 Home.navigationOptions = ({ navigation }) => {

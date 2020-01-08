@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { AppLoading } from 'expo';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   // ScrollView,
   // Button,
@@ -18,8 +18,8 @@ import {
   // AsyncStorage,
   // Alert,
   FlatList,
-  ActivityIndicator,
-  Button,
+  // ActivityIndicator,
+  // Button,
   Alert,
   Platform,
   // BlurViewIOS,
@@ -45,16 +45,25 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import Dialog from "react-native-dialog";
+import Dialog from 'react-native-dialog';
 
 // import Constants from 'expo-constants';
+
+// ui colors
+import colors from 'main/colors';
+
+import styles from 'main/styles';
+
+import BlueButton from 'main/storybook/stories/BlueButton';
+
+import TouchableText from 'main/storybook/stories/TouchableText';
 
 import {
   loadSettingsStorage,
   saveSettingsStorage,
 } from '../storage/SettingsStorage';
 
-import CustomSwipeCell from '../components/CustomSwipeCell';
+// import CustomSwipeCell from '../components/CustomSwipeCell';
 
 import SwipeDelete from '../components/SwipeDelete';
 
@@ -65,11 +74,6 @@ import SwipeEdit from '../components/SwipeEdit';
 import Category from '../models/Category';
 
 // import InfoBox from '../components/InfoBox';
-
-// ui colors
-import colors from '../../colors';
-
-import NewCategoryButton from './NewCategoryButton';
 
 import HelpMessage from '../components/HelpMessage';
 
@@ -85,143 +89,6 @@ const MAX_NAME_LENGTH = 15;
 //   // saveUserCategories,
 //   // loadUserCategories,
 // } from '../storage/UserStorage';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // alignItems: 'stretch',
-    // justifyContent: 'center',
-
-    // top: '2%',
-
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // height: '100%',
-    // width: '100%',
-
-    // backgroundColor: colors.darkTwo,
-    backgroundColor: 'transparent',
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  table: {
-    flex: 1,
-
-    // top: '10%',
-    // backgroundColor: colors.darkTwo,
-    // backgroundColor: colors.dark,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  name: {
-    flex: 1,
-    // width: 67,
-    // height: 20,
-    fontFamily: 'SFProDisplay-Regular',
-    fontSize: 17,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    letterSpacing: 0.13,
-    color: colors.white, // '#ffffff',
-
-    paddingLeft: 12,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  item: {
-    backgroundColor: colors.dark, // '#f9c2ff',
-    paddingVertical: 14,
-    // marginVertical: 8,
-    paddingHorizontal: 12,
-  },
-  // arrow: {
-  //   flex: 0.1,
-  //   flexDirection: 'row-reverse',
-
-  //   textAlign: 'center',
-  //   // width: 8,
-  //   // height: 13,
-  //   fontFamily: 'SFProDisplay-Semibold',
-  //   fontSize: 17,
-  //   opacity: 0.5,
-  //   letterSpacing: 0.13,
-  //   color: colors.white, // '#ffffff',
-
-  //   paddingRight: 12,
-
-  //   // backgroundColor: '#ffffff'
-
-  //   // borderWidth: 1,
-  //   // borderColor: 'white',
-  //   // borderStyle: 'solid',
-  // },
-  iconStyle: {
-    flex: 0.1,
-    color: colors.offWhite, // '#5a52a5',
-    fontSize: 17,
-    marginLeft: 15,
-
-    // borderWidth: 1,
-    // borderColor: 'pink',
-    // borderStyle: 'solid',
-  },
-  rowBackLeft: {
-    flex: 1,
-    backgroundColor: colors.azure,
-  },
-  rowBackRight: {
-    flex: 1,
-    backgroundColor: colors.pinkRed,
-  },
-  rowBack: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-
-    // width: '50%',
-    // height: '100%', // 37,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dotted',
-  },
-
-  text: {
-    // flex: 1,
-    // width: 67,
-    // height: 20,
-    fontFamily: 'SFProDisplay-Regular',
-    fontSize: 17,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    letterSpacing: 0.13,
-    color: colors.white, // '#ffffff',
-
-    paddingLeft: 12,
-  },
-
-});
-
-// let COLORS_DATA = [
-//   {
-//     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-//     name: 'First Item',
-//   },
-//   {
-//     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-//     name: 'Second Item',
-//   },
-//   {
-//     id: '58694a0f-3da1-471f-bd96-145571e29d72',
-//     name: 'Third Item',
-//   },
-// ];
 
 // find previous obj if exists
 function searchByName(nameKey, myArray) {
@@ -241,9 +108,7 @@ function searchByID(key, myArray) {
   let obj = null;
   let i = 0;
   for (i; i < myArray.length; i += 1) {
-    // console.log(myArray[i].name, nameKey);
     if (myArray[i].id === key) {
-      // console.log(nameKey)
       obj = myArray[i];
     }
   }
@@ -360,7 +225,7 @@ function CellItem({
       // onPress={() => console.log(id)}
       activeOpacity={1}
       style={[
-        styles.item,
+        styles.tableItemStyle,
         {
           backgroundColor: selected ? colors.darkGreyBlue : colors.dark,
         },
@@ -378,7 +243,7 @@ function CellItem({
         <TextInput
           style={
             [
-              styles.text,
+              styles.textStyle,
               {
                 color: selected ? colors.white : color,
                 opacity: selected ? 0.9 : 1,
@@ -429,13 +294,13 @@ function CellItem({
 const CustomizeCategoriesScreen = () => {
   const [selected, setSelected] = useState(new Map());
 
-  // const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   // const [storageKey, setStorageKey] = useState(null);
 
   const [data, setData] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // const [user, setUser] = useState(null);
 
@@ -451,18 +316,28 @@ const CustomizeCategoriesScreen = () => {
 
   const [currentCategory, setCurrentCategory] = useState(null);
 
-  const [helpMessage, setHelpMessage] = useState('Swipe left or right');
+  const [helpMessage, setHelpMessage] = useState(null);
 
   // static methods
   CustomizeCategoriesScreen.resetCategories = async (key) => {
     // console.log(key);
+    let success = false;
     const storageObj = await loadSettingsStorage(key);
 
     storageObj.categories = defaultCategories;
 
-    saveSettingsStorage(storageKey, storageObj);
+    try {
+      saveSettingsStorage(storageKey, storageObj);
+      success = true;
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
 
-    setData(storageObj.categories);
+    if (success) {
+      setData(storageObj.categories);
+      setHelpMessage('Reset Categories');
+    }
   };
 
   // fetch aws method
@@ -490,8 +365,11 @@ const CustomizeCategoriesScreen = () => {
         storage.categories.splice(i, 1);
       }
     }
+    saveSettingsStorage(storageKey, storage)
     setData(storage.categories);
     // setIsLoading(false);
+
+    setHelpMessage('Removed category');
   }
 
   const addCategory = async (name, color, type) => {
@@ -522,6 +400,8 @@ const CustomizeCategoriesScreen = () => {
         saveSettingsStorage(storageKey, userObject);
 
         setData(list);
+
+        setHelpMessage('Added category');
       }
     }
 
@@ -596,15 +476,56 @@ const CustomizeCategoriesScreen = () => {
   };
 
 
-  const storedUserCategories = async (list) => {
-    // setIsLoading(true);
+  const storeUserCategories = async (list) => {
+    let success = false;
     const storage = await loadSettingsStorage(storageKey);
 
     storage.categories = list;
 
-    saveSettingsStorage(storageKey, storage);
+    try {
+      saveSettingsStorage(storageKey, storage);
+      success = true;
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
+    return success;
+  };
+
+  const updateUserTransactionCategories = async (list) => {
+    let success = false;
+    const storage = await loadSettingsStorage(storageKey);
+
+    let transactions = storage.transactions;
+    // console.log('Transactions found:', transactions.length);
+
+    try {
+      transactions.forEach( function(element, index) {
+        var foundCategory = (searchByName(element.category.name, list))
+        if (foundCategory) {
+          // console.log('Found:', foundCategory);
+          // change out category
+          const category = new Category(foundCategory.name, foundCategory.color, foundCategory.type);
+          // category.id = foundCategory.id;
+          // element.category = searchByID(foundCategory.id, list);
+          element.category = category; // searchByID(foundCategory.id, data);
+          success = true;
+        }
+      });
+    } catch(e) {
+      // statements
+      console.log('Could not update transaction', e);
+    }
+
+    if (success) {
+      saveSettingsStorage(storageKey, storage);
+    }
+    // storage.categories = list;
+
+    // saveSettingsStorage(storageKey, storage);
     // setIsLoading(false);
   };
+
 
   const retrieveStoredCategories = async () => {
     const storage = await loadSettingsStorage(storageKey);
@@ -618,12 +539,15 @@ const CustomizeCategoriesScreen = () => {
   function renderSeparator(item) {
     let view = <View />;
     // console.log(item.leadingItem.key);
-    if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Passcode' && item.leadingItem.key !== 'Change Password') {
+    // if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Passcode' && item.leadingItem.key !== 'Change Password') {
       view = (
         <View
           style={{
             flex: 1,
             backgroundColor: colors.dark,
+            justifyContent: 'center',
+            alignItems: 'center',
+
 
             // borderWidth: 1,
             // borderColor: colors.dark,
@@ -634,7 +558,7 @@ const CustomizeCategoriesScreen = () => {
             style={
               {
                 width: '90%', // 346,
-                alignSelf: 'center',
+                // alignSelf: 'center',
                 // height: 0.5,
 
                 borderWidth: 0.5,
@@ -645,7 +569,7 @@ const CustomizeCategoriesScreen = () => {
           />
         </View>
       );
-    }
+    // }
 
     return view;
   }
@@ -770,22 +694,38 @@ const CustomizeCategoriesScreen = () => {
   //   // return () => {
   //   //   // effect
   //   // };
-  // }, [user])
+  // }, [user]);
+
+  // useEffect(() => {
+  //   return () => {
+  //     // effect
+  //     updateUserTransactionCategories();
+  //     console.log('Updated Categori')
+  //   };
+  // }, [])
 
   useEffect(() => {
     // console.log('Data changed.. saved data');
     if (data) {
-      storedUserCategories(data.filter((item) => { return item.name }));
-      
+      const success = storeUserCategories(data.filter((item) => { return item.name }))
+      if (success) {
+        updateUserTransactionCategories(data);
+        // console.log('Updated Transaction Categories');
+      }
     }
-    if (data && data.length < 1) {
+    else if (data && data.length < 1) {
       setHelpMessage('No categories available.');
     }
     return () => {
       // effect
       // setHelpMessage('Swipe left or right to edit');
-      setIsLoading(false);
-      setHelpMessage(null);
+
+      // setHelpMessage('Swipe Left to Edit or Right Delete');
+      
+      // setIsLoading(false);
+
+
+
     };
   }, [data]);
 
@@ -997,8 +937,27 @@ const CustomizeCategoriesScreen = () => {
 
   function Item({ item, onPress }) {
     return (
-      <TouchableOpacity onPress={onPress} style={styles.item}>
-        <Text style={[styles.text, {
+      <TouchableOpacity
+        onPress={onPress}
+        // style={styles.buttonStyle}
+        style={[,
+          styles.buttonStyle,
+          {
+          // alignItems: 'center',
+          // justifyContent: 'center',
+
+          marginHorizontal: 14,
+          marginVertical: 5,
+
+          // borderRadius: 17,
+          borderWidth: 1,
+          borderStyle: 'solid',
+
+          borderColor: colors[item.key],
+
+        }]}
+      >
+        <Text style={[styles.listItemTitleStyle, {
           color: colors[item.key]
         }]}>{
           capitalizeFLetter(item.key)
@@ -1007,22 +966,25 @@ const CustomizeCategoriesScreen = () => {
     );
   }
 
-  const colorHandler = async (name, color) => {
-    // setIsLoading(true);
-    // currentCategory.color = color;
-    // console.log(currentCategory);
-    let isSuccessful = false;
+  const updateCategoryColor = async (name, color) => {
+    let success = false;
 
     for (var i = 0; i < data.length; i++) {
       if (data[i] === currentCategory) {
         data[i].color = color;
-        isSuccessful = true;
+        success = true;
       }
     }
 
-    if (isSuccessful !== false) {
-      storedUserCategories(data);
-    }
+    if (success) {
+      await storeUserCategories(data);
+      updateUserTransactionCategories(data);
+      setHelpMessage('Updated transactions');
+    };
+
+    // if (success) updateUserTransactionCategories(data);
+
+
 
     setShouldShowColorBox(false);
     // setIsLoading(false);
@@ -1032,33 +994,10 @@ const CustomizeCategoriesScreen = () => {
      <View style={[styles.container, {
       // backgroundColor: 'pink',
      }]}>
-{/*      <Dialog.Container
-        visible={shouldShowColorBox}
-        // style={styles.container}
-        style={{
-          // backgroundColor: 'pink',
-        }}
-      >
-        <Dialog.Title style={[styles.text, {
-            // height: 36,
-            fontFamily: 'SFProDisplay-Semibold',
-            fontSize: 17,
-            fontWeight: 'bold',
-            fontStyle: 'normal',
-            letterSpacing: 0.1,
-            color: colors.darkTwo,
-            // color: '#ffffff'
-        }]}>Category Color</Dialog.Title>
-        <Dialog.Description style={[styles.text, {
-          color: colors.darkTwo,
-        }]}>
-          Select a new category color
-        </Dialog.Description>
-*/}
       
       <FlatList
         data={getFlatListDataFromObject(colors)}
-        renderItem={({ item }) => <Item item={item} onPress={() => colorHandler(item.key, colors[item.key])} />}
+        renderItem={({ item }) => <Item item={item} onPress={() => updateCategoryColor(item.key, colors[item.key])} />}
         keyExtractor={(item) => item.key}
       />
 
@@ -1074,6 +1013,88 @@ const CustomizeCategoriesScreen = () => {
     </View>
   );
 
+  const view = (
+    <SafeAreaView style={styles.container}>
+      <NavigationEvents
+        // try only this. and your component will auto refresh when this is the active component
+        onWillFocus={clearState} // {(payload) => clearState()}
+        // other props
+        // onDidFocus={payload => console.log('did focus',payload)}
+        // onWillBlur={payload => console.log('will blur',payload)}
+        // onDidBlur={payload => console.log('did blur',payload)}
+      />
+      <View style={{
+        flex: 1,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+
+        // width: '100%',
+        // height: '100%',
+
+        marginVertical: '4%',
+
+        // position: 'absolute',
+
+      }} >
+      <View style={{
+        flex: 1,
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }}>
+      <SwipeListView
+
+        // style={styles.table}
+        data={data}
+        renderItem={(item) => renderItem(item)}
+        // renderItem={({ item }) => (
+        //   <Item
+        //     id={item.id}
+        //     name={item.name}
+        //     selected={!!selected.get(item.id)}
+        //     onSelect={onSelect}
+        //   />
+        // )}
+        keyExtractor={(item) => String(item.id)}
+        extraData={selected}
+        ItemSeparatorComponent={(item) => renderSeparator(item)}
+        renderHiddenItem={(item) => renderHiddenItem(item)}
+
+        leftOpenValue={75}
+        rightOpenValue={-75}
+      />
+      </View>
+
+      {/* <Button title="Add New" onPress={() => addCategory('')} /> */}
+      <View
+        style={
+          {
+            // flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            // marginVertical: '2%',
+            paddingBottom: 14,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+            // backgroundColor: 'transparent',
+          }
+        }
+      >
+        <HelpMessage message={helpMessage} />
+        <BlueButton
+          title="Add New"
+          onPress={() => {
+            Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
+          }}
+        />
+      </View>
+      </View>
+    </SafeAreaView>
+  );
+
   if (shouldShowDialog) {
     return dialogBox;
   }
@@ -1082,109 +1103,28 @@ const CustomizeCategoriesScreen = () => {
     return colorBox;
   }
 
-  if (isLoading) {
-    return (
-      <View
-        style={
-          {
-            flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo
-          }
+  const appLoading = (
+    <View
+      style={
+        {
+          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo
         }
-      >
-        <ActivityIndicator size="large" color={colors.offWhite} />
-        <AppLoading
-          startAsync={clearState}
-          onFinish={() => {}}
-          onError={console.warn}
-        />
-      </View>
-    );
-  } else {
-    return (
-      <SafeAreaView style={styles.container}>
-        <NavigationEvents
-          // try only this. and your component will auto refresh when this is the active component
-          onWillFocus={clearState} // {(payload) => clearState()}
-          // other props
-          // onDidFocus={payload => console.log('did focus',payload)}
-          // onWillBlur={payload => console.log('will blur',payload)}
-          // onDidBlur={payload => console.log('did blur',payload)}
-        />
-        <View style={{
-          flex: 1,
-          // justifyContent: 'center',
-          // alignItems: 'center',
+      }
+    >
+     
+      <AppLoading
+        startAsync={clearState}
+        onFinish={() => setIsReady(true)}
+        onError={console.warn}
+      />
+    </View>
+  );
 
-          // width: '100%',
-          // height: '100%',
-
-          marginVertical: '4%',
-
-          // position: 'absolute',
-
-        }} >
-        <View style={{
-          flex: 1,
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }}>
-        <SwipeListView
-
-          // style={styles.table}
-          data={data}
-          renderItem={(item) => renderItem(item)}
-          // renderItem={({ item }) => (
-          //   <Item
-          //     id={item.id}
-          //     name={item.name}
-          //     selected={!!selected.get(item.id)}
-          //     onSelect={onSelect}
-          //   />
-          // )}
-          keyExtractor={(item) => String(item.id)}
-          extraData={selected}
-          ItemSeparatorComponent={(item) => renderSeparator(item)}
-          renderHiddenItem={(item) => renderHiddenItem(item)}
-
-          leftOpenValue={75}
-          rightOpenValue={-75}
-        />
-        </View>
-
-        {/* <Button title="Add New" onPress={() => addCategory('')} /> */}
-        <View
-          style={
-            {
-              // flex: 1,
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              // marginVertical: '2%',
-              paddingBottom: 14,
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
-
-              backgroundColor: 'transparent',
-            }
-          }
-        >
-          <HelpMessage message={helpMessage} />
-          <NewCategoryButton onPress={() => {
-            // promptUserForCategoryType();
-            // promptUserForCategoryName(); // ios
-            // setShowDialogBox(true); // android
-
-            Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-          }}
-          />
-        </View>
-        </View>
-      </SafeAreaView>
-    );
+  if (isLoading) {
+    return appLoading;
   }
+
+  return view;
 };
 
 // // static methods
@@ -1208,7 +1148,7 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
 
   // let categories = null;
 
-  let storageKey = retrieveCognitoUserKey();
+  let key = retrieveCognitoUserKey();
 
   async function retrieveCognitoUserKey() {
     Auth.currentAuthenticatedUser()
@@ -1218,32 +1158,13 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
         // setStorageKey(cognito.username);
 
         // setEmail(cognito.attributes.email);
-        storageKey = cognito.username;
+        key = cognito.username;
       })
       .catch((err) => {
         // console.log(err);
         Alert.alert(err);
       });
   }
-
-
-  // const getStoredUserCategories = async (list) => {
-  //   // setIsLoading(true);
-
-  //   const storageObject = await loadSettingsStorage(storageKey);
-
-  //   return storageObject.categories;
-
-  //   // userObject.categories = list;
-  //   // setCategories(storageObject.categories);
-
-  //   // saveUserObject(userObject);
-  //   // saveSettingsStorage(storageKey, userObject);
-
-  //   // setIsLoading(false);
-  // };
-
-
 
   const promptUserForCategoryReset = async () => {
     await new Promise(() => {
@@ -1254,15 +1175,13 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
         {
           text: 'Reset All of My Categories',
           onPress: () => {
-            CustomizeCategoriesScreen.resetCategories(storageKey);
+            CustomizeCategoriesScreen.resetCategories(key);
           }
         }
       ];
       Alert.alert(title, message, buttons);
     });
   };
-
-
 
   const navbar = {
     // headerTransparent: {},
@@ -1271,7 +1190,10 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
     },
     headerTintColor: colors.white,
 
-    headerRight: (<Button title="Reset" onPress={promptUserForCategoryReset} />),
+    headerRight: (<View style={{
+      marginRight: 10,
+    }}>
+    <TouchableText title="Reset" onPress={promptUserForCategoryReset} /></View>),
     // resetCategories: () => {
     //   CustomizeCategoriesScreen.resetCategories(storageKey);
     // },

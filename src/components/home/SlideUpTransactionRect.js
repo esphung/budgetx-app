@@ -15,7 +15,7 @@ import {
 import SlideViewSeparator from '../SlideViewSeparator';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
 
 import { getCurrencySymbol, getFormattedDateString } from '../functions';
 
@@ -44,7 +44,7 @@ const SlideUpTransactionRect = (props) => {
 
       setTextLabel(`${getFormattedDateString(date)}`); // 'Amount Spent on'
 
-      setDataIsLoaded(true);
+      
     }
     // return () => {
     //   // effect
@@ -52,14 +52,21 @@ const SlideUpTransactionRect = (props) => {
     // };
   });
 
+  useEffect(() => {
+    if (amount, date, transaction) {
+      setDataIsLoaded(true);
+    }
+    return () => {
+      // effect
+    };
+  }, [amount, date, transaction])
+
   // let view = <SpinnerMask />;
   let view = <View />;
 
   if (dataIsLoaded && transaction) {
     view = (
       <View style={styles.container}>
-
-        <SlideViewSeparator />
 
         <View style={styles.dateAmountRectangle}>
 
@@ -154,22 +161,20 @@ const SlideUpTransactionRect = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
+    // alignItems: 'center',
 
-
-    // // borderWidth: 3,
+    // borderWidth: 1,
     // borderColor: 'pink',
     // borderStyle: 'dashed',
   },
 
   dateAmountRectangle: {
-
+    alignSelf: 'center',
     justifyContent: 'center',
     width: '95%', // 346,
-    height: '50%', // 74,
+    // height: '50%', // 74,
 
-    // marginTop: '5%',
+    // marginTop: '2%',
 
     borderRadius: 9,
     backgroundColor: colors.dark,
@@ -192,7 +197,7 @@ const dateLabel = {
   // width: 242,
   // height: 18,
 
-  flex: 1,
+  // flex: 1,
 
 
   // width: '100%',
@@ -205,7 +210,7 @@ const dateLabel = {
   textAlign: 'center',
   color: colors.tangerine,
 
-  paddingTop: 10,
+  // paddingTop: 8,
 
   // borderWidth: 1,
   // borderColor: 'white',
@@ -217,7 +222,7 @@ const amountLabel = {
   // width: 66,
   // height: 30,
 
-  flex: 1,
+  // flex: 1,
 
 
   // width: '100%',
@@ -230,8 +235,8 @@ const amountLabel = {
   textAlign: 'center',
   color: colors.white,
 
-  paddingBottom: 10,
-  paddingTop: 6,
+  // paddingBottom: 10,
+  // paddingTop: 6,
 
   // borderWidth: 1,
   // borderColor: 'white',

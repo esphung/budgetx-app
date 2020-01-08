@@ -57,7 +57,7 @@ import colors from '../../colors';
 
 import styles from './styles';
 
-import Dialog from "react-native-dialog";
+import Dialog from 'react-native-dialog';
 
 // import Offline from '../components/Offline';
 

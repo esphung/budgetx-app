@@ -23,7 +23,7 @@ export default function HelpMessage(props) {
           [
             styles.textStyle,
             {
-              // opacity: 0.3,
+              opacity: 0.3,
               // color: 'white',
             }
           ]

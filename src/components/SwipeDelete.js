@@ -5,9 +5,9 @@ import {
   Text,
 } from 'react-native';
 
-import colors from '../../colors';
+import colors from 'main/colors';
 
-import styles from '../screens/styles';
+import styles from 'main/styles';
 
 class SwipeDelete extends Component {
   render() {
@@ -20,6 +20,7 @@ class SwipeDelete extends Component {
         // alignSelf: 'stretch',
         justifyContent: 'flex-start',
         margin: 10,
+        alignItems: 'center',
 
         // backgroundColor: colors.pinkRed,
 

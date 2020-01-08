@@ -5,20 +5,22 @@ import {
   Text,
 } from 'react-native';
 
-import colors from '../../colors';
+import colors from 'main/colors';
 
-import styles from '../screens/styles';
+import styles from 'main/styles';
 
 const SwipeEdit = (props) => {
   const { onPress } = props;
   const cellView = (
 
     <TouchableOpacity style={{
-      // flex: 1,
+      flex: 1,
       flexDirection: 'row',
       // alignSelf: 'stretch',
       justifyContent: 'flex-start',
       margin: 10,
+
+      alignItems: 'center',
 
       // borderWidth: 1,
       // borderColor: 'pink',
