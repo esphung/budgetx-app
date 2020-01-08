@@ -45,7 +45,7 @@ import Auth from '@aws-amplify/auth';
 
 import colors from '../../colors';
 
-import styles from './styles';
+import styles from 'main/styles';
 
 import OfflineScreen from './OfflineScreen';
 
