@@ -1,43 +1,22 @@
 import React from 'react';
 
 import {
-  // TouchableOpacity,
   TouchableWithoutFeedback,
-  // StyleSheet,
-  // Text,
-  // SafeAreaView,
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
   View,
-  // Alert,
-  // Modal,
-  // FlatList,
-  // Animated,
-  // TextInput,
-  // NetInfo,
 } from 'react-native';
-
-// import NetInfo from '@react-native-community/netinfo';
 
 import { NetworkConsumer } from 'react-native-offline';
 
-import {
-  Container,
-  // Item,
-  // Input,
-} from 'native-base';
+import colors from 'main/colors';
 
-import colors from '../../colors';
+import styles from 'main/styles';
 
-import Offline from '../components/Offline';
-
-import styles from './styles';
-
-// import { NavigationEvents } from 'react-navigation';
+import InfoBox from 'main/storybook/stories/InfoBox';
 
 const OfflineScreen = () => {
-
   const page = (
     <View style={styles.container}>
       <StatusBar />
@@ -48,13 +27,7 @@ const OfflineScreen = () => {
       >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <Container style={styles.infoContainer}>
-              <View style={styles.container}>
-
-                <Offline />
-
-              </View>
-            </Container>
+            <InfoBox title="It appears you are offline!" />
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

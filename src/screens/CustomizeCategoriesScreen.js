@@ -75,7 +75,7 @@ import SwipeEdit from '../components/SwipeEdit';
 
 import Category from '../models/Category';
 
-// import InfoBox from '../components/InfoBox';
+// import InfoBox from 'main/storybook/stories/InfoBox';
 
 // import ColorDialog from '../components/ColorDialog';
 

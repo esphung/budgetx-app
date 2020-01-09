@@ -10,6 +10,7 @@ import Welcome from './Welcome';
 import Button from './Button';
 import BlueButton from './BlueButton';
 import HelpMessage from './HelpMessage';
+import InfoBox from './InfoBox';
 
 import TouchableText from './TouchableText';
 
@@ -46,11 +47,15 @@ storiesOf('Components', module)
   </CenterView>
 )
 
-
-
 .add('HelpMessage', () => 
   <CenterView>
-    <HelpMessage message="Hello" />
+    <HelpMessage message="HelpMessage" />
+  </CenterView>
+)
+
+.add('InfoBox', () => 
+  <CenterView>
+    <InfoBox title="InfoBox" />
   </CenterView>
 )
 

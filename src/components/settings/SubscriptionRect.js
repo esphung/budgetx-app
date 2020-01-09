@@ -10,7 +10,9 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
+
+import InfoBox from 'main/storybook/stories/InfoBox';
 
 // text style
 const copy3 = {
@@ -123,7 +125,7 @@ function SubscriptionRect() {
         }
         >
           <Text style={copy3}>
-            { message }
+            Thank you for using {global.appName} version {global.appVersion}!
           </Text>
         </View>
       </TouchableOpacity>

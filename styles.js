@@ -14,6 +14,17 @@ export default StyleSheet.create({
     // marginTop: 15, // '5%',
     // marginBottom: 5,
   },
+
+  // container: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+
+  //   // backgroundColor: colors.darkTwo, // '#aa73b7',
+  //   // flexDirection: 'column',
+  //   // marginTop: 15, // '5%',
+  //   // marginBottom: 5,
+  // },
   slideView: {
     flex: 1,
     backgroundColor: colors.darkTwo,
@@ -206,10 +217,10 @@ export default StyleSheet.create({
     paddingHorizontal: 12,
   },
   arrow: {
+    // table item right side icon
     // flex: 0.05,
     // flexDirection: 'row-reverse',
     alignSelf: 'center',
-
 
     // textAlign: 'center',
     // width: 8,
@@ -227,5 +238,48 @@ export default StyleSheet.create({
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',
+  },
+  infoBoxStyle: {
+    // Offline message box
+    alignSelf: 'center',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    // padding: 14,
+    // marginBottom: 20,
+    // minWidth: 346,
+    width: '90%',
+    // maxWidth: '95%',
+    minHeight: 74,
+
+    borderRadius: 9,
+    backgroundColor: colors.dark,
+    shadowColor: '#0f1725',
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    shadowRadius: 16,
+    shadowOpacity: 1,
+
+    // borderWidth: 1,
+    // borderColor: colors.white,
+    // borderStyle: 'solid',
+  },
+  infoBoxGreenTextStyle: {
+    // width: 215,
+    // alignSelf: 'center',
+
+    // height: 40,
+    fontFamily: 'SFProDisplay-Semibold',
+    fontSize: 17,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    letterSpacing: 0.13,
+    color: colors.shamrockGreen,
+
+    paddingHorizontal: 6,
+    textAlign: 'center',
   },
 });
