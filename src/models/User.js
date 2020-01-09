@@ -13,37 +13,36 @@ UPDATED:
 //   # friends: [User] @connection(name: "friends")
 // }
 
+var ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return Math.random().toString(36).substr(2, 9);
+};
+
 import defaultCategories from '../data/categories';
 
 // User function with multiple constructors
-function User(username) {
-  const currentDate = new Date();
-  this.id = `${Date.now(currentDate)}`;
-  this.username = username;
-  this.email = '' // email;
+const User = (username) => {
+  // const currentDate = new Date();
+  // this.id = `${Date.now(currentDate)}`;
+  return {
+    id: ID(), // `${Date.now(currentDate)}`,
+    username: username,
+    email: '' // email;
+  }
   // this.phoneNumber = '';
   // this.password = '';
   
   // this.transactions = [];
 
-
-
-
-
   // this.created = currentDate;
   // this.given = ''; // first name
   // this.surname = '';
 
-
-
-
-
   // this.profileImage = global.avatar;
 
   // this.categories = defaultCategories;
-
-
-
 
 } // end user function def
 

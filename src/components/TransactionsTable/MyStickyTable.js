@@ -269,6 +269,8 @@ const MyStickyTable = (props) => {
             position: tablePosition, // 'absolute'
             top: tableTop, // '30%', // 240,
 
+            zIndex: -1,
+
             // borderWidth: 2,
             // borderColor: 'white',
             // borderStyle: 'dashed',

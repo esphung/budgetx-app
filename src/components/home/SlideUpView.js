@@ -107,15 +107,17 @@ function SlideUpView(props) {
           <Text style={styles.listItemTitleStyle}>Choose Category</Text>
         </TouchableOpacity>
 */}
+                            
+{/*                            <View style={styles.btnContainer}>
+                                <Button title="Submit" onPress={() => null} />
+                            </View>*/}
+                            <View style={{ flex : 1, marginBottom: 24 }} />
+
                             <NoteTextInput
                               transaction={transaction}
                               // handleNoteChange={handleNoteChange}
                               updateStoredTransactionNote={updateStoredTransactionNote}
                             />
-{/*                            <View style={styles.btnContainer}>
-                                <Button title="Submit" onPress={() => null} />
-                            </View>*/}
-                            <View style={{ flex : 1, marginBottom: 24 }} />
                             
                         </View>
 

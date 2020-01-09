@@ -16,13 +16,13 @@ export default StyleSheet.create({
   },
   slideView: {
     flex: 1,
-                    backgroundColor: colors.darkTwo,
+    backgroundColor: colors.darkTwo,
 
-                    // borderWidth: 1,
-                    // borderColor: 'blue',
-                    // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderColor: 'blue',
+    // borderStyle: 'solid',
 
-                    shadowColor: '#0a101b',
+    shadowColor: '#0a101b',
     shadowOffset: {
       width: 1,
       height: 1,
@@ -148,8 +148,9 @@ export default StyleSheet.create({
   },
   innerSlide: {
     // padding: 24,
-    flex: 1,
+    // flex: 1,
     justifyContent: 'flex-end',
+    
   },
   textStyle: {
     // fontWeight: '600',
@@ -171,6 +172,19 @@ export default StyleSheet.create({
     letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
 
+  },
+  helpMessageText: {
+    fontWeight: '600',
+    color: colors.white, // '#fff',
+    // opacity: 0.6,
+    fontSize: 17,
+
+    fontFamily: 'SFProDisplay-Regular',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    lineHeight: 28,
+    letterSpacing: 0.17,
+    textAlign: 'center',
   },
   rowBackLeft: {
     flex: 1,

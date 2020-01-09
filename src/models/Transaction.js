@@ -14,8 +14,15 @@ import Category from './Category';
 
 import colors from 'main/colors';
 
+var ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return Math.random().toString(36).substr(2, 9);
+};
+
 function Transaction(date, amount, payee, category, type, note) {
-  const currentDate = new Date();
+  // const currentDate = new Date();
 
   if (category) {
     const id = category.id
@@ -27,7 +34,7 @@ function Transaction(date, amount, payee, category, type, note) {
 
   // console.log(category);
 
-  this.id = `${Date.now(currentDate)}`;
+  id: ID(), // `${Date.now(currentDate)}`,
   this.date = (date) ? date : currentDate;
   this.amount = amount ? amount : Number.parseFloat(0).toFixed(2);
   this.payee = payee ? payee : new Payee();

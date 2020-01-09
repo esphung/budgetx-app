@@ -17,5 +17,6 @@
                 12/05/2019 12:19 PM
                 12/12/2019 02:12 AM | Ready for push to App Store
                 01/07/2020 06:39 PM | Released 1.1.4
+                01/08/2020 08:47 AM 1.1.7 release
 
 

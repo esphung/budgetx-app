@@ -5,8 +5,6 @@ PURPOSE: user default payees local storage
 */
 import { AsyncStorage } from 'react-native';
 
-import defaultPayees from '../data/payees';
-
 const STORAGE_KEY = 'PAYEES';
 
 // AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
@@ -17,7 +15,7 @@ export const savePayees = (payees) => {
 
 // LOAD VALUE USERDEFAULTPAYEES
 const DEFAULT_USERDEFAULTPAYEES = {
-  payees: defaultPayees,
+  payees: []
 };
 
 export const loadPayees = async () => {

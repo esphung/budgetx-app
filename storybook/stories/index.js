@@ -9,6 +9,7 @@ import { linkTo } from '@storybook/addon-links';
 import Welcome from './Welcome';
 import Button from './Button';
 import BlueButton from './BlueButton';
+import HelpMessage from './HelpMessage';
 
 import TouchableText from './TouchableText';
 
@@ -16,8 +17,9 @@ import TouchableText from './TouchableText';
 import CenterView from './CenterView';
 // import Welcome from './Welcome';
 
-storiesOf('Financely', module)
+storiesOf('Components', module)
 // .add('to Welcome Screen', () => <Welcome />)
+
 .add('Button', () => 
   <CenterView>
     <Button
@@ -43,6 +45,19 @@ storiesOf('Financely', module)
     />
   </CenterView>
 )
+
+
+
+.add('HelpMessage', () => 
+  <CenterView>
+    <HelpMessage message="Hello" />
+  </CenterView>
+)
+
+
+
+
+
 
 
 

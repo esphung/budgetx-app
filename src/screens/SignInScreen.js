@@ -8,7 +8,7 @@ import { NetworkConsumer } from 'react-native-offline';
 
 import SpinnerMask from 'main/src/components/SpinnerMask';
 
-import HelpMessage from '../components/HelpMessage';
+import HelpMessage from 'main/storybook/stories/HelpMessage';
 
 import {
   // StyleSheet,

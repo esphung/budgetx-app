@@ -10,7 +10,7 @@ import {
 import Auth from '@aws-amplify/auth';
 
 // ui colors
-import colors from '../../../../colors';
+import colors from 'main/colors';
 
 // import {
 //   loadTransactionsObject,

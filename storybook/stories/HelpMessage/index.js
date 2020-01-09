@@ -2,9 +2,11 @@ import React from 'react';
 
 import { Text, View } from 'react-native';
 
-import styles from '../screens/styles';
+import styles from 'main/styles';
 
-export default function HelpMessage(props) {
+import PropTypes from 'prop-types';
+
+function HelpMessage(props) {
   const { message } = props;
   return (
     <View style={
@@ -21,9 +23,9 @@ export default function HelpMessage(props) {
       <Text
         style={
           [
-            styles.textStyle,
+            styles.helpMessageText,
             {
-              opacity: 0.3,
+              // opacity: 0.3,
               // color: 'white',
             }
           ]
@@ -34,3 +36,9 @@ export default function HelpMessage(props) {
     </View>
   );
 }
+
+HelpMessage.propTypes = {
+  message : PropTypes.string,
+};
+
+export default HelpMessage;

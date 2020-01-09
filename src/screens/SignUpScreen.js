@@ -49,7 +49,7 @@ import OfflineScreen from './OfflineScreen';
 
 import SpinnerMask from '../components/SpinnerMask';
 
-import HelpMessage from '../components/HelpMessage';
+import HelpMessage from 'main/storybook/stories/HelpMessage';
 
 import countries from '../../Countries';
 

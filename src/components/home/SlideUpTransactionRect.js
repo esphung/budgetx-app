@@ -161,6 +161,7 @@ const SlideUpTransactionRect = (props) => {
 
 const styles = StyleSheet.create({
   container: {
+
     // alignItems: 'center',
 
     // borderWidth: 1,
@@ -169,8 +170,9 @@ const styles = StyleSheet.create({
   },
 
   dateAmountRectangle: {
+    
     alignSelf: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     width: '95%', // 346,
     // height: '50%', // 74,
 

@@ -7,11 +7,11 @@ import { AsyncStorage } from 'react-native';
 
 import User from '../models/User';
 
-import Payee from '../models/Payee';
+// import Payee from '../models/Payee';
 
-import Category from '../models/Category';
+// import Category from '../models/Category';
 
-import Transaction from '../models/Transaction';
+// import Transaction from '../models/Transaction';
 
 import defaultCategories from '../data/categories';
 
@@ -28,20 +28,19 @@ export const clearSettingsStorage = async (key) => {
   try {
     await AsyncStorage.removeItem(key);
     return true;
-  }
-  catch(exception) {
+  } catch (exception) {
     return false;
   }
-}
+};
 
 // LOAD VALUE USERDEFAULTCATEGORIES
-const DEFAULT_SETTINGS = function(key) {
+const DEFAULT_SETTINGS = (key) => {
   const settings = {
     user: new User(key),
     image: global.avatar,
     transactions: [],
     categories: defaultCategories,
-  }
+  };
   return settings;
 };
 

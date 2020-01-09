@@ -14,7 +14,7 @@ import OfflineScreen from '../screens/OfflineScreen';
 
 import SpinnerMask from 'main/src/components/SpinnerMask';
 
-import HelpMessage from '../components/HelpMessage';
+import HelpMessage from 'main/storybook/stories/HelpMessage';
 
 import {
   TouchableOpacity,

@@ -18,10 +18,10 @@ import SpinnerMask from '../SpinnerMask';
 // ui colors
 import colors from '../../../colors';
 
-import {
-  loadUserObject,
-  saveUserObject,
-} from '../../storage/UserStorage';
+// import {
+//   loadUserObject,
+//   saveUserObject,
+// } from '../../storage/UserStorage';
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -65,29 +65,29 @@ function UserNameEmailInput() {
 
   const [user, setUser] = useState(null);
 
-  async function saveName(string) {
-    const userObject = await loadUserObject(); // load storage object
-    // console.log('user:', userObject.user.username);
+  // async function saveName(string) {
+  //   const userObject = await loadUserObject(); // load storage object
+  //   // console.log('user:', userObject.user.username);
 
-    userObject.user.username = string;
-    // console.log('user:', userObject.user.username);
+  //   userObject.user.username = string;
+  //   // console.log('user:', userObject.user.username);
 
-    if (isValidName(string)) {
-      saveUserObject(userObject);
-    }
-  }
+  //   if (isValidName(string)) {
+  //     saveUserObject(userObject);
+  //   }
+  // }
 
-  async function saveEmail(string) {
-    const userObject = await loadUserObject(); // load storage object
+  // async function saveEmail(string) {
+  //   const userObject = await loadUserObject(); // load storage object
 
-    userObject.user.email = string;
-    // console.log('user:', userObject.user.username);
+  //   userObject.user.email = string;
+  //   // console.log('user:', userObject.user.username);
 
-    if (isValidEmail(string)) {
-      saveUserObject(userObject);
-      // setIsEmailInputEnabled(false);
-    }
-  }
+  //   if (isValidEmail(string)) {
+  //     saveUserObject(userObject);
+  //     // setIsEmailInputEnabled(false);
+  //   }
+  // }
 
   async function retrieveStoredUserData() {
     const userObject = await loadUserObject(); // load storage object
@@ -115,9 +115,9 @@ function UserNameEmailInput() {
   }
 
   function submitNamePressed(text) {
-    // setName(text);
+    setName(text);
     // console.log('Submit:', text)
-    saveName(text);
+    // saveName(text);
   }
 
   function handleTextChange(text) {
@@ -130,9 +130,9 @@ function UserNameEmailInput() {
   }
   function submitEmailPressed(text) {
     // console.log('Submit:', text)
-    // setEmail(text);
+    setEmail(text);
 
-    saveEmail(text)
+    // saveEmail(text)
   }
 
   async function loadCognitoUser() {

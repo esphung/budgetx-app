@@ -58,6 +58,8 @@ import BlueButton from 'main/storybook/stories/BlueButton';
 
 import TouchableText from 'main/storybook/stories/TouchableText';
 
+import HelpMessage from 'main/storybook/stories/HelpMessage';
+
 import {
   loadSettingsStorage,
   saveSettingsStorage,
@@ -74,8 +76,6 @@ import SwipeEdit from '../components/SwipeEdit';
 import Category from '../models/Category';
 
 // import InfoBox from '../components/InfoBox';
-
-import HelpMessage from '../components/HelpMessage';
 
 // import ColorDialog from '../components/ColorDialog';
 

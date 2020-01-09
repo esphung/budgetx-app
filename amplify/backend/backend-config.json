@@ -12,21 +12,5 @@
 			"providerPlugin": "awscloudformation"
 		}
 	},
-	"api": {
-		"financelyapi": {
-			"service": "AppSync",
-			"providerPlugin": "awscloudformation",
-			"output": {
-				"authConfig": {
-					"additionalAuthenticationProviders": [],
-					"defaultAuthentication": {
-						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
-						"userPoolConfig": {
-							"userPoolId": "authbudgetxapp7ad453bb"
-						}
-					}
-				}
-			}
-		}
-	}
+	"api": {}
 }
