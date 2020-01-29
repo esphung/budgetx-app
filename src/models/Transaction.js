@@ -22,7 +22,7 @@ var ID = function () {
 };
 
 function Transaction(date, amount, payee, category, type, note) {
-  // const currentDate = new Date();
+  const currentDate = new Date();
 
   if (category) {
     const id = category.id
@@ -34,7 +34,7 @@ function Transaction(date, amount, payee, category, type, note) {
 
   // console.log(category);
 
-  id: ID(), // `${Date.now(currentDate)}`,
+  this.id = `${Date.now(currentDate)}`,
   this.date = (date) ? date : currentDate;
   this.amount = amount ? amount : Number.parseFloat(0).toFixed(2);
   this.payee = payee ? payee : new Payee();

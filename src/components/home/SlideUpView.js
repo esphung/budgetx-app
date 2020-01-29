@@ -90,7 +90,19 @@ function SlideUpView(props) {
                   }
                 }>
                 <Animated.View
-      style={[styles.slideView, { transform: [{ translateY: slideViewBounceValue }] }]}
+      style={
+        [
+          styles.slideView,
+          {
+            transform:
+            [
+              {
+                translateY: slideViewBounceValue,
+              },
+            ]
+          }
+        ]
+      }
     >
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <View style={styles.innerSlide}>
@@ -129,7 +141,19 @@ function SlideUpView(props) {
 
   const animatedView = (
     <Animated.View
-      style={[styles.container, { transform: [{ translateY: slideViewBounceValue }] }]}
+      style={
+        [
+          // styles.container,
+          {
+            flex: 1,
+            justifyContent: 'center',
+
+            borderWidth: 1,
+            borderColor: 'white',
+            borderStyle: 'dashed',
+          },
+          { transform: [{ translateY: slideViewBounceValue }] }
+        ]}
     >
       <SlideUpTransactionRect transaction={transaction} />
       

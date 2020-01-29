@@ -171,11 +171,15 @@ function Home() {
 
     // console.log(currentTransaction.id);
 
+    
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(storageKey);
       // console.log(transaction);
-      const found = searchByID(currentTransaction.id, storageObj.transactions);
+      const list = storageObj.transactions;
+
+      const found = searchByID(currentTransaction.id, list);
+
 
       // set stored user image
       // console.log('stored user settings image:', storageObj.image);
@@ -188,33 +192,55 @@ function Home() {
         found.note = string;
         // console.log('new note:', found.note);
 
-        let i = storageObj.transactions.length - 1;
-        for (i; i >= 0; i -= 1) {
-          if (storageObj.transactions[i].id === found.id) {
-            // set user transaction payee
-            storageObj.transactions[i] = found;
+        const pos = list.indexOf(found);
 
-            // console.log(storageObj.transactions[i]);
+        list[pos] = found;
 
-            // save transactions list
-            // saveUserObject(userObject);
-            // saveSettingsStorage(this.state.storageKey, userObject);
+        storageObj.transactions =  list;
 
-            saveSettingsStorage(storageKey, storageObj);
+        saveSettingsStorage(storageKey, storageObj);
 
-            setTransactions(storageObj.transactions);
+        setTransactions(list);
 
-            // setCurrentPayee(null);
-            // setCurrentNote(null);
-            // setCurrentAmount(initialState.currentAmount);
-            // setCurrentCategory(initialState.currentCategory);
-            setCurrentTransaction(storageObj.transactions[i]);
-            // setCurrentType(initialState.currentType);
+        // setCurrentPayee(null);
+        // setCurrentNote(null);
+        // setCurrentAmount(initialState.currentAmount);
+        // setCurrentCategory(initialState.currentCategory);
+        setCurrentTransaction(list[pos]);
+        // setCurrentType(initialState.currentType);
 
-            // return from here
-            // return;
-          }
-        }
+        // return from here
+        // return;
+
+
+
+        // let i = storageObj.transactions.length - 1;
+        // for (i; i >= 0; i -= 1) {
+        //   if (storageObj.transactions[i].id === found.id) {
+        //     // set user transaction payee
+        //     storageObj.transactions[i] = found;
+
+        //     // console.log(storageObj.transactions[i]);
+
+        //     // save transactions list
+        //     // saveUserObject(userObject);
+        //     // saveSettingsStorage(this.state.storageKey, userObject);
+
+        //     saveSettingsStorage(storageKey, storageObj);
+
+        //     setTransactions(storageObj.transactions);
+
+        //     // setCurrentPayee(null);
+        //     // setCurrentNote(null);
+        //     // setCurrentAmount(initialState.currentAmount);
+        //     // setCurrentCategory(initialState.currentCategory);
+        //     setCurrentTransaction(storageObj.transactions[i]);
+        //     // setCurrentType(initialState.currentType);
+
+        //     // return from here
+        //     // return;
+        //   }
+        // }
       }
     } catch (e) {
       // statements
@@ -292,24 +318,29 @@ function Home() {
   async function removeUserTransaction(transaction) {
     const userObject = await loadSettingsStorage(storageKey);
 
-    // loop thru stored transactions and splice transaction from it
-    let i = userObject.transactions.length - 1;
+    const list = userObject.transactions;
 
-    for (i; i >= 0; i -= 1) {
-      if (userObject.transactions[i].id === transaction.id) {
-        userObject.transactions.splice(i, 1);
-      }
+    const found = searchByID(transaction.id, list);
+
+    // console.log(found);
+
+    if (found) {
+      const pos = list.indexOf(found);
+      list.splice(pos, 1);
+
+      setTransactions(list);
+
+      userObject.transactions = list;
+
+      saveSettingsStorage(storageKey, userObject);
+
+      setCurrentPayee(null);
+      setCurrentNote(null);
+      setCurrentAmount(initialState.currentAmount);
+      setCurrentCategory(initialState.currentCategory);
+      setCurrentTransaction(initialState.currentTransaction);
+      setCurrentType(initialState.currentType);
     }
-    saveSettingsStorage(storageKey, userObject);
-
-    setTransactions(userObject.transactions);
-
-    setCurrentPayee(null);
-    setCurrentNote(null);
-    setCurrentAmount(initialState.currentAmount);
-    setCurrentCategory(initialState.currentCategory);
-    setCurrentTransaction(initialState.currentTransaction);
-    setCurrentType(initialState.currentType);
   }
 
   // async function retrieveStoredTransactions() {
