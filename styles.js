@@ -32,22 +32,6 @@ export default StyleSheet.create({
     fontStyle: 'normal',
     letterSpacing: 0.13,
   },
-  slideView: {
-    flex: 1,
-    backgroundColor: colors.darkTwo,
-
-    // borderWidth: 1,
-    // borderColor: 'blue',
-    // borderStyle: 'solid',
-
-    shadowColor: '#0a101b',
-    shadowOffset: {
-      width: 1,
-      height: 1,
-    },
-    shadowRadius: 26,
-    shadowOpacity: 1,
-  },
   input: {
     alignItems: 'center',
     fontSize: 17,
@@ -172,7 +156,7 @@ export default StyleSheet.create({
     letterSpacing: 0.1,
     color: colors.white, // '#ffffff',
 
-    paddingLeft: 12,
+    // paddingLeft: 12,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -194,6 +178,7 @@ export default StyleSheet.create({
     fontWeight: 'normal',
     fontStyle: 'normal',
     // lineHeight: 28,
+    // lineHeight: 24,
     letterSpacing: 0.17,
     // textAlign: 'center',
 
@@ -201,7 +186,7 @@ export default StyleSheet.create({
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    // letterSpacing: 0.13,
+    letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
 
   },
@@ -211,7 +196,7 @@ export default StyleSheet.create({
     // fontStyle: 'normal',
     fontFamily: 'SFProDisplay-Regular',
 
-    letterSpacing: 0.17,
+    letterSpacing: 0.13,
 
     // color: 'pink',
 
@@ -221,6 +206,76 @@ export default StyleSheet.create({
 
     // textAlignVertical: 'center',
 
+  },
+  slideView: {
+    // flex: 1,
+    // width: '100%',
+    // height: '100%',
+    // backgroundColor: colors.darkTwo,
+
+    // position: 'absolute',
+
+    // top: '10%',
+
+    // borderWidth: 2,
+    // borderColor: 'blue',
+    // borderStyle: 'dashed',
+
+
+
+    // shadowColor: '#0a101b',
+    // shadowOffset: {
+    //   width: 1,
+    //   height: 1,
+    // },
+    // shadowRadius: 26,
+    // shadowOpacity: 1,
+  },
+  slideUpTransactionRect: {
+    // height: '100%',
+    height: 300,
+
+    alignItems: 'center',
+
+    // borderWidth: 3,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+
+    backgroundColor: colors.darkTwo,
+    // backgroundColor: 'blue',
+
+    shadowColor: '#0a101b',
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    shadowRadius: 26,
+    shadowOpacity: 1,
+  },
+  dateAmountRectangle: {
+    // position: 'absolute',
+    
+    // alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '95%', // 346,
+    height: 74,
+
+    marginBottom: '2%',
+
+    borderRadius: 9,
+    backgroundColor: colors.dark,
+    shadowColor: '#0f1725',
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    shadowRadius: 16,
+    shadowOpacity: 1,
+
+    // borderWidth: 2,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
   },
   helpMessageText: {
     fontWeight: '600',

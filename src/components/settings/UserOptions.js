@@ -168,6 +168,8 @@ function UserOptions(props) {
               alignItems: 'flex-start',
               justifyContent: 'center',
 
+              paddingLeft: 12,
+
               // borderWidth: 1,
               // borderColor: 'blue',
               // borderStyle: 'solid',

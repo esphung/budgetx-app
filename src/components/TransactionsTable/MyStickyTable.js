@@ -368,14 +368,18 @@ const MyStickyTable = (props) => {
       {
         // flex: 1,
         width: '100%',
-        height: tableHeight, // '32%',
-        // height: '30%',
+        // height: tableHeight, // '32%',
+
+
+        height: '32.5%',
         position: tablePosition, // 'absolute'
         top: tableTop, // '30%', // 240,
 
-        
-
+      
         zIndex: -1,
+
+        // paddingBottom: 30,
+        marginBottom: 20,
 
         // borderWidth: 2,
         // borderColor: 'white',

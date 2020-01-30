@@ -34,6 +34,7 @@ function CategoryLabel(props) {
     <Text style={
       [
         styles.textStyle,
+        // styles.listItemTitleStyle,
         {
           color: textColor, // 'rgba(255, 255, 255, 0.5)',
           // fontFamily: 'SFProDisplay-Regular',

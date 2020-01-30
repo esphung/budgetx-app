@@ -59,6 +59,8 @@ function SlideUpView(props) {
     slideViewBounceValue,
     transaction,
     updateStoredTransactionNote,
+    // clearState,
+    dismiss,
   } = props;
 
   // console.log(transaction);
@@ -70,15 +72,20 @@ function SlideUpView(props) {
                 behavior={Platform.OS === 'ios' ? 'padding' : null}
                 enabled={isKeyboardAvoidEnabled}
                 style={{
-                  // flex: 1,
+                  flex: 1,
                   width: '100%',
-                  height: '40%',
-                  bottom: '0%',
-                  top: '60%',
+                  // height: '40%',
+                  // bottom: '0%',
+                  top: '58%',
+                  // top: 480,
                   // borderWidth: 1,
                   // borderColor: 'white',
                   // borderStyle: 'dashed',
+
                   zIndex: -1,
+
+                  // backgroundColor: 'pink',
+                  // backgroundColor: 'transparent',
 
 
               }}
@@ -107,9 +114,9 @@ function SlideUpView(props) {
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <View style={styles.innerSlide}>
 
-                        <SlideViewSeparator />
+                        {/*<SlideViewSeparator />*/}
 
-                            <SlideUpTransactionRect transaction={transaction} />
+                            <SlideUpTransactionRect  handleTransactionChange={props.handleTransactionChange} dismiss={dismiss} updateStoredTransactionNote={updateStoredTransactionNote} transaction={transaction} />
 
 {/*                            <TouchableOpacity style={[
                               styles.tableItemStyle, {
@@ -123,13 +130,9 @@ function SlideUpView(props) {
 {/*                            <View style={styles.btnContainer}>
                                 <Button title="Submit" onPress={() => null} />
                             </View>*/}
-                            <View style={{ flex : 1, marginBottom: 24 }} />
+                           
 
-                            <NoteTextInput
-                              transaction={transaction}
-                              // handleNoteChange={handleNoteChange}
-                              updateStoredTransactionNote={updateStoredTransactionNote}
-                            />
+                            
                             
                         </View>
 
@@ -148,9 +151,9 @@ function SlideUpView(props) {
             flex: 1,
             justifyContent: 'center',
 
-            borderWidth: 1,
-            borderColor: 'white',
-            borderStyle: 'dashed',
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'dashed',
           },
           { transform: [{ translateY: slideViewBounceValue }] }
         ]}

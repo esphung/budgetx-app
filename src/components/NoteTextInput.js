@@ -6,7 +6,7 @@ import { TextInput, View, Alert } from 'react-native';
 import Auth from '@aws-amplify/auth';
 
 // ui colors
-import colors from '../../colors';
+import colors from 'main/colors';
 
 import styles from 'main/styles';
 
@@ -68,22 +68,26 @@ export default function NoteTextInput(props) {
 
   if (isReady) {
     return (
-      <View style={styles.tableItemStyle}>
-        <TextInput
+      <TextInput
         style={
           [
-            styles.listItemTitleStyle,
+            // styles.listItemTitleStyle,
+            styles.textStyle,
           {
-                      height: 45,
-                      // flex: 1,
-                      // borderColor: 'gray',
-                      // borderWidth: 1,
-          
-                      backgroundColor: colors.dark,
-          
-                    }]
+            height: 50,
+            // width: '100%',
+            // flex: 1,
+
+            paddingLeft: 12,
+
+            backgroundColor: colors.darkTwo,
+
+            // borderWidth: 1,
+            // borderColor: 'gray',
+            // borderStyle: 'solid',
+          }]
         }
-        placeholder="Enter a note"
+        placeholder="Add note"
         placeholderTextColor={colors.offWhite}
         onChangeText={(text) => setNote(text)}
         value={note}
@@ -93,8 +97,12 @@ export default function NoteTextInput(props) {
         onSubmitEditing={() => props.updateStoredTransactionNote(note)}
         autoCompleteType="off"
         autoCorrect={false}
+
+        clearButtonMode="while-editing"
+
+        maxLength={42}
       />
-      </View>
+      
     );
   }
   return <View />;

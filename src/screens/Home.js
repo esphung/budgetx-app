@@ -165,13 +165,31 @@ function Home() {
     return obj;
   }
 
+  const handleTransactionChange = async (transactions) => {
+    console.log(transactions);
+    try {
+      const storageObj = await loadSettingsStorage(storageKey);
+
+      const list = transactions;
+
+      storageObj.transactions = list
+
+      saveSettingsStorage(storageKey, storageObj);
+
+      
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
+    setTransactions(transactions);
+  };
+
 
   const updateStoredTransactionNote = async (string) => {
     // console.log(string);
 
     // console.log(currentTransaction.id);
 
-    
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(storageKey);
@@ -196,7 +214,7 @@ function Home() {
 
         list[pos] = found;
 
-        storageObj.transactions =  list;
+        storageObj.transactions = list;
 
         saveSettingsStorage(storageKey, storageObj);
 
@@ -211,7 +229,6 @@ function Home() {
 
         // return from here
         // return;
-
 
 
         // let i = storageObj.transactions.length - 1;
@@ -343,30 +360,31 @@ function Home() {
     }
   }
 
-  // async function retrieveStoredTransactions() {
-  //   // setIsReady(false);
-  //   try {
-  //     const userObject = await loadUserObject();
-  //     // set stored user's transactions
-  //     await setTransactions(userObject.user.transactions);
-  //     // setIsReady(true);
-  //   } catch (e) {
-  //     // statements
-  //     Alert.alert('Could not load stored transactions');
-  //   }
+  async function retrieveStoredTransactions() {
+    // setIsReady(false);
+    try {
+      const userObject = await loadSettingsStorage(storageKey)
+      // set stored user's transactions
+      await setTransactions(userObject.transactions);
+      // console.log(userObject.transactions)
+      // setIsReady(true);
+    } catch (e) {
+      // statements
+      Alert.alert('Could not load stored transactions');
+    }
 
-  //   // try {
-  //   //   const items = await API.graphql(graphqlOperation(ListTransactions));
-  //   //   console.log('items: ', items.data.listTransactions.items);
-  //   //   // this.setState({ items: items.data.listBooks.items });
-  //   //   setTransactions(items.data.listTransactions.items);
-  //   // } catch (err) {
-  //   //   console.log('error: ', err);
-  //   // }
+    // try {
+    //   const items = await API.graphql(graphqlOperation(ListTransactions));
+    //   console.log('items: ', items.data.listTransactions.items);
+    //   // this.setState({ items: items.data.listBooks.items });
+    //   setTransactions(items.data.listTransactions.items);
+    // } catch (err) {
+    //   console.log('error: ', err);
+    // }
 
 
-  //   // setIsReady(true);
-  // }
+    // setIsReady(true);
+  }
 
   const addTransaction = async () => {
     if (!currentAmount || !currentCategory) return;
@@ -746,9 +764,38 @@ function Home() {
       <SlideUpView
         slideViewBounceValue={slideViewBounceValue}
         transaction={currentTransaction}
+        handleTransactionChange={handleTransactionChange}
         // handleNoteChange={handleNoteChange}
-        clearState={clearState}
-        updateStoredTransactionNote={updateStoredTransactionNote}
+        dismiss={() => {
+          // setIsReady(false);
+          // hideSlideView();
+
+          // add/remove transactions
+          // setTransactions([]);
+          // setCurrentBalance(0.00);
+          // setCurrentSpent(0.00);
+          // setCurrentPayee(null);
+          // setCurrentNote(null);
+          // setCurrentDate(initialState.currentDate);
+          // setCurrentAmount(initialState.currentAmount);
+          // setCurrentCategory(initialState.currentCategory);
+          setCurrentTransaction(initialState.currentTransaction);
+          // setCurrentType(initialState.currentType);
+
+
+          // setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
+          // setIsSlideViewHidden(initialState.isSlideViewHidden);
+          // setIsCurrentTransaction(initialState.isCurrentTransaction);
+
+          // setStorageKey(null);
+          // retrieveStoredTransactions(); // load stored user
+          // cacheResourcesAsync();
+        }}
+        // updateStoredTransactionNote={updateStoredTransactionNote}
+
+        // updateStoredTransactionCategory={() => {
+        //   console.log(currentTransaction)
+        // }}
       />
 
     </View>

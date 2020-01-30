@@ -10,9 +10,9 @@ export default function SlideViewSeparator() {
     <View
       style={
         {
-          alignSelf: 'center',
-          width: '35%', // 134,
-          height: '1%', // 5,
+          // alignSelf: 'center',
+          width: 134,
+          height: 5,
 
           margin: 13,
 
