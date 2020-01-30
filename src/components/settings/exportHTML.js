@@ -36,7 +36,7 @@ export function convertObjectToHTML(item) {
     }
 
     if (key === 'category') {
-      console.log(item[key]);
+      // console.log(item[key]);
       array.push(`<td>${item[key].name}</td>\n`);
     }
 
@@ -49,8 +49,9 @@ export function convertObjectToHTML(item) {
     }
 
     if (key === 'note') {
-      if (item[key].name) {
-        array.push(`<td>${item[key].name}</td>\n`);
+      // console.log(item[key]);
+      if (item[key]) {
+        array.push(`<td>${item[key]}</td>\n`);
       } else {
         array.push(`<td></td>\n`);
       }
