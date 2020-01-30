@@ -183,19 +183,47 @@ function CellItem({
   //   // console.log(colorId);
   // };
 
+
+
+  async function retrieveCognitoUserKey() {
+    Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        // setStorageKey(cognito.username);
+
+        // setEmail(cognito.attributes.email);
+        key = cognito.username;
+      })
+      .catch((err) => {
+        // console.log(err);
+        Alert.alert(err);
+      });
+  }
+
+
   const handleTextSubmit = async (value) => {
-    // load stored user settings
-    const userObject = await loadSettingsStorage(storageKey);
+    alert('handling text submit')
+    // let key = retrieveCognitoUserKey();
 
-    const previousObj = searchByName(value, userObject.categories);
+    // if (key) {
+    //   // load stored user settings
+    //   const userObject = await loadSettingsStorage(key);
+    // } else {
+    //   alert('error handling text submit')
+    // }
 
-    // const randomColor = randomKeyFrom(colors)
+    
 
-    if (!previousObj) {
-      //  create new payee
-      // addCategory(value, randomColor);
-      addCategory(value, colors.white);
-    }
+    // const previousObj = searchByName(value, userObject.categories);
+
+    // // const randomColor = randomKeyFrom(colors)
+
+    // if (!previousObj) {
+    //   //  create new payee
+    //   // addCategory(value, randomColor);
+    //   addCategory(value, colors.white);
+    // }
   };
 
   // useEffect(() => {
@@ -265,11 +293,11 @@ function CellItem({
 
           autoCorrect
 
-          onChangeText={(value) => handleTextChange(value)}
+          // onChangeText={(value) => handleTextChange(value)}
 
-          onSubmitEditing={() => handleTextSubmit(text)}
+          // onSubmitEditing={() => handleTextSubmit(text)}
 
-          onEndEditing={(value) => setText(value)}
+          // onEndEditing={(value) => setText(value)}
 
           maxLength={14}
 
@@ -365,12 +393,12 @@ const CustomizeCategoriesScreen = () => {
         storage.categories.splice(i, 1);
       }
     }
-    saveSettingsStorage(storageKey, storage)
+    saveSettingsStorage(storageKey, storage);
     setData(storage.categories);
     // setIsLoading(false);
 
     setHelpMessage('Removed category');
-  }
+  };
 
   const addCategory = async (name, color, type) => {
     // const list = await loadUserCategories();
@@ -436,7 +464,7 @@ const CustomizeCategoriesScreen = () => {
   //   // console.log(list.length);
 
   //   // var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-  //   for( var i = 0; i < list.length; i++){ 
+  //   for( var i = 0; i < list.length; i++){
   //      if ( list[i] === obj) {
   //        list[i] = obj;
   //      }
@@ -465,7 +493,7 @@ const CustomizeCategoriesScreen = () => {
   //   ];
   //       Alert.alert(title, message, buttons);
   //   })
-    
+
   //   if (selection) {
   //       setTypeInputValue(selection);
   //   }
@@ -485,9 +513,9 @@ const CustomizeCategoriesScreen = () => {
     try {
       saveSettingsStorage(storageKey, storage);
       success = true;
-    } catch(e) {
+    } catch (e) {
       // statements
-      console.log(e);
+      // console.log(e);
     }
     return success;
   };
@@ -496,7 +524,7 @@ const CustomizeCategoriesScreen = () => {
     let success = false;
     const storage = await loadSettingsStorage(storageKey);
 
-    let transactions = storage.transactions;
+    const transactions = storage.transactions;
     // console.log('Transactions found:', transactions.length);
 
     try {
@@ -991,9 +1019,11 @@ const CustomizeCategoriesScreen = () => {
   }
 
   const colorBox = (
-     <View style={[styles.container, {
+    <View style={[styles.container, {
+      paddingTop: 12,
       // backgroundColor: 'pink',
-     }]}>
+    }]}
+    >
       
       <FlatList
         data={getFlatListDataFromObject(colors)}

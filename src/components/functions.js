@@ -1,10 +1,23 @@
 /*
-FILENAME:  functions.js
-PURPOSE:   functions for budget x components
-AUTHOR:    Eric Phung
-CREATED:   12/04/2019 05:23 PM
-UPDATED:   12/04/2019 05:23 PM
+FILENAME:   functions.js
+PURPOSE:    functions for budget x components
+AUTHOR:     Eric Phung
+CREATED:    12/04/2019 05:23 PM
+UPDATED:    12/04/2019 05:23 PM
+            // 01/29/2020 04:14 PM Added ID function
+
 */
+
+
+
+// // Generate random unique identifier string; alphanumeric.
+// export var ID = function () {
+//   // Math.random should be unique because of its seeding algorithm.
+//   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+//   // after the decimal.
+//   return Math.random().toString(36).substr(2, 9);
+// };
+
 
 export function getCurrencySymbol(amount) {
   let symbol = '$';

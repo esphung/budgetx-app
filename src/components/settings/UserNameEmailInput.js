@@ -13,19 +13,24 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import SpinnerMask from '../SpinnerMask';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
+
+import isValidEmail from 'main/src/functions/isValidEmail';
+
+import SpinnerMask from '../SpinnerMask';
+
+// function isValidEmail(email) {
+//   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+// }
+
 
 // import {
 //   loadUserObject,
 //   saveUserObject,
 // } from '../../storage/UserStorage';
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
 
 function isValidName(text) {
   // var nameRegex = /^[a-zA-Z\-]+$/;
@@ -89,30 +94,30 @@ function UserNameEmailInput() {
   //   }
   // }
 
-  async function retrieveStoredUserData() {
-    const userObject = await loadUserObject(); // load storage object
-    // console.log(userObject.user);
+  // async function retrieveStoredUserData() {
+  //   const userObject = await loadUserObject(); // load storage object
+  //   // console.log(userObject.user);
 
-    // //  Testing
-    // userObject.user.username = ''
-    // userObject.user.email = ''
-    // saveUserObject(userObject)
+  //   // //  Testing
+  //   // userObject.user.username = ''
+  //   // userObject.user.email = ''
+  //   // saveUserObject(userObject)
 
-    if (userObject.user.username) {
-      setName(userObject.user.username);
-      // setNamePlaceholder(userObject.user.username);
-    } else {
-      setShouldClearNameInput(true);
-    }
+  //   if (userObject.user.username) {
+  //     setName(userObject.user.username);
+  //     // setNamePlaceholder(userObject.user.username);
+  //   } else {
+  //     setShouldClearNameInput(true);
+  //   }
 
-    if (userObject.user.email) {
-      setEmail(userObject.user.email);
-      // setEmailPlaceholder(userObject.user.email);
-      // setIsEmailInputEnabled(false);
-    }
+  //   if (userObject.user.email) {
+  //     setEmail(userObject.user.email);
+  //     // setEmailPlaceholder(userObject.user.email);
+  //     // setIsEmailInputEnabled(false);
+  //   }
 
-    setIsUserLoaded(true);
-  }
+  //   setIsUserLoaded(true);
+  // }
 
   function submitNamePressed(text) {
     setName(text);
@@ -150,15 +155,14 @@ function UserNameEmailInput() {
   useEffect(() => {
     if (isValidName(name) || name === '') {
       // console.log(name);
-      setNamePlaceholder(name)
+      setNamePlaceholder(name);
     } else {
       // setIsNameReturnKeyEnabled(false);
-      setName(namePlaceholder)
+      setName(namePlaceholder);
     }
-    return ()  => {
+    return () => {
       // setIsNameReturnKeyEnabled(true);
-    }
-
+    };
   }, [name]);
 
   useEffect(() => {
@@ -177,7 +181,7 @@ function UserNameEmailInput() {
     return () => {
       // effect
     };
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     // check for stored user
@@ -274,8 +278,6 @@ function UserNameEmailInput() {
 
               onChangeText={handleTextChange}
 
-              editable={true}
-
               value={name}
 
               // autoFocus={shouldNameAutofocus}
@@ -352,7 +354,7 @@ function UserNameEmailInput() {
                   // borderStyle: 'solid',
                 }
               }
-              placeholder={'No email address'}
+              placeholder="No email address"
 
               placeholderTextColor={colors.offWhite}
 
@@ -386,7 +388,7 @@ function UserNameEmailInput() {
 
           </View>
         </View>
-    )
+    );
   }
   return view;
 }

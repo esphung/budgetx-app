@@ -21,7 +21,7 @@ function BlueButton(props) {
         {
           width: '38%', // 133,
           height: 46,
-          // backgroundColor: 'tranosparent',
+          // backgroundColor: 'transparent',
 
           // borderWidth: 1,
           // borderColor: 'white',

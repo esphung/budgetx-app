@@ -1,28 +1,34 @@
 /*
-FILENAME:  Category.js
-PURPOSE:   Category model for budget x app
-AUTHOR:    Eric Phung
-CREATED:   12/11/2019 10:09 PM
-UPDATED:   12/11/2019 10:09 PM
+FILENAME:   Category.js
+PURPOSE:    Category model for budget x app
+AUTHOR:     Eric Phung
+CREATED:    12/11/2019 10:09 PM
+UPDATED:    12/11/2019 10:09 PM
+            01/29/2020 06:41 PM
 */
-var ID = function () {
-  // Math.random should be unique because of its seeding algorithm.
-  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-  // after the decimal.
-  return Math.random().toString(36).substr(2, 9);
-};
 
-import colors from 'main/colors';
+// var ID = function () {
+//   // Math.random should be unique because of its seeding algorithm.
+//   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+//   // after the decimal.
+//   return Math.random().toString(36).substr(2, 9);
+// };
 
-const Category = (name, color, type) => {
+import { ID } from 'main/src/functions/ID';
+
+// import colors from 'main/colors';
+
+export const Category = (name, color, type) => {
   // const currentDate = new Date();
-  return {
-    id: ID(), // `${Date.now(currentDate)}`,
-    name: name,
-    color: color,
-    type: type
-  }
-}// end Color definition
+  const obj = {
+    // id: `${Date.now(currentDate)}`,
+    id: ID(),
+    name,
+    color,
+    type
+  };
+  return obj;
+}; // end Color definition
 
 module.exports = Category;
 

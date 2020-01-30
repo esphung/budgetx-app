@@ -12,6 +12,8 @@ import BlueButton from './BlueButton';
 import HelpMessage from './HelpMessage';
 import InfoBox from './InfoBox';
 
+import EmptyListMessage from './EmptyListMessage';
+
 import TouchableText from './TouchableText';
 
 // import Button from './Button';
@@ -59,6 +61,11 @@ storiesOf('Components', module)
   </CenterView>
 )
 
+.add('EmptyListMessage', () => 
+  <CenterView>
+    <EmptyListMessage />
+  </CenterView>
+)
 
 
 

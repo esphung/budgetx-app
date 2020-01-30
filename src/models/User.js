@@ -13,21 +13,21 @@ UPDATED:
 //   # friends: [User] @connection(name: "friends")
 // }
 
-var ID = function () {
-  // Math.random should be unique because of its seeding algorithm.
-  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-  // after the decimal.
-  return Math.random().toString(36).substr(2, 9);
-};
+// var ID = function () {
+//   // Math.random should be unique because of its seeding algorithm.
+//   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+//   // after the decimal.
+//   return Math.random().toString(36).substr(2, 9);
+// };
 
 import defaultCategories from '../data/categories';
 
 // User function with multiple constructors
 const User = (username) => {
-  // const currentDate = new Date();
+  const currentDate = new Date();
   // this.id = `${Date.now(currentDate)}`;
   return {
-    id: ID(), // `${Date.now(currentDate)}`,
+    id: `${Date.now(currentDate)}`,
     username: username,
     email: '' // email;
   }

@@ -57,6 +57,8 @@ import colors from '../../colors';
 
 import styles from 'main/styles';
 
+import isValidEmail from 'main/src/functions/isValidEmail';
+
 import Dialog from 'react-native-dialog';
 
 // import Offline from '../components/Offline';
@@ -105,9 +107,9 @@ function SignUpScreen(props) {
 
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 
-  function isValidEmail(string) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(string);
-  }
+  // function isValidEmail(string) {
+  //   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(string);
+  // }
 
   /*
   * > Input Refs
@@ -393,7 +395,7 @@ function SignUpScreen(props) {
   function isPhoneAWSFormat(phone) {
     // +01234567890
     if (/[+][0-9]{11}/.test(phone)) {
-      console.log('Correct format')
+      // console.log('Correct format');
       return true;
     } else {
       return false;
@@ -428,7 +430,7 @@ function SignUpScreen(props) {
 
     // rename variable to conform with Amplify Auth field phone attribute
     const phone_number = phoneNumber; // +01234567890 format
-    console.log(phone_number);
+    // console.log(phone_number);
     await Auth.signUp({
       username,
       password,
@@ -820,12 +822,12 @@ function SignUpScreen(props) {
   }
   return (
     <SpinnerMask>
-      <AppLoading
+{/*      <AppLoading
         autoHideSplash
         startAsync={clearState}
         onFinish={() => {}}
         onError={console.warn}
-      />
+      />*/}
     </SpinnerMask>
 
   );

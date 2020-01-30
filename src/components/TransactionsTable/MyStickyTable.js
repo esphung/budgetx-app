@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -23,7 +24,15 @@ import StickyDateHeader from './StickyDateHeader';
 
 import TransactionItem from './TransactionCell/TransactionItem';
 
+import SwipeDelete from '../SwipeDelete';
+
+import SwipeEdit from '../SwipeEdit';
+
+import EmptyListMessage from 'main/storybook/stories/EmptyListMessage';
+
 // import SpinnerMask from '../SpinnerMask';
+
+import styles from 'main/styles';
 
 const ROW_HEIGHT = 44;
 
@@ -70,58 +79,58 @@ function sortByHeadersDateDescending(items) {
   return list; // .sort((a, b) => (a.date.getTime < b.date.getTime) ? 1 : -1)
 }
 
-const styles = StyleSheet.create({
-  FlatList_Item: {
-    // padding: 10,
-    // fontSize: 18,
-    height: ROW_HEIGHT, // 44,
-  },
+// const styles = StyleSheet.create({
+//   // FlatList_Item: {
+//   //   // padding: 10,
+//   //   // fontSize: 18,
+//   //   height: ROW_HEIGHT, // 44,
+//   // },
 
-  headerBody: {
-    marginRight: 80,
-    // width: '100%',
-    // height: 40,
-    // // backgroundColor: '#00BCD4',
-    // // alignItems: 'center',
-    // justifyContent: 'center',
+//   // headerBody: {
+//   //   marginRight: 80,
+//   //   // width: '100%',
+//   //   // height: 40,
+//   //   // // backgroundColor: '#00BCD4',
+//   //   // // alignItems: 'center',
+//   //   // justifyContent: 'center',
 
-    // borderWidth: 1,
-    // borderColor: 'gray',
-    // borderStyle: 'dotted',
-  },
+//   //   // borderWidth: 1,
+//   //   // borderColor: 'gray',
+//   //   // borderStyle: 'dotted',
+//   // },
 
-  rowFront: {
-    backgroundColor: colors.darkTwo,
+//   // rowFront: {
+//   //   backgroundColor: colors.darkTwo,
 
-  },
-  rowBack: {
-    flex: 1,
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
+//   // },
+//   // rowBack: {
+//   //   flex: 1,
+//   //   flexDirection: 'row-reverse',
+//   //   alignItems: 'center',
 
-    width: '50%',
-    // left: '500%',
-    height: 37,
+//   //   width: '50%',
+//   //   // left: '500%',
+//   //   height: 37,
 
-    backgroundColor: colors.pinkRed,
+//   //   backgroundColor: colors.pinkRed,
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dotted',
-  },
+//   //   // borderWidth: 1,
+//   //   // borderColor: 'white',
+//   //   // borderStyle: 'dotted',
+//   // },
 
-  text: {
-    opacity: 0.6,
-    fontFamily: 'SFProDisplay-Regular',
-    fontSize: 22,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    lineHeight: 28,
-    letterSpacing: 0.17,
-    textAlign: 'center',
-    color: 'rgba(255, 255, 255, 0.5)', // 'rgba(255, 255, 255, 0.5)',
-  },
-});
+//   // text: {
+//   //   opacity: 0.6,
+//   //   fontFamily: 'SFProDisplay-Regular',
+//   //   fontSize: 22,
+//   //   fontWeight: 'normal',
+//   //   fontStyle: 'normal',
+//   //   lineHeight: 28,
+//   //   letterSpacing: 0.17,
+//   //   textAlign: 'center',
+//   //   color: 'rgba(255, 255, 255, 0.5)', // 'rgba(255, 255, 255, 0.5)',
+//   // },
+// });
 
 const MyStickyTable = (props) => {
   // get passed props
@@ -153,6 +162,51 @@ const MyStickyTable = (props) => {
     }
     // console.log(indices);
     return indices;
+  }
+
+  const Render_Empty_Component = () => {
+    // console.log('Rendering Empty Component');
+    const view = (
+      <ScrollView contentContainerStyle={{
+        flex: 1,
+
+        // borderWidth: 3,
+        // borderColor: 'white',
+        // borderStyle: 'dashed',
+      }}>
+      <View style={styles.rowFront}>
+          <StickyDateHeader date={new Date()} />
+        </View>
+      <View style={{
+        // width: '100%',
+        // height: tableHeight, // '32%',
+        // position: tablePosition, // 'absolute'
+        // top: tableTop, // '30%', // 240,
+
+        flex: 1,
+        
+        alignItems: 'center',
+        // justifyContent: 'center',
+
+        paddingTop: 12,
+
+        // backgroundColor: 'pink',
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'dashed',
+
+      }}
+      >
+
+       
+
+      <EmptyListMessage />
+
+      </View>
+      </ScrollView>
+    );
+    return view;
   }
 
   function renderItem({ item }) {
@@ -194,22 +248,34 @@ const MyStickyTable = (props) => {
       );
     } else if (!header) {
       view = (
-        <View style={{ flexDirection: 'row', flex: 1 }}>
-          <View style={{
-            flex: 1,
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-            // backgroundColor: colors.dark,
-          }}
+      <View style={styles.rowBack}>
+
+        <View style={styles.rowBackLeft}>
+          <SwipeEdit
+            keyExtractor={item.id}
+            onPress={() => {
+              // setCurrentCategory(searchByID(item.id, data));
+              // setShouldShowColorBox(true);
+              // console.log('Edited', item);
+
+              // SHOW TRANSACTION BOX
+            }}
           />
-          <View style={styles.rowBack}>
-            <CustomSwipeCell
+        </View>
+        <View style={styles.rowBackRight}>
+          <SwipeDelete
+            keyExtractor={item.id}
+            onDeleteBtnPress={() => deleteBtnPressed(item)}
+          />
+
+          {/*
+           <CustomSwipeCell
               // keyExtractor={() => String(index)}
               onDeleteBtnPress={() => deleteBtnPressed(item)}
             />
-          </View>
+          */}
         </View>
+      </View>
       );
     }
 
@@ -242,14 +308,21 @@ const MyStickyTable = (props) => {
     <View
       style={
         {
-          width: '100%',
-          height: tableHeight, // '32%',
-          position: tablePosition, // 'absolute'
-          top: tableTop, // '30%', // 240,
+          // width: '100%',
+
+          // // height: tableHeight, // '32%',
+          // // position: tablePosition, // 'absolute'
+          // top: tableTop, // '30%', // 240,
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: colors.darkTwo,
+          // backgroundColor: colors.darkTwo,
+
+          // opacity: 0.3,
+
+          // borderWidth: 2,
+          // borderColor: 'white',
+          // borderStyle: 'dashed',
         }
       }
     >
@@ -262,23 +335,6 @@ const MyStickyTable = (props) => {
   if (!loading) {
     view = (
       <SwipeListView
-        style={
-          {
-            width: '100%',
-            height: tableHeight, // '32%',
-            position: tablePosition, // 'absolute'
-            top: tableTop, // '30%', // 240,
-
-            zIndex: -1,
-
-            // borderWidth: 2,
-            // borderColor: 'white',
-            // borderStyle: 'dashed',
-
-            // backgroundColor: 'pink',
-          }
-        }
-
         data={data}
         // extraData={setData}
         renderItem={renderItem}
@@ -286,12 +342,13 @@ const MyStickyTable = (props) => {
         stickyHeaderIndices={stickyHeaderIndices}
         renderHiddenItem={renderHiddenItem}
 
-        leftOpenValue={0}
+        // leftOpenValue={0}
+        leftOpenValue={55}
         rightOpenValue={-75}
 
         // ItemSeparatorComponent={this.FlatListItemSeparator}
         // ListHeaderComponent={this.Render_FlatList_Sticky_header}
-        // ListEmptyComponent={this.Render_Empty_Component}
+        // ListEmptyComponent={Render_Empty_Component}
 
         showsVerticalScrollIndicator={false}
 
@@ -303,7 +360,36 @@ const MyStickyTable = (props) => {
       />
     );
   }
-  return view;
+
+  if (transactions.length <= 0) {
+    view = Render_Empty_Component();
+  }
+
+  return (
+    <View style={
+      {
+        // flex: 1,
+        width: '100%',
+        // height: tableHeight, // '32%',
+        height: '30%',
+        position: tablePosition, // 'absolute'
+        top: tableTop, // '30%', // 240,
+
+        
+
+        // zIndex: -1,
+
+        // borderWidth: 2,
+        // borderColor: 'white',
+        // borderStyle: 'dashed',
+
+        // backgroundColor: 'pink',
+      }
+    }
+    >
+      { view }
+    </View>
+  );
 }
 
 // tableTop,

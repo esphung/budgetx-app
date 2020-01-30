@@ -1,4 +1,13 @@
+/*
+FILENAME:  dates.js
+PURPOSE:   compare, convert transaction date objects
+AUTHOR:    Eric Phung
+CREATED:   01/29/2020 06:19 PM
+
 // Source: http://stackoverflow.com/questions/497790
+*/
+
+
 export const dates = {
   convert: function convert(d) {
     // Converts the date in d to a date-object. The input can be:
@@ -49,4 +58,4 @@ export const dates = {
       NaN
     );
   }
-}
+};

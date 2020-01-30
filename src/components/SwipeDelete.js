@@ -5,7 +5,7 @@ import {
   Text,
 } from 'react-native';
 
-import colors from 'main/colors';
+// import colors from 'main/colors';
 
 import styles from 'main/styles';
 
@@ -14,30 +14,32 @@ class SwipeDelete extends Component {
     const { onDeleteBtnPress } = this.props;
     const cellView = (
 
-      <TouchableOpacity style={{
-        flex: 1,
-        flexDirection: 'row-reverse',
-        // alignSelf: 'stretch',
-        justifyContent: 'flex-start',
-        margin: 10,
-        alignItems: 'center',
+      <TouchableOpacity
+        style={
+          styles.swipeDeleteOpacity
+          // {
+          //   flex: 1,
+          //   flexDirection: 'row-reverse',
+          //   // alignSelf: 'stretch',
+          //   justifyContent: 'flex-start',
+          //   margin: 10,
+          //   alignItems: 'center',
 
-        // backgroundColor: colors.pinkRed,
+          //   // backgroundColor: colors.pinkRed,
 
-        // borderWidth: 1,
-        // borderColor: 'pink',
-        // borderStyle: 'solid',
-      }} onPress={onDeleteBtnPress}>
+          //   // borderWidth: 1,
+          //   // borderColor: 'pink',
+          //   // borderStyle: 'solid',
+          // }
+        }
+        onPress={onDeleteBtnPress}
+      >
 
-        <Text style={styles.buttonText}
-        >
-          Delete
-        </Text>
+        <Text style={styles.buttonText}>Delete</Text>
       </TouchableOpacity>
     );
     return cellView;
   }
 }
-
 
 export default SwipeDelete;

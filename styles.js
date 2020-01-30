@@ -50,7 +50,7 @@ export default StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     // fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.17,
+    // letterSpacing: 0.17,
     textAlign: 'left',
 
     // borderWidth: 1,
@@ -125,6 +125,20 @@ export default StyleSheet.create({
   //   // borderColor: colors.white,
   //   // borderStyle: 'solid',    
   // },
+  emptyMessageTextStyle: {
+    // width: 225,
+    // height: 84,
+    opacity: 0.6,
+    fontFamily: 'SFProDisplay-Regular',
+    fontSize: 22,
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    lineHeight: 28,
+    letterSpacing: 0.17,
+    textAlign: 'center',
+    color: colors.offWhite,
+  },
+
   buttonText: {
     // fontSize: 18,
     fontWeight: 'bold',
@@ -135,7 +149,7 @@ export default StyleSheet.create({
     fontFamily: 'SFProDisplay-Semibold',
     fontWeight: '600',
     fontStyle: 'normal',
-    lineHeight: 28,
+    // lineHeight: 28,
     letterSpacing: 0.17,
     textAlign: 'center',
   },
@@ -148,7 +162,7 @@ export default StyleSheet.create({
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.13,
+    letterSpacing: 0.1,
     color: colors.white, // '#ffffff',
 
     paddingLeft: 12,
@@ -173,15 +187,32 @@ export default StyleSheet.create({
     // fontWeight: 'normal',
     // fontStyle: 'normal',
     // lineHeight: 28,
-    // letterSpacing: 0.17,
+    letterSpacing: 0.17,
     // textAlign: 'center',
 
     fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.13,
+    // letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
+
+  },
+  payeeInputText: {
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 15,
+    // fontStyle: 'normal',
+    fontFamily: 'SFProDisplay-Regular',
+
+    letterSpacing: 0.17,
+
+    // color: 'pink',
+
+    // color: item.category.color +  '7f',
+    // color: colors.white,
+    // backgroundColor: colors.darkTwo,
+
+    // textAlignVertical: 'center',
 
   },
   helpMessageText: {
@@ -193,7 +224,7 @@ export default StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     fontWeight: 'normal',
     fontStyle: 'normal',
-    lineHeight: 28,
+    // lineHeight: 28,
     letterSpacing: 0.17,
     textAlign: 'center',
   },
@@ -212,9 +243,47 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'dotted',
   },
+  rowFront: {
+    backgroundColor: colors.darkTwo,
+    // backgroundColor: 'transparent',
+
+    // borderWidth: 1,
+    // borderColor: 'orange',
+    // borderStyle: 'solid',
+  },
+  swipeDeleteOpacity: {
+    flex: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+
+    paddingHorizontal: 12,
+    // backgroundColor: colors.pinkRed,
+
+    // borderWidth: 1,
+    // borderColor: 'pink',
+    // borderStyle: 'solid',
+  },
+
+  swipeEditOpacity: {
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+
+    paddingHorizontal: 12,
+    // backgroundColor: colors.pinkRed,
+
+    // borderWidth: 1,
+    // borderColor: 'orange',
+    // borderStyle: 'solid',
+  },
   tableItemStyle: {
+    /* category  table items */
     paddingVertical: 14,
     paddingHorizontal: 12,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
   arrow: {
     // table item right side icon
@@ -228,7 +297,7 @@ export default StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,
     opacity: 0.5,
-    letterSpacing: 0.13,
+    letterSpacing: 0.17,
     color: colors.white, // '#ffffff',
 
     // paddingRight: 12,
@@ -276,7 +345,7 @@ export default StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     fontStyle: 'normal',
-    letterSpacing: 0.13,
+    letterSpacing: 0.17,
     color: colors.shamrockGreen,
 
     paddingHorizontal: 6,

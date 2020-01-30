@@ -621,8 +621,9 @@ function Settings(props) {
         <View
           style={
             {
-              flex: 0.5,
+              flex: 0.4,
               alignItems: 'center',
+              justifyContent: 'center',
 
               // justifyContent: 'space-around',
 
@@ -644,9 +645,10 @@ function Settings(props) {
           <View
             style={
               {
-                // flex: 1,
+                flex: 1,
+                alignSelf: 'stretch',
                 // justifyContent: 'space-around',
-                // justifyContent: 'center',
+                justifyContent: 'center',
 
                 // borderWidth: 1,
                 // borderColor: 'white',
@@ -655,31 +657,13 @@ function Settings(props) {
             }
           >
 
-            <DeveloperCredit />
-
-            <DesignerCredit />
-
-          </View>
-
-          <View style={{
-            flex: 1,
-            // justifyContent: 'center',
-            // alignItems: 'center',
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-          }}>
             <View
               style={
                 {
                   flex: 1,
-                  width: 340,
-                  flexDirection: 'row',
-
-                  alignItems: 'center',
-                  justifyContent: 'center',
-
+                  alignSelf: 'stretch',
                   // justifyContent: 'space-around',
+                  justifyContent: 'center',
 
                   // borderWidth: 1,
                   // borderColor: 'white',
@@ -687,13 +671,31 @@ function Settings(props) {
                 }
               }
             >
-             
+              <DeveloperCredit />
+
+              <DesignerCredit />
+
+            </View>
+
+          </View>
+
+          <View style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignSelf: 'stretch',
+            justifyContent: 'center',
+            alignItems: 'center',
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }}
+          >
 
               <BlueButton title="Rate Us" onPress={() => rateUsBtnPressed()} />
 
-              {/*<ShareButton onPress={() => shareBtnPressed()} />*/}
+              {/*<BlueButton title="Share Us" onPress={() => shareBtnPressed()} />*/}
 
-            </View>
           </View>
 
           <View style={{

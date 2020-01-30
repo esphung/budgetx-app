@@ -12,16 +12,16 @@ function ItemSymbol(props) {
     color,
   } = props;
   return (
-    <View style={{
-      flex: 0.3,
-      justifyContent: 'center',
-      alignItems: 'center',
+    // <View style={{
+    //   flex: 0.3,
+    //   justifyContent: 'center',
+    //   alignItems: 'center',
 
-      // borderWidth: 1,
-      // borderColor: 'white',
-      // borderStyle: 'dotted',
-    }}
-    >
+    //   // borderWidth: 1,
+    //   // borderColor: 'white',
+    //   // borderStyle: 'dotted',
+    // }}
+    // >
       <Text style={{
         color: `${color}`,
         fontFamily: 'SFProDisplay-Semibold',
@@ -33,7 +33,7 @@ function ItemSymbol(props) {
       >
         o
       </Text>
-    </View>
+    // </View>
   );
 }
 

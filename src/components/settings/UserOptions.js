@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   Text,
   // Image,
@@ -77,7 +77,7 @@ function UserOptions(props) {
     let view = null;
     // console.log(item.leadingItem.key);
     if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Backup Data') {
-    view = (
+      view = (
         <View
           style={{
             flex: 1,
@@ -106,7 +106,7 @@ function UserOptions(props) {
           />
         </View>
       );
-  }
+    }
     return view;
   }
 
@@ -118,7 +118,7 @@ function UserOptions(props) {
 
     if (item.key === '') {
       rowHeight = 24;
-      backgroundColor = 'transparent', // colors.darkTwo;
+      backgroundColor = 'transparent'; // colors.darkTwo;
       isDisabled = true;
       caret = '';
       // console.log(item);
@@ -172,8 +172,11 @@ function UserOptions(props) {
               // borderColor: 'blue',
               // borderStyle: 'solid',
             }
-          }><Text style={styles.listItemTitleStyle}>{title}</Text></View>
-          
+          }
+          >
+            <Text style={styles.listItemTitleStyle}>{title}</Text>
+          </View>
+
         </View>
         <View style={{
           flex: 0.1,
@@ -183,15 +186,18 @@ function UserOptions(props) {
           // borderWidth: 1,
           // borderColor: 'red',
           // borderStyle: 'solid',
-        }}><Text style={styles.arrow}>{caret}</Text></View>
+        }}
+        >
+          <Text style={styles.arrow}>{caret}</Text>
+        </View>
       </TouchableOpacity>
     );
     return view;
   }
   const view = (
     <SwipeListView
-      scrollEnabled={true}
-      style={styles.table}
+      scrollEnabled
+      // style={styles.table}
 
       // style={
       //   {
@@ -203,18 +209,29 @@ function UserOptions(props) {
       //     // paddingBottom: 50,
       //   }
       // }
-      // contentContainerStyle={styles.container}
+      contentContainerStyle={[
+        // {},
+        // styles.container,
+        {
+        flex: 1,
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }]}
       data={[
         { key: 'Customize Categories' },
         { key: 'Export Transactions' },
         // { key: 'Passcode' },
         { key: 'Change Password/Sign Out' },
-        { key: 'Restore Backup' },
+
         { key: 'Backup Data' },
         { key: '' },
         { key: 'Contact Support' },
         // { key: 'Passcode' },
+        { key: 'Restore Backup' },
         { key: 'Reset Data' },
+        
 
       ]}
 

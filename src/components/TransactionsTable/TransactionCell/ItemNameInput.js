@@ -12,6 +12,8 @@ import Auth from '@aws-amplify/auth';
 // ui colors
 import colors from 'main/colors';
 
+import styles from 'main/styles';
+
 // import {
 //   loadTransactionsObject,
 //   saveTransactionsObject
@@ -47,6 +49,8 @@ function search(nameKey, myArray) {
   }
   return obj;
 }
+
+const placeholderText = 'Payee';
 
 class ItemNameInput extends Component {
   constructor(props) {
@@ -168,41 +172,50 @@ class ItemNameInput extends Component {
   }
 
   render() {
-    // const { item } = this.props;
-
     const { text } = this.state;
+
+    const color = colors.white;
+
+    let opacity = 0.1;
+
+    let isClearButtonModeEnabled = 'never';
+
+    
+
+    // item has payee
+    if (text && text !== placeholderText) {
+      opacity = 1;
+      isClearButtonModeEnabled = 'while-editing';
+    }
+
     return (
-      <View
-        style={
-          {
-            flex: 1,
-
-            // flexDirection: 'row',
-
-            justifyContent: 'center',
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-          }
-        }
-      >
+      
         <TextInput
           style={
-            {
-              fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-              fontSize: 15,
-              fontStyle: 'normal',
-              letterSpacing: 0.1,
-              // color: '#ffffff',
+            [
+              // {
+              //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+              //   fontSize: 15,
+              //   fontStyle: 'normal',
+              //   letterSpacing: 0.1,
+              //   // color: '#ffffff',
 
-              // color: item.category.color +  '7f',
-              color: colors.white,
-              // backgroundColor: colors.darkTwo,
-            }
+              //   // color: item.category.color +  '7f',
+              //   color: colors.white,
+              //   // backgroundColor: colors.darkTwo,
+
+              // },
+
+              styles.payeeInputText,
+              {
+                // color: '#ffffff',
+                color,
+                opacity,
+              }
+            ]
           }
 
-          placeholder=""
+          placeholder={placeholderText}
 
           placeholderTextColor="#ffffff7f"
 
@@ -228,9 +241,17 @@ class ItemNameInput extends Component {
 
           value={text}
 
+          clearButtonMode={isClearButtonModeEnabled}
+
+          // onFocus={() => {
+          //   if (!text) {
+          //     // transaction has no existing payee name, clear placeholder
+              
+          //   }
+          // }}
+
           // onEndEditing={() => this.setState({ text: payee.name })}
         />
-      </View>
     );
   }
 }

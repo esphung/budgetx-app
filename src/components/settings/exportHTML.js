@@ -19,7 +19,8 @@ export function convertObjectToHTML(item) {
   // console.log(item);
 
   Object.keys(item).forEach((key) => {
-    // parse nested opbj properties
+    // Loop thru object keys' values and add HTML for it's table cell
+
     // if (key === 'id') {
     //   // do not add id
     //   array.push(`<td>${item[key]}</td>\n`);
@@ -35,7 +36,7 @@ export function convertObjectToHTML(item) {
     }
 
     if (key === 'category') {
-      // console.log(item[key].name);
+      console.log(item[key]);
       array.push(`<td>${item[key].name}</td>\n`);
     }
 
@@ -46,6 +47,15 @@ export function convertObjectToHTML(item) {
     if (key === 'amount') {
       array.push(`<td>$${item[key].toFixed(2)}</td>\n`);
     }
+
+    if (key === 'note') {
+      if (item[key].name) {
+        array.push(`<td>${item[key].name}</td>\n`);
+      } else {
+        array.push(`<td></td>\n`);
+      }
+    }
+
   });
   return array.join('');
 }
@@ -59,15 +69,30 @@ export function getHTMLObjectRows(array) {
   return string;
 }
 
+function capitalizeFirstChar(str) {
+  // const lower = 'this is an entirely lowercase string';
+  const lower = str;
+  const upper = lower.charAt(0).toUpperCase() + lower.substring(1);
+  // console.log(upper +  lower);
+
+  return upper;
+}
+
 export function getObjectKeysHTML(list) {
   const keys = [];
 
   const item = list[0];
 
   Object.keys(item).forEach((key) => {
-    // parse nested opbj properties
+    // parse the nested object's properties
+    // console.log(item);
+    
+    const keyCapitalized = capitalizeFirstChar(key); // capitalize the first letter of the object's key
+    // console.log(capitalizeFirstChar(key));
+
+    // Add string for this key's table cell to existing HTML string
     if (key !== 'id' && key !== 'type') {
-      keys.push(`<td>${key}</td>\n`);
+      keys.push(`<td>${keyCapitalized}</td>\n`);
     }
   });
   return keys.join('');
@@ -106,4 +131,3 @@ export const htmlBottom = `
   </body>
 </html>
 `;
-

@@ -45,9 +45,19 @@ function TransactionItem(props) {
         onPress={onPress}
         style={
           {
-            // borderWidth: borderWidth,
-            // borderColor: '#ffffff0f',
+            // flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+
+            // borderWidth: 1,
+            // borderColor: '#ffffff',
             // borderStyle: 'solid',
+
+            // marginHorizontal: 5,
+
+            paddingVertical: 8,
+
+            paddingHorizontal: 4,
 
             // backgroundColor
           }
@@ -57,20 +67,56 @@ function TransactionItem(props) {
           flex: 1,
           flexDirection: 'row',
 
-          paddingVertical: 8,
+          // paddingVertical: 8,
 
-          marginHorizontal: 12,
+          
         }}
         >
 
-          <ItemSymbol color={item.category.color} />
+        <View style={{
+          flex: 0.25,
+          justifyContent: 'center',
+          alignItems: 'center',
 
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}
+        >
+          <ItemSymbol color={item.category.color} />
+        </View>
+
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          // alignItems: 'center',
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}
+        >
           <ItemCategory
             item={item}
             textColor={textColor}
           />
+        </View>
 
+        <View
+          style={
+            {
+              flex: 1, // 1
+              justifyContent: 'center',
+              // alignItems: 'center',
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }
+          }
+        >
           <ItemNameInput item={item} />
+        </View>
 
           {/* <ItemDate item={item} /> */}
 

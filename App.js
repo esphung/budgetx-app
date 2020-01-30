@@ -25,9 +25,7 @@ UPDATED:    Fri Nov  1 13:20:51 2019
 */
 
 // console.disableYellowBox = true;
-
 // global.isStorybookModeOn = true;
-
 
 
 
