@@ -239,6 +239,10 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: colors.azure,
   },
+  rowBackLeftEmpty: {
+    flex: 1,
+    // backgroundColor: colors.azure,
+  },
   rowBackRight: {
     flex: 1,
     backgroundColor: colors.pinkRed,

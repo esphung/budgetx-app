@@ -5,12 +5,12 @@ import {
   View,
   // Text,
   // ScrollView,
-  // TouchableOpacity,
+  TouchableOpacity, // better for not opening slide view
 } from 'react-native';
 
-import {
-  TouchableOpacity,
-} from 'react-native-gesture-handler';
+// import {
+//   TouchableOpacity,
+// } from 'react-native-gesture-handler';
 
 // import CustomSwipeCell from './CustomSwipeCell';
 

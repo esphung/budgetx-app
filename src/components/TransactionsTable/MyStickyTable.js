@@ -177,33 +177,31 @@ const MyStickyTable = (props) => {
       <View style={styles.rowFront}>
           <StickyDateHeader date={new Date()} />
         </View>
-      <View style={{
-        // width: '100%',
-        // height: tableHeight, // '32%',
-        // position: tablePosition, // 'absolute'
-        // top: tableTop, // '30%', // 240,
+        <View style={{
+          // width: '100%',
+          // height: tableHeight, // '32%',
+          // position: tablePosition, // 'absolute'
+          // top: tableTop, // '30%', // 240,
 
-        flex: 1,
-        
-        alignItems: 'center',
-        // justifyContent: 'center',
+          flex: 1,
+          
+          alignItems: 'center',
+          // justifyContent: 'center',
 
-        paddingTop: 12,
+          paddingTop: 12,
 
-        // backgroundColor: 'pink',
+          // backgroundColor: 'pink',
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dashed',
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'dashed',
 
-      }}
-      >
+        }}
+        >
 
-       
+          <EmptyListMessage />
 
-      <EmptyListMessage />
-
-      </View>
+        </View>
       </ScrollView>
     );
     return view;
@@ -250,8 +248,8 @@ const MyStickyTable = (props) => {
       view = (
       <View style={styles.rowBack}>
 
-        <View style={styles.rowBackLeft}>
-          <SwipeEdit
+        <View style={styles.rowBackLeftEmpty}>
+{/*          <SwipeEdit
             keyExtractor={item.id}
             onPress={() => {
               // setCurrentCategory(searchByID(item.id, data));
@@ -260,7 +258,7 @@ const MyStickyTable = (props) => {
 
               // SHOW TRANSACTION BOX
             }}
-          />
+          />*/}
         </View>
         <View style={styles.rowBackRight}>
           <SwipeDelete
@@ -342,8 +340,8 @@ const MyStickyTable = (props) => {
         stickyHeaderIndices={stickyHeaderIndices}
         renderHiddenItem={renderHiddenItem}
 
-        // leftOpenValue={0}
-        leftOpenValue={55}
+        leftOpenValue={0}
+        // leftOpenValue={55}
         rightOpenValue={-75}
 
         // ItemSeparatorComponent={this.FlatListItemSeparator}
