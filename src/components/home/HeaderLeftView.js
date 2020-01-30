@@ -153,7 +153,8 @@ const HeaderLeftView = () => {
 
         setBoldMessage(`Welcome to ${global.appName}`);
 
-        setNormalMessage(`${cognito.attributes.email}`)
+        // setNormalMessage(`${cognito.attributes.email}`);
+        setNormalMessage(`${cognito.username}`);
 
       })
       .catch((err) => {
