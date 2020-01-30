@@ -25,6 +25,13 @@ export default StyleSheet.create({
   //   // marginTop: 15, // '5%',
   //   // marginBottom: 5,
   // },
+  itemSymbolStyle: {
+    fontFamily: 'SFProDisplay-Semibold',
+    fontSize: 17,
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    letterSpacing: 0.13,
+  },
   slideView: {
     flex: 1,
     backgroundColor: colors.darkTwo,
@@ -183,9 +190,9 @@ export default StyleSheet.create({
     // // opacity: 0.6,
     // fontSize: 17,
 
-    // fontFamily: 'SFProDisplay-Regular',
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
+    fontFamily: 'SFProDisplay-Regular',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
     // lineHeight: 28,
     letterSpacing: 0.17,
     // textAlign: 'center',

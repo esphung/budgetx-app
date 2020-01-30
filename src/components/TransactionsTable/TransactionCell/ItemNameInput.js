@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 
+import PropTypes from 'prop-types';
+
 import {
   TextInput,
-  View,
-  Platform,
+  // View,
+  // Platform,
   Alert,
 } from 'react-native';
 
@@ -50,7 +52,7 @@ function search(nameKey, myArray) {
   return obj;
 }
 
-const placeholderText = 'Payee';
+
 
 class ItemNameInput extends Component {
   constructor(props) {
@@ -172,6 +174,8 @@ class ItemNameInput extends Component {
   }
 
   render() {
+    const placeholderText = 'Payee';
+
     const { text } = this.state;
 
     const color = colors.white;
@@ -246,7 +250,7 @@ class ItemNameInput extends Component {
           // onFocus={() => {
           //   if (!text) {
           //     // transaction has no existing payee name, clear placeholder
-              
+
           //   }
           // }}
 
@@ -255,5 +259,10 @@ class ItemNameInput extends Component {
     );
   }
 }
+
+ItemNameInput.propTypes = {
+  item: PropTypes.object.isRequired,
+};
+
 
 export default ItemNameInput;

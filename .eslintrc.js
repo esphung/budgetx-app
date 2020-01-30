@@ -5,10 +5,12 @@ module.exports = {
     'jest': true,
   },
   'rules': {
-    'no-use-before-define': 'off',
+    // 'no-use-before-define': 'off',
     'react/jsx-filename-extension': 'off',
-    'react/prop-types': 'off',
-    'comma-dangle': 'off'
+    // 'react/prop-types': 'off',
+    'comma-dangle': 'off',
+    "import/no-unresolved": "off",
+    // "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
   },
   'globals': {
     "fetch": true

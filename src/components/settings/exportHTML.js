@@ -31,23 +31,29 @@ export function convertObjectToHTML(item) {
     //   array.push(`<td>${capitalize(item[key])}</td>\n`);
     // }
 
+
+    // Date
     if (key === 'date') {
       array.push(`<td>${getShortDate(item[key])}</td>\n`);
     }
 
+    // Category
     if (key === 'category') {
       // console.log(item[key]);
       array.push(`<td>${item[key].name}</td>\n`);
     }
 
+    // Payee
     if (key === 'payee') {
       array.push(`<td>${item[key].name}</td>\n`);
     }
 
+    // Amount
     if (key === 'amount') {
       array.push(`<td>$${item[key].toFixed(2)}</td>\n`);
     }
 
+    // Note
     if (key === 'note') {
       // console.log(item[key]);
       if (item[key]) {

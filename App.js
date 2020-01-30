@@ -21,13 +21,12 @@ UPDATED:    Fri Nov  1 13:20:51 2019
                                   started app.json version 1.1.5
                                   Removed all Network stuff
                                   Added routes.js
-            01/08/2020 05:47 PM | Stories
+            01/08/2020 05:47 PM | Added transaction item cell Stories
 */
+
 
 // console.disableYellowBox = true;
 // global.isStorybookModeOn = true;
-
-
 
 
 import React, { useState } from 'react';
@@ -46,11 +45,14 @@ import SwitchNavigator from './SwitchNavigator';
 
 import './globals'; // global values
 
+import Storybook from './storybook';
+
 Amplify.configure(config);
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
-import Storybook from './storybook';
+// console.disableYellowBox = true;
+// global.isStorybookModeOn = true;
 
 function App() {
   // state hooks
@@ -76,7 +78,7 @@ function App() {
 
   const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
 
-  if (!fontsAreLoaded) {
+  if (!fontsAreLoaded && !isReady) {
     return (
       <AppLoading
         startAsync={cacheResourcesAsync}
@@ -97,4 +99,3 @@ export default App;
 
 
 // export default from './storybook';
-

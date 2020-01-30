@@ -5,20 +5,27 @@ import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 
+// import Button from './Button';
+import CenterView from './CenterView';
+// import Welcome from './Welcome';
+
 // eslint-disable-next-line import/extensions
 import Welcome from './Welcome';
 import Button from './Button';
 import BlueButton from './BlueButton';
 import HelpMessage from './HelpMessage';
 import InfoBox from './InfoBox';
-
-import EmptyListMessage from './EmptyListMessage';
-
 import TouchableText from './TouchableText';
 
-// import Button from './Button';
-import CenterView from './CenterView';
-// import Welcome from './Welcome';
+
+// Transactions Table Components
+import EmptyListMessage from './EmptyListMessage';
+import CategoryLabel from './CategoryLabel';
+import TransactionItemCell from './TransactionItemCell';
+
+
+// variables
+const message = 'Hello World'
 
 storiesOf('Components', module)
 // .add('to Welcome Screen', () => <Welcome />)
@@ -27,7 +34,7 @@ storiesOf('Components', module)
   <CenterView>
     <Button
       title="Button"
-      onPress={() => console.log('Button')}
+      onPress={() => console.log(message)}
     />
   </CenterView>
 )
@@ -35,7 +42,7 @@ storiesOf('Components', module)
   <CenterView>
     <TouchableText
       title="TouchableText"
-      onPress={() => console.log('TouchableText')}
+      onPress={() => console.log(message)}
     />
   </CenterView>
 )
@@ -44,28 +51,59 @@ storiesOf('Components', module)
   <CenterView>
     <BlueButton
       title="Blue Button"
-      onPress={() => console.log('Blue Button')}
+      onPress={() => console.log(message)}
     />
   </CenterView>
 )
 
 .add('HelpMessage', () => 
   <CenterView>
-    <HelpMessage message="HelpMessage" />
+    <HelpMessage message={message} />
   </CenterView>
 )
 
 .add('InfoBox', () => 
   <CenterView>
-    <InfoBox title="InfoBox" />
+    <InfoBox title={message} />
   </CenterView>
 )
+
+// Transactions Table
 
 .add('EmptyListMessage', () => 
   <CenterView>
     <EmptyListMessage />
   </CenterView>
 )
+
+.add('TransactionItemCell', () => 
+  <CenterView>
+    <TransactionItemCell
+      item={
+        {
+          payee: {
+            name: 'Joe Budden'
+          },
+          date: new Date(),
+          amount: 3423.23,
+          category: {
+            name: 'Groceries',
+            color: 'pink',
+          },
+        }
+      }
+
+      // onPress={() => alert('Hello')}
+    />
+  </CenterView>
+)
+
+.add('CategoryLabel', () => 
+  <CenterView>
+    <CategoryLabel name={message} textColor="gray" />
+  </CenterView>
+)
+
 
 
 
