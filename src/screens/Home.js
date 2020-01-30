@@ -419,7 +419,7 @@ function Home() {
       Animated.spring(
         slideViewBounceValue,
         {
-          toValue: 300,
+          toValue: 600,
           velocity: 100,
           tension: 32,
           friction: 8,

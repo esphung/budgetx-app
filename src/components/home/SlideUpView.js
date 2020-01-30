@@ -78,9 +78,7 @@ function SlideUpView(props) {
                   // borderWidth: 1,
                   // borderColor: 'white',
                   // borderStyle: 'dashed',
-                  // zIndex: -1,
-
-                  
+                  zIndex: -1,
 
 
               }}
