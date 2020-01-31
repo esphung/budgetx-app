@@ -8,9 +8,9 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
 
-import { getCurrencySymbol } from '../functions';
+import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
 function BalanceView(props) {
   const currentBalanceBtnPressed = () => {

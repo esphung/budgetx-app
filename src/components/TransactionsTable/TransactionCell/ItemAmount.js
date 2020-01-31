@@ -13,7 +13,7 @@ import { View, Text } from 'react-native';
 // ui colors
 import colors from 'main/colors';
 
-import { getCurrencySymbol } from '../../functions';
+import getCurrencySymbol from '../../../functions/getCurrencySymbol';
 
 function ItemAmount(props) {
   const { item } = props;

@@ -43,8 +43,9 @@ import colors from 'main/colors';
 
 import styles from 'main/styles';
 
-import { isValidUsername } from './functions';
+import isValidUsername from 'main/src/functions/isValidUsername';
 
+import getButtonStyle from 'main/src/functions/getButtonStyle';
 
 function ForgotPasswordScreen(props) {
   // input refs
@@ -138,29 +139,6 @@ function ForgotPasswordScreen(props) {
   function handleAuthCodeInputSubmit() {
     // emailInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
-  }
-
-  function getButtonStyle(bool) {
-    // console.log(bool);
-    if (bool) {
-      return {
-        alignItems: 'center',
-        backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
-        padding: 14,
-        marginBottom: 20,
-        borderRadius: 26, // 24,
-      }
-    }
-    else  {
-      return {
-        alignItems: 'center',
-        backgroundColor: colors.dark, // backgroundColor: colors.offWhite, // '#667292',
-        padding: 14,
-        marginBottom: 20,
-        borderRadius: 26, // 24,
-        opacity: 0.4,
-      }
-    }
   }
 
   /*

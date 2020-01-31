@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   Text,
   // SafeAreaView,
   TouchableOpacity,
   FlatList,
-  ScrollView,
+  // ScrollView,
+  Alert,
 } from 'react-native';
 
 import Auth from '@aws-amplify/auth';
@@ -24,36 +25,16 @@ import colors from 'main/colors';
 
 import styles from 'main/styles';
 
-import { getCurrencySymbol, getFormattedDateString } from '../functions';
+import getFormattedDateString from '../../functions/getFormattedDateString';
+
+import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
 import NoteTextInput from '../NoteTextInput';
-
-import BlueButton from 'main/storybook/stories/BlueButton';
-
-import Dialog from 'react-native-dialog';
 
 import {
   loadSettingsStorage,
   saveSettingsStorage,
 } from '../../storage/SettingsStorage';
-
-// const DATA = [
-//   {
-//     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-//     title: 'First Item',
-//     color: 'white',
-//   },
-//   {
-//     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-//     title: 'Second Item',
-//     color: 'white',
-//   },
-//   {
-//     id: '58694a0f-3da1-471f-bd96-145571e29d72',
-//     title: 'Third Item',
-//     color: 'white',
-//   },
-// ];
 
 // arbitrary size limits
 const MAX_PILL_WIDTH = 156;
@@ -74,11 +55,7 @@ function searchByID(key, myArray) {
   return obj;
 }
 
-
-
-
-
-const SlideUpTransactionRect = (props) => {
+function SlideUpTransactionRect(props) {
   const [dataIsLoaded, setDataIsLoaded] = useState(false);
 
   const [textLabel, setTextLabel] = useState('');
@@ -120,9 +97,9 @@ const SlideUpTransactionRect = (props) => {
       const found = searchByID(transaction.id, storageObj.transactions);
 
       if (found) {
-        found.category = category
+        found.category = category;
 
-        found.type = category.type
+        found.type = category.type;
 
         const pos = storageObj.transactions.indexOf(found);
 
@@ -147,96 +124,95 @@ const SlideUpTransactionRect = (props) => {
 
 
   function Item({ item }) {
-  // return (
-  //   <View style={styles.item}>
-  //     <Text style={styles.title}>{title}</Text>
-  //   </View>
-  // );
+    // return (
+    //   <View style={styles.item}>
+    //     <Text style={styles.title}>{title}</Text>
+    //   </View>
+    // );
 
-  let color = item.value.color;
+    let { color } = item.value;
 
-  let backgroundColor = 'transparent';
+    let backgroundColor = 'transparent';
 
-  let borderColor = color;
+    let borderColor = color;
 
-  if (transaction.category.name === item.value.name) {
-    backgroundColor = color;
-    borderColor = 'transparent'
-    color = colors.white;
-    
-  }
+    if (transaction.category.name === item.value.name) {
+      backgroundColor = color;
+      borderColor = 'transparent'
+      color = colors.white;
+    }
 
-  const view = (
-    <TouchableOpacity
-      // disabled={!isEnabled}
-      style={
-        {
-          // maxHeight: MAX_PILL_HEIGHT,
-          minWidth: MIN_PILL_WIDTH,
-          maxWidth: MAX_PILL_WIDTH,
+    const view = (
+      <TouchableOpacity
+        // disabled={!isEnabled}
+        style={
+          {
+            // maxHeight: MAX_PILL_HEIGHT,
+            minWidth: MIN_PILL_WIDTH,
+            maxWidth: MAX_PILL_WIDTH,
 
-          height: 28,
+            height: 28,
 
-          alignItems: 'center',
-          justifyContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
 
-          marginHorizontal: 4,
-          // marginVertical: 10,
+            marginHorizontal: 4,
+            // marginVertical: 10,
 
-          borderRadius: 17,
-          borderWidth: 1,
-          borderStyle: 'solid',
+            borderRadius: 17,
+            borderWidth: 1,
+            borderStyle: 'solid',
 
-          borderColor: borderColor,
+            borderColor: borderColor,
 
-          backgroundColor: backgroundColor,
-        }
-      }
-
-      // key={id}
-
-      onPress={() => {
-        // find existing category
-        const found = searchByID(item.value.id, categories);
-
-        if (found) {
-          transaction.category = found;
-          updateStoredTransactionCategory(item.value)
+            backgroundColor: backgroundColor,
+          }
         }
 
-      }}
-    >
+        // key={id}
 
-      <Text style={[
-        styles.textStyle,
-        {
-          paddingHorizontal: 12,
-          paddingBottom: 1,
-          color: color
-        }
-        ]
-        // {
-        //   // paddingHorizontal: 12,
-        //   // paddingBottom: 1,
+        onPress={() => {
+          // find existing category
+          const found = searchByID(item.value.id, categories);
 
-        //   // fontFamily: 'SFProDisplay-Regular',
-        //   // fontSize: 17,
-        //   // fontWeight: 'normal',
-        //   // fontStyle: 'normal',
-        //   // letterSpacing: 0.12,
+          if (found) {
+            transaction.category = found;
+            updateStoredTransactionCategory(item.value)
+          }
 
-        //   color: color,
-        // }
-      }
+        }}
       >
 
-        { item.value.name }
-      </Text>
-    </TouchableOpacity>
-  );
+        <Text style={[
+          styles.textStyle,
+          {
+            paddingHorizontal: 12,
+            paddingBottom: 1,
+            color: color
+          }
+          ]
+          // {
+          //   // paddingHorizontal: 12,
+          //   // paddingBottom: 1,
 
-  return view;
-}
+          //   // fontFamily: 'SFProDisplay-Regular',
+          //   // fontSize: 17,
+          //   // fontWeight: 'normal',
+          //   // fontStyle: 'normal',
+          //   // letterSpacing: 0.12,
+
+          //   color: color,
+          // }
+        }
+        >
+
+          { item.value.name }
+        </Text>
+      </TouchableOpacity>
+    );
+
+    return view;
+  }
 
 
   async function retrieveCognitoUserKey() {
@@ -280,45 +256,42 @@ const SlideUpTransactionRect = (props) => {
     retrieveCognitoUserKey();
     // console.log('Finished');
     // setIsReady(true);
-  }
-
-  const chooseCategoryBtnPressed = () => {
-    if (shouldShowCategoryBox) {
-      setShouldShowCategoryBox(false);
-    } else {
-      setShouldShowCategoryBox(true);
-    }
   };
+
+  // const chooseCategoryBtnPressed = () => {
+  //   if (shouldShowCategoryBox) {
+  //     setShouldShowCategoryBox(false);
+  //   } else {
+  //     setShouldShowCategoryBox(true);
+  //   }
+  // };
 
   function getFlatListDataFromObject(obj) {
     // console.log(obj);
-    const data = [];
-    let keys = Object.keys(obj);
-    let values = Object.values(obj)
+    const list = [];
+    const keys = Object.keys(obj);
+    const values = Object.values(obj);
     // console.log(Object.values(obj));
     // console.log(Object.keys(obj));
     // body...
-    keys.forEach( function(key, index) {
+    keys.forEach((key, index) => {
       // statements
-      let item = {
-        'key': key,
-        'value': values[index],
-      }
+      const item = {
+        key,
+        value: values[index],
+      };
       // console.log('id', index, key, values[index]);
-      data.push(item);
+      list.push(item);
     });
     // console.log(data);
-    return data;
+    return list;
   }
 
   // console.log(getFlatListDataFromObject(colors));
 
   useEffect(() => {
-    clearState()
-    // return () => {
-    //   // effect
-    // };
-  }, [])
+    clearState();
+  }, []);
 
   useEffect(() => {
     if (storageKey) {
@@ -355,83 +328,17 @@ const SlideUpTransactionRect = (props) => {
 
 
   const categoryBox = (
-    <View style={[
-      // styles.container,
-      {
-      // paddingTop: 12,
-      // justifyContent: 'center',
-
-
-      // alignItems: 'center',
-
-
-      // height: 200,
-      // width: 300,
-
-      // backgroundColor: 'gray',
-
-      // borderWidth: 1,
-      // borderColor: 'white',
-      // borderStyle: 'dashed',
-    }]}
-    >
-
-        {/*<Dialog.Button label="Cancel" onPress={() => {
-          setShouldShowCategoryBox(false);
-        }} />*/}
-       {/* <BlueButton title="Cancel" onPress={() => setShouldShowCategoryBox(false)}/>*/}
-{/*        <Dialog.Button label="Ok" onPress={() => {
-          console.log('Select Pressed');
-        }} />*/}
-
-
-
-{/*      <FlatList
-        data={getFlatListDataFromObject(colors)}
-        // renderItem={({ item }) => <Item item={item} onPress={() => updateCategoryColor(item.key, colors[item.key])} />}
-        keyExtractor={(item) => item.key}
-      />*/}
-
-{/*      <ScrollView
-        contentContainerStyle={{
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          flexDirection: 'row',
-          paddingLeft: 10,
-
-          paddingRight: 12,
-
-          borderWidth: 1,
-        }}
+    <View>
+      <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         decelerationRate={0}
-        // snapToInterval={MIN_PILL_WIDTH} // your element width
         snapToAlignment="center"
 
-        style={styles.scrollView}
-      >
-        */}
-
-        <FlatList
-
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          decelerationRate={0}
-          snapToAlignment="center"
-
-          data={data}
-          renderItem={({ item }) => <Item item={item} transaction={transaction} />}
-          keyExtractor={item => item.key}
-        />
-
-      {/*</ScrollView>*/}
-
-      
-
-
-          {/*<BlueButton title="Ok" onPress={() =>  console.log('Select Pressed')}/>*/}
-        
+        data={data}
+        renderItem={({ item }) => <Item item={item} transaction={transaction} />}
+        keyExtractor={(item) => item.key}
+      />
 
     </View>
   );
@@ -449,13 +356,7 @@ const SlideUpTransactionRect = (props) => {
       setDate(transaction.date);
 
       setTextLabel(`${getFormattedDateString(date)}`); // 'Amount Spent on'
-
-      
     }
-    // return () => {
-    //   // effect
-    //   // console.log('clean up');
-    // };
   });
 
   useEffect(() => {
@@ -474,7 +375,7 @@ const SlideUpTransactionRect = (props) => {
   let box = null;
 
   if (shouldShowCategoryBox) {
-    box = categoryBox
+    box = categoryBox;
   }
 
   if (isReady && dataIsLoaded && transaction) {
@@ -503,171 +404,63 @@ const SlideUpTransactionRect = (props) => {
         </View>
 
 
-        <View style={{
-          
-          // flex: 1,
-
-          // alignSelf: 'stretch',
-
-          // width: '100%',
-
-          height: '100%',
-
-          backgroundColor: colors.darkTwo,
-
-          // borderWidth: 1,
-          // borderColor: 'red',
-          // borderStyle: 'solid',
-        }}>
-
-
-{/*          <TouchableOpacity
-            style={[
-              styles.tableItemStyle,
-              {
-                // backgroundColor: colors.dark,
-                flexDirection: 'row',
-                // marginVertical: 1,
-              }]}
-            onPress={() =>  {
-              chooseCategoryBtnPressed();
-            }}
-          >
-            <View style={{
-              flex: 1,
-            }}><Text style={styles.listItemTitleStyle}>Choose Category</Text></View>
-
-            <View style={{
-              // flex: 0.1,
-              // justifyContent: 'center',
-              // alignItems: 'flex-end',
-              // height: '100%',
-              // borderWidth: 1,
-              // borderColor: 'red',
-              // borderStyle: 'solid',
-            }}
-            >
-              <Text style={styles.arrow}>></Text>
-            </View>
-          </TouchableOpacity>*/}
-
-
-          <View style={[
-      // styles.container,
-      {
-      // paddingTop: 12,
-      // justifyContent: 'center',
-
-
-      alignItems: 'center',
-
-
-      // height: 200,
-      // width: 300,
-
-      // backgroundColor: 'gray',
-
-      // borderWidth: 1,
-      // borderColor: 'white',
-      // borderStyle: 'dashed',
-    }]}
-    >
-        <View style={
-          {
-            flexDirection: 'row',
+        <View
+          style={{
+            height: '100%',
+            backgroundColor: colors.darkTwo,
 
             // borderWidth: 1,
-            // borderColor: 'white',
+            // borderColor: 'red',
             // borderStyle: 'solid',
-
-            padding: 6,
-
-          }
-        }>
-        {/*<Dialog.Button label="Cancel" onPress={() => {
-          setShouldShowCategoryBox(false);
-        }} />*/}
-       {/* <BlueButton title="Cancel" onPress={() => setShouldShowCategoryBox(false)}/>*/}
-{/*        <Dialog.Button label="Ok" onPress={() => {
-          console.log('Select Pressed');
-        }} />*/}
-
-
-
-{/*      <FlatList
-        data={getFlatListDataFromObject(colors)}
-        // renderItem={({ item }) => <Item item={item} onPress={() => updateCategoryColor(item.key, colors[item.key])} />}
-        keyExtractor={(item) => item.key}
-      />*/}
-
-{/*      <ScrollView
-        contentContainerStyle={{
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          flexDirection: 'row',
-          paddingLeft: 10,
-
-          paddingRight: 12,
-
-          borderWidth: 1,
-        }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        decelerationRate={0}
-        // snapToInterval={MIN_PILL_WIDTH} // your element width
-        snapToAlignment="center"
-
-        style={styles.scrollView}
-      >
-        */}
-
-        <FlatList
-          contentContainerStyle={{
-            alignItems: 'center',
-            height: 28,
-
-
-            // paddingHorizontal: 10,
-
-
-
           }}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          decelerationRate={0}
-          snapToAlignment="center"
+        >
 
-          data={data}
-          renderItem={({ item }) => <Item item={item} transaction={transaction} />}
-          keyExtractor={item => item.key}
-        />
+          <View
+            style={[
+              // styles.container,
+              {
+                alignItems: 'center',
 
-      {/*</ScrollView>*/}
+                // backgroundColor: 'gray',
 
-      
+                // borderWidth: 1,
+                // borderColor: 'white',
+                // borderStyle: 'dashed',
+              }]}
+          >
+            <View
+              style={
+                {
+                  flexDirection: 'row',
 
+                  // borderWidth: 1,
+                  // borderColor: 'white',
+                  // borderStyle: 'solid',
 
-          {/*<BlueButton title="Ok" onPress={() =>  console.log('Select Pressed')}/>*/}
-        
+                  padding: 6,
 
-        </View>
-      
-    </View>
+                }
+              }
+            >
 
+              <FlatList
+                contentContainerStyle={{
+                  alignItems: 'center',
+                  height: 28,
+                  // paddingHorizontal: 10,
 
-                  
+                }}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                decelerationRate={0}
+                snapToAlignment="center"
 
-
-{/*          <View style={{
-            alignSelf: 'center',
-            width: '80%',
-            borderWidth: 0.5,
-            borderColor: 'gray',
-
-            opacity: 0.3,
-            // borderStyle: 'solid',
-          }} />*/}
-
+                data={data}
+                renderItem={({ item }) => <Item item={item} transaction={transaction} />}
+                keyExtractor={item => item.key}
+              />
+            </View>
+          </View>
 
           { box }
 
@@ -680,53 +473,12 @@ const SlideUpTransactionRect = (props) => {
       </View>
     );
   }
-
-  // if (shouldShowCategoryBox) {
-  //   view = categoryBox;
-  // }
-
   return view;
-};
+}
 
-// const styles = StyleSheet.create({
-//   container: {
-
-//     // alignItems: 'center',
-
-//     // borderWidth: 1,
-//     // borderColor: 'pink',
-//     // borderStyle: 'dashed',
-//   },
-
-//   dateAmountRectangle: {
-    
-//     alignSelf: 'center',
-//     // justifyContent: 'center',
-//     width: '95%', // 346,
-//     // height: '50%', // 74,
-
-//     // marginTop: '2%',
-
-//     borderRadius: 9,
-//     backgroundColor: colors.dark,
-//     shadowColor: '#0f1725',
-//     shadowOffset: {
-//       width: 5,
-//       height: 5,
-//     },
-//     shadowRadius: 16,
-//     shadowOpacity: 1,
-
-//     // borderWidth: 2,
-//     // borderColor: 'white',
-//     // borderStyle: 'dashed',
-//   },
-// });
 
 // test label
 const dateLabel = {
-
-
   // width: 242,
   // height: 28,
 
@@ -753,7 +505,7 @@ const dateLabel = {
 // amountlabel style
 const amountLabel = {
   // width: 66,
-  height: 30,
+  // height: 30,
 
   // flex: 1,
 

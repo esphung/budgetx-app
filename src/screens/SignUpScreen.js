@@ -63,7 +63,13 @@ import Dialog from 'react-native-dialog';
 
 // import Offline from '../components/Offline';
 
-import { isValidUsername, isValidPhoneNumber, getButtonStyle } from './functions';
+// import { getButtonStyle } from './functions';
+
+import isValidUsername from 'main/src/functions/isValidUsername';
+
+import isValidPhoneNumber from 'main/src/functions/isValidPhoneNumber';
+
+import getButtonStyle from 'main/src/functions/getButtonStyle';
 
 function SignUpScreen(props) {
   /*

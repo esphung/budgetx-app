@@ -49,7 +49,11 @@ import styles from 'main/styles';
 
 import OfflineScreen from './OfflineScreen';
 
-import { isValidUsername, getButtonStyle } from './functions';
+// import { getButtonStyle } from './functions';
+
+import getButtonStyle from 'main/src/functions/getButtonStyle';
+
+import isValidUsername from 'main/src/functions/isValidUsername';
 
 import Dialog from "react-native-dialog";
 

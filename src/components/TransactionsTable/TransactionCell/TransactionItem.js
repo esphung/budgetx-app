@@ -17,8 +17,10 @@ import {
 // ui colors
 import colors from 'main/colors';
 
-import ItemSymbol from './ItemSymbol';
 import CategoryLabel from 'main/storybook/stories/CategoryLabel';
+
+import ItemSymbol from './ItemSymbol';
+
 // import ItemPayee from './ItemPayee';
 import ItemNameInput from './ItemNameInput';
 // import ItemDate from './ItemDate';
@@ -28,20 +30,23 @@ function TransactionItem(props) {
   const {
     item,
     onPress,
-    currentTransaction
+    currentTransaction,
+    isNameInputEnabled,
   } = props;
 
-  if (!item.category) {
-    item.category = {
+  let { category } = item;
+
+  if (!category) {
+    category = {
       name: 'Category',
       color: colors.white,
-    }
+    };
   }
 
-  let textColor = colors.offWhite // 'rgba(255, 255, 255, 0.5)';
+  let textColor = colors.offWhite; // 'rgba(255, 255, 255, 0.5)';
 
   if (currentTransaction === item) {
-    textColor = `${item.category.color}`; // item.category.color + '0f';
+    textColor = `${category.color}`; // item.category.color + '0f';
   }
 
   return (
@@ -71,63 +76,58 @@ function TransactionItem(props) {
         flex: 1,
         flexDirection: 'row',
 
-        // paddingVertical: 8,
-
-        
       }}
       >
 
-      <View style={{
-        flex: 0.25,
-        justifyContent: 'center',
-        alignItems: 'center',
+        <View style={{
+          flex: 0.25,
+          justifyContent: 'center',
+          alignItems: 'center',
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-      }}
-      >
-        <ItemSymbol color={item.category.color} />
-      </View>
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}
+        >
+          <ItemSymbol color={category.color} />
+        </View>
 
-      <View style={{
-        flex: 1,
-        justifyContent: 'center',
-        // alignItems: 'center',
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          // alignItems: 'center',
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-      }}
-      >
-        <CategoryLabel
-          // item={item}
-          name={item.category.name}
-          textColor={textColor}
-        />
-      </View>
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}
+        >
+          <CategoryLabel
+            // item={item}
+            name={category.name}
+            textColor={textColor}
+          />
+        </View>
 
-      <View
-        style={
-          {
-            flex: 1, // 1
-            justifyContent: 'center',
-            // alignItems: 'center',
+        <View
+          style={
+            {
+              flex: 1, // 1
+              justifyContent: 'center',
+              // alignItems: 'center',
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }
           }
-        }
-      >
-        <ItemNameInput isNameInputEnabled={props.isNameInputEnabled} item={item} />
-      </View>
+        >
+          <ItemNameInput isNameInputEnabled={isNameInputEnabled} item={item} />
+        </View>
 
         {/* <ItemDate item={item} /> */}
 
         <ItemAmount item={item} />
-
-
       </View>
     </TouchableOpacity>
   );

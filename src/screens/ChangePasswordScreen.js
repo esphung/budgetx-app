@@ -29,7 +29,7 @@ import colors from 'main/colors';
 
 import styles from 'main/styles';
 
-import { getButtonStyle } from './functions';
+import getButtonStyle from 'main/src/functions/getButtonStyle';
 
 
 

@@ -1103,8 +1103,12 @@ const CustomizeCategoriesScreen = () => {
             // flex: 1,
             justifyContent: 'flex-end',
             alignItems: 'center',
+
+
             // marginVertical: '2%',
-            paddingBottom: 14,
+            // paddingBottom: 14,
+
+            // padding: 14,
 
             // borderWidth: 1,
             // borderColor: 'white',
@@ -1113,13 +1117,43 @@ const CustomizeCategoriesScreen = () => {
           }
         }
       >
+        <View style={{
+          height: 10,
+          width: '100%',
+          margin: 2,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }} />
+
         <HelpMessage message={helpMessage} />
+
+        <View style={{
+          height: 10,
+          width: '100%',
+          margin: 2,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }} />
         <BlueButton
           title="Add New"
           onPress={() => {
             Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
           }}
         />
+
+                <View style={{
+          height: 10,
+          width: '100%',
+          margin: 2,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }} />
       </View>
       </View>
     </SafeAreaView>

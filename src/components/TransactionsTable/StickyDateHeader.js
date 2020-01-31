@@ -9,7 +9,7 @@ import {
 // ui colors
 import colors from 'main/colors';
 
-import { getFormattedDateString } from '../functions';
+import getFormattedDateString from '../../functions/getFormattedDateString';
 
 function StickyDateHeader(props) {
   const view = (

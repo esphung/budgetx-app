@@ -63,7 +63,11 @@ import Transaction from '../models/Transaction';
 
 // import Category from '../models/Category';
 
-import { calculateBalance, calculateMonthSpent } from './functions';
+// import { calculateBalance, calculateMonthSpent } from './functions';
+
+import calculateBalance from '../functions/calculateBalance';
+
+import calculateMonthSpent from '../functions/calculateMonthSpent';
 
 const styles = StyleSheet.create({
   container: {
