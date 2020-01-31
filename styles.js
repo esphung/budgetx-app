@@ -233,7 +233,7 @@ export default StyleSheet.create({
   },
   slideUpTransactionRect: {
     // height: '100%',
-    height: 300,
+    height: 200,
 
     alignItems: 'center',
 

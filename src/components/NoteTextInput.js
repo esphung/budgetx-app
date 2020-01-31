@@ -71,20 +71,22 @@ export default function NoteTextInput(props) {
       <TextInput
         style={
           [
-            // styles.listItemTitleStyle,
-            styles.textStyle,
+            styles.listItemTitleStyle,
+            // styles.textStyle,
           {
             height: 50,
-            // width: '100%',
+            // width: '80%',
             // flex: 1,
 
             paddingLeft: 12,
 
-            backgroundColor: colors.darkTwo,
+            // marginTop: 4,
 
-            // borderWidth: 1,
-            // borderColor: 'gray',
-            // borderStyle: 'solid',
+            backgroundColor: colors.dark,
+
+            borderWidth: 8,
+            borderColor: colors.darkTwo,
+            borderStyle: 'solid',
           }]
         }
         placeholder="Add note"

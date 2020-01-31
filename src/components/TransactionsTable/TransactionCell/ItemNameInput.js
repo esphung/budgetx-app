@@ -16,21 +16,10 @@ import colors from 'main/colors';
 
 import styles from 'main/styles';
 
-// import {
-//   loadTransactionsObject,
-//   saveTransactionsObject
-// } from '../../storage/TransactionsStorage';
-
-// import {
-//   loadUserObject,
-//   saveUserObject
-// } from '../../../storage/UserStorage';
-
 import {
   loadSettingsStorage,
   saveSettingsStorage,
 } from '../../../storage/SettingsStorage';
-
 
 import {
   loadPayees,
@@ -39,30 +28,17 @@ import {
 
 import Payee from '../../../models/Payee';
 
-// find previous obj if exists
-function search(nameKey, myArray) {
-  let obj = null;
-  let i = 0;
-  for (i; i < myArray.length; i += 1) {
-    // console.log(myArray[i].name, nameKey);
-    if (myArray[i].name === nameKey) {
-      obj = myArray[i];
-    }
-  }
-  return obj;
-}
-
-
+import searchByName from '../../../functions/searchByName';
 
 class ItemNameInput extends Component {
   constructor(props) {
     super(props);
 
-    const { payee } = props.item;
+    const { payee, isNameInputEnabled } = props.item;
 
     this.state = {
       text: '',
-      payee: payee,
+      payee,
       storageKey: null,
     };
 
@@ -76,9 +52,7 @@ class ItemNameInput extends Component {
 
   async componentDidMount() {
     const { payee } = this.state;
-    if (payee) {
-      this.setState({ text: payee.name });
-    }
+    this.setState({ text: payee.name });
 
     Auth.currentAuthenticatedUser()
       .then((cognito) => {
@@ -90,11 +64,6 @@ class ItemNameInput extends Component {
         Alert.alert(err);
       });
   }
-
-  // endEditing() {
-  //   const { payee } = this.state; // current transaction item
-  //   this.setState({ text: payee.name })
-  // }
 
   handleTextChange(text) {
     this.setState({ text });
@@ -111,7 +80,7 @@ class ItemNameInput extends Component {
     // console.log(payees);
 
     // check if previous payee exists
-    const previousPayee = search(text, payees);
+    const previousPayee = searchByName(text, payees);
 
     if (previousPayee) {
       // const { storageKey } = this.state;
@@ -174,7 +143,7 @@ class ItemNameInput extends Component {
   }
 
   render() {
-    const placeholderText = 'Payee';
+    const placeholderText = 'Enter name';
 
     const { text } = this.state;
 
@@ -184,7 +153,7 @@ class ItemNameInput extends Component {
 
     let isClearButtonModeEnabled = 'never';
 
-    
+ 
 
     // item has payee
     if (text && text !== placeholderText) {
@@ -246,6 +215,8 @@ class ItemNameInput extends Component {
           value={text}
 
           clearButtonMode={isClearButtonModeEnabled}
+
+          editable={this.props.isNameInputEnabled}
 
           // onFocus={() => {
           //   if (!text) {

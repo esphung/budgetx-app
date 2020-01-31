@@ -113,32 +113,18 @@ const SlideUpTransactionRect = (props) => {
   // };
 
   const updateStoredTransactionCategory = async (category) => {
-    // console.log(category)
-    // console.log(string);
-
-    // console.log(currentTransaction.id);
-
-    
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(storageKey);
-      // console.log(transaction);
-      const list = storageObj.transactions;
 
-      const found = searchByID(transaction.id, list);
+      const found = searchByID(transaction.id, storageObj.transactions);
 
       if (found) {
         found.category = category
 
         found.type = category.type
 
-        const pos = list.indexOf(found);
-        // console.log(pos);
-        // console.log(list[pos]);
-
-        list[pos] = found
-
-        storageObj.transactions[pos] = list[pos]
+        const pos = storageObj.transactions.indexOf(found);
 
         if (storageObj.transactions[pos].type === 'income' && storageObj.transactions[pos].amount < 0) {
           storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1
@@ -150,62 +136,13 @@ const SlideUpTransactionRect = (props) => {
 
         saveSettingsStorage(storageKey, storageObj);
 
-        props.handleTransactionChange(storageObj.transactions)
-
-        // props.handleTransactionChange(storageObj.transactions[pos])
-
-
-
-
-        // setData(getFlatListDataFromObject(categories))
-
-        // setTransactions(list);
-
-        // setCurrentPayee(null);
-        // setCurrentNote(null);
-        // setCurrentAmount(initialState.currentAmount);
-        // setCurrentCategory(initialState.currentCategory);
-        // setCurrentTransaction(list[pos]);
-        // setCurrentType(initialState.currentType);
-
-        // return from here
-        // return;
-
-
-
-        // let i = storageObj.transactions.length - 1;
-        // for (i; i >= 0; i -= 1) {
-        //   if (storageObj.transactions[i].id === found.id) {
-        //     // set user transaction payee
-        //     storageObj.transactions[i] = found;
-
-        //     // console.log(storageObj.transactions[i]);
-
-        //     // save transactions list
-        //     // saveUserObject(userObject);
-        //     // saveSettingsStorage(this.state.storageKey, userObject);
-
-        //     saveSettingsStorage(storageKey, storageObj);
-
-        //     setTransactions(storageObj.transactions);
-
-        //     // setCurrentPayee(null);
-        //     // setCurrentNote(null);
-        //     // setCurrentAmount(initialState.currentAmount);
-        //     // setCurrentCategory(initialState.currentCategory);
-        //     setCurrentTransaction(storageObj.transactions[i]);
-        //     // setCurrentType(initialState.currentType);
-
-        //     // return from here
-        //     // return;
-        //   }
-        // }
-        }
-      } catch (e) {
-        // statements
-        // Alert.alert('Could not load settings');
-        // console.log(e);
+        props.handleTransactionChange(storageObj.transactions, storageObj.transactions[pos]);
       }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not update transaction');
+      // console.log(e);
+    }
   };
 
 
@@ -238,7 +175,7 @@ const SlideUpTransactionRect = (props) => {
           minWidth: MIN_PILL_WIDTH,
           maxWidth: MAX_PILL_WIDTH,
 
-          // height: '60%', // 37,
+          height: 28,
 
           alignItems: 'center',
           justifyContent: 'center',
@@ -259,49 +196,42 @@ const SlideUpTransactionRect = (props) => {
       // key={id}
 
       onPress={() => {
-        // console.log(item.value); // category picked
+        // find existing category
+        const found = searchByID(item.value.id, categories);
 
-        if (searchByID(item.value.id, categories)) {
-          // console.log(true);
-          transaction.category = item.value
-
+        if (found) {
+          transaction.category = found;
           updateStoredTransactionCategory(item.value)
-
-          // clearState();
-
-          // props.dismiss();
-
-          // clearState()
-
-          // console.log(props);
         }
-
-        // console.log(transaction);
-
 
       }}
     >
 
-      <Text style={
+      <Text style={[
+        styles.textStyle,
         {
           paddingHorizontal: 12,
           paddingBottom: 1,
-
-          fontFamily: 'SFProDisplay-Regular',
-          fontSize: 17,
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          letterSpacing: 0.12,
-
-          color: color,
+          color: color
         }
+        ]
+        // {
+        //   // paddingHorizontal: 12,
+        //   // paddingBottom: 1,
+
+        //   // fontFamily: 'SFProDisplay-Regular',
+        //   // fontSize: 17,
+        //   // fontWeight: 'normal',
+        //   // fontStyle: 'normal',
+        //   // letterSpacing: 0.12,
+
+        //   color: color,
+        // }
       }
       >
 
         { item.value.name }
       </Text>
-
-      
     </TouchableOpacity>
   );
 
@@ -408,8 +338,6 @@ const SlideUpTransactionRect = (props) => {
 
       // console.log(getFlatListDataFromObject(categories));
 
-
-
       // setData(
       //   [
       //     {
@@ -434,7 +362,7 @@ const SlideUpTransactionRect = (props) => {
       // justifyContent: 'center',
 
 
-      alignItems: 'center',
+      // alignItems: 'center',
 
 
       // height: 200,
@@ -447,18 +375,7 @@ const SlideUpTransactionRect = (props) => {
       // borderStyle: 'dashed',
     }]}
     >
-        <View style={
-          {
-            flexDirection: 'row',
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-
-            padding: 6,
-
-          }
-        }>
         {/*<Dialog.Button label="Cancel" onPress={() => {
           setShouldShowCategoryBox(false);
         }} />*/}
@@ -497,13 +414,7 @@ const SlideUpTransactionRect = (props) => {
         */}
 
         <FlatList
-        contentContainerStyle={{
-          alignItems: 'center',
 
-
-          // paddingHorizontal: 10,
-
-        }}
           horizontal
           showsHorizontalScrollIndicator={false}
           decelerationRate={0}
@@ -522,8 +433,6 @@ const SlideUpTransactionRect = (props) => {
           {/*<BlueButton title="Ok" onPress={() =>  console.log('Select Pressed')}/>*/}
         
 
-        </View>
-      
     </View>
   );
 
@@ -598,13 +507,13 @@ const SlideUpTransactionRect = (props) => {
           
           // flex: 1,
 
-          alignSelf: 'stretch',
+          // alignSelf: 'stretch',
 
           // width: '100%',
 
-          // height: '60%',
+          height: '100%',
 
-          backgroundColor: colors.dark,
+          backgroundColor: colors.darkTwo,
 
           // borderWidth: 1,
           // borderColor: 'red',
@@ -713,13 +622,16 @@ const SlideUpTransactionRect = (props) => {
         */}
 
         <FlatList
-        contentContainerStyle={{
-          alignItems: 'center',
+          contentContainerStyle={{
+            alignItems: 'center',
+            height: 28,
 
 
-          // paddingHorizontal: 10,
+            // paddingHorizontal: 10,
 
-        }}
+
+
+          }}
           horizontal
           showsHorizontalScrollIndicator={false}
           decelerationRate={0}
@@ -759,11 +671,11 @@ const SlideUpTransactionRect = (props) => {
 
           { box }
 
-{/*          <NoteTextInput
+          <NoteTextInput
             transaction={transaction}
             // handleNoteChange={handleNoteChange}
             updateStoredTransactionNote={props.updateStoredTransactionNote}
-          />*/}
+          />
         </View>
       </View>
     );
@@ -847,7 +759,7 @@ const amountLabel = {
 
 
   width: '100%',
-  // height: '50%',
+  height: '50%',
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 25,
   fontWeight: 'normal',
@@ -855,6 +767,8 @@ const amountLabel = {
   letterSpacing: 0.29,
   textAlign: 'center',
   color: colors.white,
+
+  backgroundColor: colors.dark,
 
   // paddingBottom: 10,
   // paddingTop: 6,

@@ -72,9 +72,9 @@ function SlideUpView(props) {
                 behavior={Platform.OS === 'ios' ? 'padding' : null}
                 enabled={isKeyboardAvoidEnabled}
                 style={{
-                  flex: 1,
-                  width: '100%',
-                  // height: '40%',
+                  // flex: 1,
+                  // width: '100%',
+                  // height: '90%',
                   // bottom: '0%',
                   top: '58%',
                   // top: 480,
@@ -82,9 +82,9 @@ function SlideUpView(props) {
                   // borderColor: 'white',
                   // borderStyle: 'dashed',
 
-                  zIndex: -1,
+                  // zIndex: -1,
 
-                  // backgroundColor: 'pink',
+                  // backgroundColor: colors.darkTwo,
                   // backgroundColor: 'transparent',
 
 
@@ -114,26 +114,9 @@ function SlideUpView(props) {
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <View style={styles.innerSlide}>
 
-                        {/*<SlideViewSeparator />*/}
 
-                            <SlideUpTransactionRect  handleTransactionChange={props.handleTransactionChange} dismiss={dismiss} updateStoredTransactionNote={updateStoredTransactionNote} transaction={transaction} />
+                           <SlideUpTransactionRect handleTransactionChange={props.handleTransactionChange} dismiss={dismiss} updateStoredTransactionNote={updateStoredTransactionNote} transaction={transaction} />
 
-{/*                            <TouchableOpacity style={[
-                              styles.tableItemStyle, {
-                                backgroundColor: colors.dark,
-                                // marginVertical: 1,
-                              }]} onPress={() =>  console.log('Choose Category')}>
-          <Text style={styles.listItemTitleStyle}>Choose Category</Text>
-        </TouchableOpacity>
-*/}
-                            
-{/*                            <View style={styles.btnContainer}>
-                                <Button title="Submit" onPress={() => null} />
-                            </View>*/}
-                           
-
-                            
-                            
                         </View>
 
                     </TouchableWithoutFeedback>
@@ -142,44 +125,41 @@ function SlideUpView(props) {
             </KeyboardAvoidingView>
           )
 
-  const animatedView = (
-    <Animated.View
-      style={
-        [
-          // styles.container,
-          {
-            flex: 1,
-            justifyContent: 'center',
+//   const animatedView = (
+//     <Animated.View
+//       // style={
+//       //   [
+//       //     // styles.container,
+//       //     {
+//       //       flex: 1,
+//       //       justifyContent: 'center',
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'dashed',
-          },
-          { transform: [{ translateY: slideViewBounceValue }] }
-        ]}
-    >
-      <SlideUpTransactionRect transaction={transaction} />
+//       //       // borderWidth: 1,
+//       //       // borderColor: 'white',
+//       //       // borderStyle: 'dashed',
+//       //     },
+//       //     { transform: [{ translateY: slideViewBounceValue }] }
+//       //   ]}
+//     >
+
+// {/*      <SlideUpTransactionRect transaction={transaction} />
       
 
 
-        <TouchableOpacity
-          style={styles.itemStyle} onPress={() =>  console.log('Choose Category')}>
-          <Text style={{
-            color: 'pink'
-          }}>Category</Text>
-        </TouchableOpacity>`
+// {/*        <TouchableOpacity
+//           style={styles.itemStyle} onPress={() =>  console.log('Choose Category')}>
+//           <Text style={{
+//             color: 'pink'
+//           }}>Category</Text>
+//         </TouchableOpacity>`*/}*/}
 
-      <NoteTextInput
-        transaction={transaction}
-        // handleNoteChange={handleNoteChange}
-        updateStoredTransactionNote={updateStoredTransactionNote}
-      />
 
-    </Animated.View>
+
+//     </Animated.View>
        
 
     
-  );
+//   );
 
   // return animatedView;
 

@@ -5,11 +5,12 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
+  Text,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
 
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 
 // ui colors
 import colors from 'main/colors';
@@ -211,23 +212,72 @@ const MyStickyTable = (props) => {
     const { header, date } = item;
     if (header) {
       return (
-        <View style={styles.rowFront}>
-          <StickyDateHeader date={date} />
-        </View>
-      );
-    }
+        <SwipeRow
+            disableRightSwipe
+            disableLeftSwipe
+            // leftOpenValue={20 + parseInt(index) * 5}
+            // rightOpenValue={-150}
+        >
+            <View style={styles.rowBack}>
+                <Text>Left Hidden</Text>
+                <Text>Right Hidden</Text>
+            </View>
+            <View style={styles.rowFront}>
+                <StickyDateHeader date={date} />
+            </View>
+        </SwipeRow>
+      )
 
+
+    } else {
     return (
-      <View style={styles.rowFront}>
-        <TransactionItem
+
+        <SwipeRow
+            // disableRightSwipe
+            // disableLeftSwipe
+            // leftOpenValue={20 + parseInt(index) * 5}
+            // rightOpenValue={-150}
+            leftOpenValue={55}
+            rightOpenValue={-75}
+
+        >
+      <View style={styles.rowBack}>
+
+        <View style={styles.rowBackLeft}>
+          <SwipeEdit
+            keyExtractor={item.id}
+            onPress={() => props.swipeEditBtnPressed(item)}
+          />
+        </View>
+        <View style={styles.rowBackRight}>
+          <SwipeDelete
+            keyExtractor={item.id}
+            onDeleteBtnPress={() => deleteBtnPressed(item)}
+          />
+
+          {/*
+           <CustomSwipeCell
+              // keyExtractor={() => String(index)}
+              onDeleteBtnPress={() => deleteBtnPressed(item)}
+            />
+          */}
+        </View>
+      </View>
+            <View style={styles.rowFront}>
+                <TransactionItem
           // keyExtractor={() => String(index)} // {data[index]} // () => console.log(index)
           item={item}
           isSelected={false}
           onPress={() => onPress(item)} // {onPress} // console.log(data[index])
           currentTransaction={currentTransaction}
+          isNameInputEnabled={props.isNameInputEnabled}
         />
-      </View>
+            </View>
+        </SwipeRow>
+
     );
+    }
+
   }
 
   function renderHiddenItem({ item }) {
@@ -248,17 +298,11 @@ const MyStickyTable = (props) => {
       view = (
       <View style={styles.rowBack}>
 
-        <View style={styles.rowBackLeftEmpty}>
-{/*          <SwipeEdit
+        <View style={styles.rowBackLeft}>
+          <SwipeEdit
             keyExtractor={item.id}
-            onPress={() => {
-              // setCurrentCategory(searchByID(item.id, data));
-              // setShouldShowColorBox(true);
-              // console.log('Edited', item);
-
-              // SHOW TRANSACTION BOX
-            }}
-          />*/}
+            onPress={() => props.swipeEditBtnPressed(item)}
+          />
         </View>
         <View style={styles.rowBackRight}>
           <SwipeDelete
@@ -284,7 +328,7 @@ const MyStickyTable = (props) => {
     setLoading(true);
     if (transactions) {
       setData(sortByHeadersDateDescending(transactions));
-      setLoading(false);
+      // setLoading(false);
     }
     // return () => {
     //   // effect
@@ -295,6 +339,7 @@ const MyStickyTable = (props) => {
     setLoading(true);
     if (data) {
       setStickyHeaderIndices(getStickyIndices(sortByHeadersDateDescending(transactions)));
+
       setLoading(false);
     }
     // return () => {
@@ -338,11 +383,19 @@ const MyStickyTable = (props) => {
         renderItem={renderItem}
         keyExtractor={(item, index) => String(index)}
         stickyHeaderIndices={stickyHeaderIndices}
-        renderHiddenItem={renderHiddenItem}
+        // renderHiddenItem={renderHiddenItem}
 
-        leftOpenValue={0}
+        // // leftOpenValue={0}
         // leftOpenValue={55}
-        rightOpenValue={-75}
+        // rightOpenValue={-75}
+        // // disableRightSwipe={false}
+        // //  disableLeftSwipe
+
+
+         
+            // disableLeftSwipe={parseInt(data.item.key) % 2 === 0}
+            // leftOpenValue={20 + parseInt(data.item.key) * 5}
+            // rightOpenValue={-150}
 
         // ItemSeparatorComponent={this.FlatListItemSeparator}
         // ListHeaderComponent={this.Render_FlatList_Sticky_header}

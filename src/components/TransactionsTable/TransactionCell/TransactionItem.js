@@ -120,7 +120,7 @@ function TransactionItem(props) {
           }
         }
       >
-        <ItemNameInput item={item} />
+        <ItemNameInput isNameInputEnabled={props.isNameInputEnabled} item={item} />
       </View>
 
         {/* <ItemDate item={item} /> */}

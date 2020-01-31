@@ -151,6 +151,8 @@ function Home() {
   const [shouldShowAmountInput, setShouldShowAmountInput] = useState(true);
   const [shouldShowKeypad, setShouldShowKeypad] = useState(true);
 
+  const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
+
   // find previous obj if exists
   function searchByID(key, myArray) {
     // console.log(nameKey);
@@ -165,8 +167,8 @@ function Home() {
     return obj;
   }
 
-  const handleTransactionChange = async (transactions) => {
-    console.log(transactions);
+  const handleTransactionChange = async (transactions, updated) => {
+    // console.log(transactions);
     try {
       const storageObj = await loadSettingsStorage(storageKey);
 
@@ -176,12 +178,15 @@ function Home() {
 
       saveSettingsStorage(storageKey, storageObj);
 
+      setTransactions(storageObj.transactions);
+
+      setCurrentTransaction(updated);
       
     } catch(e) {
       // statements
       console.log(e);
     }
-    setTransactions(transactions);
+    
   };
 
 
@@ -281,6 +286,7 @@ function Home() {
     setCurrentCategory(initialState.currentCategory);
     setCurrentTransaction(initialState.currentTransaction);
     setCurrentType(initialState.currentType);
+    setIsNameInputEnabled(true);
 
 
     setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
@@ -592,32 +598,40 @@ function Home() {
       setShouldShowAmountInput(true);
       setShouldShowKeypad(true);
     }
-    return () => {
-      // effect
-    };
-  }, [isSlideViewHidden]);
 
-  useEffect(() => {
-    // toggle slideup view
-    if (currentTransaction) {
-      showSlideView();
-
-      // setCurrentAmount(Math.abs(currentTransaction.amount * 100));
-      // setCurrentCategory(currentTransaction.category);
-
-      // categoryBtnPressed(currentTransaction.category);
-      // console.log(currentCategory)
-    } else if (!currentTransaction) {
-      hideSlideView();
+    if (currentTransaction && !isSlideViewHidden) {
+      setIsNameInputEnabled(false);
+    } else {
+      setIsNameInputEnabled(true);
     }
+
+    
     return () => {
       // effect
-      hideSlideView();
-
-      // setCurrentAmount(initialState.currentAmount);
-      // setCurrentCategory(initialState.currentCategory);
     };
-  }, [currentTransaction, hideSlideView, showSlideView]);
+  }, [isSlideViewHidden, currentTransaction]);
+
+  // useEffect(() => {
+  //   // // toggle slideup view
+  //   // if (currentTransaction) {
+  //   //   showSlideView();
+
+  //   //   // setCurrentAmount(Math.abs(currentTransaction.amount * 100));
+  //   //   // setCurrentCategory(currentTransaction.category);
+
+  //   //   // categoryBtnPressed(currentTransaction.category);
+  //   //   // console.log(currentCategory)
+  //   // } else if (!currentTransaction) {
+  //   //   hideSlideView();
+  //   // }
+  //   // return () => {
+  //   //   // effect
+  //   //   hideSlideView();
+
+  //   //   // setCurrentAmount(initialState.currentAmount);
+  //   //   // setCurrentCategory(initialState.currentCategory);
+  //   // };
+  // }, [currentTransaction, hideSlideView, showSlideView]);
 
   // async function didMount() {
   //   try {
@@ -632,18 +646,19 @@ function Home() {
 
   // actions
   const transactionBtnPressed = (transaction) => {
-    if (currentTransaction === transaction) {
-      setCurrentTransaction(null);
-      if (isSlideViewHidden !== true) {
-        hideSlideView();
-      }
-    } else if (currentTransaction !== transaction) {
-      // not same transaction
-      setCurrentTransaction(transaction);
-    }
-    // else {
+    // if (currentTransaction === transaction) {
+    //   // already selected
+    //   setCurrentTransaction(null);
+    //   // if (isSlideViewHidden !== true) {
+    //   //   hideSlideView();
+    //   // }
+    // } else {
+    //   // not same transaction
     //   setCurrentTransaction(transaction);
+    //   // showSlideView()
     // }
+
+    toggleTransactionSlideView(transaction)
   };
 
   const deleteBtnPressed = (transaction) => {
@@ -681,6 +696,34 @@ function Home() {
       return true;
     }
   };
+
+  const toggleTransactionSlideView = (transaction) => {
+     // console.log(transaction);
+    hideSlideView();
+    // setCurrentTransaction(null);
+
+    
+
+    // show slide view if not visible and transaction selected
+    if (!currentTransaction) {
+      setCurrentTransaction(transaction);
+      showSlideView();
+    } else if (currentTransaction === transaction && !isSlideViewHidden) {
+      hideSlideView();
+      setCurrentTransaction(null);
+    }
+
+    else {
+      setCurrentTransaction(transaction)
+      showSlideView();
+      
+    }
+
+  };
+
+  const swipeEditBtnPressed = (transaction) => {
+    toggleTransactionSlideView(transaction);
+  }
 
   let scrollingPills = (
     <ScrollingPillCategoriesView
@@ -753,6 +796,10 @@ function Home() {
         onPress={(transaction) => transactionBtnPressed(transaction)}
         deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
         // isCurrentTransaction={isCurrentTransaction}
+
+        swipeEditBtnPressed={swipeEditBtnPressed}
+
+        isNameInputEnabled={isNameInputEnabled}
       />
 
       { scrollingPills }
@@ -767,31 +814,9 @@ function Home() {
         handleTransactionChange={handleTransactionChange}
         // handleNoteChange={handleNoteChange}
         dismiss={() => {
-          // setIsReady(false);
-          // hideSlideView();
-
-          // add/remove transactions
-          // setTransactions([]);
-          // setCurrentBalance(0.00);
-          // setCurrentSpent(0.00);
-          // setCurrentPayee(null);
-          // setCurrentNote(null);
-          // setCurrentDate(initialState.currentDate);
-          // setCurrentAmount(initialState.currentAmount);
-          // setCurrentCategory(initialState.currentCategory);
           setCurrentTransaction(initialState.currentTransaction);
-          // setCurrentType(initialState.currentType);
-
-
-          // setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
-          // setIsSlideViewHidden(initialState.isSlideViewHidden);
-          // setIsCurrentTransaction(initialState.isCurrentTransaction);
-
-          // setStorageKey(null);
-          // retrieveStoredTransactions(); // load stored user
-          // cacheResourcesAsync();
         }}
-        // updateStoredTransactionNote={updateStoredTransactionNote}
+        updateStoredTransactionNote={updateStoredTransactionNote}
 
         // updateStoredTransactionCategory={() => {
         //   console.log(currentTransaction)
