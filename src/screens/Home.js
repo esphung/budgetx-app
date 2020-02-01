@@ -367,6 +367,10 @@ function Home() {
       setCurrentCategory(initialState.currentCategory);
       setCurrentTransaction(initialState.currentTransaction);
       setCurrentType(initialState.currentType);
+
+      // hide slide view
+      hideSlideView();
+
     }
   }
 
@@ -594,15 +598,18 @@ function Home() {
 
   useEffect(() => {
     if (!isSlideViewHidden) {
+      // Showing Slide View
       setShouldShowScrollingPills(false);
       setShouldShowAmountInput(false);
       setShouldShowKeypad(false);
     } else {
+      // Slide View is Hidden
       setShouldShowScrollingPills(true);
       setShouldShowAmountInput(true);
       setShouldShowKeypad(true);
     }
 
+    // Control Name Input Editable
     if (currentTransaction && !isSlideViewHidden) {
       setIsNameInputEnabled(false);
     } else {
