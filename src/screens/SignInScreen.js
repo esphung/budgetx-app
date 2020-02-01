@@ -345,8 +345,8 @@ function SignInScreen(props) {
   }
 
   function onChangeText(key, value) {
-    console.log('key:', key);
-    console.log('value:', value);
+    // console.log('key:', key);
+    // console.log('value:', value);
 
     if (key === 'username') {
       if (value.length < 6) {
@@ -399,7 +399,7 @@ function SignInScreen(props) {
   const signin = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled={false}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
             <Container style={styles.infoContainer}>

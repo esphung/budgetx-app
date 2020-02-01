@@ -40,8 +40,8 @@ export default function getFormattedDateString(date) {
   // set "today" word in transaction date label
   const todaysDate = new Date();
 
-  // console.log(transactionDate);
-  // console.log(todaysDate);
+  // console.log(getShortDate(transactionDate));
+  // console.log(getShortDate(todaysDate));
 
   if
   (

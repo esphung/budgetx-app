@@ -16,7 +16,7 @@ import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 import colors from 'main/colors';
 
-import styles from './styles';
+import styles from 'main/styles';
 
 function AuthLoadingScreen(props) {
   /*

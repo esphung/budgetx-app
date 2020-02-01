@@ -31,6 +31,8 @@ import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
 import NoteTextInput from '../NoteTextInput';
 
+import DatePicker from 'react-native-datepicker'
+
 import {
   loadSettingsStorage,
   saveSettingsStorage,
@@ -82,6 +84,8 @@ function SlideUpTransactionRect(props) {
   const [storageKey, setStorageKey] = useState(null);
 
   const [data, setData] = useState(null);
+
+  const [pickerDate, setPickerDate] = useState("2016-05-15");
 
   // const showCategoryPicker = () => {
   //   console.log('Choose Category');
@@ -343,6 +347,36 @@ function SlideUpTransactionRect(props) {
     </View>
   );
 
+  const datePicker = (
+      <DatePicker
+        style={{width: 200,}}
+        date={pickerDate}
+        mode="date"
+        placeholder="select date"
+        format="YYYY-MM-DD"
+        minDate="2016-05-01"
+        maxDate="2016-06-01"
+        confirmBtnText="Confirm"
+        cancelBtnText="Cancel"
+        customStyles={{
+          dateIcon: {
+            position: 'absolute',
+            left: 0,
+            top: 4,
+            marginLeft: 0,
+
+
+          },
+          dateInput: {
+            marginLeft: 36,
+
+          }
+          // ... You can check the source to find the other keys.
+        }}
+        onDateChange={(date) => setPickerDate(date)}
+      />
+    );
+
 
   useEffect(() => {
     // console.log('Mount');
@@ -469,6 +503,13 @@ function SlideUpTransactionRect(props) {
             // handleNoteChange={handleNoteChange}
             updateStoredTransactionNote={props.updateStoredTransactionNote}
           />
+
+          {/* Date Picker */}
+
+          {
+            // datePicker
+          }
+
         </View>
       </View>
     );
