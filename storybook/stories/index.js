@@ -22,6 +22,7 @@ import TouchableText from './TouchableText';
 import EmptyListMessage from './EmptyListMessage';
 import CategoryLabel from './CategoryLabel';
 import TransactionItemCell from './TransactionItemCell';
+import MyDateTimePicker from './MyDateTimePicker';
 
 
 // variables
@@ -106,7 +107,11 @@ storiesOf('Components', module)
 
 
 
-
+.add('MyDateTimePicker',() => 
+  <CenterView>
+    <MyDateTimePicker date={new Date()} />
+  </CenterView>
+)
 
 
 

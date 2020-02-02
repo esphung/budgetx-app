@@ -31,7 +31,11 @@ import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
 import NoteTextInput from '../NoteTextInput';
 
-import DatePicker from 'react-native-datepicker'
+// import DatePicker from 'react-native-datepicker';
+
+// import DateTimePicker from '@react-native-community/datetimepicker';
+
+import MyDateTimePicker from 'main/storybook/stories/MyDateTimePicker';
 
 import {
   loadSettingsStorage,
@@ -347,35 +351,40 @@ function SlideUpTransactionRect(props) {
     </View>
   );
 
+  // const datePicker = (
+  //     <DatePicker
+  //       style={{width: 200,}}
+  //       date={pickerDate}
+  //       mode="date"
+  //       placeholder="select date"
+  //       format="YYYY-MM-DD"
+  //       minDate="2016-05-01"
+  //       maxDate="2016-06-01"
+  //       confirmBtnText="Confirm"
+  //       cancelBtnText="Cancel"
+  //       customStyles={{
+  //         dateIcon: {
+  //           position: 'absolute',
+  //           left: 0,
+  //           top: 4,
+  //           marginLeft: 0,
+
+
+  //         },
+  //         dateInput: {
+  //           marginLeft: 36,
+
+  //         }
+  //         // ... You can check the source to find the other keys.
+  //       }}
+  //       onDateChange={(date) => setPickerDate(date)}
+  //     />
+  //   );
+
   const datePicker = (
-      <DatePicker
-        style={{width: 200,}}
-        date={pickerDate}
-        mode="date"
-        placeholder="select date"
-        format="YYYY-MM-DD"
-        minDate="2016-05-01"
-        maxDate="2016-06-01"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: 0,
-            top: 4,
-            marginLeft: 0,
-
-
-          },
-          dateInput: {
-            marginLeft: 36,
-
-          }
-          // ... You can check the source to find the other keys.
-        }}
-        onDateChange={(date) => setPickerDate(date)}
-      />
-    );
+    
+    <MyDateTimePicker date={new Date(date)} />
+  );
 
 
   useEffect(() => {
@@ -491,7 +500,7 @@ function SlideUpTransactionRect(props) {
 
                 data={data}
                 renderItem={({ item }) => <Item item={item} transaction={transaction} />}
-                keyExtractor={item => item.key}
+                keyExtractor={(item) => item.key}
               />
             </View>
           </View>

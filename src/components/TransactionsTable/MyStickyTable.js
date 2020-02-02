@@ -208,7 +208,8 @@ const MyStickyTable = (props) => {
           </View>
           <View style={styles.rowFront}>
             <TransactionItem
-              // keyExtractor={() => String(index)} // {data[index]} // () => console.log(index)
+
+              keyExtractor={(item) => item.id} // {data[index]} // () => console.log(index)
               item={item}
               isSelected={false}
               onPress={() => onPress(item)} // {onPress} // console.log(data[index])
