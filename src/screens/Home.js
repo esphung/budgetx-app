@@ -299,7 +299,7 @@ function Home() {
 
     setStorageKey(null);
     // retrieveStoredTransactions(); // load stored user
-    cacheResourcesAsync();
+    await cacheResourcesAsync();
     // console.log('Cleared');
   }
 
@@ -797,18 +797,20 @@ function Home() {
     keypad = null;
   }
 
-  function onDateChange(date) {
+  async function onDateChange(date) {
     // console.log(new Date(date));
 
     // set new date for transaction
     currentTransaction.date = new Date(date);
     // console.log(currentTransaction.date);
 
-    handleTransactionChange(transactions, currentTransaction);
+    await handleTransactionChange(transactions, currentTransaction);
     
     // save transaction
 
     // reload transactions list (to update table)
+
+    clearState()
 
   }
 

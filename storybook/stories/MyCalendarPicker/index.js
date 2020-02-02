@@ -28,6 +28,7 @@ export default class App extends Component {
       selectedStartDate: date,
     });
   }
+
   render() {
     const { selectedStartDate } = this.state;
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
