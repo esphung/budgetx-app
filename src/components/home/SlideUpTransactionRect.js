@@ -37,6 +37,8 @@ import NoteTextInput from '../NoteTextInput';
 
 import MyDateTimePicker from 'main/storybook/stories/MyDateTimePicker';
 
+import MyCalendarPicker from 'main/storybook/stories/MyCalendarPicker';
+
 import {
   loadSettingsStorage,
   saveSettingsStorage,
@@ -351,39 +353,12 @@ function SlideUpTransactionRect(props) {
     </View>
   );
 
-  // const datePicker = (
-  //     <DatePicker
-  //       style={{width: 200,}}
-  //       date={pickerDate}
-  //       mode="date"
-  //       placeholder="select date"
-  //       format="YYYY-MM-DD"
-  //       minDate="2016-05-01"
-  //       maxDate="2016-06-01"
-  //       confirmBtnText="Confirm"
-  //       cancelBtnText="Cancel"
-  //       customStyles={{
-  //         dateIcon: {
-  //           position: 'absolute',
-  //           left: 0,
-  //           top: 4,
-  //           marginLeft: 0,
-
-
-  //         },
-  //         dateInput: {
-  //           marginLeft: 36,
-
-  //         }
-  //         // ... You can check the source to find the other keys.
-  //       }}
-  //       onDateChange={(date) => setPickerDate(date)}
-  //     />
-  //   );
-
   const datePicker = (
-    
     <MyDateTimePicker date={new Date(date)} />
+  );
+
+  const calendarPicker = (
+    <MyCalendarPicker date={new Date(date)} onDateChange={props.onDateChange} />
   );
 
 
@@ -449,8 +424,8 @@ function SlideUpTransactionRect(props) {
 
         <View
           style={{
-            height: '100%',
-            backgroundColor: colors.darkTwo,
+            // height: '100%',
+            // backgroundColor: colors.darkTwo,
 
             // borderWidth: 1,
             // borderColor: 'red',
@@ -517,6 +492,10 @@ function SlideUpTransactionRect(props) {
 
           {
             // datePicker
+          }
+
+          {
+            calendarPicker
           }
 
         </View>

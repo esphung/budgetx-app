@@ -24,6 +24,8 @@ import CategoryLabel from './CategoryLabel';
 import TransactionItemCell from './TransactionItemCell';
 import MyDateTimePicker from './MyDateTimePicker';
 
+import MyCalendarPicker from './MyCalendarPicker';
+
 
 // variables
 const message = 'Hello World'
@@ -110,6 +112,16 @@ storiesOf('Components', module)
 .add('MyDateTimePicker',() => 
   <CenterView>
     <MyDateTimePicker date={new Date()} />
+  </CenterView>
+)
+
+
+.add('MyCalendarPicker',() => 
+  <CenterView>
+    <MyCalendarPicker
+      date={new Date(1998, 7, 2)}
+      onDateChange={() => console.log('Hello')}
+    />
   </CenterView>
 )
 

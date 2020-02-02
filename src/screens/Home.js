@@ -171,7 +171,7 @@ function Home() {
     return obj;
   }
 
-  const handleTransactionChange = async (transactions, updated) => {
+  const handleTransactionChange = async (transactions, updatedTransaction) => {
     // console.log(transactions);
     try {
       const storageObj = await loadSettingsStorage(storageKey);
@@ -184,7 +184,7 @@ function Home() {
 
       setTransactions(storageObj.transactions);
 
-      setCurrentTransaction(updated);
+      setCurrentTransaction(updatedTransaction);
       
     } catch(e) {
       // statements
@@ -377,9 +377,16 @@ function Home() {
   async function retrieveStoredTransactions() {
     // setIsReady(false);
     try {
-      const userObject = await loadSettingsStorage(storageKey)
+      const userObject = await loadSettingsStorage(storageKey);
+
+      // sort transactions by date
+
+      for (var i = 0; i < userObject.transactions.length; i++) {
+        console.log(userObject.transactions[i].date);
+      }
+
       // set stored user's transactions
-      await setTransactions(userObject.transactions);
+      setTransactions(userObject.transactions);
       // console.log(userObject.transactions)
       // setIsReady(true);
     } catch (e) {
@@ -436,8 +443,8 @@ function Home() {
         slideViewBounceValue,
         {
           toValue: 0,
-          velocity: 100,
-          tension: 32,
+          velocity: 10, // 100
+          tension: 12, // 32
           friction: 8,
         },
       ).start();
@@ -451,9 +458,9 @@ function Home() {
       Animated.spring(
         slideViewBounceValue,
         {
-          toValue: 600,
-          velocity: 100,
-          tension: 32,
+          toValue: 300,
+          velocity: 10,
+          tension: 12,
           friction: 8,
         },
       ).start();
@@ -533,15 +540,29 @@ function Home() {
     try {
       const storageObj = await loadSettingsStorage(key);
 
-      // set stored user transactions
-      if (storageObj) {
-        // console.log('stored user settings transactions:', storageObj.transactions);
-        if (storageObj.transactions) {
-          // found stored image
-          // console.log(storageObj.transactions);
-          setTransactions(storageObj.transactions);
-        }
-      }
+      setTransactions(storageObj.transactions);
+
+      // console.log(storageObj.transactions[0].date);
+
+      // const sortedTransactions = storageObj.transactions.sort((a, b) => b.date + a.date);
+
+      // console.log(sortedTransactions[0].date);
+
+      // setTransactions(sortedTransactions);
+
+      // for (var i = 0; i < storageObj.transactions.length; i++) {
+      //   console.log(storageObj.transactions[i].date);
+      // }
+
+      // // set stored user transactions
+      // if (storageObj) {
+      //   // console.log('stored user settings transactions:', storageObj.transactions);
+      //   if (storageObj.transactions) {
+      //     // found stored image
+      //     // console.log(storageObj.transactions);
+      //     setTransactions(storageObj.transactions);
+      //   }
+      // }
     } catch (e) {
       // statements
       // Alert.alert('Could not load settings');
@@ -776,6 +797,21 @@ function Home() {
     keypad = null;
   }
 
+  function onDateChange(date) {
+    // console.log(new Date(date));
+
+    // set new date for transaction
+    currentTransaction.date = new Date(date);
+    // console.log(currentTransaction.date);
+
+    handleTransactionChange(transactions, currentTransaction);
+    
+    // save transaction
+
+    // reload transactions list (to update table)
+
+  }
+
   const view = (
     <View
       // scrollEnabled={false}
@@ -832,6 +868,8 @@ function Home() {
         // updateStoredTransactionCategory={() => {
         //   console.log(currentTransaction)
         // }}
+
+        onDateChange={onDateChange}
       />
 
     </View>

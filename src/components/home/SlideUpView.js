@@ -52,6 +52,9 @@ function SlideUpView(props) {
         // height: '90%',
         // bottom: '0%',
         top: '58%',
+
+        // top: '38%', // WITH CALENDAR PICKER!!
+
         // top: 480,
         // borderWidth: 1,
         // borderColor: 'white',
@@ -94,6 +97,7 @@ function SlideUpView(props) {
                 dismiss={dismiss}
                 updateStoredTransactionNote={updateStoredTransactionNote}
                 transaction={transaction}
+                onDateChange={props.onDateChange}
               />
             </View>
           </TouchableWithoutFeedback>

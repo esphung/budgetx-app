@@ -37,7 +37,25 @@ import { getShortDate } from './functions';
 
 // const ROW_HEIGHT = 44;
 
+function sortItemsByDate(items) {
+  let sorted = items.sort((a, b) => (new Date(a.date) < new Date(b.date)) ? 1 : -1);
+
+  console.log('Items sorted');
+
+  return sorted;
+}
+
 function sortByHeadersDateDescending(items) {
+
+  // console.log(items[0].date);
+  // sort items
+
+  // let sorted = items.sort((a, b) => (a.date.getTime < b.date.getTime) ? 1 : -1);
+
+  // console.log(sorted[0].date);
+
+
+
   // push first header with a date
   let header = new Header();
 
@@ -270,7 +288,8 @@ const MyStickyTable = (props) => {
   useEffect(() => {
     setLoading(true);
     if (transactions) {
-      setData(sortByHeadersDateDescending(transactions));
+      let sortedTransactions = sortItemsByDate(transactions);
+      setData(sortByHeadersDateDescending(sortedTransactions));
       // setLoading(false);
     }
     // return () => {
