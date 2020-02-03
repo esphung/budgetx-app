@@ -122,7 +122,7 @@ function TransactionItem(props) {
             }
           }
         >
-          <ItemNameInput isNameInputEnabled={isNameInputEnabled} item={item} />
+          <ItemNameInput isNameInputEnabled={isNameInputEnabled} item={item}  handlePayeeNameChange={props.handlePayeeNameChange} />
         </View>
 
         {/* <ItemDate item={item} /> */}

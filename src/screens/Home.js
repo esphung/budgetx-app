@@ -59,7 +59,7 @@ import SlideUpView from '../components/home/SlideUpView';
 // data models
 import Transaction from '../models/Transaction';
 
-// import Payee from '../models/Payee';
+import Payee from '../models/Payee';
 
 // import Category from '../models/Category';
 
@@ -68,6 +68,8 @@ import Transaction from '../models/Transaction';
 import calculateBalance from '../functions/calculateBalance';
 
 import calculateMonthSpent from '../functions/calculateMonthSpent';
+
+import searchByID from '../functions/searchByID';
 
 const styles = StyleSheet.create({
   container: {
@@ -157,19 +159,19 @@ function Home() {
 
   const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
 
-  // find previous obj if exists
-  function searchByID(key, myArray) {
-    // console.log(nameKey);
-    let obj = null;
-    let i = 0;
-    for (i; i < myArray.length; i += 1) {
-      // console.log(myArray[i].id, nameKey);
-      if (myArray[i].id === key) {
-        obj = myArray[i];
-      }
-    }
-    return obj;
-  }
+  // // find previous obj if exists
+  // function searchByID(key, myArray) {
+  //   // console.log(nameKey);
+  //   let obj = null;
+  //   let i = 0;
+  //   for (i; i < myArray.length; i += 1) {
+  //     // console.log(myArray[i].id, nameKey);
+  //     if (myArray[i].id === key) {
+  //       obj = myArray[i];
+  //     }
+  //   }
+  //   return obj;
+  // }
 
   const handleTransactionChange = async (transactions, updatedTransaction) => {
     // console.log(transactions);
@@ -192,6 +194,43 @@ function Home() {
     }
     
   };
+
+  const handlePayeeNameChange = async (string, transaction) => {
+    // console.log(string);
+    console.log(transaction);
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(storageKey);
+      // console.log(transaction);
+      const list = storageObj.transactions;
+
+      const found = searchByID(transaction.id, list);
+
+      // console.log(found);
+
+      // set stored user image
+      // console.log('stored user settings image:', storageObj.image);
+      if (found) {
+        found.payee = new Payee(string);
+        // console.log(found);
+
+        const pos = list.indexOf(found);
+
+        list[pos] = found;
+
+        storageObj.transactions = list;
+
+        saveSettingsStorage(storageKey, storageObj);
+
+        setTransactions(list);
+
+        setCurrentTransaction(list[pos]);
+      }
+    } catch (e) {
+      // statements
+      // console.log(e);
+    } 
+  }
 
 
   const updateStoredTransactionNote = async (string) => {
@@ -810,33 +849,33 @@ function Home() {
 
     // reload transactions list (to update table)
 
-    // clearState();
+    clearState();
 
 
-    // setIsReady(false);
-    // hideSlideView();
+    // // setIsReady(false);
+    // // hideSlideView();
 
-    // add/remove transactions
-    // setTransactions([]);
-    // setCurrentBalance(0.00);
-    // setCurrentSpent(0.00);
-    // setCurrentPayee(null);
-    // setCurrentNote(null);
-    // setCurrentDate(initialState.currentDate);
-    // setCurrentAmount(initialState.currentAmount);
-    // setCurrentCategory(initialState.currentCategory);
-    setCurrentTransaction(initialState.currentTransaction);
-    // setCurrentType(initialState.currentType);
-    // setIsNameInputEnabled(true);
+    // // add/remove transactions
+    // // setTransactions([]);
+    // // setCurrentBalance(0.00);
+    // // setCurrentSpent(0.00);
+    // // setCurrentPayee(null);
+    // // setCurrentNote(null);
+    // // setCurrentDate(initialState.currentDate);
+    // // setCurrentAmount(initialState.currentAmount);
+    // // setCurrentCategory(initialState.currentCategory);
+    // setCurrentTransaction(initialState.currentTransaction);
+    // // setCurrentType(initialState.currentType);
+    // // setIsNameInputEnabled(true);
 
 
-    // setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
-    setIsSlideViewHidden(initialState.isSlideViewHidden);
-    // setIsCurrentTransaction(initialState.isCurrentTransaction);
+    // // setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
+    // setIsSlideViewHidden(initialState.isSlideViewHidden);
+    // // setIsCurrentTransaction(initialState.isCurrentTransaction);
 
-    setStorageKey(null);
-    // retrieveStoredTransactions(); // load stored user
-    await cacheResourcesAsync();
+    // setStorageKey(null);
+    // // retrieveStoredTransactions(); // load stored user
+    // await cacheResourcesAsync();
     // console.log('Cleared');
 
   }
@@ -876,6 +915,8 @@ function Home() {
         swipeEditBtnPressed={swipeEditBtnPressed}
 
         isNameInputEnabled={isNameInputEnabled}
+
+        handlePayeeNameChange={handlePayeeNameChange}
       />
 
       { scrollingPills }

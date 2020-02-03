@@ -30,6 +30,8 @@ import Payee from '../../../models/Payee';
 
 import searchByName from '../../../functions/searchByName';
 
+import searchByID from '../../../functions/searchByID';
+
 class ItemNameInput extends Component {
   constructor(props) {
     super(props);
@@ -52,7 +54,7 @@ class ItemNameInput extends Component {
 
   async componentDidMount() {
     const { payee } = this.state;
-    this.setState({ text: payee.name });
+    await this.setState({ text: payee.name });
 
     Auth.currentAuthenticatedUser()
       .then((cognito) => {
@@ -70,81 +72,87 @@ class ItemNameInput extends Component {
     // console.log(text);
   }
 
-  async submitBtnPressed(text) {
-    const { item } = this.props; // current transaction item
+  // async submitBtnPressed(text) {
+  //   // console.log(text);
+  //   const { item } = this.props; // current transaction item
 
-    // load default payees
-    const payeesObject = await loadPayees();
+  //   // load default payees
+  //   const payeesObject = await loadPayees();
 
-    const { payees } = payeesObject;
-    // console.log(payees);
+  //   const { payees } = payeesObject;
+  //   // console.log(payees);
 
-    // check if previous payee exists
-    const previousPayee = searchByName(text, payees);
+  //   // check if previous payee exists
+  //   const previousPayee = searchByName(text, payees);
 
-    if (previousPayee) {
-      // const { storageKey } = this.state;
-      // load stored user
-      const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
+  //   if (previousPayee) {
+  //     // const { storageKey } = this.state;
+  //     // load stored user
+  //     const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
 
 
-      // find current transaction fromm user transactions list
-      let i = userObject.transactions.length - 1;
-      for (i; i >= 0; i -= 1) {
-        if (userObject.transactions[i].id === item.id) {
-          // set user transaction payee
-          userObject.transactions[i].payee = previousPayee;
+  //     // find current transaction fromm user transactions list
+  //     let i = userObject.transactions.length - 1;
+  //     for (i; i >= 0; i -= 1) {
+  //       if (userObject.transactions[i].id === item.id) {
+  //         // set user transaction payee
+  //         userObject.transactions[i].payee = previousPayee;
 
-          // console.log(transactions[i]);
+  //         // console.log(transactions[i]);
 
-          // save transactions list
-          // saveUserObject(userObject);
-          saveSettingsStorage(this.state.storageKey, userObject);
+  //         // save transactions list
+  //         // saveUserObject(userObject);
+  //         saveSettingsStorage(this.state.storageKey, userObject);
 
-          // return from here
-          return;
-        }
-      }
-    } else {
-      // clean scrub name
+  //         // return from here
+  //         return;
+  //       }
+  //     }
+  //   } else {
+  //     // clean scrub name
 
-      //  create new payee
-      const payee = new Payee(text);
+  //     //  create new payee
+  //     const payee = new Payee(text);
 
-      // add payee to list
-      payees.push(payee);
-      // console.log(payees);
+  //     // add payee to list
+  //     payees.push(payee);
+  //     // console.log(payees);
 
-      // save new list of payees
-      savePayees(payeesObject);
+  //     // save new list of payees
+  //     savePayees(payeesObject);
 
-      // load user saved transactions
-      const userObject = await loadSettingsStorage(this.state.storageKey);
+  //     // load user saved transactions
+  //     const userObject = await loadSettingsStorage(this.state.storageKey);
 
-      // // find current transaction from list
-      let i = userObject.transactions.length - 1;
-      for (i; i >= 0; i -= 1) {
-        if (userObject.transactions[i].id === item.id) {
-          // set transaction payee
-          userObject.transactions[i].payee = payee;
+  //     // // find current transaction from list
+  //     let i = userObject.transactions.length - 1;
+  //     for (i; i >= 0; i -= 1) {
+  //       if (userObject.transactions[i].id === item.id) {
+  //         // set transaction payee
+  //         userObject.transactions[i].payee = payee;
 
-          // console.log(transactions[i]);
+  //         // console.log(transactions[i]);
 
-          // save transactions list
-          // saveUserObject(userObject);
-          saveSettingsStorage(this.state.storageKey, userObject);
+  //         // save transactions list
+  //         // saveUserObject(userObject);
+  //         saveSettingsStorage(this.state.storageKey, userObject);
 
-          // return from here
-          return;
-        }
-      }
-    }
-    this.setState({ text });
-    // console.log('Submit:', text);
+  //         // return from here
+  //         return;
+  //       }
+  //     }
+  //   }
+  //   this.setState({ text });
+  //   // console.log('Submit:', text);
+  // }
+
+  submitBtnPressed(text, transaction) {
+    // console.log(text);
+    this.props.handlePayeeNameChange(text, transaction);
   }
 
   render() {
-    const placeholderText = 'Enter name';
+    const placeholderText = '';
 
     const { text } = this.state;
 
@@ -207,7 +215,7 @@ class ItemNameInput extends Component {
 
           maxLength={24}
 
-          onSubmitEditing={(event) => this.submitBtnPressed(event.nativeEvent.text)}
+          onSubmitEditing={(event) => this.submitBtnPressed(event.nativeEvent.text, this.props.item)}
 
           onChangeText={this.handleTextChange}
 

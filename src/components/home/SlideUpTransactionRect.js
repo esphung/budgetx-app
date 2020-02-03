@@ -25,12 +25,6 @@ import colors from 'main/colors';
 
 import styles from 'main/styles';
 
-import getFormattedDateString from '../../functions/getFormattedDateString';
-
-import getCurrencySymbol from '../../functions/getCurrencySymbol';
-
-import NoteTextInput from '../NoteTextInput';
-
 // import DatePicker from 'react-native-datepicker';
 
 // import DateTimePicker from '@react-native-community/datetimepicker';
@@ -41,46 +35,111 @@ import MyCalendarPicker from 'main/storybook/stories/MyCalendarPicker';
 
 import TouchableText from 'main/storybook/stories/TouchableText';
 
+import getFormattedDateString from '../../functions/getFormattedDateString';
+
+import getCurrencySymbol from '../../functions/getCurrencySymbol';
+
+import NoteTextInput from '../NoteTextInput';
+
+import searchByID from 'main/src/functions/searchByID';
+
 import {
   loadSettingsStorage,
   saveSettingsStorage,
 } from '../../storage/SettingsStorage';
 
+// test label
+const dateLabel = {
+  // width: 242,
+  height: 28,
+
+  // flex: 1,
+
+
+  // width: '100%',
+  // height: '30%',
+  fontFamily: 'SFProDisplay-Regular',
+  // fontSize: 15,
+  fontWeight: 'normal',
+  fontStyle: 'normal',
+  letterSpacing: 0.1,
+  textAlign: 'center',
+  color: colors.tangerine,
+
+  // borderWidth: 1,
+  // borderColor: 'white',
+  // borderStyle: 'solid',
+};
+
+// amountlabel style
+const amountLabel = {
+  // width: 66,
+  // height: 30,
+
+  // flex: 1,
+
+
+  width: '100%',
+  height: '50%',
+  fontFamily: 'SFProDisplay-Regular',
+  fontSize: 25,
+  fontWeight: 'normal',
+  fontStyle: 'normal',
+  letterSpacing: 0.29,
+  textAlign: 'center',
+  color: colors.white,
+
+  backgroundColor: colors.dark,
+
+  // paddingBottom: 10,
+  // paddingTop: 6,
+
+  // borderWidth: 1,
+  // borderColor: 'white',
+  // borderStyle: 'solid',
+};
+
 // arbitrary size limits
 const MAX_PILL_WIDTH = 156;
+
 const MIN_PILL_WIDTH = 54;
 // const MAX_PILL_HEIGHT = 32;
 
-// find previous obj if exists
-function searchByID(key, myArray) {
-  // console.log(nameKey);
-  let obj = null;
-  let i = 0;
-  for (i; i < myArray.length; i += 1) {
-    // console.log(myArray[i].id, nameKey);
-    if (myArray[i].id === key) {
-      obj = myArray[i];
-    }
-  }
-  return obj;
-}
+// // find previous obj if exists
+// function searchByID(key, myArray) {
+//   // console.log(nameKey);
+//   let obj = null;
+//   let i = 0;
+//   for (i; i < myArray.length; i += 1) {
+//     // console.log(myArray[i].id, nameKey);
+//     if (myArray[i].id === key) {
+//       obj = myArray[i];
+//     }
+//   }
+//   return obj;
+// }
 
 function SlideUpTransactionRect(props) {
+  let { transaction } = props;
+
+
   const [dataIsLoaded, setDataIsLoaded] = useState(false);
 
-  const [textLabel, setTextLabel] = useState('');
+  // const [textLabel, setTextLabel] = useState('');
 
   const [amount, setAmount] = useState(0.00);
 
   const [date, setDate] = useState(null);
 
-  const [transaction, setTransaction] = useState(props.transaction);
+  // const [transaction, setTransaction] = useState(props.transaction);
 
-  const [shouldShowCategoryBox, setShouldShowCategoryBox] = useState(true);
+  // const [shouldShowCategoryBox, setShouldShowCategoryBox] = useState(true);
 
   const [categories, setCategories] = useState(null);
 
   const [isReady, setIsReady] = useState(false);
+
+  // const [currentTransaction, setCurrentTransaction] = useState(null);
 
   // const [currentCategory, setCurrentCategory] = useState(null);
 
@@ -104,6 +163,10 @@ function SlideUpTransactionRect(props) {
 
   const [pickerBtnText, setPickerBtnText] = useState('Pick a date');
 
+  const [shouldShowNoteInput, setShouldShowNoteInput] = useState(true);
+
+  const [shouldShowNoteInputBtn, setShouldShowNoteInputBtn] = useState(true);
+
   const updateStoredTransactionCategory = async (category) => {
     // load stored user transactions
     try {
@@ -119,9 +182,9 @@ function SlideUpTransactionRect(props) {
         const pos = storageObj.transactions.indexOf(found);
 
         if (storageObj.transactions[pos].type === 'income' && storageObj.transactions[pos].amount < 0) {
-          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1
+          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
         } else if (storageObj.transactions[pos].type === 'expense' && storageObj.transactions[pos].amount >= 0) {
-          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1
+          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
         }
 
         // console.log(storageObj.transactions[pos]);
@@ -153,7 +216,7 @@ function SlideUpTransactionRect(props) {
 
     if (transaction.category.name === item.value.name) {
       backgroundColor = color;
-      borderColor = 'transparent'
+      borderColor = 'transparent';
       color = colors.white;
     }
 
@@ -178,9 +241,9 @@ function SlideUpTransactionRect(props) {
             borderWidth: 1,
             borderStyle: 'solid',
 
-            borderColor: borderColor,
+            borderColor,
 
-            backgroundColor: backgroundColor,
+            backgroundColor,
           }
         }
 
@@ -192,33 +255,20 @@ function SlideUpTransactionRect(props) {
 
           if (found) {
             transaction.category = found;
-            updateStoredTransactionCategory(item.value)
+            updateStoredTransactionCategory(item.value);
           }
-
         }}
       >
 
-        <Text style={[
-          styles.textStyle,
-          {
-            paddingHorizontal: 12,
-            paddingBottom: 1,
-            color: color
-          }
-          ]
-          // {
-          //   // paddingHorizontal: 12,
-          //   // paddingBottom: 1,
-
-          //   // fontFamily: 'SFProDisplay-Regular',
-          //   // fontSize: 17,
-          //   // fontWeight: 'normal',
-          //   // fontStyle: 'normal',
-          //   // letterSpacing: 0.12,
-
-          //   color: color,
-          // }
-        }
+        <Text
+          style={[
+            styles.textStyle,
+            {
+              paddingHorizontal: 12,
+              paddingBottom: 1,
+              color
+            }
+          ]}
         >
 
           { item.value.name }
@@ -261,14 +311,17 @@ function SlideUpTransactionRect(props) {
 
   const clearState = async () => {
     // setIsReady(false);
-    setShouldShowCategoryBox(false);
+    // setShouldShowCategoryBox(true);
+    setShouldShowCalendarPicker(false);
+    setShouldShowNoteInput(true);
+    setShouldShowNoteInputBtn(true);
     // setShadowOffset(props.shadowOffset);
     // setShadowRadius(props.shadowRadius);
     // setShadowOpacity(props.shadowOpacity);
     // setTopPosition(props.topPosition);
     // setZIndex(props.zIndex);
 
-    retrieveCognitoUserKey();
+    await retrieveCognitoUserKey();
     // console.log('Finished');
     // setIsReady(true);
   };
@@ -302,6 +355,32 @@ function SlideUpTransactionRect(props) {
     return list;
   }
 
+  // function showNoteInput() {
+  //   setShouldShowNoteInput(true);
+  // }
+
+  // function hideNoteInput() {
+  //   setShouldShowNoteInput(false);
+  // }
+
+  // function showNoteInputBtn() {
+  //   setShouldShowNoteInputBtn(true);
+  // }
+
+  // function hideNoteInputBtn() {
+  //   setShouldShowNoteInputBtn(false);
+  // }
+
+  // function noteInputBtnPressed() {
+  //   if (shouldShowNoteInput) {
+  //     hideNoteInput();
+  //     showNoteInputBtn();
+  //   } else {
+  //     showNoteInput();
+  //     hideNoteInputBtn();
+  //   }
+  // }
+
   // console.log(getFlatListDataFromObject(colors));
 
   useEffect(() => {
@@ -320,68 +399,38 @@ function SlideUpTransactionRect(props) {
 
   useEffect(() => {
     if (categories) {
-      setIsReady(true);
-
       setData(getFlatListDataFromObject(categories));
 
-      // console.log(getFlatListDataFromObject(categories));
-
-      // setData(
-      //   [
-      //     {
-      //       id: '3098432l',
-      //       title:'Hello',
-      //       color: 'orange'
-      //     }
-      //   ]
-      // );
+      setIsReady(true);
     }
     return () => {
       // effect
     };
   }, [categories]);
 
-
-  const categoryBox = (
-    <View>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        decelerationRate={0}
-        snapToAlignment="center"
-
-        data={data}
-        renderItem={({ item }) => <Item item={item} transaction={transaction} />}
-        keyExtractor={(item) => item.key}
-      />
-
-    </View>
-  );
-
-  const datePicker = (
-    <MyDateTimePicker date={new Date(date)} />
-  );
-
-  const calendarPicker = (
-    <MyCalendarPicker date={new Date(date)} onDateChange={props.onDateChange} />
-  );
-
   useEffect(() => {
     // console.log('Mount');
-    setTransaction(props.transaction);
 
-    if (transaction) {
-      // console.log('transaction');
+    if (!transaction) {
+      // reset buttons
+      // console.log('Reset');
 
-      setAmount(transaction.amount);
+      clearState();
+    } else if (transaction) {
+      // Mount current transaction
+      transaction = (props.transaction);
 
-      setDate(transaction.date);
+      if (transaction) {
+        // console.log('transaction');
 
-      // setPickerBtnText(transaction.date);
+        setAmount(transaction.amount);
 
-      setPickerBtnText(`${getFormattedDateString(date)}`)
+        setDate(transaction.date);
 
-      setTextLabel(`${getFormattedDateString(date)}`); // 'Amount Spent on'
+        // setPickerBtnText(transaction.date);
+
+        setPickerBtnText(`${getFormattedDateString(date)}`);
+      }
     }
   });
 
@@ -398,44 +447,92 @@ function SlideUpTransactionRect(props) {
   function pickerBtnPressed() {
     // console.log(shouldShowCalendarPicker);
     if (shouldShowCalendarPicker) {
-      setShouldShowCalendarPicker(false)
+      setShouldShowCalendarPicker(false); // hide cal
     } else {
-      setShouldShowCalendarPicker(true);
+      setShouldShowCalendarPicker(true); // show cal
     }
   }
 
+  // let categoryBox = (
+  //   <FlatList
+  //     horizontal
+  //     showsHorizontalScrollIndicator={false}
+  //     decelerationRate={0}
+  //     snapToAlignment="center"
+
+  //     data={data}
+  //     renderItem={({ item }) => <Item item={item} transaction={transaction} />}
+  //     keyExtractor={(item) => item.key}
+  //   />
+  // );
+
+  // const datePicker = (
+  //   <MyDateTimePicker date={new Date(date)} />
+  // );
+
+  let calendarPicker = (
+    <MyCalendarPicker date={new Date(date)} onDateChange={props.onDateChange} />
+  );
+
+  let noteInput = (
+    <NoteTextInput
+      transaction={transaction}
+      // handleNoteChange={handleNoteChange}
+      updateStoredTransactionNote={props.updateStoredTransactionNote}
+    />
+  );
+
+  // let noteInputBtn = <TouchableText title="Add Note" onPress={noteInputBtnPressed} />;
+
+
   // let view = <SpinnerMask />;
-  let view = <View />;
+  let view = null;
 
-  let box = null;
+  // let box = null;
 
-  let pickerBtn = null;
+  // let pickerBtn = null;
 
-  const touchableText = <TouchableText style={
-    dateLabel
-    // {
-    //   color: colors.tangerine,
-    // }
-  } title={pickerBtnText} onPress={pickerBtnPressed} />;
+  // let noteInputBtn = null;
 
-  if (shouldShowCategoryBox) {
-    box = categoryBox;
+  const touchableText = (
+    <TouchableText
+      style={
+        dateLabel
+        // {
+        //   color: colors.tangerine,
+        // }
+      }
+      title={pickerBtnText}
+      onPress={pickerBtnPressed}
+    />
+  );
+
+  // if (!shouldShowCategoryBox) {
+  //   categoryBox = null;
+  // }
+
+  if (!shouldShowNoteInput) {
+    noteInput = null;
   }
 
+  // Calendar
   if (shouldShowCalendarPicker) {
+    // showing calendar
     // set slide window height
     props.setWindowHeight('38%');
-    // console.log('38%');
-
-    // show picker button
-    // pickerBtn = calendarPicker;
-    box = calendarPicker
-  }
-  else {
+    // noteInputBtn = null;
+    noteInput = null;
+  } else if (!shouldShowCalendarPicker) {
+    // hiding calendar
     props.setWindowHeight('58%');
+    calendarPicker = null;
 
-    pickerBtn = touchableText;
+    // pickerBtn = touchableText;
   }
+
+  // if (!shouldShowNoteInputBtn) {
+  //   noteInputBtn = null;
+  // }
 
   if (isReady && dataIsLoaded && transaction) {
     view = (
@@ -450,7 +547,7 @@ function SlideUpTransactionRect(props) {
 
         <View style={styles.dateAmountRectangle}>
 
-          {/*<Text style={dateLabel}>{ textLabel }</Text>*/}
+          {/* <Text style={dateLabel}>{ textLabel }</Text> */}
 
           {
             touchableText
@@ -523,15 +620,15 @@ function SlideUpTransactionRect(props) {
             </View>
           </View>
 
-          
-
-          <NoteTextInput
-            transaction={transaction}
-            // handleNoteChange={handleNoteChange}
-            updateStoredTransactionNote={props.updateStoredTransactionNote}
-          />
-
-          { box }
+          {
+            // noteInputBtn
+          }
+          {
+            noteInput
+          }
+          {
+            calendarPicker
+          }
 
           {/* Date Picker */}
 
@@ -546,56 +643,5 @@ function SlideUpTransactionRect(props) {
   return view;
 }
 
-
-// test label
-const dateLabel = {
-  // width: 242,
-  height: 28,
-
-  // flex: 1,
-
-
-  // width: '100%',
-  // height: '30%',
-  fontFamily: 'SFProDisplay-Regular',
-  // fontSize: 15,
-  fontWeight: 'normal',
-  fontStyle: 'normal',
-  letterSpacing: 0.1,
-  textAlign: 'center',
-  color: colors.tangerine,
-
-  // borderWidth: 1,
-  // borderColor: 'white',
-  // borderStyle: 'solid',
-};
-
-// amountlabel style
-const amountLabel = {
-  // width: 66,
-  // height: 30,
-
-  // flex: 1,
-
-
-  width: '100%',
-  height: '50%',
-  fontFamily: 'SFProDisplay-Regular',
-  fontSize: 25,
-  fontWeight: 'normal',
-  fontStyle: 'normal',
-  letterSpacing: 0.29,
-  textAlign: 'center',
-  color: colors.white,
-
-  backgroundColor: colors.dark,
-
-  // paddingBottom: 10,
-  // paddingTop: 6,
-
-  // borderWidth: 1,
-  // borderColor: 'white',
-  // borderStyle: 'solid',
-};
 
 export default SlideUpTransactionRect;

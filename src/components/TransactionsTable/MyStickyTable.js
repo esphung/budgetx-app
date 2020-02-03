@@ -233,6 +233,7 @@ const MyStickyTable = (props) => {
               onPress={() => onPress(item)} // {onPress} // console.log(data[index])
               currentTransaction={currentTransaction}
               isNameInputEnabled={props.isNameInputEnabled}
+              handlePayeeNameChange={props.handlePayeeNameChange}
             />
           </View>
         </SwipeRow>
