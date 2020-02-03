@@ -54,6 +54,8 @@ global.privacyLink = 'www.google.com';
 
 global.latestReleaseDate = '12/12/2019 02:09 AM';
 
+global.backspaceKeyIcon = require('./assets/backspace-clear-delete-key-remove-text-icon-_512-512.png')
+
 // local storage keys
 // global.isPasscodeEnabledKey = 'isPasscodeEnabled';
 

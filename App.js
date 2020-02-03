@@ -51,7 +51,8 @@ Amplify.configure(config);
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
-// console.disableYellowBox = true;
+console.disableYellowBox = true;
+
 // global.isStorybookModeOn = true;
 
 function App() {
