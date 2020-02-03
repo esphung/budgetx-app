@@ -12,7 +12,7 @@ import styles from 'main/styles';
 
 import colors from 'main/colors';
  
-export default class App extends Component {
+export default class MyCalendarPicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,9 +34,18 @@ export default class App extends Component {
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
     return (
       <View style={{
+        justifyContent: 'center',
+        alignItems: 'center',
+
+        margin: 14,
         // flex: 1,
         // backgroundColor: '#FFFFFF',
         // marginTop: 100,
+
+        backgroundColor: colors.dark,
+
+        borderRadius: 9,
+
 
         // borderWidth: 1,
         // borderColor: 'white',
@@ -55,15 +64,15 @@ export default class App extends Component {
           todayTextStyle={[
             // styles.textStyle,
             {
-              opacity: 0.3,
+              // opacity: 0.5,
             }
           ]}
 
           textStyle={styles.textStyle}
 
-          // scaleFactor={550}
+          scaleFactor={600}
 
-          initialDate={this.props.date}
+          // initialDate={this.props.date}
 
           // width={250}
           // height={250}
@@ -73,24 +82,21 @@ export default class App extends Component {
           // dayShape="square"
 
           previousTitleStyle={[
-            // styles.buttonText,
+            styles.buttonText,
             {
-              // paddingLeft: 4,
+              paddingLeft: 4,
             }
           ]}
 
           nextTitleStyle={[
-            // styles.buttonText,
+            styles.buttonText,
             {
-              // paddingRight: 4,
+              paddingRight: 4,
             }
           ]}
 
         />
- 
-{/*        <View>
-          <Text>SELECTED DATE:{ startDate }</Text>
-        </View>*/}
+
       </View>
     );
   }

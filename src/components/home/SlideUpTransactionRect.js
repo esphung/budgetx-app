@@ -79,7 +79,7 @@ const amountLabel = {
   // flex: 1,
 
 
-  width: '100%',
+  width: '90%',
   height: '50%',
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 25,
