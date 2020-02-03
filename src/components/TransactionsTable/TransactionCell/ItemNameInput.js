@@ -87,6 +87,7 @@ class ItemNameInput extends Component {
       // load stored user
       const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
 
+
       // find current transaction fromm user transactions list
       let i = userObject.transactions.length - 1;
       for (i; i >= 0; i -= 1) {

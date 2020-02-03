@@ -18,7 +18,7 @@ function TouchableText(props) {
   const { onPress, title } = props;
   return (
     <TouchableOpacity onPress={onPress}>
-      <Text style={styles.buttonText}>{ title }</Text>
+      <Text style={[styles.buttonText, props.style]}>{ title }</Text>
     </TouchableOpacity>
   );
 }

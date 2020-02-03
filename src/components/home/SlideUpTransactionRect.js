@@ -39,6 +39,8 @@ import MyDateTimePicker from 'main/storybook/stories/MyDateTimePicker';
 
 import MyCalendarPicker from 'main/storybook/stories/MyCalendarPicker';
 
+import TouchableText from 'main/storybook/stories/TouchableText';
+
 import {
   loadSettingsStorage,
   saveSettingsStorage,
@@ -76,7 +78,6 @@ function SlideUpTransactionRect(props) {
 
   const [shouldShowCategoryBox, setShouldShowCategoryBox] = useState(true);
 
-
   const [categories, setCategories] = useState(null);
 
   const [isReady, setIsReady] = useState(false);
@@ -91,13 +92,17 @@ function SlideUpTransactionRect(props) {
 
   const [data, setData] = useState(null);
 
-  const [pickerDate, setPickerDate] = useState("2016-05-15");
+  // const [pickerDate, setPickerDate] = useState("2016-05-15");
 
   // const showCategoryPicker = () => {
   //   console.log('Choose Category');
 
   //   setShouldShowCategoryBox(true);
   // };
+
+  const [shouldShowCalendarPicker, setShouldShowCalendarPicker] = useState(false);
+
+  const [pickerBtnText, setPickerBtnText] = useState('Pick a date');
 
   const updateStoredTransactionCategory = async (category) => {
     // load stored user transactions
@@ -361,7 +366,6 @@ function SlideUpTransactionRect(props) {
     <MyCalendarPicker date={new Date(date)} onDateChange={props.onDateChange} />
   );
 
-
   useEffect(() => {
     // console.log('Mount');
     setTransaction(props.transaction);
@@ -372,6 +376,10 @@ function SlideUpTransactionRect(props) {
       setAmount(transaction.amount);
 
       setDate(transaction.date);
+
+      // setPickerBtnText(transaction.date);
+
+      setPickerBtnText(`${getFormattedDateString(date)}`)
 
       setTextLabel(`${getFormattedDateString(date)}`); // 'Amount Spent on'
     }
@@ -387,13 +395,46 @@ function SlideUpTransactionRect(props) {
     };
   }, [amount, date, transaction, data]);
 
+  function pickerBtnPressed() {
+    // console.log(shouldShowCalendarPicker);
+    if (shouldShowCalendarPicker) {
+      setShouldShowCalendarPicker(false)
+    } else {
+      setShouldShowCalendarPicker(true);
+    }
+  }
+
   // let view = <SpinnerMask />;
   let view = <View />;
 
   let box = null;
 
+  let pickerBtn = null;
+
+  const touchableText = <TouchableText style={
+    dateLabel
+    // {
+    //   color: colors.tangerine,
+    // }
+  } title={pickerBtnText} onPress={pickerBtnPressed} />;
+
   if (shouldShowCategoryBox) {
     box = categoryBox;
+  }
+
+  if (shouldShowCalendarPicker) {
+    // set slide window height
+    props.setWindowHeight('38%');
+    // console.log('38%');
+
+    // show picker button
+    // pickerBtn = calendarPicker;
+    box = calendarPicker
+  }
+  else {
+    props.setWindowHeight('58%');
+
+    pickerBtn = touchableText;
   }
 
   if (isReady && dataIsLoaded && transaction) {
@@ -401,17 +442,19 @@ function SlideUpTransactionRect(props) {
       <View
         style={
           [
-            // styles.container,
             styles.slideUpTransactionRect
           ]
         }
       >
-
         <SlideViewSeparator />
 
         <View style={styles.dateAmountRectangle}>
 
-          <Text style={dateLabel}>{ textLabel }</Text>
+          {/*<Text style={dateLabel}>{ textLabel }</Text>*/}
+
+          {
+            touchableText
+          }
 
           <Text style={amountLabel}>
             <Text style={{ color: colors.offWhite }}>
@@ -480,7 +523,7 @@ function SlideUpTransactionRect(props) {
             </View>
           </View>
 
-          { box }
+          
 
           <NoteTextInput
             transaction={transaction}
@@ -488,14 +531,12 @@ function SlideUpTransactionRect(props) {
             updateStoredTransactionNote={props.updateStoredTransactionNote}
           />
 
+          { box }
+
           {/* Date Picker */}
 
           {
             // datePicker
-          }
-
-          {
-            calendarPicker
           }
 
         </View>
@@ -509,22 +550,20 @@ function SlideUpTransactionRect(props) {
 // test label
 const dateLabel = {
   // width: 242,
-  // height: 28,
+  height: 28,
 
   // flex: 1,
 
 
-  width: '100%',
-  height: '30%',
+  // width: '100%',
+  // height: '30%',
   fontFamily: 'SFProDisplay-Regular',
-  fontSize: 15,
+  // fontSize: 15,
   fontWeight: 'normal',
   fontStyle: 'normal',
   letterSpacing: 0.1,
   textAlign: 'center',
   color: colors.tangerine,
-
-  // paddingTop: 8,
 
   // borderWidth: 1,
   // borderColor: 'white',

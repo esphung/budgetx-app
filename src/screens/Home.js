@@ -810,7 +810,34 @@ function Home() {
 
     // reload transactions list (to update table)
 
-    clearState()
+    // clearState();
+
+
+    // setIsReady(false);
+    // hideSlideView();
+
+    // add/remove transactions
+    // setTransactions([]);
+    // setCurrentBalance(0.00);
+    // setCurrentSpent(0.00);
+    // setCurrentPayee(null);
+    // setCurrentNote(null);
+    // setCurrentDate(initialState.currentDate);
+    // setCurrentAmount(initialState.currentAmount);
+    // setCurrentCategory(initialState.currentCategory);
+    setCurrentTransaction(initialState.currentTransaction);
+    // setCurrentType(initialState.currentType);
+    // setIsNameInputEnabled(true);
+
+
+    // setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
+    setIsSlideViewHidden(initialState.isSlideViewHidden);
+    // setIsCurrentTransaction(initialState.isCurrentTransaction);
+
+    setStorageKey(null);
+    // retrieveStoredTransactions(); // load stored user
+    await cacheResourcesAsync();
+    // console.log('Cleared');
 
   }
 

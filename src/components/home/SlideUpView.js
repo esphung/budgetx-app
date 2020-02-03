@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   // StyleSheet,
@@ -41,6 +41,13 @@ function SlideUpView(props) {
 
   // const [isKeyboardAvoidEnabled, setIsKeyboardAvoidEnabled] = useState(true);
 
+  const [top, setTop] = useState('58%');
+
+  function setWindowHeight(value) {
+    // console.log(value);
+    setTop(value);
+  }
+
   const keyboardAvoidingView = (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : null}
@@ -51,9 +58,13 @@ function SlideUpView(props) {
         // width: '100%',
         // height: '90%',
         // bottom: '0%',
-        top: '58%',
+        
+
+        // top: '58%',
 
         // top: '38%', // WITH CALENDAR PICKER!!
+
+        top: top,
 
         // top: 480,
         // borderWidth: 1,
@@ -98,6 +109,7 @@ function SlideUpView(props) {
                 updateStoredTransactionNote={updateStoredTransactionNote}
                 transaction={transaction}
                 onDateChange={props.onDateChange}
+                setWindowHeight={setWindowHeight}
               />
             </View>
           </TouchableWithoutFeedback>
