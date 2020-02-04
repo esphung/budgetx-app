@@ -71,8 +71,8 @@ export default function NoteTextInput(props) {
       <TextInput
         style={
           [
-            styles.listItemTitleStyle,
-            // styles.textStyle,
+            // styles.listItemTitleStyle,
+            styles.textStyle,
           {
             height: 50,
             // width: '80%',
@@ -80,13 +80,13 @@ export default function NoteTextInput(props) {
 
             paddingLeft: 12,
 
-            // marginTop: 4,
+            margin: 4,
 
-            backgroundColor: colors.dark,
+            // backgroundColor: colors.dark,
 
-            borderWidth: 8,
-            borderColor: colors.darkTwo,
-            borderStyle: 'solid',
+            // borderWidth: 8,
+            // borderColor: colors.darkTwo,
+            // borderStyle: 'solid',
           }]
         }
         placeholder="Add note"

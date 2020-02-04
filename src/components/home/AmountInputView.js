@@ -11,68 +11,94 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'main/colors';
+
+// import styles from 'main/styles';
 
 import CurrencyInput from './CurrencyInput';
 
-class AmountInputView extends Component {
-  constructor(props) {
-    super(props);
+export default function AmountInputView(props) {
+  const { handleChange, value, isEditable } = props;
 
-    // this.state = {
-    //   value: this.props.value,
-    //   isEditable: this.props.isEditable
-    // };
-
-    // this.state = this.props.state
-
-    this.handleValueChange = this.handleValueChange.bind(this);
-  }
-
-  handleValueChange(value) {
-    // this.setState({ value });
-
-    const { handleChange } = this.props;
+  function handleValueChange(value) {
     handleChange(value);
   }
 
-  render() {
-    const { value, isEditable } = this.props;
-    return (
-      <View style={styles.container}>
-        <Text style={styles.label}>Amount Spent:</Text>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.label}>Amount Spent:</Text>
 
-        <CurrencyInput
-          onValueChange={this.handleValueChange}
-          value={value}
-          isEditable={isEditable}
-          style={
-          styles.input
-          
+      <CurrencyInput
+        onValueChange={handleValueChange}
+        value={value}
+        isEditable={isEditable}
+        style={
+        styles.input
+      }
+      />
 
-        }
-        />
+      <Text style={styles.symbol}>$</Text>
 
-        <Text style={styles.symbol}>$</Text>
-
-      </View>
-    );
-  }
+    </View>
+  );
 }
+
+// class AmountInputView extends Component {
+//   constructor(props) {
+//     super(props);
+
+//     // this.state = {
+//     //   value: this.props.value,
+//     //   isEditable: this.props.isEditable
+//     // };
+
+//     // this.state = this.props.state
+
+//     this.handleValueChange = this.handleValueChange.bind(this);
+//   }
+
+//   handleValueChange(value) {
+//     // this.setState({ value });
+
+//     const { handleChange } = this.props;
+//     handleChange(value);
+//   }
+
+//   render() {
+//     const { value, isEditable } = this.props;
+//     return (
+//       <View style={styles.container}>
+//         <Text style={styles.label}>Amount Spent:</Text>
+
+//         <CurrencyInput
+//           onValueChange={this.handleValueChange}
+//           value={value}
+//           isEditable={isEditable}
+//           style={
+//           styles.input
+//         }
+//         />
+
+//         <Text style={styles.symbol}>$</Text>
+
+//       </View>
+//     );
+//   }
+// }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    // flex: 1,
+    // justifyContent: 'center',
     alignItems: 'center',
 
     position: 'absolute',
     flexDirection: 'row',
     width: '100%',
-    height: '6%', // 46,
+    height: 50,
     backgroundColor: colors.dark,
 
-    top: '63%', // 460,
+    top: '62.5%', // 460,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -85,19 +111,19 @@ const styles = StyleSheet.create({
     flex: 1,
 
 
-    width: '100%',
+    // width: '100%',
     // height: '70%', // 30,
     fontFamily: 'SFProDisplay-Regular',
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: 'normal',
     fontStyle: 'normal',
     letterSpacing: 0.13,
-    color: '#ffffff7f',
+    color: colors.offWhite,
 
     // marginVertical: 8,
     marginLeft: 12,
 
-    paddingTop: 5,
+    // paddingTop: 5,
     // paddingLeft: 3,
 
     // borderWidth: 1,
@@ -113,7 +139,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.29,
+    // letterSpacing: 0.29,
     textAlign: 'right',
     color: '#ffffff',
 
@@ -134,9 +160,9 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.29,
+    // letterSpacing: 0.29,
     textAlign: 'right',
-    color: '#ffffff7f',
+    color: colors.offWhite,
 
     // marginVertical: 8,
     marginRight: 12,
@@ -154,4 +180,4 @@ const styles = StyleSheet.create({
 // console.log(screenWidth * 0.55)
 
 
-export default AmountInputView;
+// export default AmountInputView;

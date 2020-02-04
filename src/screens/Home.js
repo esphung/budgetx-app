@@ -18,9 +18,12 @@ CREATED:    Thu Oct 31 23:17:49 2019
             12/10/2019 12:22 AM
             01/01/2020 03:28 PM | AppSync Settings
             01/04/2020 08:25 AM | Released version 1.1.0 to App Store!
+            02/04/2020 05:50 AM | Added Sound
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
+
+import { Audio } from 'expo-av';
 
 import {
   StyleSheet,
@@ -40,6 +43,8 @@ import { NavigationEvents } from 'react-navigation';
 
 // ui colors
 import colors from 'main/colors';
+
+import styles from 'main/styles';
 
 import {
   loadSettingsStorage,
@@ -71,50 +76,50 @@ import calculateMonthSpent from '../functions/calculateMonthSpent';
 
 import searchByID from '../functions/searchByID';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: colors.darkTwo,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     alignItems: 'center',
+//     backgroundColor: colors.darkTwo,
+//   },
+// });
 
 
-const AddTransaction = `
-mutation ($amount: Float! $date: String! $note: String $type: String) {
-  createTransaction(input: {
-    amount: $amount
-    date: $date
-    note: $note
-    type: $type
-  }) {
-    id amount date note type
-  }
-}
-`;
+// const AddTransaction = `
+// mutation ($amount: Float! $date: String! $note: String $type: String) {
+//   createTransaction(input: {
+//     amount: $amount
+//     date: $date
+//     note: $note
+//     type: $type
+//   }) {
+//     id amount date note type
+//   }
+// }
+// `;
 
-const ListTransactions = `
-query {
-  listTransactions {
-    items {
-      id
-      date
-      amount
-      payee {
-        id
-        name
-      }
-      category {
-        id
-        name
-        color
-        type
-      }
-      note
-    }
-  }
-}
-`;
+// const ListTransactions = `
+// query {
+//   listTransactions {
+//     items {
+//       id
+//       date
+//       amount
+//       payee {
+//         id
+//         name
+//       }
+//       category {
+//         id
+//         name
+//         color
+//         type
+//       }
+//       note
+//     }
+//   }
+// }
+// `;
 
 const initialState = {
   currentDate: new Date(),
@@ -132,6 +137,8 @@ const initialState = {
   isSlideViewHidden: true,
   isCurrentTransaction: false,
 };
+
+
 
 function Home() {
   // hooks
@@ -159,6 +166,8 @@ function Home() {
 
   const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
 
+  const [playbackInstance, setPlaybackInstance] = useState(null);
+
   // // find previous obj if exists
   // function searchByID(key, myArray) {
   //   // console.log(nameKey);
@@ -172,6 +181,85 @@ function Home() {
   //   }
   //   return obj;
   // }
+
+  async function _loadNewPlaybackInstance(playing) {
+    if (playbackInstance !== null) {
+      await playbackInstance.unloadAsync();
+      playbackInstance.setOnPlaybackStatusUpdate(null);
+      // playbackInstance = null;
+      setPlaybackInstance(null);
+    }
+    const initialStatus = {
+      //        Play by default
+      shouldPlay: true,
+      //        Control the speed
+      rate: 1.3,
+      //        Correct the pitch
+      shouldCorrectPitch: true,
+      //        Control the Volume
+      volume: 0.21,
+      //        mute the Audio
+      isMuted: false
+     };
+    const { sound, status } = await Audio.Sound.createAsync(
+      global.clickSound,
+      initialStatus
+    );
+      //  Save the response of sound in playbackInstance
+    // playbackInstance = sound;
+    // setPlaybackInstance(sound);
+      //  Make the loop of Audio
+    // this.playbackInstance.setIsLoopingAsync(true);
+      //  Play the Music
+    // playbackInstance.playAsync();
+  }
+
+  async function _playClickSound() {
+    _loadNewPlaybackInstance(true);
+
+    // const { sound } = await Audio.Sound.createAsync(
+    //   global.clickSound,
+    //   {
+    //     shouldPlay: true,
+    //     volume: 0.21,
+    //     rate: 1.3,
+    //     isLooping: false,
+    //     isMuted: false,
+    //     shouldCorrectPitch: true,
+    //   },
+    // );
+
+
+      //  Save the response of sound in playbackInstance
+    // playbackInstance = sound;
+    // setPlaybackInstance(sound);
+      //  Make the loop of Audio
+    // this.playbackInstance.setIsLoopingAsync(true);
+      //  Play the Music
+    // playbackInstance.playAsync();
+
+    // const { sound } = await Audio.Sound.createAsync(
+    //   global.clickSound,
+    //   // {
+    //   //   shouldPlay: true,
+    //   //   // isLooping: false,
+    //   // },
+
+    //   // _updateScreenForSoundStatus,
+    // );
+
+    // sound.setVolumeAsync(0.21);
+
+    // sound.playAsync();
+
+    // console.log('Sound Played!');
+    // setNumberBtnTone(sound);
+
+    // setPlayingStatus('playing');
+    // this.setState({
+    //   playingStatus: 'playing'
+    // });
+  };
 
   const handleTransactionChange = async (transactions, updatedTransaction) => {
     // console.log(transactions);
@@ -315,6 +403,17 @@ function Home() {
   };
 
   async function clearState() {
+    await Audio.setAudioModeAsync({
+       allowsRecordingIOS: false,
+       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+       playsInSilentModeIOS: true,
+       shouldDuckAndroid: true,
+       interruptionModeAndroid:          Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+       playThroughEarpieceAndroid: false,
+     });
+
+    // _loadNewPlaybackInstance(true);
+
     setIsReady(false);
     hideSlideView();
 
@@ -413,69 +512,55 @@ function Home() {
     }
   }
 
-  async function retrieveStoredTransactions() {
-    // setIsReady(false);
-    try {
-      const userObject = await loadSettingsStorage(storageKey);
+  // async function retrieveStoredTransactions() {
+  //   // setIsReady(false);
+  //   try {
+  //     const userObject = await loadSettingsStorage(storageKey);
 
-      // sort transactions by date
+  //     // sort transactions by date
 
-      for (var i = 0; i < userObject.transactions.length; i++) {
-        console.log(userObject.transactions[i].date);
-      }
+  //     for (var i = 0; i < userObject.transactions.length; i++) {
+  //       console.log(userObject.transactions[i].date);
+  //     }
 
-      // set stored user's transactions
-      setTransactions(userObject.transactions);
-      // console.log(userObject.transactions)
-      // setIsReady(true);
-    } catch (e) {
-      // statements
-      Alert.alert('Could not load stored transactions');
+  //     // set stored user's transactions
+  //     setTransactions(userObject.transactions);
+  //     // console.log(userObject.transactions)
+  //     // setIsReady(true);
+  //   } catch (e) {
+  //     // statements
+  //     Alert.alert('Could not load stored transactions');
+  //   }
+
+  //   // try {
+  //   //   const items = await API.graphql(graphqlOperation(ListTransactions));
+  //   //   console.log('items: ', items.data.listTransactions.items);
+  //   //   // this.setState({ items: items.data.listBooks.items });
+  //   //   setTransactions(items.data.listTransactions.items);
+  //   // } catch (err) {
+  //   //   console.log('error: ', err);
+  //   // }
+
+
+  //   // setIsReady(true);
+  // }
+
+  function addTransaction() {
+    if (currentAmount && currentCategory) {
+      const transaction = new Transaction(
+        currentDate, // date
+        Number(currentAmount).toFixed(2) / 100, // amount
+        currentPayee, // payee
+        currentCategory, // category
+        currentType, // type
+        currentNote, // note
+      );
+      storeUserTransaction(transaction);   
     }
-
-    // try {
-    //   const items = await API.graphql(graphqlOperation(ListTransactions));
-    //   console.log('items: ', items.data.listTransactions.items);
-    //   // this.setState({ items: items.data.listBooks.items });
-    //   setTransactions(items.data.listTransactions.items);
-    // } catch (err) {
-    //   console.log('error: ', err);
-    // }
-
-
-    // setIsReady(true);
+   
+    // clearState();
   }
 
-  const addTransaction = async () => {
-    if (!currentAmount || !currentCategory) return;
-    // const transaction = { amount: currentAmount, category: currentCategory };
-    const transaction = new Transaction(
-      currentDate, // date
-      Number(currentAmount).toFixed(2) / 100, // amount
-      currentPayee, // payee
-      currentCategory, // category
-      currentType, // type
-      currentNote, // note
-    );
-    // console.log(transaction);
-
-    // try {
-    //   const list = [transaction, ...transactions];
-    //   // console.log(list);
-    //   setTransactions(list);
-    //   setCurrentAmount(0.00);
-    //   setCurrentCategory(null);
-    //   setCurrentDate(new Date());
-
-    //   await API.graphql(graphqlOperation(AddTransaction, transaction));
-    //   console.log('Success!');
-    // } catch (err) {
-    //   console.log('error: ', err);
-    // }
-
-    storeUserTransaction(transaction);
-    // clearState();
-  };
   const showSlideView = useCallback(
     () => {
       Animated.spring(
@@ -509,19 +594,21 @@ function Home() {
   );
 
   // value changes
-  const handleChange = (value) => {
+  function handleChange(value) {
     // check for limit of 11 digits
-    if (String(value).length > global.maxAmountLength) {
-      return;
+    if (String(value).length <= 11) {
+      setCurrentAmount(value);
     }
-    setCurrentAmount(value);
+    
   };
 
-  const numberBtnPressed = (number) => {
+  function numberBtnPressed(number) {
     // truncate single AND leading zeros; concatenate old + new values
     const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
     handleChange(newValue);
-  };
+    // _playClickSound();
+    // setTimeout(_playClickSound, 30);
+  }
 
   // const createNewTransaction = () => {
   //   let transaction = null;
@@ -548,31 +635,27 @@ function Home() {
   //   return transaction;
   // };
 
-  const addTransactionBtnPressed = () => {
+  function addBtnPressed() {
     addTransaction();
-  };
+    // _playClickSound();
+  }
 
-  const backspaceBtnPressed = () => {
-    if (currentAmount) {
+  function backspaceBtnPressed() {
+    // if (currentAmount) {
       const strValue = String(currentAmount);
       // pop last char from string value
       const newStr = strValue.substring(0, strValue.length - 1);
       handleChange(newStr);
-    }
-  };
+      // _playClickSound();
+    // } else {
+    //   return;
+    // }
+  }
 
-  const handlePress = (value) => {
-    if (typeof (value) === 'number') {
-      numberBtnPressed(value);
-    } else if (value === 'Add') {
-      addTransactionBtnPressed();
-      // console.log('Add', value)
-    } else if (value === '<') {
-      backspaceBtnPressed();
-    } else {
-      throw new Error('Pressed:', value);
-    }
-  };
+  // function handlePress(value) {
+  //   numberBtnPressed(value);
+  //   _playClickSound();
+  // };
 
   async function retrieveStoredSettingsTransactions(key) {
     // load stored user transactions
@@ -822,7 +905,13 @@ function Home() {
     />
   );
 
-  let keypad = <KeypadView handlePress={handlePress} />;
+  let keypad = (
+    <KeypadView
+      handlePress={numberBtnPressed}
+      addBtnPressed={addBtnPressed}
+      backspaceBtnPressed={backspaceBtnPressed}
+    />
+    );
 
   if (!shouldShowScrollingPills) {
     scrollingPills = null;
@@ -843,20 +932,24 @@ function Home() {
     currentTransaction.date = new Date(date);
     // console.log(currentTransaction.date);
 
-    await handleTransactionChange(transactions, currentTransaction);
+    handleTransactionChange(transactions, currentTransaction);
+
+    setCurrentTransaction(null);
+
+    await cacheResourcesAsync();
+
     
     // save transaction
 
     // reload transactions list (to update table)
 
-    clearState();
-
+    // clearState();
 
     // // setIsReady(false);
     // // hideSlideView();
 
     // // add/remove transactions
-    // // setTransactions([]);
+    setTransactions([]);
     // // setCurrentBalance(0.00);
     // // setCurrentSpent(0.00);
     // // setCurrentPayee(null);
@@ -884,11 +977,20 @@ function Home() {
     <View
       // scrollEnabled={false}
       // contentContainerStyle={styles.container}>
-      style={styles.container}
+      style={{
+            flex: 1,
+            alignItems: 'center',
+            
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+            // backgroundColor: colors.darkTwo,
+      }}
     >
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={clearState} // {(payload) => clearState()}
+        onWillFocus={() => setIsReady(false)} // {(payload) => clearState()}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         // onWillBlur={clearState} // console.log('will blur',payload)}
@@ -906,7 +1008,7 @@ function Home() {
 
         tableTop="25.5%"
         tableHeight="32%"
-        tablePosition="absolute"
+        // tablePosition="absolute"
 
         onPress={(transaction) => transactionBtnPressed(transaction)}
         deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}

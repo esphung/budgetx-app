@@ -44,6 +44,8 @@ export default StyleSheet.create({
     // letterSpacing: 0.17,
     textAlign: 'left',
 
+    letterSpacing: 0.13,
+
     // borderWidth: 1,
     // borderColor: 'orange',
     // borderStyle: 'solid',
@@ -125,7 +127,7 @@ export default StyleSheet.create({
     fontWeight: 'normal',
     fontStyle: 'normal',
     lineHeight: 28,
-    letterSpacing: 0.17,
+    letterSpacing: 0.13,
     textAlign: 'center',
     color: colors.offWhite,
   },
@@ -141,7 +143,7 @@ export default StyleSheet.create({
     fontWeight: '600',
     fontStyle: 'normal',
     // lineHeight: 28,
-    letterSpacing: 0.17,
+    letterSpacing: 0.13,
     textAlign: 'center',
   },
   listItemTitleStyle: {
@@ -153,7 +155,7 @@ export default StyleSheet.create({
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.1,
+    letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
 
     // paddingLeft: 12,
@@ -179,7 +181,7 @@ export default StyleSheet.create({
     fontStyle: 'normal',
     // lineHeight: 28,
     // lineHeight: 24,
-    letterSpacing: 0.17,
+    letterSpacing: 0.13,
     // textAlign: 'center',
 
     fontFamily: 'SFProDisplay-Regular',
@@ -223,27 +225,6 @@ export default StyleSheet.create({
 
 
 
-    // shadowColor: '#0a101b',
-    // shadowOffset: {
-    //   width: 1,
-    //   height: 1,
-    // },
-    // shadowRadius: 26,
-    // shadowOpacity: 1,
-  },
-  slideUpTransactionRect: {
-    // height: '100%',
-    height: 200,
-
-    alignItems: 'center',
-
-    // borderWidth: 3,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-
-    backgroundColor: colors.darkTwo,
-    // backgroundColor: 'blue',
-
     shadowColor: '#0a101b',
     shadowOffset: {
       width: 1,
@@ -252,16 +233,42 @@ export default StyleSheet.create({
     shadowRadius: 26,
     shadowOpacity: 1,
   },
+  slideUpTransactionRect: {
+    // height: '100%',
+    height: 210,
+    width: 'auto',
+
+    alignItems: 'center',
+
+    borderRadius: 9,
+
+
+
+    // borderWidth: 3,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+
+    backgroundColor: colors.darkTwo,
+    // backgroundColor: 'blue',
+
+    // shadowColor: '#0a101b',
+    // shadowOffset: {
+    //   width: 1,
+    //   height: 1,
+    // },
+    // shadowRadius: 26,
+    // shadowOpacity: 1,
+  },
   dateAmountRectangle: {
     // position: 'absolute',
     
     // alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '95%', // 346,
+    width: 346,
     height: 74,
 
-    marginBottom: '2%',
+    marginBottom: 6,
 
     borderRadius: 9,
     backgroundColor: colors.dark,
@@ -287,7 +294,7 @@ export default StyleSheet.create({
     fontWeight: 'normal',
     fontStyle: 'normal',
     // lineHeight: 28,
-    letterSpacing: 0.17,
+    letterSpacing: 0.13,
     textAlign: 'center',
   },
   rowBackLeft: {
@@ -363,7 +370,7 @@ export default StyleSheet.create({
     fontFamily: 'SFProDisplay-Regular',
     fontSize: 17,
     opacity: 0.5,
-    letterSpacing: 0.17,
+    letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
 
     // paddingRight: 12,
@@ -411,7 +418,7 @@ export default StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     fontStyle: 'normal',
-    letterSpacing: 0.17,
+    letterSpacing: 0.13,
     color: colors.shamrockGreen,
 
     paddingHorizontal: 6,

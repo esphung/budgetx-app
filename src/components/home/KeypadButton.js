@@ -20,8 +20,14 @@ import {
 // ui colors
 import colors from 'main/colors';
 
+
+
 export default function KeypadButton(props) {
   const { onPress, value } = props;
+
+  function handlePress() {
+    onPress(value);
+  }
 
   let btnTextColor = colors.white;
 
@@ -207,7 +213,7 @@ export default function KeypadButton(props) {
   // );
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       style={
         {
           flex: 1,

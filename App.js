@@ -37,6 +37,8 @@ import { NetworkProvider } from 'react-native-offline';
 
 import { AppLoading } from 'expo';
 
+import { Audio } from 'expo-av';
+
 // Amplify imports and config
 import Amplify from '@aws-amplify/core';
 import config from './aws-exports';
@@ -51,9 +53,26 @@ Amplify.configure(config);
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
-console.disableYellowBox = true;
+// console.disableYellowBox = true;
 
 // global.isStorybookModeOn = true;
+
+// async function _playRecording() {
+//   const { sound } = await Audio.Sound.createAsync(
+//     require('./assets/hello.mp3'),
+//     {
+//       shouldPlay: true,
+//       isLooping: false,
+//     },
+//     this._updateScreenForSoundStatus,
+//   );
+//   this.sound = sound;
+//   // this.setState({
+//   //   playingStatus: 'playing'
+//   // });
+// }
+
+// // _playRecording(); // inside async function
 
 function App() {
   // state hooks
@@ -62,12 +81,17 @@ function App() {
   const [isReady, setIsReady] = useState(false);
 
   async function cacheResourcesAsync() {
+    const soundObject = new Audio.Sound();
+
     // fonts
     try {
       await Font.loadAsync({
         'SFProDisplay-Regular': global.SFProDisplayRegularFont,
         'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
       });
+
+      // _playRecording(); // inside async func
+
       // stored fonts have been loaded
       setFontsAreLoaded(true);
     } catch (err) {
@@ -93,7 +117,13 @@ function App() {
     return storybook;
   }
 
-  return navigator;
+  if (fontsAreLoaded) {
+    return navigator;
+  } else {
+    return null;
+  }
+
+  
 }
 
 export default App;

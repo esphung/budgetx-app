@@ -79,17 +79,17 @@ const amountLabel = {
   // flex: 1,
 
 
-  width: '90%',
+  // width: '90%',
   height: '50%',
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 25,
   fontWeight: 'normal',
   fontStyle: 'normal',
-  letterSpacing: 0.29,
+  letterSpacing: 0.13,
   textAlign: 'center',
   color: colors.white,
 
-  backgroundColor: colors.dark,
+  // backgroundColor: colors.dark,
 
   // paddingBottom: 10,
   // paddingTop: 6,
@@ -218,6 +218,10 @@ function SlideUpTransactionRect(props) {
       backgroundColor = color;
       borderColor = 'transparent';
       color = colors.white;
+
+      if (backgroundColor === colors.white) {
+        color = colors.darkTwo;
+      }
     }
 
     const view = (
@@ -521,7 +525,7 @@ function SlideUpTransactionRect(props) {
     // set slide window height
     props.setWindowHeight('38%');
     // noteInputBtn = null;
-    noteInput = null;
+    // noteInput = null;
   } else if (!shouldShowCalendarPicker) {
     // hiding calendar
     props.setWindowHeight('58%');
@@ -543,6 +547,24 @@ function SlideUpTransactionRect(props) {
           ]
         }
       >
+      <View
+              style={
+                {
+                  // flexDirection: 'row',
+
+                  justifyContent: 'center',
+                  alignItems: 'center',
+
+                  // borderWidth: 1,
+                  // borderColor: 'white',
+                  // borderStyle: 'solid',
+
+                  // paddingHorizontal: 6,
+
+                }
+              }
+            >
+
         <SlideViewSeparator />
 
         <View style={styles.dateAmountRectangle}>
@@ -562,9 +584,15 @@ function SlideUpTransactionRect(props) {
         </View>
 
 
-        <View
+
+
+
+  
+        </View>
+
+                <View
           style={{
-            // height: '100%',
+            height: '50%',
             // backgroundColor: colors.darkTwo,
 
             // borderWidth: 1,
@@ -573,39 +601,19 @@ function SlideUpTransactionRect(props) {
           }}
         >
 
-          <View
-            style={[
-              // styles.container,
+
+            <View style={
               {
-                alignItems: 'center',
-
-                // backgroundColor: 'gray',
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'dashed',
-              }]}
-          >
-            <View
-              style={
-                {
-                  flexDirection: 'row',
-
-                  // borderWidth: 1,
-                  // borderColor: 'white',
-                  // borderStyle: 'solid',
-
-                  padding: 6,
-
-                }
+                flex: 1,
               }
-            >
-
-              <FlatList
+            }>
+            <FlatList
                 contentContainerStyle={{
-                  alignItems: 'center',
-                  height: 28,
+                  // alignItems: 'center',
+                  // height: 28,
                   // paddingHorizontal: 10,
+
+                  marginVertical: 10,
 
                 }}
                 horizontal
@@ -618,25 +626,15 @@ function SlideUpTransactionRect(props) {
                 keyExtractor={(item) => item.key}
               />
             </View>
+
+              {
+            noteInput
+          }
           </View>
 
           {
-            // noteInputBtn
-          }
-          {
-            noteInput
-          }
-          {
             calendarPicker
           }
-
-          {/* Date Picker */}
-
-          {
-            // datePicker
-          }
-
-        </View>
       </View>
     );
   }

@@ -103,7 +103,7 @@ const MyStickyTable = (props) => {
   const {
     tableTop,
     // tableHeight,
-    tablePosition,
+    // tablePosition,
     onPress,
     deleteBtnPressed,
     currentTransaction,
@@ -382,7 +382,7 @@ const MyStickyTable = (props) => {
 
 
         height: '32.5%',
-        position: tablePosition, // 'absolute'
+        position: 'absolute',
         top: tableTop, // '30%', // 240,
 
         zIndex: -1,
@@ -415,7 +415,7 @@ const MyStickyTable = (props) => {
 MyStickyTable.propTypes = {
   tableTop: PropTypes.string.isRequired,
   // tableHeight: PropTypes.string.isRequired,
-  tablePosition: PropTypes.string.isRequired,
+  // tablePosition: PropTypes.string.isRequired,
 
   onPress: PropTypes.func.isRequired,
   deleteBtnPressed: PropTypes.func.isRequired,

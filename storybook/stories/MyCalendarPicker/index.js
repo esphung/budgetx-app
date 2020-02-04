@@ -16,41 +16,53 @@ export default class MyCalendarPicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedStartDate: null,
+      // selectedStartDate: null,s
+      initialDate: this.props.date,
     };
     this.onDateChange = this.onDateChange.bind(this);
   }
  
   onDateChange(date) {
     // console.log(new Date(date));
+    // this.setState({
+    //   selectedStartDate: date,
+    // });
+
     this.props.onDateChange(date);
-    this.setState({
-      selectedStartDate: date,
-    });
   }
 
   render() {
-    const { selectedStartDate } = this.state;
-    const startDate = selectedStartDate ? selectedStartDate.toString() : '';
+    // const { selectedStartDate } = this.state;
+    // const startDate = selectedStartDate ? selectedStartDate.toString() : '';
     return (
-      <View style={{
-        justifyContent: 'center',
-        alignItems: 'center',
+       <View style={[ 
+        {
+              // justifyContent: 'center',
+              // alignItems: 'center',
+      
+              margin: 14,
 
-        margin: 14,
-        // flex: 1,
-        // backgroundColor: '#FFFFFF',
-        // marginTop: 100,
+              // paddingBottom: 14,
+              // flex: 1,
+              // backgroundColor: '#FFFFFF',
+              // marginTop: 100,
+      
+              backgroundColor: colors.dark,
+      
+              borderRadius: 9,
 
-        backgroundColor: colors.dark,
-
-        borderRadius: 9,
-
-
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-      }}>
+              // shadowColor: '#0a101b',
+              // shadowOffset: {
+              //   width: 1,
+              //   height: 1,
+              // },
+              // shadowRadius: 26,
+              // shadowOpacity: 1,
+      
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }]}>
         <CalendarPicker
           onDateChange={this.onDateChange}
 
@@ -64,18 +76,18 @@ export default class MyCalendarPicker extends Component {
           todayTextStyle={[
             // styles.textStyle,
             {
-              // opacity: 0.5,
+              opacity: 0.3,
             }
           ]}
 
           textStyle={styles.textStyle}
 
-          scaleFactor={600}
+          // scaleFactor={600}
 
-          // initialDate={this.props.date}
+          initialDate={this.props.date}
 
           // width={250}
-          // height={250}
+          height={300}
 
           enableSwipe={false}
 
@@ -85,6 +97,7 @@ export default class MyCalendarPicker extends Component {
             styles.buttonText,
             {
               paddingLeft: 4,
+              color: colors.tangerine,
             }
           ]}
 
@@ -92,6 +105,7 @@ export default class MyCalendarPicker extends Component {
             styles.buttonText,
             {
               paddingRight: 4,
+              color: colors.tangerine,
             }
           ]}
 
