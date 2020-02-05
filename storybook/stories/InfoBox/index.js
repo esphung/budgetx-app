@@ -6,9 +6,10 @@ import {
   // TouchableOpacity,
 } from 'react-native';
 
-// import colors from 'main/colors';
+// import colors from '../../../colors';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
+
 
 const InfoBox = (props) => {
   const view = (

@@ -10,9 +10,9 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
-import InfoBox from 'main/storybook/stories/InfoBox';
+import InfoBox from '../../../storybook/stories/InfoBox';
 
 // text style
 const copy3 = {

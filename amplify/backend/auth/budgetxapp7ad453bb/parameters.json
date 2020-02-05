@@ -1,6 +1,6 @@
 {
     "identityPoolName": "budgetxapp7ad453bb_identitypool_7ad453bb",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "budget7ad453bb",
     "userPoolName": "budgetxapp7ad453bb_userpool_7ad453bb",
     "autoVerifiedAttributes": [

@@ -2,7 +2,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import { createAppContainer } from 'react-navigation';
 
-import WelcomeScreen from 'main/storybook/stories/Welcome';
+import WelcomeScreen from './storybook/stories/Welcome';
 
 import SignUpScreen from './src/screens/SignUpScreen';
 
@@ -12,7 +12,7 @@ import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
 import OfflineScreen from './src/screens/OfflineScreen';
 
-import colors from 'main/colors';
+import colors from './colors';
 
 // Auth stack
 const AuthStackNavigator = createStackNavigator({

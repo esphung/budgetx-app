@@ -6,9 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 
-import SpinnerMask from 'main/src/components/SpinnerMask';
+import SpinnerMask from '../../src/components/SpinnerMask';
 
-import HelpMessage from 'main/storybook/stories/HelpMessage';
+import HelpMessage from '../../storybook/stories/HelpMessage';
 
 import {
   // StyleSheet,
@@ -34,7 +34,7 @@ import {
 // import {
 //   loadUserObject,
 //   saveUserObject,
-// } from 'main/src/storage/UserStorage';
+// } from '../../src/storage/UserStorage';
 
 // import { Asset } from 'expo-asset';
 
@@ -43,17 +43,18 @@ import {
 // AWS Amplify
 import Auth from '@aws-amplify/auth';
 
+// ui colors
 import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
 import OfflineScreen from './OfflineScreen';
 
 // import { getButtonStyle } from './functions';
 
-import getButtonStyle from 'main/src/functions/getButtonStyle';
+import getButtonStyle from '../../src/functions/getButtonStyle';
 
-import isValidUsername from 'main/src/functions/isValidUsername';
+import isValidUsername from '../../src/functions/isValidUsername';
 
 import Dialog from "react-native-dialog";
 

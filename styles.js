@@ -1,13 +1,17 @@
 import {
   StyleSheet,
+  Platform,
 } from 'react-native';
 
-import colors from 'main/colors';
+import colors from './colors';
+
+// fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
 
 export default StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    
 
     // backgroundColor: colors.darkTwo, // '#aa73b7',
     // flexDirection: 'column',
@@ -25,8 +29,23 @@ export default StyleSheet.create({
   //   // marginTop: 15, // '5%',
   //   // marginBottom: 5,
   // },
+  settingsBtnTouchableOpacityMask: {
+    // flex: 1,
+    width: 35,
+    height: 35,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+  },
+
+  settingsImage: {
+    width: '100%',
+    height: '100%'
+  },
+
   itemSymbolStyle: {
-    fontFamily: 'SFProDisplay-Semibold',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
@@ -38,7 +57,7 @@ export default StyleSheet.create({
     fontWeight: '600',
     color: colors.white, // '#5a52a5',
 
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     // fontWeight: 'normal',
     fontStyle: 'normal',
     // letterSpacing: 0.17,
@@ -122,7 +141,7 @@ export default StyleSheet.create({
     // width: 225,
     // height: 84,
     opacity: 0.6,
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 22,
     fontWeight: 'normal',
     fontStyle: 'normal',
@@ -139,7 +158,7 @@ export default StyleSheet.create({
     // opacity: 0.6,
     fontSize: 17,
 
-    fontFamily: 'SFProDisplay-Semibold',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontWeight: '600',
     fontStyle: 'normal',
     // lineHeight: 28,
@@ -151,7 +170,7 @@ export default StyleSheet.create({
     // width: 67,
     // height: 20,
 
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
@@ -176,7 +195,7 @@ export default StyleSheet.create({
     // // opacity: 0.6,
     // fontSize: 17,
 
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontWeight: 'normal',
     fontStyle: 'normal',
     // lineHeight: 28,
@@ -184,7 +203,7 @@ export default StyleSheet.create({
     letterSpacing: 0.13,
     // textAlign: 'center',
 
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 17,
     fontWeight: 'normal',
     fontStyle: 'normal',
@@ -196,7 +215,7 @@ export default StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
     // fontStyle: 'normal',
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
 
     letterSpacing: 0.13,
 
@@ -290,7 +309,7 @@ export default StyleSheet.create({
     // opacity: 0.6,
     fontSize: 17,
 
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontWeight: 'normal',
     fontStyle: 'normal',
     // lineHeight: 28,
@@ -367,7 +386,7 @@ export default StyleSheet.create({
     // textAlign: 'center',
     // width: 8,
     // height: 13,
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 17,
     opacity: 0.5,
     letterSpacing: 0.13,
@@ -414,7 +433,7 @@ export default StyleSheet.create({
     // alignSelf: 'center',
 
     // height: 40,
-    fontFamily: 'SFProDisplay-Semibold',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontSize: 17,
     fontWeight: '600',
     fontStyle: 'normal',

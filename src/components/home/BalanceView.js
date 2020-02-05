@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
 import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.1,
+    letterSpacing: 0.13,
     textAlign: 'center',
     textAlignVertical: 'top',
     color: colors.shamrockGreen,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.1,
+    letterSpacing: 0.13,
     textAlign: 'center',
     color: colors.pinkRed,
 
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.29,
+    letterSpacing: 0.13,
     textAlign: 'center',
     color: '#ffffff',
 
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    letterSpacing: 0.29,
+    letterSpacing: 0.13,
     textAlign: 'center',
     color: '#ffffff',
 

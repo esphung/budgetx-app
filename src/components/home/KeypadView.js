@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 // import { Audio } from 'expo-av';
 
@@ -14,7 +14,7 @@ import {
 import KeypadButton from './KeypadButton';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
 // import styles from 'main/styles';
 
@@ -162,17 +162,18 @@ export default function KeypadView(props) {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    flex: 1,
+    // position: 'absolute',
 
-    top: '69%', // 460,
+    // top: '69%', // 460,
 
-    paddingTop: 4,
+    // paddingTop: 4,
 
-    width: '100%',
+    // width: '100%',
 
-    height: '26%', // 252,
+    // height: '26%', // 252,
 
-    backgroundColor: colors.darkTwo,
+    // backgroundColor: colors.darkTwo,
 
     // borderWidth: 1,
     // borderColor: 'white',

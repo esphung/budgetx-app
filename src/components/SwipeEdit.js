@@ -5,9 +5,9 @@ import {
   Text,
 } from 'react-native';
 
-// import colors from 'main/colors';
+// import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
 const SwipeEdit = (props) => {
   const { onPress } = props;

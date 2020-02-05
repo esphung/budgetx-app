@@ -25,11 +25,11 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
-import getButtonStyle from 'main/src/functions/getButtonStyle';
+import getButtonStyle from '../../src/functions/getButtonStyle';
 
 
 

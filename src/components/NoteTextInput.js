@@ -6,9 +6,9 @@ import { TextInput, View, Alert } from 'react-native';
 import Auth from '@aws-amplify/auth';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
 // import {
 //   loadSettingsStorage,

@@ -18,9 +18,7 @@ import {
 // } from 'react-native-gesture-handler'
 
 // ui colors
-import colors from 'main/colors';
-
-
+import colors from '../../../colors';
 
 export default function KeypadButton(props) {
   const { onPress, value } = props;

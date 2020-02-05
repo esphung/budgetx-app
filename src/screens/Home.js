@@ -42,9 +42,9 @@ import { AppLoading } from 'expo';
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
 import {
   loadSettingsStorage,
@@ -140,7 +140,7 @@ const initialState = {
 
 
 
-function Home() {
+export default function Home() {
   // hooks
   const [transactions, setTransactions] = useState(initialState.transactions);
   const [currentBalance, setCurrentBalance] = useState(initialState.currentBalance);
@@ -881,15 +881,15 @@ function Home() {
 
   let scrollingPills = (
     <ScrollingPillCategoriesView
-      onPress={(category) => categoryBtnPressed(category)}
+      onPress={categoryBtnPressed}
       currentCategory={currentCategory}
-      topPosition="57%"
-      shadowOffset={{
-        width: 1,
-        height: 1,
-      }}
-      shadowRadius={26}
-      shadowOpacity={1}
+      // topPosition="56.8%"
+      // shadowOffset={{
+      //   width: 1,
+      //   height: 1,
+      // }}
+      // shadowRadius={26}
+      // shadowOpacity={1}
 
       currentCategories={[]}
 
@@ -980,6 +980,8 @@ function Home() {
       style={{
             flex: 1,
             alignItems: 'center',
+
+            justifyContent: 'center',
             
 
             // borderWidth: 1,
@@ -1021,11 +1023,86 @@ function Home() {
         handlePayeeNameChange={handlePayeeNameChange}
       />
 
+      <View style={
+      {
+        position: 'absolute',
+      // flexDirection: 'row',
+        // justifyContent: 'center',
+        // width: '100%',
+        // height: '6%', // 53,
+        height: 50,
+        // maxHeight: '6%',
+
+
+
+        // shadowColor: '#0a101b',
+        // shadowOffset: props.shadowOffset,
+        // shadowRadius: props.shadowRadius,
+        // shadowOpacity: props.shadowOpacity,
+
+        // position: 'absolute',
+
+        top: '56%', // props.topPosition, // '57%', // 462,
+
+        // zIndex: -2,
+
+        // zIndex: props.zIndex, // display ontop of datepickerbox
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'dashed',
+      }
+    }
+    >
+
       { scrollingPills }
 
+
+      <View style={{
+
+      // justifyContent: 'center',
+      // alignItems: 'center',
+
+      position: 'absolute',
+      flexDirection: 'row',
+      width: '100%',
+      height: '100%',
+      // backgroundColor: colors.dark,
+
+      top: '100%', // 460,
+
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'dashed',
+    }}>
+
       { amountInput }
+    </View>
+
+    </View>
+
+    <View style={{
+
+      position: 'absolute',
+
+      top: '69%', // 460,
+
+      marginTop: 4,
+
+      width: '100%',
+
+      height: '26%', // 252,
+
+      backgroundColor: colors.darkTwo,
+
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
+    }}>
 
       { keypad }
+
+      </View>
 
       <SlideUpView
         slideViewBounceValue={slideViewBounceValue}
@@ -1077,4 +1154,4 @@ Home.navigationOptions = ({ navigation }) => {
 //     // GraphQL.operations.FetchTransactions
 // )(Home);
 
-export default Home; // TransactionsList; // Home;
+// export default Home; // TransactionsList; // Home;

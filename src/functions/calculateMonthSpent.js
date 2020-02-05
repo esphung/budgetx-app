@@ -3,9 +3,12 @@ import { dates } from './dates';
 import checkIfLeapYear from './checkIfLeapYear';
 
 Date.prototype.addDays = (days) => {
-  const date = new Date(this.valueOf());
+  if (this) {
+    const date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
+  }
+  
 };
 
 export default function calculateMonthSpent(array) {

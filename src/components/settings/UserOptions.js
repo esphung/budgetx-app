@@ -13,9 +13,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
 
 // const styles = StyleSheet.create({
 //   container: {

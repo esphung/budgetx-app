@@ -2,7 +2,10 @@ import React from 'react';
 
 import { Text, View } from 'react-native';
 
-import styles from 'main/styles';
+// import colors from '../../../colors';
+
+import styles from '../../../styles';
+
 
 import PropTypes from 'prop-types';
 

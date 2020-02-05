@@ -5,6 +5,7 @@ AUTHOR:    Eric Phung
 CREATED:    12/10/2019 12:54 AM
 UPDATED:    12/10/2019 12:54 AM
             12/30/2019 12:47 PM
+            02/04/2020 05:08 PM
 */
 
 import React from 'react';
@@ -14,7 +15,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
 function SpinnerMask() {
   const spinnerView = (

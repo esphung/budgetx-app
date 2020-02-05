@@ -7,7 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import PropTypes from 'prop-types';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
 
 function Button(props) {
   // console.log(props);

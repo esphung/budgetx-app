@@ -21,19 +21,19 @@ import Auth from '@aws-amplify/auth';
 import SlideViewSeparator from '../SlideViewSeparator';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
 
 // import DatePicker from 'react-native-datepicker';
 
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
-import MyDateTimePicker from 'main/storybook/stories/MyDateTimePicker';
+import MyDateTimePicker from '../../../storybook/stories/MyDateTimePicker';
 
-import MyCalendarPicker from 'main/storybook/stories/MyCalendarPicker';
+import MyCalendarPicker from '../../../storybook/stories/MyCalendarPicker';
 
-import TouchableText from 'main/storybook/stories/TouchableText';
+import TouchableText from '../../../storybook/stories/TouchableText';
 
 import getFormattedDateString from '../../functions/getFormattedDateString';
 
@@ -41,7 +41,7 @@ import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
 import NoteTextInput from '../NoteTextInput';
 
-import searchByID from 'main/src/functions/searchByID';
+import searchByID from '../../../src/functions/searchByID';
 
 import {
   loadSettingsStorage,
@@ -62,7 +62,7 @@ const dateLabel = {
   // fontSize: 15,
   fontWeight: 'normal',
   fontStyle: 'normal',
-  letterSpacing: 0.1,
+  letterSpacing: 0.13,
   textAlign: 'center',
   color: colors.tangerine,
 

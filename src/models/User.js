@@ -20,10 +20,10 @@ UPDATED:
 //   return Math.random().toString(36).substr(2, 9);
 // };
 
-import defaultCategories from '../data/categories';
+// import defaultCategories from '../data/categories';
 
 // User function with multiple constructors
-const User = (username) => {
+export default function User(username) {
   const currentDate = new Date();
   // this.id = `${Date.now(currentDate)}`;
   return {
@@ -81,7 +81,7 @@ const User = (username) => {
 // }; // end create user from login creds definition
 
 
-module.exports = User;
+// module.exports = User;
 
 
 

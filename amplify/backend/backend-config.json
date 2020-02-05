@@ -12,5 +12,11 @@
 			"providerPlugin": "awscloudformation"
 		}
 	},
-	"api": {}
+	"api": {},
+	"analytics": {
+		"financelyanalytics": {
+			"service": "Pinpoint",
+			"providerPlugin": "awscloudformation"
+		}
+	}
 }

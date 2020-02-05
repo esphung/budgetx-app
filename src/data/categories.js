@@ -3,7 +3,7 @@
 // AUTHOR:    Eric Phung
 // CREATED:   10/11/2019 02:07 PM
 
-import Category from 'main/src/models/Category';
+import Category from '../../src/models/Category';
 
 const categories = [
   // {

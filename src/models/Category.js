@@ -14,23 +14,21 @@ UPDATED:    12/11/2019 10:09 PM
 //   return Math.random().toString(36).substr(2, 9);
 // };
 
-import { ID } from 'main/src/functions/ID';
+// import { ID } from '../functions/ID';
 
-// import colors from 'main/colors';
+// import colors from '../colors';
 
-export const Category = (name, color, type) => {
-  // const currentDate = new Date();
+export default function Category(name, color, type) {
+  const currentDate = new Date();
   const obj = {
-    // id: `${Date.now(currentDate)}`,
-    id: ID(),
+    id: `${Date.now(currentDate)}`,
+    // id: ID(),
     name,
     color,
     type
   };
   return obj;
-}; // end Color definition
-
-module.exports = Category;
+}
 
 // class Category(name, color, type) {
 //   const currentDate = new Date();

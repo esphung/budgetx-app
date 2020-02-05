@@ -34,12 +34,12 @@ module.exports = Color;
 // console.log(test);
 
 // const color = new Color('white', '#ffffff');
-const color = Color('white', '#ffffff');
+// const color = Color('white', '#ffffff');
 
-color.setName('black');
+// color.setName('black');
 
-color.setValue('#000000')
+// color.setValue('#000000')
 
-console.log(color);
+// console.log(color);
 
 

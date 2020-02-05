@@ -10,11 +10,11 @@ import {
 
 import { NetworkConsumer } from 'react-native-offline';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
-import InfoBox from 'main/storybook/stories/InfoBox';
+import InfoBox from '../../storybook/stories/InfoBox';
 
 const OfflineScreen = () => {
   const page = (

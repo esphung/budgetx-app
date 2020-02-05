@@ -10,7 +10,7 @@ import CenterView from './CenterView';
 // import Welcome from './Welcome';
 
 // eslint-disable-next-line import/extensions
-import Welcome from './Welcome';
+// import Welcome from './Welcome';
 import Button from './Button';
 import BlueButton from './BlueButton';
 import HelpMessage from './HelpMessage';
@@ -22,13 +22,14 @@ import TouchableText from './TouchableText';
 import EmptyListMessage from './EmptyListMessage';
 import CategoryLabel from './CategoryLabel';
 import TransactionItemCell from './TransactionItemCell';
-import MyDateTimePicker from './MyDateTimePicker';
-
+// import MyDateTimePicker from './MyDateTimePicker';
 import MyCalendarPicker from './MyCalendarPicker';
 
 
-// variables
-const message = 'Hello World'
+// test variables
+const message = 'Hello World';
+
+const test_date = new Date(1998, 7, 2);
 
 storiesOf('Components', module)
 // .add('to Welcome Screen', () => <Welcome />)
@@ -109,17 +110,17 @@ storiesOf('Components', module)
 
 
 
-.add('MyDateTimePicker',() => 
-  <CenterView>
-    <MyDateTimePicker date={new Date()} />
-  </CenterView>
-)
+// .add('MyDateTimePicker',() => 
+//   <CenterView>
+//     <MyDateTimePicker date={new Date()} />
+//   </CenterView>
+// )
 
 
 .add('MyCalendarPicker',() => 
   <CenterView>
     <MyCalendarPicker
-      date={new Date(1998, 7, 2)}
+      date={test_date}
       onDateChange={() => console.log('Hello')}
     />
   </CenterView>

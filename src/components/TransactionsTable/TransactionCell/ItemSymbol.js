@@ -14,7 +14,7 @@ import {
   Text,
 } from 'react-native';
 
-import styles from 'main/styles';
+import styles from '../../../../styles';
 
 function ItemSymbol(props) {
   const {

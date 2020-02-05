@@ -20,7 +20,7 @@ import {
 // ui colors
 // import colors from 'main/colors';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
 
 // import SlideViewSeparator from '../SlideViewSeparator';
 

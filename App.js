@@ -22,6 +22,8 @@ UPDATED:    Fri Nov  1 13:20:51 2019
                                   Removed all Network stuff
                                   Added routes.js
             01/08/2020 05:47 PM | Added transaction item cell Stories
+            02/04/2020 04:34 PM | Released version 2.0.0
+            02/04/2020 09:00 PM   | Added AWS Analytics
 */
 
 
@@ -31,13 +33,19 @@ UPDATED:    Fri Nov  1 13:20:51 2019
 
 import React, { useState } from 'react';
 
+import {
+  // StyleSheet,
+  // Text,
+  View
+} from 'react-native';
+
 import * as Font from 'expo-font';
 
 import { NetworkProvider } from 'react-native-offline';
 
 import { AppLoading } from 'expo';
 
-import { Audio } from 'expo-av';
+// import { Audio } from 'expo-av';
 
 // Amplify imports and config
 import Amplify from '@aws-amplify/core';
@@ -53,10 +61,12 @@ Amplify.configure(config);
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
+// /* Storybook editing */
 // console.disableYellowBox = true;
 
 // global.isStorybookModeOn = true;
 
+// Play audio sounds
 // async function _playRecording() {
 //   const { sound } = await Audio.Sound.createAsync(
 //     require('./assets/hello.mp3'),
@@ -74,14 +84,14 @@ Amplify.configure(config);
 
 // // _playRecording(); // inside async function
 
-function App() {
+export default function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
   const [isReady, setIsReady] = useState(false);
 
   async function cacheResourcesAsync() {
-    const soundObject = new Audio.Sound();
+    // const soundObject = new Audio.Sound();
 
     // fonts
     try {
@@ -103,6 +113,17 @@ function App() {
 
   const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
 
+  let view = (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: 'pink',
+      }}
+    />
+  );
+
+  // let view = null;
+
   if (!fontsAreLoaded && !isReady) {
     return (
       <AppLoading
@@ -118,15 +139,13 @@ function App() {
   }
 
   if (fontsAreLoaded) {
-    return navigator;
-  } else {
-    return null;
+    view = navigator;
   }
 
-  
+  return view;
 }
 
-export default App;
+// export default App;
 
 
 // export default from './storybook';

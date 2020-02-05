@@ -1,4 +1,4 @@
-import colors from 'main/colors';
+import colors from '../../colors';
 
 export default function getButtonStyle(bool) {
   // console.log(bool);

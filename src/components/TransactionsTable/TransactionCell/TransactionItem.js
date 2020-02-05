@@ -15,9 +15,9 @@ import {
 // import CustomSwipeCell from './CustomSwipeCell';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../../colors';
 
-import CategoryLabel from 'main/storybook/stories/CategoryLabel';
+import CategoryLabel from '../../../../storybook/stories/CategoryLabel';
 
 import ItemSymbol from './ItemSymbol';
 
@@ -55,8 +55,8 @@ function TransactionItem(props) {
       style={
         {
           // flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
+          // justifyContent: 'center',
+          // alignItems: 'center',
 
           // borderWidth: 1,
           // borderColor: '#ffffff',

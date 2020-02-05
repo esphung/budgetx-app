@@ -50,15 +50,15 @@ import Dialog from 'react-native-dialog';
 // import Constants from 'expo-constants';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
-import BlueButton from 'main/storybook/stories/BlueButton';
+import BlueButton from '../../storybook/stories/BlueButton';
 
-import TouchableText from 'main/storybook/stories/TouchableText';
+import TouchableText from '../../storybook/stories/TouchableText';
 
-import HelpMessage from 'main/storybook/stories/HelpMessage';
+import HelpMessage from '../../storybook/stories/HelpMessage';
 
 import {
   loadSettingsStorage,
@@ -75,7 +75,7 @@ import SwipeEdit from '../components/SwipeEdit';
 
 import Category from '../models/Category';
 
-// import InfoBox from 'main/storybook/stories/InfoBox';
+// import InfoBox from '../../storybook/stories/InfoBox';
 
 // import ColorDialog from '../components/ColorDialog';
 

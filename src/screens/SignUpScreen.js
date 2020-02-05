@@ -49,15 +49,15 @@ import OfflineScreen from './OfflineScreen';
 
 import SpinnerMask from '../components/SpinnerMask';
 
-import HelpMessage from 'main/storybook/stories/HelpMessage';
+import HelpMessage from '../../storybook/stories/HelpMessage';
 
 import countries from '../../Countries';
 
 import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
-import isValidEmail from 'main/src/functions/isValidEmail';
+import isValidEmail from '../../src/functions/isValidEmail';
 
 import Dialog from 'react-native-dialog';
 
@@ -65,11 +65,11 @@ import Dialog from 'react-native-dialog';
 
 // import { getButtonStyle } from './functions';
 
-import isValidUsername from 'main/src/functions/isValidUsername';
+import isValidUsername from '../../src/functions/isValidUsername';
 
-import isValidPhoneNumber from 'main/src/functions/isValidPhoneNumber';
+import isValidPhoneNumber from '../../src/functions/isValidPhoneNumber';
 
-import getButtonStyle from 'main/src/functions/getButtonStyle';
+import getButtonStyle from '../../src/functions/getButtonStyle';
 
 function SignUpScreen(props) {
   /*

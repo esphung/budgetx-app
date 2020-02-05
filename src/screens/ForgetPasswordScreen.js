@@ -12,9 +12,9 @@ import { NetworkConsumer } from 'react-native-offline';
 
 import OfflineScreen from '../screens/OfflineScreen';
 
-import SpinnerMask from 'main/src/components/SpinnerMask';
+import SpinnerMask from '../../src/components/SpinnerMask';
 
-import HelpMessage from 'main/storybook/stories/HelpMessage';
+import HelpMessage from '../../storybook/stories/HelpMessage';
 
 import {
   TouchableOpacity,
@@ -39,13 +39,13 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
-import isValidUsername from 'main/src/functions/isValidUsername';
+import isValidUsername from '../../src/functions/isValidUsername';
 
-import getButtonStyle from 'main/src/functions/getButtonStyle';
+import getButtonStyle from '../../src/functions/getButtonStyle';
 
 function ForgotPasswordScreen(props) {
   // input refs

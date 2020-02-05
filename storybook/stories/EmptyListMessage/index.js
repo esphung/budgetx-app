@@ -8,10 +8,9 @@ import { View, Text } from 'react-native';
 
 // import PropTypes from 'prop-types';
 
-// ui colors
-// import colors from 'main/colors';
+// import colors from '../../../colors';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
 
 const message = `No transactions yet.
 Choose category

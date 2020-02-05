@@ -5,6 +5,7 @@ AUTHOR:    Eric Phung
 CREATED:   03/11/2019 10:43 PM
 UPDATED:   08/11/2019 03:00 AM
            11/12/2019 09:12 PM
+           02/04/2020 05:13 PM
 
 */
 
@@ -22,23 +23,12 @@ import { AppLoading } from 'expo';
 
 import Auth from '@aws-amplify/auth';
 
-
 import CategoryPill from './CategoryPill';
 
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
-import colors from 'main/colors';
-
-// import {
-//   loadCategories,
-//   // saveCategories
-// } from '../../storage/CategoriesStorage';
-
-// import {
-//   loadUserObject,
-//   // saveUserObject
-// } from '../../storage/UserStorage';
+import colors from '../../../colors';
 
 import {
   loadSettingsStorage,
@@ -68,6 +58,8 @@ const ScrollingPillCategoriesView = (props) => {
   // const [transactions, setTransactions] = useState(null);
 
   const [storageKey, setStorageKey] = useState(null);
+
+  const { onPress } = props;
 
   async function retrieveCognitoUserKey() {
     // console.log('loading');
@@ -99,17 +91,7 @@ const ScrollingPillCategoriesView = (props) => {
   };
 
 
-  const categoryBtnPressed = (item) => {
-    props.onPress(item);
-    if (currentCategory === item) {
-      setCurrentCategory(null); // set off
-    } else if (currentCategory !== item) {
-      setCurrentCategory(item); // set on
-    } else {
-      // set new current category
-      setCurrentCategory(null);
-    }
-  };
+
 
   const clearState = async () => {
     // setIsReady(false);
@@ -186,7 +168,7 @@ const ScrollingPillCategoriesView = (props) => {
           color={item.color}
           textColor={item.color}
           key={item.id}
-          onPress={() => categoryBtnPressed(item)}
+          onPress={() => onPress(item)}
           // currentCategory={currentCategory}
           isSelected={props.isSelected(item)}
           isEnabled={true}
@@ -204,60 +186,57 @@ const ScrollingPillCategoriesView = (props) => {
     />
   );
 
-  if (!isReady) {
-    return appLoading;
-  }
-
-
-  return (
-    <SafeAreaView style={
+  let view = (
+    <View style={
       {
-        width: '100%',
-        // height: '6%', // 53,
-        height: 53,
-        maxHeight: '6%',
-
-        shadowColor: '#0a101b',
-        shadowOffset: props.shadowOffset,
-        shadowRadius: props.shadowRadius,
-        shadowOpacity: props.shadowOpacity,
-
-        // position: 'absolute',
-
-        top: props.topPosition, // '57%', // 462,
+        height: '100%',
+        shadowColor: "#0a101b",
+        shadowOffset: {
+          width: 1,
+          height: 1
+        },
+        shadowRadius: 26,
+        shadowOpacity: 1,
 
         backgroundColor: colors.darkTwo,
-
-        zIndex: props.zIndex, // display ontop of datepickerbox
-
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dashed',
       }
-    }
-    >
+    }>
       <ScrollView
         contentContainerStyle={{
+          
           alignItems: 'center',
-          justifyContent: 'flex-start',
-          flexDirection: 'row',
+          // justifyContent: 'flex-start',
+          // flexDirection: 'row',
           paddingLeft: 10,
 
           paddingRight: 12,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
         }}
         horizontal
         showsHorizontalScrollIndicator={false}
-        decelerationRate={0}
+        // decelerationRate={0}
         // snapToInterval={MIN_PILL_WIDTH} // your element width
-        snapToAlignment="center"
+        // snapToAlignment="center"
 
-        style={styles.scrollView}
+        // style={styles.scrollView}
       >
         { getCategoryPill(categories) }
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
+
+
+  if (!isReady) {
+    view = appLoading;
+  }
+
+
+  
+  return view;
 };
 
 
@@ -371,33 +350,33 @@ const ScrollingPillCategoriesView = (props) => {
 //   }
 // }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '6%', // 53,
-    backgroundColor: colors.darkTwo,
-    shadowColor: '#0a101b',
-    shadowOffset: {
-      width: 1,
-      height: 1
-    },
-    shadowRadius: 26,
-    shadowOpacity: 1,
+// const styles = StyleSheet.create({
+//   container: {
+//     width: '100%',
+//     height: '6%', // 53,
+//     backgroundColor: colors.darkTwo,
+//     shadowColor: '#0a101b',
+//     shadowOffset: {
+//       width: 1,
+//       height: 1
+//     },
+//     shadowRadius: 26,
+//     shadowOpacity: 1,
 
-    position: 'absolute',
-    top: '57%', // '57%', // 462,
+//     position: 'absolute',
+//     top: '57%', // '57%', // 462,
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
-  separator: {
-    width: 2,
-    marginVertical: 10,
-    backgroundColor: 'white' // 'rgba(0,0,0,0.5)'
-  }
+//     // borderWidth: 1,
+//     // borderColor: 'white',
+//     // borderStyle: 'dashed',
+//   },
+//   separator: {
+//     width: 2,
+//     marginVertical: 10,
+//     backgroundColor: 'white' // 'rgba(0,0,0,0.5)'
+//   }
 
-});
+// });
 
 
 export default ScrollingPillCategoriesView;

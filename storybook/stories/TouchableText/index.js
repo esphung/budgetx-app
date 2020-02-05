@@ -12,7 +12,10 @@ import {
 
 import PropTypes from 'prop-types';
 
-import styles from 'main/styles';
+// import colors from '../../../colors';
+
+import styles from '../../../styles';
+
 
 function TouchableText(props) {
   const { onPress, title } = props;

@@ -12,7 +12,7 @@ import Payee from './Payee';
 
 import Category from './Category';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
 // var ID = function () {
 //   // Math.random should be unique because of its seeding algorithm.
@@ -21,7 +21,7 @@ import colors from 'main/colors';
 //   return Math.random().toString(36).substr(2, 9);
 // };
 
-function Transaction(date, amount, payee, category, type, note) {
+export default function Transaction(date, amount, payee, category, type, note) {
   const currentDate = new Date();
 
   // if (category) {
@@ -50,7 +50,7 @@ function Transaction(date, amount, payee, category, type, note) {
   }
 }
 
-module.exports = Transaction;
+// module.exports = Transaction;
 
 
 // //  TESTING

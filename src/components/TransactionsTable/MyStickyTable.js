@@ -13,9 +13,9 @@ import PropTypes from 'prop-types';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
 
 import Header from './Header';
 
@@ -29,7 +29,7 @@ import SwipeDelete from '../SwipeDelete';
 
 import SwipeEdit from '../SwipeEdit';
 
-import EmptyListMessage from 'main/storybook/stories/EmptyListMessage';
+import EmptyListMessage from '../../../storybook/stories/EmptyListMessage';
 
 import { getShortDate } from './functions';
 

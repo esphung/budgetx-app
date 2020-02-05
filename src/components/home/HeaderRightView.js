@@ -6,15 +6,18 @@ DATE:       Sun Nov  3 14:25:49 2019
             12/11/2019 12:31 AM
             12/04/2019 04:39 PM | implemented hooks
             12/04/2019 07:41 PM Updated to TouchabaleOp from gesture handler. changed css
+            02/04/2020 06:52 PM | Moved styles extesrnal
 */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+
+import PropTypes from 'prop-types';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   // TouchableOpacity,
-  Image
+  Image,
 } from 'react-native';
 
 import {
@@ -26,22 +29,18 @@ import {
 
 import { withNavigation } from 'react-navigation';
 
+import styles from '../../../styles';
+
 function HeaderRightView(props) {
-  // state hooks
-  const [navigation, setNavigation] = useState(null);
+  const { navigation } = props;
 
-  useEffect(() => {
-    // mount component
-    setNavigation(props.navigation);
-  }, []);
+  // function searchBtnPressed() {
+  //   navigation.navigate('Search');
+  // }
 
-  const searchBtnPressed = () => {
-    navigation.navigate('Search');
-  };
-
-  const settingsBtnPressed = () => {
+  function settingsBtnPressed() {
     navigation.navigate('Settings');
-  };
+  }
 
   return (
     <View style={
@@ -50,8 +49,8 @@ function HeaderRightView(props) {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100%',
-        width: '100%',
+        // height: '100%',
+        // width: '100%',
         marginRight: 4, // '20%', // 3,
         marginTop: 20,
 
@@ -63,7 +62,8 @@ function HeaderRightView(props) {
     >
       {/* ==== Search Button ==== */}
 
-{/*     <TouchableOpacity
+      { /*
+      <TouchableOpacity
         onPress={searchBtnPressed}
         style={styles.searchBtnTouchableOpacity}
       >
@@ -74,19 +74,31 @@ function HeaderRightView(props) {
           source={global.searchIcon}
         />
 
-      </TouchableOpacity>*/}
+      </TouchableOpacity>
+      */ }
 
       {/* ==== Settings Button ==== */}
 
       <TouchableOpacity
         onPress={settingsBtnPressed}
-        style={styles.settingsBtnTouchableOpacity}
+        style={styles.settingsBtnTouchableOpacityMask}
       >
 
         <Image
           resizeMode="contain"
-          style={styles.settingsImage}
+          style={
+            [
+              styles.settingsImage,
+              {
+                // borderWidth: 1,
+                // borderColor: 'white',
+              }
+            ]
+          }
           source={global.settingsIcon}
+
+          accessibilityLabel="Settings"
+          accessible
         />
 
       </TouchableOpacity>
@@ -95,39 +107,45 @@ function HeaderRightView(props) {
   );
 }
 
-const styles = StyleSheet.create({
-  searchBtnTouchableOpacity: {
-    width: 45,
-    height: '60%'
+// const styles = StyleSheet.create({
+//   searchBtnTouchableOpacity: {
+//     width: 45,
+//     height: '60%'
 
-    // flex: 0.5,
-    // width: 40,
-    // height: '60%',
+//     // flex: 0.5,
+//     // width: 40,
+//     // height: '60%',
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
+//     // borderWidth: 1,
+//     // borderColor: 'white',
+//     // borderStyle: 'dashed',
+//   },
 
-  searchImage: {
-    width: '100%',
-    height: '100%'
-  },
+//   searchImage: {
+//     width: '100%',
+//     height: '100%'
+//   },
 
-  settingsBtnTouchableOpacity: {
-    // flex: 1,
-    width: 45, // 30,
-    // height: 45, // 30,
+//   settingsBtnTouchableOpacityMask: {
+//     // flex: 1,
+//     width: 38,
+//     height: 38,
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
+//     // borderWidth: 1,
+//     // borderColor: 'white',
+//     // borderStyle: 'dashed',
+//   },
 
-  settingsImage: {
-    width: '100%',
-    height: '100%'
-  }
-});
+//   settingsImage: {
+//     width: '100%',
+//     height: '100%'
+//   }
+// });
+
+HeaderRightView.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 export default withNavigation(HeaderRightView);

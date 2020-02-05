@@ -253,7 +253,7 @@ const HeaderLeftView = () => {
               fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
               fontSize: 15,
               fontStyle: 'normal',
-              letterSpacing: 0.12,
+              letterSpacing: 0.13,
               color: colors.white,
               fontWeight: '600',
             }
@@ -270,7 +270,7 @@ const HeaderLeftView = () => {
                 fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
                 fontSize: 15,
                 fontStyle: 'normal',
-                letterSpacing: 0.12,
+                letterSpacing: 0.13,
                 color: colors.white,
               }
             }>

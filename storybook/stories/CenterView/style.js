@@ -1,4 +1,8 @@
-import colors from 'main/colors';
+// ui colors
+import colors from '../../../colors';
+
+// import styles from '../../../styles';
+
 
 export default {
   main: {

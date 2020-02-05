@@ -16,7 +16,9 @@ import {
   Text,
 } from 'react-native';
 
-import styles from 'main/styles';
+// import colors from '../../../colors';
+
+import styles from '../../../styles';
 
 function CategoryLabel(props) {
   let {

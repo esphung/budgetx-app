@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
 
 // import styles from 'main/styles';
 
@@ -92,13 +92,15 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     alignItems: 'center',
 
-    position: 'absolute',
+    // position: 'absolute',
     flexDirection: 'row',
     width: '100%',
-    height: 50,
+    height: '100%',
     backgroundColor: colors.dark,
 
-    top: '62.5%', // 460,
+    
+
+    // top: '62.5%', // 460,
 
     // borderWidth: 1,
     // borderColor: 'white',

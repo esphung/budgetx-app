@@ -14,11 +14,11 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
-function AuthLoadingScreen(props) {
+export default function AuthLoadingScreen(props) {
   /*
   * > hooks
   */
@@ -47,7 +47,7 @@ function AuthLoadingScreen(props) {
     return () => {
       props.navigation.navigate(userToken ? 'App' : 'Auth');
     };
-  }, [userToken, props.navigation]);
+  }, [userToken]);
 
   const view = (
     <View style={styles.container}>
@@ -57,4 +57,4 @@ function AuthLoadingScreen(props) {
   return view;
 }
 
-export default AuthLoadingScreen;
+// export default AuthLoadingScreen;

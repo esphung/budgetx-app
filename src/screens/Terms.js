@@ -5,13 +5,13 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import messages from 'main/messages';
+import messages from '../../messages';
 
-import HeadingLabel from '../components/terms/HeadingLabel';
+// import HeadingLabel from '../components/terms/HeadingLabel';
 
-import MessageLabel from '../components/terms/MessageLabel';
+// import MessageLabel from '../components/terms/MessageLabel';
 
 function titleCaseSentence(string) {
   const sentence = string.toLowerCase().split('.');
@@ -46,7 +46,7 @@ function Terms() {
         }
       >
 
-        <HeadingLabel message={messages.terms.accept.title} />
+{/*        <HeadingLabel message={messages.terms.accept.title} />
         <MessageLabel message={messages.terms.accept.message} />
 
         <HeadingLabel message={messages.terms.legal.title} />
@@ -56,7 +56,7 @@ function Terms() {
         <MessageLabel message={messages.terms.privacy.message} />
 
         <HeadingLabel message={messages.terms.change.title} />
-        <MessageLabel message={messages.terms.change.message} />
+        <MessageLabel message={messages.terms.change.message} />*/}
 
       </ScrollView>
     </SafeAreaView>

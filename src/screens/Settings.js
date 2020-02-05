@@ -46,7 +46,7 @@ import SubscriptionRect from '../components/settings/SubscriptionRect';
 
 import UserOptions from '../components/settings/UserOptions';
 
-import BlueButton from 'main/storybook/stories/BlueButton';
+import BlueButton from '../../storybook/stories/BlueButton';
 
 import DeveloperCredit from '../components/settings/DeveloperCredit';
 
@@ -75,9 +75,9 @@ import {
 import Auth from '@aws-amplify/auth';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../colors';
 
-import styles from 'main/styles';
+import styles from '../../styles';
 
 // import { getShortDate } from './functions';
 

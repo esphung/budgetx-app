@@ -11,7 +11,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../../colors';
 
 import getCurrencySymbol from '../../../functions/getCurrencySymbol';
 

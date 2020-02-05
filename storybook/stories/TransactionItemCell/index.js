@@ -17,7 +17,9 @@ import {
 // import CustomSwipeCell from './CustomSwipeCell';
 
 // ui colors
-import colors from 'main/colors';
+import colors from '../../../colors';
+
+// import styles from '../../../styles';
 
 import ItemSymbol from '../ItemSymbol';
 import CategoryLabel from '../CategoryLabel';

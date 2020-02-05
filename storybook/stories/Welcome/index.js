@@ -13,13 +13,13 @@ import {
   Keyboard,
 } from 'react-native';
 
-import colors from 'main/colors';
+import colors from '../../../colors';
 
-import styles from 'main/styles';
+import styles from '../../../styles';
 
-import Button from 'main/storybook/stories/Button';
+import Button from '../Button';
 
-import TouchableText from 'main/storybook/stories/TouchableText';
+import TouchableText from '../TouchableText';
 
 function WelcomeScreen(props) {
   const handleRoute = async (destination) => {
