@@ -9,31 +9,31 @@ UPDATED:   08/11/2019 03:00 AM
 
 */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import {
-  StyleSheet,
-  SafeAreaView,
+  // StyleSheet,
+  // SafeAreaView,
   ScrollView,
   View,
-  Alert,
+  // Alert,
 } from 'react-native';
 
-import { AppLoading } from 'expo';
+// import { AppLoading } from 'expo';
 
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 import CategoryPill from './CategoryPill';
 
-import { NavigationEvents } from 'react-navigation';
+// import { NavigationEvents } from 'react-navigation';
 
 // ui colors
 import colors from '../../../colors';
 
-import {
-  loadSettingsStorage,
-  // saveSettingsStorage,
-} from '../../storage/SettingsStorage';
+// import {
+//   loadSettingsStorage,
+//   // saveSettingsStorage,
+// } from '../../storage/SettingsStorage';
 
 
 const ScrollingPillCategoriesView = (props) => {
@@ -47,68 +47,54 @@ const ScrollingPillCategoriesView = (props) => {
 
   // const [zIndex, setZIndex] = useState(0); // 1
 
-  const [categories, setCategories] = useState(null);
+  // const [categories, setCategories] = useState(null);
 
-  const [isReady, setIsReady] = useState(false);
+  // const [isReady, setIsReady] = useState(false);
 
-  const [currentCategory, setCurrentCategory] = useState(null);
+  // const [currentCategory, setCurrentCategory] = useState(null);
 
-  // const [currentCategories, setCurrentCategories] = useState([]);
+  // // const [currentCategories, setCurrentCategories] = useState([]);
 
-  // const [transactions, setTransactions] = useState(null);
+  // // const [transactions, setTransactions] = useState(null);
 
-  const [storageKey, setStorageKey] = useState(null);
+  // const [storageKey, setStorageKey] = useState(null);
 
-  const { onPress } = props;
+  const { onPress, categories } = props;
 
-  async function retrieveCognitoUserKey() {
-    // console.log('loading');
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        setStorageKey(cognito.username);
-      })
-      .catch((err) => {
-        // console.log(err);
-        console.log(err);
-      });
-  }
+  // async function retrieveCognitoUserKey() {
+  //   // console.log('loading');
+  //   Auth.currentAuthenticatedUser()
+  //     .then((cognito) => {
+  //       setStorageKey(cognito.username);
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //       console.log(err);
+  //     });
+  // }
 
-  const retrieveStoredCategories = async (key) => {
-    // console.log(key);
-    // load stored user categories
-    try {
-      const userObject = await loadSettingsStorage(key);
+  // const retrieveStoredCategories = async (key) => {
+  //   // console.log(key);
+  //   // load stored user categories
+  //   try {
+  //     const userObject = await loadSettingsStorage(key);
 
-      // user categories from stored user
-      setCategories(userObject.categories);
-      // console.log('User:', userObject.categories);
-      // setCurrentCategory(props.currentCategory);
-      // setCurrentCategories(props.currentCategories);
-    } catch (e) {
-      // statements
-      console.log('Could not retrieve stored user categories\n', e);
-    }
-  };
-
-
+  //     // user categories from stored user
+  //     setCategories(userObject.categories);
+  //     // console.log('User:', userObject.categories);
+  //     // setCurrentCategory(props.currentCategory);
+  //     // setCurrentCategories(props.currentCategories);
+  //   } catch (e) {
+  //     // statements
+  //     console.log('Could not retrieve stored user categories\n', e);
+  //   }
+  // };
 
 
-  const clearState = async () => {
-    // setIsReady(false);
-    // setShadowOffset(props.shadowOffset);
-    // setShadowRadius(props.shadowRadius);
-    // setShadowOpacity(props.shadowOpacity);
-    // setTopPosition(props.topPosition);
-    // setZIndex(props.zIndex);
 
-    retrieveCognitoUserKey();
-    // console.log('Finished');
-    // setIsReady(true);
-  }
 
-  // useEffect(() => {
-  //   // console.log('Mount pills');
-
+  // const clearState = async () => {
+  //   // setIsReady(false);
   //   // setShadowOffset(props.shadowOffset);
   //   // setShadowRadius(props.shadowRadius);
   //   // setShadowOpacity(props.shadowOpacity);
@@ -116,33 +102,47 @@ const ScrollingPillCategoriesView = (props) => {
   //   // setZIndex(props.zIndex);
 
   //   retrieveCognitoUserKey();
+  //   // console.log('Finished');
+  //   // setIsReady(true);
+  // }
 
-  //   // retrieveStoredCategories(); // for user categories
-  //   // return () => {
-  //   //   // effect
-  //   //   console.log('Clean up pills');
+  // // useEffect(() => {
+  // //   // console.log('Mount pills');
 
-  //   clearState();
-  //   // };
-  // }, []);
+  // //   // setShadowOffset(props.shadowOffset);
+  // //   // setShadowRadius(props.shadowRadius);
+  // //   // setShadowOpacity(props.shadowOpacity);
+  // //   // setTopPosition(props.topPosition);
+  // //   // setZIndex(props.zIndex);
 
-  useEffect(() => {
-    if (storageKey) {
-      retrieveStoredCategories(storageKey); // for user categories
-    }
-    return () => {
-      // effect
-    };
-  }, [storageKey]);
+  // //   retrieveCognitoUserKey();
 
-  useEffect(() => {
-    if (categories) {
-      setIsReady(true);
-    }
-    return () => {
-      // effect
-    };
-  }, [categories]);
+  // //   // retrieveStoredCategories(); // for user categories
+  // //   // return () => {
+  // //   //   // effect
+  // //   //   console.log('Clean up pills');
+
+  // //   clearState();
+  // //   // };
+  // // }, []);
+
+  // useEffect(() => {
+  //   if (storageKey) {
+  //     retrieveStoredCategories(storageKey); // for user categories
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [storageKey]);
+
+  // useEffect(() => {
+  //   if (categories) {
+  //     setIsReady(true);
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [categories]);
 
   // useEffect(() => {
   //   // console.log('mount');
@@ -158,9 +158,10 @@ const ScrollingPillCategoriesView = (props) => {
   const getCategoryPill = (items) => {
     // const { isEnabled } = this.props;
     // console.log(isEnabled)
+    // console.log(items);
     let view = null;
     if (items) {
-      view = items.map((item) => (
+      view = items.map((item, index) => (
         <CategoryPill
           item={item}
           id={item.id}
@@ -171,20 +172,20 @@ const ScrollingPillCategoriesView = (props) => {
           onPress={() => onPress(item)}
           // currentCategory={currentCategory}
           isSelected={props.isSelected(item)}
-          isEnabled={true}
+          isEnabled
         />
       ));
     }
     return view;
   };
 
-  const appLoading = (
-    <AppLoading
-      startAsync={clearState}
-      onFinish={() => setIsReady(true)}
-      onError={console.warn}
-    />
-  );
+  // const appLoading = (
+  //   <AppLoading
+  //     startAsync={clearState}
+  //     onFinish={() => setIsReady(true)}
+  //     onError={console.warn}
+  //   />
+  // );
 
   let view = (
     <View style={
@@ -230,9 +231,9 @@ const ScrollingPillCategoriesView = (props) => {
   );
 
 
-  if (!isReady) {
-    view = appLoading;
-  }
+  // if (!isReady) {
+  //   view = appLoading;
+  // }
 
 
   

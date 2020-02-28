@@ -30,14 +30,15 @@ UPDATED:    Fri Nov  1 13:20:51 2019
 // console.disableYellowBox = true;
 // global.isStorybookModeOn = true;
 
+// console.log('\033[2J');
 
 import React, { useState } from 'react';
 
-import {
-  // StyleSheet,
-  // Text,
-  View
-} from 'react-native';
+// import {
+//   // StyleSheet,
+//   // Text,
+//   View
+// } from 'react-native';
 
 import * as Font from 'expo-font';
 
@@ -48,16 +49,41 @@ import { AppLoading } from 'expo';
 // import { Audio } from 'expo-av';
 
 // Amplify imports and config
+// import Amplify from '@aws-amplify/core';
 import Amplify from '@aws-amplify/core';
+// Analytics.record({ name: String!, attributes: Object, metrics: Object })
 import config from './aws-exports';
 
+
+
+
+// import Analytics from '@aws-amplify/analytics';
+
+// Analytics.record({ name: "Sign in attempted!"});
+// console.log('Analytics recorded sign in attempt!');
+
+
+
+
+
+
+
 import SwitchNavigator from './SwitchNavigator';
+
+import AppStackNavigator from './AppStackNavigator';
 
 import './globals'; // global values
 
 import Storybook from './storybook';
 
 Amplify.configure(config);
+
+// function clearLines(lines) {
+//   let i = 0;
+//   for (i; i < lines; i += 1) {
+//     console.log('\r\n');
+//   }
+// }
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
@@ -84,19 +110,28 @@ Amplify.configure(config);
 
 // // _playRecording(); // inside async function
 
+// clearLines(35);
+// console.log(`Application ${global.appName} Loading:`, Date.now());
+
 export default function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
-  const [isReady, setIsReady] = useState(false);
+  // const navigator = <NetworkProvider><SwitchNavigator /></NetworkProvider>;
 
-  async function cacheResourcesAsync() {
+  const navigator = <AppStackNavigator />;
+
+  const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
+
+  let view = null;
+
+  async function loadApplicationResources() {
     // const soundObject = new Audio.Sound();
 
     // fonts
     try {
       await Font.loadAsync({
-        'SFProDisplay-Regular': global.SFProDisplayRegularFont,
+        'SFProDisplay-Regular': global.SFProDisplayRegularFont, // require('./assets/fonts/SF-Pro-Display-Regular.otf');
         'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
       });
 
@@ -105,47 +140,42 @@ export default function App() {
       // stored fonts have been loaded
       setFontsAreLoaded(true);
     } catch (err) {
-      // console.log('error: ', err);
+      console.log('error: ', err);
     }
   }
 
-  const navigator = <NetworkProvider><SwitchNavigator /></NetworkProvider>;
+  // let view = (
+  //   <View
+  //     style={{
+  //       flex: 1,
+  //       backgroundColor: 'pink',
+  //     }}
+  //   />
+  // );s
 
-  const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
-
-  let view = (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: 'pink',
-      }}
-    />
-  );
-
-  // let view = null;
-
-  if (!fontsAreLoaded && !isReady) {
-    return (
-      <AppLoading
-        startAsync={cacheResourcesAsync}
-        onFinish={setIsReady}
-        onError={console.warn}
-      />
-    );
-  }
+  // let appLoading = (
+  //   <AppLoading
+  //     startAsync={loadApplicationResources}
+  //     onFinish={setIsReady}
+  //     // onError={console.warn}
+  //     onError={() => {
+  //     return <View style={{
+  //       flex: 1,
+  //       backgroundColor: 'blue',
+  //     }} />
+  //     }}
+  //   />
+  // );
 
   if (global.isStorybookModeOn) {
     return storybook;
   }
 
-  if (fontsAreLoaded) {
+  if (!fontsAreLoaded) {
+    loadApplicationResources();
+    view = <AppLoading />;
+  } else {
     view = navigator;
   }
-
   return view;
 }
-
-// export default App;
-
-
-// export default from './storybook';

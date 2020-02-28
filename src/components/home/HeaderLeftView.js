@@ -7,6 +7,7 @@ UPDATED:    12/04/2019 05:07 PM   | commented out Font loader
             12/05/2019 11:22 PM   | fixed  bold, norrmal messages,
             image to show updated user image
             12/11/2019 03:07 AM | added cognito user
+            02/28/2020 02:36 PM | Disabled TextInput
 */
 
 
@@ -23,201 +24,71 @@ import {
   Platform,
   SafeAreaView,
   Alert,
+  TextInput,
 } from 'react-native';
-
-// AWS Amplify
-import Auth from '@aws-amplify/auth';
 
 import { NavigationEvents } from 'react-navigation';
 
-import { NetworkConsumer } from 'react-native-offline';
+// import { NetworkConsumer } from 'react-native-offline';
 
-import { Asset } from 'expo-asset';
+// import { Asset } from 'expo-asset';
 
 import { AppLoading } from 'expo';
 
 // ui colors
 import colors from '../../../colors';
 
-// import {
-//   loadUserObject,
-//   // saveUserObject,
-// } from '../../storage/UserStorage';
+import styles from '../../../styles';
 
-import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-} from '../../storage/SettingsStorage';
+const HeaderLeftView = (props) => {
+  const { onUsernameSubmit, boldMessage, normalMessage } = props;
 
-// import avatarPicture from '../../../assets/avatar.png';
-
-// const isValidEmail = require('../../functions/isValidEmail');
-
-const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-    marginLeft: 15,
-    width: '100%',
-    height: '100%',
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
-
-  userImageMaskView: {
-    flex: 0.1,
-    width: 33,
-    height: 33,
-    backgroundColor: colors.darkGreyBlue,
-    borderRadius: 50,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-
-  userImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 17,
-
-    // width: 27,// if user image available???
-    // height: 27,// if user image available???
-    // opacity: 0.2, // if no image available
-    // backgroundColor: '#ffffff'
-  },
-
-  userMessageView: {
-    flex: 1,
-    // flexDirection: 'column',
-    // height: '100%', // 36,
-    // left: 12,
-    // justifyContent: 'center',
-    marginLeft: 12,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-});
-
-
-const HeaderLeftView = () => {
-  const [boldMessage, setBoldMessage] = useState(`${global.appName}`);
-
-  const [normalMessage, setNormalMessage] = useState('Get cross-device sync');
-
-  const [image, setImage] = useState(null);
-
+  // console.log('props: ', props);
+  // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+  // const [normalMessage, setNormalMessage] = useState('Enter your email');
+  // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+  // const [normalMessage, setNormalMessage] = useState('Enter your username');
+  const [image, setImage] = useState(global.avatar);
   const [isReady, setIsReady] = useState(false);
 
-  const [storageKey, setStorageKey] = useState(null);
 
-  // async function retrieveStoredUserImage() {
-  //   // load stored user transactions
-  //   try {
-  //     const userObject = await loadUserObject();
+  const [value, onChangeText] = React.useState(normalMessage);
 
-  //     // set stored user image
-  //     if (userObject.user.profileImage) {
-  //       setImage(userObject.user.profileImage);
-  //     }
-
-  //     // //  set current userr info
-  //     // Auth.currentAuthenticatedUser({
-  //     //   bypassCache: false,
-  //     // }).then((user) => {
-  //     //   // console.log(user);
-  //     //   setNormalMessage(`Your are logged in as ${user.username}`);
-  //     //   setBoldMessage(`Welcome to ${global.appName} ${global.appVersion}`);
-  //     // })
-  //     //   .catch((err) => Alert.alert(err));
-  //   } catch (e) {
-  //     // statements
-  //     Alert.alert('Could not load image');
-  //   }
-  // }
+  // useEffect(() => {
+  //   console.log('value: ', value);
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [value]);
 
   function _cacheResourcesAsync() {
-    // console.log('loading');
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-        setStorageKey(cognito.username);
+    // // console.log('loading');
+    // Auth.currentAuthenticatedUser()
+    //   .then((cognito) => {
+    //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
+    //     // console.log('username:', cognitoUser.username);
+    //     // setStorageKey(cognito.username);
 
-        setBoldMessage(`Welcome to ${global.appName}`);
+    //     // setNormalMessage(`${cognito.attributes.email}`);
+    //     setNormalMessage(`${cognito.username}`);
 
-        // setNormalMessage(`${cognito.attributes.email}`);
-        setNormalMessage(`${cognito.username}`);
+    //   })
+    //   .catch((err) => {
+    //     // console.log(err);
+    //     // Alert.alert(err);
+    //   });
 
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
   }
 
-  useEffect(() => {
-    if (storageKey) {
-      // load user storage
-      retrieveStoredSettingsImage(storageKey);
-    }
-    return () => {
-      // effect
-    };
-  }, [storageKey])
-
-  useEffect(() => {
-    if (image) {
-      setIsReady(true);
-    }
-  }, [image])
-
-  const appLoading = (
-    <AppLoading
-      startAsync={clearState}
-      onFinish={() => {}}
-      onError={console.warn}
-    />
-  );
-
-  async function clearState() {
-    setBoldMessage('');
-    setNormalMessage('');
-    setIsReady(false);
-    setStorageKey(null);
-    setImage(null);
-
-    _cacheResourcesAsync();
-    // console.log('Cleared HeaderLeft');
-  }
-
-
-  async function retrieveStoredSettingsImage(user_storage_key) {
-    // load stored user transactions
-    try {
-      const storageObj = await loadSettingsStorage(user_storage_key);
-
-      // set stored user image
-      if (storageObj) {
-        // console.log('stored user settings image:', storageObj.image);
-        if (storageObj.image) {
-          // found stored image
-          setImage(storageObj.image);
-        }
-      }
-    } catch (e) {
-      // statements
-      Alert.alert('Could not load settings');
-      // console.log(e);
-    }
-  }
+  // useEffect(() => {
+  //   if (storageKey) {
+  //     // load user storage
+  //     retrieveStoredSettingsImage(storageKey);
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [storageKey])
 
   const imageView = (
     <TouchableOpacity
@@ -232,58 +103,56 @@ const HeaderLeftView = () => {
   </TouchableOpacity>
   )
 
-  if (isReady) {
-    return (
-      <SafeAreaView style={styles.container}>
+  return (
+      <View style={
+        styles.headerLeft
+        // {
+        //   flexDirection: 'row',
+        //   marginTop: 20,
+        //   marginLeft: 15,
 
-        <NavigationEvents
-          // try only this. and your component will auto refresh when this is the active component
-          onWillFocus={clearState} // {(payload) => clearState()}
-          // other props
-          // onDidFocus={payload => console.log('did focus',payload)}
-          // onWillBlur={payload => console.log('will blur',payload)}
-          // onDidBlur={payload => console.log('did blur',payload)}
-        />
+        //   alignItems: 'center',
 
-        { imageView }
+        //   borderWidth: 1,
+        //   borderColor: 'white',
+        //   borderStyle: 'solid',
+        // }
+      }
+      >
+        {
+          imageView
+        }
 
         <View style={styles.userMessageView}>
-          <Text style={
+          <Text style={styles.boldMessage}>
             {
-              fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
-              fontSize: 15,
-              fontStyle: 'normal',
-              letterSpacing: 0.13,
-              color: colors.white,
-              fontWeight: '600',
+              boldMessage
             }
-
-          }
-          >
-            { boldMessage }
 
           </Text>
 
-          <Text
-            style={
-              {
-                fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-                fontSize: 15,
-                fontStyle: 'normal',
-                letterSpacing: 0.13,
-                color: colors.white,
-              }
-            }>
-            { normalMessage }
-            </Text>
+          <TextInput
+            placeholder={normalMessage}
+            style={styles.normalMessage}
+            editable={false}
+            onChangeText={(text) => onChangeText(text)}
+            onSubmitEditing={() => onUsernameSubmit(value)}
+            value={value}
+            clearButtonMode="while-editing"
+            clearTextOnFocus
+            autoCorrect={false}
+            autoCapitalize="none"
+            enablesReturnKeyAutomatically
+          >
+            {
+              // normalMessage
+            }
+          </TextInput>
 
         </View>
 
-      </SafeAreaView>
+      </View>
     );
-  } else {
-    return appLoading;
-  }
 };
 
 export default HeaderLeftView;

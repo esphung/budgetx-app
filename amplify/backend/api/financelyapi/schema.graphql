@@ -1,0 +1,22 @@
+type Transaction @model {
+	id: ID!
+	date: String!
+	amount: Float!
+	payee: [Payee]
+	category: [Category]
+	type: String
+	# created: AWSDATE!
+	note: String
+}
+
+type Payee @model {
+	id: ID!
+	name: String
+}
+
+type Category @model {
+	id: ID!
+	name: String
+	color: String
+	type: String!
+}

@@ -187,7 +187,7 @@ function UserNameEmailInput() {
     // check for stored user
     // retrieveStoredUserData();
 
-    loadCognitoUser();
+    // loadCognitoUser();
 
     // // enable input
     // setIsInputEnabled(true);
@@ -195,7 +195,7 @@ function UserNameEmailInput() {
 
   let view = <SpinnerMask />;
 
-  if (user) {
+  // if (user) {
     view = (
         <View style={{ flex: 1, flexDirection: 'column' }}>
           <View style={
@@ -389,7 +389,7 @@ function UserNameEmailInput() {
           </View>
         </View>
     );
-  }
+  // }
   return view;
 }
 

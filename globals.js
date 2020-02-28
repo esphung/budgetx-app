@@ -5,6 +5,10 @@
 
 import app from './app.json';
 
+global.storageKey = 'CURRENT_USER';
+
+global.appTier = 'Free';
+
 // max min lengths
 global.maxAuthCodeLength = 6;
 
@@ -18,7 +22,7 @@ global.SFProDisplayRegularFont = require('./assets/fonts/SF-Pro-Display-Regular.
 
 global.SFProDisplaySemiboldFont = require('./assets/fonts/SF-Pro-Display-Semibold.otf');
 
-global.searchIcon = require('./assets/search-icon.png');
+// global.searchIcon = require('./assets/search-icon.png');
 
 global.settingsIcon = require('./assets/settings-icon.png');
 
@@ -32,11 +36,13 @@ global.avatar = require('./assets/avatar.png');
 
 global.appIcon = require('./assets/icon.png');
 
-global.wifiSymbol = require('./assets/wifi-symbol-high-resolution.png');
+// global.wifiSymbol = require('./assets/wifi-symbol-high-resolution.png');
 
-global.wifiImage = require('./assets/wifi-image.png');
+// global.wifiImage = require('./assets/wifi-image.png');
 
-global.noWifiImage = require('./assets/no-wifi-image.png');
+// global.noWifiImage = require('./assets/no-wifi-image.png');
+
+global.backspaceKeyIcon = require('./assets/backspace-clear-delete-key-remove-text-icon-_512-512.png')
 
 global.bankImageGreen = require('./assets/bank-image-green.png');
 
@@ -50,11 +56,10 @@ global.appDeveloper = 'Eric Phung';
 
 global.appDesigner = 'Andrey Nasanov';
 
-global.privacyLink = 'www.google.com';
+// global.privacyLink = 'www.google.com';
 
-global.latestReleaseDate = '12/12/2019 02:09 AM';
+// global.latestReleaseDate = '12/12/2019 02:09 AM';
 
-global.backspaceKeyIcon = require('./assets/backspace-clear-delete-key-remove-text-icon-_512-512.png')
 
 // global.clickSound = require('main/assets/clickSound.mp3');
 

@@ -16,7 +16,6 @@ import PropTypes from 'prop-types';
 
 import styles from '../../../styles';
 
-
 function TouchableText(props) {
   const { onPress, title } = props;
   return (

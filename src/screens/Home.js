@@ -19,6 +19,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             01/01/2020 03:28 PM | AppSync Settings
             01/04/2020 08:25 AM | Released version 1.1.0 to App Store!
             02/04/2020 05:50 AM | Added Sound
+            02/28/2020 02:34 PM | Enabling settings page
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -31,9 +32,25 @@ import {
   // ScrollView,
   Animated,
   Alert,
+  AsyncStorage
 } from 'react-native';
 
-import Auth from '@aws-amplify/auth';
+// import AsyncStorage from '@react-native-community/async-storage';
+
+export function logCurrentStorage() {
+  AsyncStorage.getAllKeys().then((keyArray) => {
+    AsyncStorage.multiGet(keyArray).then((keyValArray) => {
+      let myStorage: any = {};
+      for (let keyVal of keyValArray) {
+        myStorage[keyVal[0]] = keyVal[1]
+      }
+
+      console.log('CURRENT STORAGE: ', myStorage);
+    })
+  });
+}
+
+// import Auth from '@aws-amplify/auth';
 
 import { AppLoading } from 'expo';
 
@@ -76,51 +93,6 @@ import calculateMonthSpent from '../functions/calculateMonthSpent';
 
 import searchByID from '../functions/searchByID';
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: 'center',
-//     backgroundColor: colors.darkTwo,
-//   },
-// });
-
-
-// const AddTransaction = `
-// mutation ($amount: Float! $date: String! $note: String $type: String) {
-//   createTransaction(input: {
-//     amount: $amount
-//     date: $date
-//     note: $note
-//     type: $type
-//   }) {
-//     id amount date note type
-//   }
-// }
-// `;
-
-// const ListTransactions = `
-// query {
-//   listTransactions {
-//     items {
-//       id
-//       date
-//       amount
-//       payee {
-//         id
-//         name
-//       }
-//       category {
-//         id
-//         name
-//         color
-//         type
-//       }
-//       note
-//     }
-//   }
-// }
-// `;
-
 const initialState = {
   currentDate: new Date(),
   currentAmount: 0.00,
@@ -141,8 +113,11 @@ const initialState = {
 
 
 export default function Home() {
-  // hooks
+  // state hooks
   const [transactions, setTransactions] = useState(initialState.transactions);
+
+  const [categories, setCategories] = useState([]);
+
   const [currentBalance, setCurrentBalance] = useState(initialState.currentBalance);
   const [currentSpent, setCurrentSpent] = useState(initialState.currentSpent);
   const [currentTransaction, setCurrentTransaction] = useState(initialState.currentTransaction);
@@ -155,110 +130,20 @@ export default function Home() {
   const [slideViewBounceValue, setSlideViewBounceValue] = useState(initialState.slideViewBounceValue);
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
   const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
+  
   const [isReady, setIsReady] = useState(false);
 
-  const [storageKey, setStorageKey] = useState(null);
+  // const [storageKey, setStorageKey] = useState('CURRENT_USER');
 
 
-  const [shouldShowScrollingPills, setShouldShowScrollingPills] = useState(true);
-  const [shouldShowAmountInput, setShouldShowAmountInput] = useState(true);
-  const [shouldShowKeypad, setShouldShowKeypad] = useState(true);
+  const [shouldShowScrollingPills, setShouldShowScrollingPills] = useState(false);
+  const [shouldShowAmountInput, setShouldShowAmountInput] = useState(false);
+  const [shouldShowKeypad, setShouldShowKeypad] = useState(false);
 
-  const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
+  const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
 
-  const [playbackInstance, setPlaybackInstance] = useState(null);
-
-  // // find previous obj if exists
-  // function searchByID(key, myArray) {
-  //   // console.log(nameKey);
-  //   let obj = null;
-  //   let i = 0;
-  //   for (i; i < myArray.length; i += 1) {
-  //     // console.log(myArray[i].id, nameKey);
-  //     if (myArray[i].id === key) {
-  //       obj = myArray[i];
-  //     }
-  //   }
-  //   return obj;
-  // }
-
-  async function _loadNewPlaybackInstance(playing) {
-    if (playbackInstance !== null) {
-      await playbackInstance.unloadAsync();
-      playbackInstance.setOnPlaybackStatusUpdate(null);
-      // playbackInstance = null;
-      setPlaybackInstance(null);
-    }
-    const initialStatus = {
-      //        Play by default
-      shouldPlay: true,
-      //        Control the speed
-      rate: 1.3,
-      //        Correct the pitch
-      shouldCorrectPitch: true,
-      //        Control the Volume
-      volume: 0.21,
-      //        mute the Audio
-      isMuted: false
-     };
-    const { sound, status } = await Audio.Sound.createAsync(
-      global.clickSound,
-      initialStatus
-    );
-      //  Save the response of sound in playbackInstance
-    // playbackInstance = sound;
-    // setPlaybackInstance(sound);
-      //  Make the loop of Audio
-    // this.playbackInstance.setIsLoopingAsync(true);
-      //  Play the Music
-    // playbackInstance.playAsync();
-  }
-
-  async function _playClickSound() {
-    _loadNewPlaybackInstance(true);
-
-    // const { sound } = await Audio.Sound.createAsync(
-    //   global.clickSound,
-    //   {
-    //     shouldPlay: true,
-    //     volume: 0.21,
-    //     rate: 1.3,
-    //     isLooping: false,
-    //     isMuted: false,
-    //     shouldCorrectPitch: true,
-    //   },
-    // );
-
-
-      //  Save the response of sound in playbackInstance
-    // playbackInstance = sound;
-    // setPlaybackInstance(sound);
-      //  Make the loop of Audio
-    // this.playbackInstance.setIsLoopingAsync(true);
-      //  Play the Music
-    // playbackInstance.playAsync();
-
-    // const { sound } = await Audio.Sound.createAsync(
-    //   global.clickSound,
-    //   // {
-    //   //   shouldPlay: true,
-    //   //   // isLooping: false,
-    //   // },
-
-    //   // _updateScreenForSoundStatus,
-    // );
-
-    // sound.setVolumeAsync(0.21);
-
-    // sound.playAsync();
-
-    // console.log('Sound Played!');
-    // setNumberBtnTone(sound);
-
-    // setPlayingStatus('playing');
-    // this.setState({
-    //   playingStatus: 'playing'
-    // });
+  Home.reloadTransactions = function(){
+    cacheResourcesAsync();
   };
 
   const handleTransactionChange = async (transactions, updatedTransaction) => {
@@ -278,14 +163,14 @@ export default function Home() {
       
     } catch(e) {
       // statements
-      console.log(e);
+      // console.log(e);
     }
     
   };
 
   const handlePayeeNameChange = async (string, transaction) => {
     // console.log(string);
-    console.log(transaction);
+    // console.log(transaction);
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(storageKey);
@@ -319,6 +204,40 @@ export default function Home() {
       // console.log(e);
     } 
   }
+
+
+  const updateStoredTransactionCategory = async (category) => {
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(storageKey);
+
+      const found = searchByID(currentTransaction.id, storageObj.transactions);
+
+      if (found) {
+        found.category = category;
+
+        found.type = category.type;
+
+        const pos = storageObj.transactions.indexOf(found);
+
+        if (storageObj.transactions[pos].type === 'income' && storageObj.transactions[pos].amount < 0) {
+          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
+        } else if (storageObj.transactions[pos].type === 'expense' && storageObj.transactions[pos].amount >= 0) {
+          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
+        }
+
+        // console.log(storageObj.transactions[pos]);
+
+        saveSettingsStorage(storageKey, storageObj);
+
+        handleTransactionChange(storageObj.transactions, storageObj.transactions[pos]);
+      }
+    } catch (e) {
+      // statements
+      // Alert.alert('Could not update transaction');
+      // console.log(e);
+    }
+  };
 
 
   const updateStoredTransactionNote = async (string) => {
@@ -403,14 +322,14 @@ export default function Home() {
   };
 
   async function clearState() {
-    await Audio.setAudioModeAsync({
-       allowsRecordingIOS: false,
-       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-       playsInSilentModeIOS: true,
-       shouldDuckAndroid: true,
-       interruptionModeAndroid:          Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-       playThroughEarpieceAndroid: false,
-     });
+    // await Audio.setAudioModeAsync({
+    //    allowsRecordingIOS: false,
+    //    interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+    //    playsInSilentModeIOS: true,
+    //    shouldDuckAndroid: true,
+    //    interruptionModeAndroid:          Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+    //    playThroughEarpieceAndroid: false,
+    //  });
 
     // _loadNewPlaybackInstance(true);
 
@@ -430,36 +349,44 @@ export default function Home() {
     setCurrentType(initialState.currentType);
     setIsNameInputEnabled(true);
 
-
     setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
     setIsSlideViewHidden(initialState.isSlideViewHidden);
     setIsCurrentTransaction(initialState.isCurrentTransaction);
 
-    setStorageKey(null);
+    // setStorageKey(null);
     // retrieveStoredTransactions(); // load stored user
     await cacheResourcesAsync();
     // console.log('Cleared');
   }
 
   async function cacheResourcesAsync() {
-    // console.log('loading');
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-        setStorageKey(cognito.username);
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
+    console.log('loading '  + storageKey + '\'s categories');
+    const userObject = await loadSettingsStorage(storageKey); // load user object
+
+    // console.log(userObject);
+
+    setCategories(userObject.categories);
+
+    setTransactions(userObject.transactions);
+
+    // Auth.currentAuthenticatedUser()
+    //   .then((cognito) => {
+    //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
+    //     // console.log('username:', cognitoUser.username);
+    //     setStorageKey(cognito.username);
+    //   })
+    //   .catch((err) => {
+    //     // console.log(err);
+    //     Alert.alert(err);
+    //   });
   }
 
   async function storeUserTransaction(transaction) {
     // setIsReady(false);
     const userObject = await loadSettingsStorage(storageKey); // load user object
+
     userObject.transactions.unshift(transaction);
-    // saveUserObject(userObject);
+
     saveSettingsStorage(storageKey, userObject);
 
     setTransactions(userObject.transactions);
@@ -470,14 +397,6 @@ export default function Home() {
     setCurrentCategory(initialState.currentCategory);
     setCurrentTransaction(initialState.currentTransaction);
     setCurrentType(initialState.currentType);
-
-    // setStorageKey(null);
-    // setIsReady(true);
-
-    // retrieveStoredTransactions(); // load stored user
-    // cacheResourcesAsync();
-
-    // clearState();
   }
 
   async function removeUserTransaction(transaction) {
@@ -511,39 +430,6 @@ export default function Home() {
 
     }
   }
-
-  // async function retrieveStoredTransactions() {
-  //   // setIsReady(false);
-  //   try {
-  //     const userObject = await loadSettingsStorage(storageKey);
-
-  //     // sort transactions by date
-
-  //     for (var i = 0; i < userObject.transactions.length; i++) {
-  //       console.log(userObject.transactions[i].date);
-  //     }
-
-  //     // set stored user's transactions
-  //     setTransactions(userObject.transactions);
-  //     // console.log(userObject.transactions)
-  //     // setIsReady(true);
-  //   } catch (e) {
-  //     // statements
-  //     Alert.alert('Could not load stored transactions');
-  //   }
-
-  //   // try {
-  //   //   const items = await API.graphql(graphqlOperation(ListTransactions));
-  //   //   console.log('items: ', items.data.listTransactions.items);
-  //   //   // this.setState({ items: items.data.listBooks.items });
-  //   //   setTransactions(items.data.listTransactions.items);
-  //   // } catch (err) {
-  //   //   console.log('error: ', err);
-  //   // }
-
-
-  //   // setIsReady(true);
-  // }
 
   function addTransaction() {
     if (currentAmount && currentCategory) {
@@ -657,61 +543,24 @@ export default function Home() {
   //   _playClickSound();
   // };
 
-  async function retrieveStoredSettingsTransactions(key) {
+  async function retrieveStoredTransactions(key) {
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(key);
 
       setTransactions(storageObj.transactions);
-
-      // console.log(storageObj.transactions[0].date);
-
-      // const sortedTransactions = storageObj.transactions.sort((a, b) => b.date + a.date);
-
-      // console.log(sortedTransactions[0].date);
-
-      // setTransactions(sortedTransactions);
-
-      // for (var i = 0; i < storageObj.transactions.length; i++) {
-      //   console.log(storageObj.transactions[i].date);
-      // }
-
-      // // set stored user transactions
-      // if (storageObj) {
-      //   // console.log('stored user settings transactions:', storageObj.transactions);
-      //   if (storageObj.transactions) {
-      //     // found stored image
-      //     // console.log(storageObj.transactions);
-      //     setTransactions(storageObj.transactions);
-      //   }
-      // }
     } catch (e) {
-      // statements
-      // Alert.alert('Could not load settings');
-      // console.log(e);
+      // statements;
+      console.log(e);
     }
   }
 
-  // useEffect(fn) // all state
-  // useEffect(fn, []) // no state
-  // useEffect(fn, [these, states])
-
-  // component did mount
   // useEffect(() => {
-  //   // console.log('mount Home');
-  //   // retrieveStoredTransactions();
-
-  //   // return () => {
-  //   //   // console.log('Clean up Home');
-  //   // };
-  // }, []);
-
-  useEffect(() => {
-    if (storageKey) {
-      // load user storage
-      retrieveStoredSettingsTransactions(storageKey);
-    }
-  }, [storageKey]);
+  //   if (storageKey) {
+  //     // load user storage
+  //     retrieveStoredTransactions(storageKey);
+  //   }
+  // }, [storageKey]);
 
   // current transaction updates
   useEffect(() => {
@@ -882,7 +731,8 @@ export default function Home() {
   let scrollingPills = (
     <ScrollingPillCategoriesView
       onPress={categoryBtnPressed}
-      currentCategory={currentCategory}
+      categories={categories}
+      // currentCategory={currentCategory}
       // topPosition="56.8%"
       // shadowOffset={{
       //   width: 1,
@@ -891,7 +741,7 @@ export default function Home() {
       // shadowRadius={26}
       // shadowOpacity={1}
 
-      currentCategories={[]}
+      // currentCategories={[]}
 
       isSelected={isCurrentCategory}
     />
@@ -936,7 +786,7 @@ export default function Home() {
 
     setCurrentTransaction(null);
 
-    await cacheResourcesAsync();
+    // cacheResourcesAsync();
 
     
     // save transaction
@@ -992,7 +842,7 @@ export default function Home() {
     >
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={() => setIsReady(false)} // {(payload) => clearState()}
+        onWillFocus={cacheResourcesAsync} // {(payload) => clearState()}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         // onWillBlur={clearState} // console.log('will blur',payload)}
@@ -1024,38 +874,40 @@ export default function Home() {
       />
 
       <View style={
-      {
-        position: 'absolute',
-      // flexDirection: 'row',
-        // justifyContent: 'center',
-        // width: '100%',
-        // height: '6%', // 53,
-        height: 50,
-        // maxHeight: '6%',
+        {
+          position: 'absolute',
+        // flexDirection: 'row',
+          // justifyContent: 'center',
+          // width: '100%',
+          // height: '6%', // 53,
+          height: 50,
+          // maxHeight: '6%',
 
 
 
-        // shadowColor: '#0a101b',
-        // shadowOffset: props.shadowOffset,
-        // shadowRadius: props.shadowRadius,
-        // shadowOpacity: props.shadowOpacity,
+          // shadowColor: '#0a101b',
+          // shadowOffset: props.shadowOffset,
+          // shadowRadius: props.shadowRadius,
+          // shadowOpacity: props.shadowOpacity,
 
-        // position: 'absolute',
+          // position: 'absolute',
 
-        top: '56%', // props.topPosition, // '57%', // 462,
+          top: '56%', // props.topPosition, // '57%', // 462,
 
-        // zIndex: -2,
+          // zIndex: -2,
 
-        // zIndex: props.zIndex, // display ontop of datepickerbox
+          // zIndex: props.zIndex, // display ontop of datepickerbox
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'dashed',
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'dashed',
+        }
       }
-    }
-    >
+      >
 
-      { scrollingPills }
+      {
+        scrollingPills
+      }
 
 
       <View style={{
@@ -1076,7 +928,9 @@ export default function Home() {
       // borderStyle: 'dashed',
     }}>
 
-      { amountInput }
+      {
+        amountInput
+      }
     </View>
 
     </View>
@@ -1100,7 +954,9 @@ export default function Home() {
       // borderStyle: 'solid',
     }}>
 
-      { keypad }
+      {
+        keypad
+      }
 
       </View>
 
@@ -1114,9 +970,7 @@ export default function Home() {
         }}
         updateStoredTransactionNote={updateStoredTransactionNote}
 
-        // updateStoredTransactionCategory={() => {
-        //   console.log(currentTransaction)
-        // }}
+        updateStoredTransactionCategory={updateStoredTransactionCategory}
 
         onDateChange={onDateChange}
       />
@@ -1134,17 +988,38 @@ export default function Home() {
     />
   );
 
-  if (!isReady) {
-    return appLoading;
-  }
+  // if (!isReady) {
+  //   return appLoading;
+  // }
   return view;
 }
 
-Home.navigationOptions = ({ navigation }) => {
+Home.navigationOptions = () => {
+  let boldMessage = 'Get device cross-sync' // `${global.appName} ${global.appVersion} (Basic)`;
+  // let normalMessage = `${global.appName} Pro is coming soon! :D`;
+  let normalMessage = 'Enter your email';
+  async function onUsernameSubmit(string) {
+    // console.log('string: ', string);
+
+    const storageObj = await loadSettingsStorage(string);
+    // console.log(storageObj);
+
+    if (storageObj) {
+      // overwrite current user settings
+      saveSettingsStorage(storageKey, storageObj);
+      storageKey = string;
+
+      // Home.cacheResourcesAsync();
+      Home.reloadTransactions();
+    }
+
+    // logCurrentStorage();
+
+  }
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    headerLeft: <HeaderLeftView navigation={navigation} />,
+    headerLeft: <HeaderLeftView onUsernameSubmit={onUsernameSubmit} boldMessage={boldMessage} normalMessage={normalMessage} />,
     headerRight: <HeaderRightView />,
   };
   return header;

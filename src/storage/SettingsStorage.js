@@ -20,7 +20,7 @@ import defaultCategories from '../data/categories';
 // AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
 
 export const saveSettingsStorage = (key, settings) => {
-  // console.log('saving user settings');
+  console.log('saving ' + key + '\'s settings');
   AsyncStorage.setItem(key, JSON.stringify(settings));
 };
 
@@ -45,7 +45,7 @@ const DEFAULT_SETTINGS = (key) => {
 };
 
 export const loadSettingsStorage = async (key) => {
-  // console.log('loading', key, 'settings');
+  console.log('loading', key, '\'s settings');
   try {
     const storageObject = await AsyncStorage.getItem(key);
 

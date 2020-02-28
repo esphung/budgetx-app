@@ -35,6 +35,7 @@ function SlideUpView(props) {
     updateStoredTransactionNote,
     // clearState,
     dismiss,
+    updateStoredTransactionCategory
   } = props;
 
   // console.log(transaction);
@@ -110,6 +111,7 @@ function SlideUpView(props) {
                 transaction={transaction}
                 onDateChange={props.onDateChange}
                 setWindowHeight={setWindowHeight}
+                updateStoredTransactionCategory={updateStoredTransactionCategory}
               />
             </View>
           </TouchableWithoutFeedback>

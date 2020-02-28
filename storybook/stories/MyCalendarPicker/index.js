@@ -26,14 +26,14 @@ export default function MyCalendarPicker(props) {
     
             margin: 14,
 
-            // paddingBottom: 14,
+            paddingBottom: 14,
             // flex: 1,
             // backgroundColor: '#FFFFFF',
             // marginTop: 100,
     
-            backgroundColor: colors.dark,
+            // backgroundColor: colors.dark,
     
-            borderRadius: 9,
+            // borderRadius: 9,
 
             // shadowColor: '#0a101b',
             // shadowOffset: {

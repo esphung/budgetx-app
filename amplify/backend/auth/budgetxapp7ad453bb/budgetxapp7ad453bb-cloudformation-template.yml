@@ -85,7 +85,7 @@ Parameters:
                       
   userPoolGroupList:
     Type: CommaDelimitedList
-              
+                          
   dependsOn:
     Type: CommaDelimitedList
     
@@ -232,7 +232,7 @@ Resources:
             - ' }'
             - '};'
       Handler: index.handler
-      Runtime: nodejs10.x
+      Runtime: nodejs8.10
       Timeout: '300'
       Role: !GetAtt 
         - UserPoolClientRole

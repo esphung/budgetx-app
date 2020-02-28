@@ -332,7 +332,7 @@ const CustomizeCategoriesScreen = () => {
 
   // const [user, setUser] = useState(null);
 
-  const [storageKey, setStorageKey] = useState(null);
+  // const [storageKey, setStorageKey] = useState(null);
 
   // const [typeInputValue, setTypeInputValue] = useState(null);
 
@@ -347,10 +347,10 @@ const CustomizeCategoriesScreen = () => {
   const [helpMessage, setHelpMessage] = useState(null);
 
   // static methods
-  CustomizeCategoriesScreen.resetCategories = async (key) => {
+  CustomizeCategoriesScreen.resetCategories = async () => {
     // console.log(key);
     let success = false;
-    const storageObj = await loadSettingsStorage(key);
+    const storageObj = await loadSettingsStorage(storageKey);
 
     storageObj.categories = defaultCategories;
 
@@ -557,6 +557,7 @@ const CustomizeCategoriesScreen = () => {
 
   const retrieveStoredCategories = async () => {
     const storage = await loadSettingsStorage(storageKey);
+    console.log(storage)
     setData(storage.categories);
   };
 
@@ -695,18 +696,18 @@ const CustomizeCategoriesScreen = () => {
     setShowDialogBox(false);
 
     // retrieveStoredCategories();
-    retrieveCognitoUserKey();
+    // retrieveCognitoUserKey();
     // console.log('Cleared state');
   }
 
-  useEffect(() => {
-    if (storageKey) {
-      retrieveStoredCategories();
-    }
-    // return () => {
-    //   // effect
-    // };
-  }, [storageKey]);
+  // useEffect(() => {
+  //   if (storageKey) {
+  //     retrieveStoredCategories();
+  //   }
+  //   // return () => {
+  //   //   // effect
+  //   // };
+  // }, [storageKey]);
 
   // useEffect(() => {
   //   clearState();
@@ -756,6 +757,13 @@ const CustomizeCategoriesScreen = () => {
 
     };
   }, [data]);
+
+  useEffect(() => {
+    retrieveStoredCategories()
+    return () => {
+      // effect
+    };
+  }, [])
 
   // useEffect(() => {
   //   if (typeInputValue && !nameInputValue) {
@@ -1212,23 +1220,25 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
 
   // let categories = null;
 
-  let key = retrieveCognitoUserKey();
+  // let key = retrieveCognitoUserKey();
 
-  async function retrieveCognitoUserKey() {
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-        // setStorageKey(cognito.username);
 
-        // setEmail(cognito.attributes.email);
-        key = cognito.username;
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
-  }
+
+  // async function retrieveCognitoUserKey() {
+  //   Auth.currentAuthenticatedUser()
+  //     .then((cognito) => {
+  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
+  //       // console.log('username:', cognitoUser.username);
+  //       // setStorageKey(cognito.username);
+
+  //       // setEmail(cognito.attributes.email);
+  //       key = cognito.username;
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //       Alert.alert(err);
+  //     });
+  // }
 
   const promptUserForCategoryReset = async () => {
     await new Promise(() => {
@@ -1239,7 +1249,7 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
         {
           text: 'Reset All of My Categories',
           onPress: () => {
-            CustomizeCategoriesScreen.resetCategories(key);
+            CustomizeCategoriesScreen.resetCategories(storageKey);
           }
         }
       ];

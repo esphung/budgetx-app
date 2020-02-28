@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 // ui colors
 import colors from '../../../../colors';
@@ -41,7 +41,7 @@ class ItemNameInput extends Component {
     this.state = {
       text: '',
       payee,
-      storageKey: null,
+      // storageKey: null,
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -56,15 +56,15 @@ class ItemNameInput extends Component {
     const { payee } = this.state;
     await this.setState({ text: payee.name });
 
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setStorageKey(cognito.username);
-        this.setState({ storageKey: cognito.username });
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
+    // Auth.currentAuthenticatedUser()
+    //   .then((cognito) => {
+    //     // setStorageKey(cognito.username);
+    //     this.setState({ storageKey: cognito.username });
+    //   })
+    //   .catch((err) => {
+    //     // console.log(err);
+    //     Alert.alert(err);
+    //   });
   }
 
   handleTextChange(text) {

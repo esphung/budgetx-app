@@ -223,15 +223,17 @@ function UserOptions(props) {
       }]}
       data={[
         { key: 'Customize Categories' },
-        { key: 'Export Transactions' },
+        // { key: 'Export Transactions' },
         // { key: 'Passcode' },
-        { key: 'Change Password/Sign Out' },
+        // { key: 'Change Password/Sign Out' },
 
         { key: 'Backup Data' },
-        { key: '' },
-        { key: 'Contact Support' },
-        // { key: 'Passcode' },
         { key: 'Restore Backup' },
+
+        { key: '' },
+        // { key: 'Contact Support' },
+        // { key: 'Passcode' },
+        
         { key: 'Reset Data' },
         
 

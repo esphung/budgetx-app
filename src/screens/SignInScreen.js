@@ -6,6 +6,17 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 
+// import the Analytics category
+// import Analytics from '@aws-amplify/analytics';
+// Analytics.record({ name: String!, attributes: Object, metrics: Object })
+
+import Amplify from '@aws-amplify/core';
+import config from '../../aws-exports';
+Amplify.configure(config);
+
+// Analytics.record({ name: "User authenticated!" });
+// console.log('Analytics recorded user authenticated!');
+
 import SpinnerMask from '../../src/components/SpinnerMask';
 
 import HelpMessage from '../../storybook/stories/HelpMessage';
@@ -297,11 +308,17 @@ function SignInScreen(props) {
       .then((cognito) => {
         // console.log(cognito);
 
+         Analytics.record({ name: "Sign in attempted!"});
+          console.log('Analytics recorded sign in attempt!');
+
         if (cognito) {
           // set username key here!
           props.navigation.navigate('AuthLoading');
           // setIsLoading(false);
         }
+
+
+
       })
       .catch((err) => {
         // console.log('Error when signing in: ', err.message);
@@ -319,6 +336,10 @@ function SignInScreen(props) {
           setIsConfirmVisible(true);
         }
       });
+
+      // send record of sign in attempt to analytics
+      // Analytics.record({ name: "Sign in attempted!"});
+      // console.log('Analytics recorded sign in attempt!');
   };
 
   // function onChangeText(key, value) {
@@ -473,8 +494,6 @@ function SignInScreen(props) {
                       justifyContent: 'space-around',
 
                       alignItems: 'center',
-
-
                     }
                   }
                   />

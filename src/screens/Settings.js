@@ -72,7 +72,7 @@ import {
   clearSettingsStorage,
 } from '../storage/SettingsStorage';
 
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 // ui colors
 import colors from '../../colors';
@@ -171,23 +171,23 @@ function Settings(props) {
 
   const [transactions, setTransactions] = useState([]);
 
-  const [storageKey, setStorageKey] = useState(null);
+  // const [storageKey, setStorageKey] = useState(null);
 
   const [isReady, setIsReady] = useState(false);
 
   async function retrieveCognitoUser() {
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-        setStorageKey(cognito.username);
+    // Auth.currentAuthenticatedUser()
+    //   .then((cognito) => {
+    //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
+    //     // console.log('username:', cognitoUser.username);
+    //     setStorageKey(cognito.username);
 
-        setEmail(cognito.attributes.email);
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
+    //     setEmail(cognito.attributes.email);
+    //   })
+    //   .catch((err) => {
+    //     // console.log(err);
+    //     Alert.alert(err);
+    //   });
   }
 
   async function retrieveStoredSettingsTransactions(user_storage_key) {
@@ -515,7 +515,7 @@ function Settings(props) {
   }
 
   const clearState = async () => {
-    retrieveCognitoUser();
+    // retrieveCognitoUser();
     // console.log('Cleared');
   }
 

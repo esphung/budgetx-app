@@ -29,6 +29,77 @@ export default StyleSheet.create({
   //   // marginTop: 15, // '5%',
   //   // marginBottom: 5,
   // },
+  headerLeft: {
+    // flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    marginLeft: 15,
+    width: '100%',
+    height: '100%',
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+  },
+  normalMessage : {
+    width: 'auto',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 15,
+    fontStyle: 'normal',
+    letterSpacing: 0.13,
+    color: colors.white,
+    
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+  },
+
+  boldMessage: {
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
+    fontSize: 15,
+    fontStyle: 'normal',
+    letterSpacing: 0.13,
+    color: colors.white,
+    fontWeight: '600',
+  },
+
+  userImageMaskView: {
+    flex: 0.1,
+    width: 33,
+    height: 33,
+    // backgroundColor: colors.darkGreyBlue,
+    borderRadius: 50,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+
+  userImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 17,
+
+    // width: 27,// if user image available???
+    // height: 27,// if user image available???
+    // opacity: 0.2, // if no image available
+    // backgroundColor: '#ffffff'
+  },
+
+  userMessageView: {
+    flex: 1,
+    // flexDirection: 'column',
+    // height: '100%', // 36,
+    // left: 12,
+    // justifyContent: 'center',
+    marginLeft: 12,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
   settingsBtnTouchableOpacityMask: {
     // flex: 1,
     width: 35,

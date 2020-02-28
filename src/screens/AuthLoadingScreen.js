@@ -14,6 +14,14 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
+
+// // import the Analytics category
+// import Analytics from '@aws-amplify/analytics'
+// // Analytics.record({ name: String!, attributes: Object, metrics: Object })
+
+// // Analytics.record({ name: "User authenticated!" });
+// // console.log('Analytics recorded user authenticated!');
+
 import colors from '../../colors';
 
 import styles from '../../styles';

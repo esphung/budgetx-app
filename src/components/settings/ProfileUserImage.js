@@ -40,7 +40,7 @@ import {
 
 
 function ProfileUserImage() {
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(global.avatar);
 
   const [isReady, setIsReady] = useState(false);
 
@@ -49,14 +49,14 @@ function ProfileUserImage() {
   const [isLoading, setIsLoading] = useState(false);
 
   async function clearState() {
-    setIsReady(false);
-    setStorageKey(null);
-    setImage(null);
-    // setUser(null);
-    setIsLoading(false);
+    // setIsReady(false);
+    // setStorageKey(null);
+    // setImage(null);
+    // // setUser(null);
+    // setIsLoading(false);
 
     // retrieveCognitoUser();
-    retrieveCognitoUserKey();
+    // retrieveCognitoUserKey();
   }
 
   // this handles the image upload to S3
@@ -175,18 +175,18 @@ function ProfileUserImage() {
   }, [storageKey]);
 
 
-  async function retrieveCognitoUserKey() {
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-        setStorageKey(cognito.username);
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
-  }
+  // async function retrieveCognitoUserKey() {
+  //   Auth.currentAuthenticatedUser()
+  //     .then((cognito) => {
+  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
+  //       // console.log('username:', cognitoUser.username);
+  //       setStorageKey(cognito.username);
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //       Alert.alert(err);
+  //     });
+  // }
   // async function retrieveImages() {
   //   await Asset.loadAsync([
   //     avatarPicture,
@@ -252,14 +252,10 @@ function ProfileUserImage() {
   if (isLoading) {
     return spinnerView;
   } else {
-    if (isReady) {
+    // if (isReady) {
       return (
         <View style={styles.container}>
-          <TouchableOpacity
-
-            onPress={getPermissionAsync}
-            style={styles.userImageMaskView}
-          >
+          <TouchableOpacity disabled onPress={getPermissionAsync} style={styles.userImageMaskView}>
             <Image
 
               style={styles.userImage}
@@ -268,10 +264,10 @@ function ProfileUserImage() {
           </TouchableOpacity>
         </View>
       );
-    } else {
-      return appLoading;
-      // return <SpinnerMask />;
-    }
+    // } else {
+    //   return appLoading;
+    //   // return <SpinnerMask />;
+    // }
   }
 }
 

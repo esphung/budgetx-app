@@ -12,7 +12,7 @@ import {
   Alert,
 } from 'react-native';
 
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 // import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -120,7 +120,7 @@ const MIN_PILL_WIDTH = 54;
 // }
 
 function SlideUpTransactionRect(props) {
-  let { transaction } = props;
+  let { transaction,  updateStoredTransactionCategory } = props;
 
 
   const [dataIsLoaded, setDataIsLoaded] = useState(false);
@@ -147,7 +147,7 @@ function SlideUpTransactionRect(props) {
 
   // const [transactions, setTransactions] = useState(null);
 
-  const [storageKey, setStorageKey] = useState(null);
+  // const [storageKey, setStorageKey] = useState('CURRENT_USER');
 
   const [data, setData] = useState(null);
 
@@ -167,38 +167,38 @@ function SlideUpTransactionRect(props) {
 
   const [shouldShowNoteInputBtn, setShouldShowNoteInputBtn] = useState(true);
 
-  const updateStoredTransactionCategory = async (category) => {
-    // load stored user transactions
-    try {
-      const storageObj = await loadSettingsStorage(storageKey);
+  // const updateStoredTransactionCategory = async (category) => {
+  //   // load stored user transactions
+  //   try {
+  //     const storageObj = await loadSettingsStorage(storageKey);
 
-      const found = searchByID(transaction.id, storageObj.transactions);
+  //     const found = searchByID(transaction.id, storageObj.transactions);
 
-      if (found) {
-        found.category = category;
+  //     if (found) {
+  //       found.category = category;
 
-        found.type = category.type;
+  //       found.type = category.type;
 
-        const pos = storageObj.transactions.indexOf(found);
+  //       const pos = storageObj.transactions.indexOf(found);
 
-        if (storageObj.transactions[pos].type === 'income' && storageObj.transactions[pos].amount < 0) {
-          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
-        } else if (storageObj.transactions[pos].type === 'expense' && storageObj.transactions[pos].amount >= 0) {
-          storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
-        }
+  //       if (storageObj.transactions[pos].type === 'income' && storageObj.transactions[pos].amount < 0) {
+  //         storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
+  //       } else if (storageObj.transactions[pos].type === 'expense' && storageObj.transactions[pos].amount >= 0) {
+  //         storageObj.transactions[pos].amount = storageObj.transactions[pos].amount * -1;
+  //       }
 
-        // console.log(storageObj.transactions[pos]);
+  //       // console.log(storageObj.transactions[pos]);
 
-        saveSettingsStorage(storageKey, storageObj);
+  //       saveSettingsStorage(storageKey, storageObj);
 
-        props.handleTransactionChange(storageObj.transactions, storageObj.transactions[pos]);
-      }
-    } catch (e) {
-      // statements
-      Alert.alert('Could not update transaction');
-      // console.log(e);
-    }
-  };
+  //       props.handleTransactionChange(storageObj.transactions, storageObj.transactions[pos]);
+  //     }
+  //   } catch (e) {
+  //     // statements
+  //     Alert.alert('Could not update transaction');
+  //     // console.log(e);
+  //   }
+  // };
 
 
   function Item({ item }) {
@@ -286,14 +286,14 @@ function SlideUpTransactionRect(props) {
 
   async function retrieveCognitoUserKey() {
     // console.log('loading');
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        setStorageKey(cognito.username);
-      })
-      .catch((err) => {
-        // console.log(err);
-        console.log(err);
-      });
+    // Auth.currentAuthenticatedUser()
+    //   .then((cognito) => {
+    //     setStorageKey(cognito.username);
+    //   })
+    //   .catch((err) => {
+    //     // console.log(err);
+    //     console.log(err);
+    //   });
   }
 
   const retrieveStoredCategories = async (key) => {

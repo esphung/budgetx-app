@@ -3,6 +3,9 @@ import {
   Text,
 } from 'react-native';
 
+// import Amplify, { Analytics } from '@aws-amplify/core';
+// // Analytics.record({ name: String!, attributes: Object, metrics: Object })
+
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import PropTypes from 'prop-types';
