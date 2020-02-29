@@ -24,31 +24,31 @@ CREATED:    Thu Oct 31 23:17:49 2019
 
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Audio } from 'expo-av';
+// import { Audio } from 'expo-av';
 
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   // ScrollView,
   Animated,
-  Alert,
+  // Alert,
   AsyncStorage
 } from 'react-native';
 
 // import AsyncStorage from '@react-native-community/async-storage';
 
-export function logCurrentStorage() {
-  AsyncStorage.getAllKeys().then((keyArray) => {
-    AsyncStorage.multiGet(keyArray).then((keyValArray) => {
-      let myStorage: any = {};
-      for (let keyVal of keyValArray) {
-        myStorage[keyVal[0]] = keyVal[1]
-      }
+// export function logCurrentStorage() {
+//   AsyncStorage.getAllKeys().then((keyArray) => {
+//     AsyncStorage.multiGet(keyArray).then((keyValArray) => {
+//       const myStorage: any = {};
+//       for (let keyVal of keyValArray) {
+//         myStorage[keyVal[0]] = keyVal[1];
+//       }
 
-      console.log('CURRENT STORAGE: ', myStorage);
-    })
-  });
-}
+//       // console.log('CURRENT STORAGE: ', myStorage);
+//     });
+//   });
+// }
 
 // import Auth from '@aws-amplify/auth';
 
@@ -110,8 +110,6 @@ const initialState = {
   isCurrentTransaction: false,
 };
 
-
-
 export default function Home() {
   // state hooks
   const [transactions, setTransactions] = useState(initialState.transactions);
@@ -125,6 +123,8 @@ export default function Home() {
   const [currentType, setCurrentType] = useState(initialState.currentType);
   const [currentAmount, setCurrentAmount] = useState(initialState.currentAmount);
   const [currentDate, setCurrentDate] = useState(initialState.currentDate);
+  const [currentOwner, setCurrentOwner] = useState(null);
+  const [currentVersion, setCurrentVersion] = useState(0);
   const [currentPayee, setCurrentPayee] = useState(initialState.currentPayee);
   const [currentNote, setCurrentNote] = useState(initialState.currentNote);
   const [slideViewBounceValue, setSlideViewBounceValue] = useState(initialState.slideViewBounceValue);
@@ -143,7 +143,7 @@ export default function Home() {
   const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
 
   Home.reloadTransactions = function(){
-    cacheResourcesAsync();
+    retrievSettings();
   };
 
   const handleTransactionChange = async (transactions, updatedTransaction) => {
@@ -164,6 +164,7 @@ export default function Home() {
     } catch(e) {
       // statements
       // console.log(e);
+      console.log('e: ', e);
     }
     
   };
@@ -198,6 +199,8 @@ export default function Home() {
         setTransactions(list);
 
         setCurrentTransaction(list[pos]);
+
+        setCurrentTransaction(null);
       }
     } catch (e) {
       // statements
@@ -236,6 +239,7 @@ export default function Home() {
       // statements
       // Alert.alert('Could not update transaction');
       // console.log(e);
+      console.log('e: ', e);
     }
   };
 
@@ -253,16 +257,14 @@ export default function Home() {
 
       const found = searchByID(currentTransaction.id, list);
 
-
-      // set stored user image
-      // console.log('stored user settings image:', storageObj.image);
       if (found) {
-        // found stored image
-        // setImage(storageObj.image);
-        // found.note = note;
-        // console.log('previous note:', found.note);
-
+        // UPDATE TRANSACTION
         found.note = string;
+
+        found.version = found.version + 1;
+
+        console.log('found.version: ', found.version);
+
         // console.log('new note:', found.note);
 
         const pos = list.indexOf(found);
@@ -280,44 +282,12 @@ export default function Home() {
         // setCurrentAmount(initialState.currentAmount);
         // setCurrentCategory(initialState.currentCategory);
         setCurrentTransaction(list[pos]);
-        // setCurrentType(initialState.currentType);
-
-        // return from here
-        // return;
-
-
-        // let i = storageObj.transactions.length - 1;
-        // for (i; i >= 0; i -= 1) {
-        //   if (storageObj.transactions[i].id === found.id) {
-        //     // set user transaction payee
-        //     storageObj.transactions[i] = found;
-
-        //     // console.log(storageObj.transactions[i]);
-
-        //     // save transactions list
-        //     // saveUserObject(userObject);
-        //     // saveSettingsStorage(this.state.storageKey, userObject);
-
-        //     saveSettingsStorage(storageKey, storageObj);
-
-        //     setTransactions(storageObj.transactions);
-
-        //     // setCurrentPayee(null);
-        //     // setCurrentNote(null);
-        //     // setCurrentAmount(initialState.currentAmount);
-        //     // setCurrentCategory(initialState.currentCategory);
-        //     setCurrentTransaction(storageObj.transactions[i]);
-        //     // setCurrentType(initialState.currentType);
-
-        //     // return from here
-        //     // return;
-        //   }
-        // }
       }
     } catch (e) {
       // statements
       // Alert.alert('Could not load settings');
       // console.log(e);
+      console.log('e: ', e);
     }
   };
 
@@ -355,14 +325,13 @@ export default function Home() {
 
     // setStorageKey(null);
     // retrieveStoredTransactions(); // load stored user
-    await cacheResourcesAsync();
+    await retrievSettings();
     // console.log('Cleared');
   }
 
-  async function cacheResourcesAsync() {
-    console.log('loading '  + storageKey + '\'s categories');
+  async function retrievSettings() {
+    // console.log('loading '  + storageKey + '\'s categories');
     const userObject = await loadSettingsStorage(storageKey); // load user object
-
     // console.log(userObject);
 
     setCategories(userObject.categories);
@@ -391,12 +360,13 @@ export default function Home() {
 
     setTransactions(userObject.transactions);
 
-    setCurrentPayee(null);
-    setCurrentNote(null);
-    setCurrentAmount(initialState.currentAmount);
-    setCurrentCategory(initialState.currentCategory);
-    setCurrentTransaction(initialState.currentTransaction);
-    setCurrentType(initialState.currentType);
+    // setCurrentPayee(null);
+    // setCurrentNote(null);
+    // setCurrentAmount(initialState.currentAmount);
+    // setCurrentCategory(initialState.currentCategory);
+    // setCurrentTransaction(initialState.currentTransaction);
+    // setCurrentType(initialState.currentType);
+
   }
 
   async function removeUserTransaction(transaction) {
@@ -418,12 +388,12 @@ export default function Home() {
 
       saveSettingsStorage(storageKey, userObject);
 
-      setCurrentPayee(null);
-      setCurrentNote(null);
-      setCurrentAmount(initialState.currentAmount);
-      setCurrentCategory(initialState.currentCategory);
-      setCurrentTransaction(initialState.currentTransaction);
-      setCurrentType(initialState.currentType);
+      // setCurrentPayee(null);
+      // setCurrentNote(null);
+      // setCurrentAmount(initialState.currentAmount);
+      // setCurrentCategory(initialState.currentCategory);
+      // setCurrentTransaction(initialState.currentTransaction);
+      // setCurrentType(initialState.currentType);
 
       // hide slide view
       hideSlideView();
@@ -432,16 +402,22 @@ export default function Home() {
   }
 
   function addTransaction() {
+    // console.log('storageKey: ', storageKey);
+
+    // Transaction(date, amount, owner, payee, category, type, note, version)
     if (currentAmount && currentCategory) {
       const transaction = new Transaction(
         currentDate, // date
         Number(currentAmount).toFixed(2) / 100, // amount
+        currentOwner,
         currentPayee, // payee
         currentCategory, // category
         currentType, // type
         currentNote, // note
+        currentVersion,
       );
-      storeUserTransaction(transaction);   
+      // console.log('transaction: ', transaction);
+      storeUserTransaction(transaction);
     }
    
     // clearState();
@@ -468,7 +444,7 @@ export default function Home() {
       Animated.spring(
         slideViewBounceValue,
         {
-          toValue: 300,
+          toValue: 400,
           velocity: 10,
           tension: 12,
           friction: 8,
@@ -547,11 +523,10 @@ export default function Home() {
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(key);
-
       setTransactions(storageObj.transactions);
     } catch (e) {
       // statements;
-      console.log(e);
+     console.log('e: ', e);
     }
   }
 
@@ -786,7 +761,7 @@ export default function Home() {
 
     setCurrentTransaction(null);
 
-    // cacheResourcesAsync();
+    // retrievSettings();
 
     
     // save transaction
@@ -818,7 +793,7 @@ export default function Home() {
 
     // setStorageKey(null);
     // // retrieveStoredTransactions(); // load stored user
-    // await cacheResourcesAsync();
+    // await retrievSettings();
     // console.log('Cleared');
 
   }
@@ -842,7 +817,7 @@ export default function Home() {
     >
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={cacheResourcesAsync} // {(payload) => clearState()}
+        onWillFocus={clearState} // {(payload) => clearState()}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         // onWillBlur={clearState} // console.log('will blur',payload)}
@@ -1009,7 +984,7 @@ Home.navigationOptions = () => {
       saveSettingsStorage(storageKey, storageObj);
       storageKey = string;
 
-      // Home.cacheResourcesAsync();
+      // Home.retrievSettings();
       Home.reloadTransactions();
     }
 

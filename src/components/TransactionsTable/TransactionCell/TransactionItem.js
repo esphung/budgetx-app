@@ -34,13 +34,14 @@ function TransactionItem(props) {
     isNameInputEnabled,
   } = props;
 
+  // console.log('item: ', item);
+
   let { category } = item;
 
-  if (!category) {
-    category = {
-      name: 'Category',
-      color: colors.white,
-    };
+  let name = '';
+
+  if (category) {
+    name = category.name;
   }
 
   let textColor = colors.offWhite; // 'rgba(255, 255, 255, 0.5)';
@@ -104,7 +105,9 @@ function TransactionItem(props) {
         >
           <CategoryLabel
             // item={item}
-            name={category.name}
+            // name={category.name}
+            // name="Hello"
+            name={name}
             textColor={textColor}
           />
         </View>
@@ -122,7 +125,7 @@ function TransactionItem(props) {
             }
           }
         >
-          <ItemNameInput isNameInputEnabled={isNameInputEnabled} item={item}  handlePayeeNameChange={props.handlePayeeNameChange} />
+          <ItemNameInput isNameInputEnabled={isNameInputEnabled} item={item} handlePayeeNameChange={props.handlePayeeNameChange} />
         </View>
 
         {/* <ItemDate item={item} /> */}
@@ -135,4 +138,3 @@ function TransactionItem(props) {
 
 
 export default TransactionItem;
-

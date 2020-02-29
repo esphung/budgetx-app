@@ -10,9 +10,7 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import {
-  Text,
-} from 'react-native';
+import { Text } from 'react-native';
 
 import styles from '../../../../styles';
 
@@ -27,7 +25,7 @@ function ItemSymbol(props) {
         [
           styles.itemSymbolStyle,
           {
-            color: `${color}`,
+            color: color,
             // fontFamily: 'SFProDisplay-Semibold',
             // fontSize: 17,
             // fontWeight: 'normal',

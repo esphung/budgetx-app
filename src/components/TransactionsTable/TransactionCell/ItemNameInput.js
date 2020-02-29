@@ -16,21 +16,21 @@ import colors from '../../../../colors';
 
 import styles from '../../../../styles';
 
-import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-} from '../../../storage/SettingsStorage';
+// import {
+//   loadSettingsStorage,
+//   saveSettingsStorage,
+// } from '../../../storage/SettingsStorage';
 
-import {
-  loadPayees,
-  savePayees
-} from '../../../storage/PayeesStorage';
+// import {
+//   loadPayees,
+//   savePayees
+// } from '../../../storage/PayeesStorage';
 
-import Payee from '../../../models/Payee';
+// import Payee from '../../../models/Payee';
 
-import searchByName from '../../../functions/searchByName';
+// import searchByName from '../../../functions/searchByName';
 
-import searchByID from '../../../functions/searchByID';
+// import searchByID from '../../../functions/searchByID';
 
 class ItemNameInput extends Component {
   constructor(props) {
@@ -38,9 +38,15 @@ class ItemNameInput extends Component {
 
     const { payee, isNameInputEnabled } = props.item;
 
+    let name = ''
+
+    if (payee) {
+      name = payee.name
+    }
+
     this.state = {
       text: '',
-      payee,
+      payee: name,
       // storageKey: null,
     };
 
@@ -54,7 +60,7 @@ class ItemNameInput extends Component {
 
   async componentDidMount() {
     const { payee } = this.state;
-    await this.setState({ text: payee.name });
+    await this.setState({ text: payee });
 
     // Auth.currentAuthenticatedUser()
     //   .then((cognito) => {

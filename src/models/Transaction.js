@@ -14,6 +14,21 @@ import Category from './Category';
 
 import colors from '../../colors';
 
+import uuidv4 from '../functions/uuidv4';
+
+export default function Transaction(date, amount, owner, payee, category, type, note, version) {
+  this.id = uuidv4();
+  this.date = date
+  this.amount = amount
+  this.payee = payee
+  this.category = category
+  this.type = type
+  this.note = note
+  this.owner = owner
+  this.version = version
+}
+
+
 // var ID = function () {
 //   // Math.random should be unique because of its seeding algorithm.
 //   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
@@ -21,46 +36,46 @@ import colors from '../../colors';
 //   return Math.random().toString(36).substr(2, 9);
 // };
 
-export default function Transaction(date, amount, payee, category, type, note) {
-  const currentDate = new Date();
+// export default function Transaction(date, amount, payee, category, type, note) {
+//   const currentDate = new Date();
 
-  // if (category) {
-  //   // const id = category.id;
-  //   // const created = category.created;
-  //   category = new Category(category.name, category.color, category.type);
-  //   category.created = category.created;
-  //   category.id = id;
-  // }
+//   // if (category) {
+//   //   // const id = category.id;
+//   //   // const created = category.created;
+//   //   category = new Category(category.name, category.color, category.type);
+//   //   category.created = category.created;
+//   //   category.id = id;
+//   // }
 
-  // console.log(category);
+//   // console.log(category);
 
-  this.id = `${Date.now(currentDate)}`,
-  this.date = (date) ? date : currentDate;
-  this.amount = amount ? amount : Number.parseFloat(0).toFixed(2);
-  this.payee = payee ? payee : new Payee();
-  this.category = (category) ? category : new Category();
-  this.type = (type) ? type: this.category.type;
-
-
-  // this.created = currentDate;
-  this.note = note ? note : '';
-
-  if (this.type !== 'income') {
-    this.amount = this.amount * -1.0
-  }
-}
-
-// module.exports = Transaction;
+//   this.id = `${Date.now(currentDate)}`,
+//   this.date = (date) ? date : currentDate;
+//   this.amount = amount ? amount : Number.parseFloat(0).toFixed(2);
+//   this.payee = payee ? payee : new Payee();
+//   this.category = (category) ? category : new Category();
+//   this.type = (type) ? type: this.category.type;
 
 
-// //  TESTING
-// // const o = new Transaction(new Date(), 2218.33, new Payee(), new Category('Test', colors.white), 'expense')
-// // console.log(o)
-// // // console.log(typeof o.created);
+//   // this.created = currentDate;
+//   this.note = note ? note : '';
 
-// const transaction = new Transaction()
+//   if (this.type !== 'income') {
+//     this.amount = this.amount * -1.0
+//   }
+// }
 
-// console.log(transaction)
+// // module.exports = Transaction;
+
+
+// // //  TESTING
+// // // const o = new Transaction(new Date(), 2218.33, new Payee(), new Category('Test', colors.white), 'expense')
+// // // console.log(o)
+// // // // console.log(typeof o.created);
+
+// // const transaction = new Transaction()
+
+// // console.log(transaction)
 
 
 
