@@ -360,12 +360,12 @@ export default function Home() {
 
     setTransactions(userObject.transactions);
 
-    // setCurrentPayee(null);
-    // setCurrentNote(null);
-    // setCurrentAmount(initialState.currentAmount);
-    // setCurrentCategory(initialState.currentCategory);
-    // setCurrentTransaction(initialState.currentTransaction);
-    // setCurrentType(initialState.currentType);
+    setCurrentPayee(null);
+    setCurrentNote(null);
+    setCurrentAmount(initialState.currentAmount);
+    setCurrentCategory(initialState.currentCategory);
+    setCurrentTransaction(initialState.currentTransaction);
+    setCurrentType(initialState.currentType);
 
   }
 
@@ -401,25 +401,43 @@ export default function Home() {
     }
   }
 
-  function addTransaction() {
-    // console.log('storageKey: ', storageKey);
-
-    // Transaction(date, amount, owner, payee, category, type, note, version)
+  function createTransaction() {
     if (currentAmount && currentCategory) {
+      // Transaction(date, amount, owner, payee, category, type, note, version)
+
+      let amount = currentAmount / 100;
+      if (currentType.toLowerCase() === 'expense') {
+        // convert amount to money format
+        amount = (currentType.toLowerCase() === 'income') ? amount : amount * -1; // income/expense
+        // console.log('amount: ', amount);
+      } else {
+        amount = Number(currentAmount).toFixed(2) / 100 // amount
+      }
+
       const transaction = new Transaction(
         currentDate, // date
-        Number(currentAmount).toFixed(2) / 100, // amount
-        currentOwner,
+        // Number(currentAmount).toFixed(2) / 100, // amount
+        amount,
+        currentOwner, // owner
         currentPayee, // payee
         currentCategory, // category
         currentType, // type
         currentNote, // note
         currentVersion,
       );
-      // console.log('transaction: ', transaction);
-      storeUserTransaction(transaction);
+
+      console.log('transaction: ', transaction);
+      return  transaction;
     }
-   
+  }
+
+  function addTransaction() {
+    // console.log('storageKey: ', storageKey);
+
+    const transaction = createTransaction();
+    
+    storeUserTransaction(transaction);
+
     // clearState();
   }
 
@@ -971,8 +989,8 @@ export default function Home() {
 
 Home.navigationOptions = () => {
   let boldMessage = 'Get device cross-sync' // `${global.appName} ${global.appVersion} (Basic)`;
-  // let normalMessage = `${global.appName} Pro is coming soon! :D`;
-  let normalMessage = 'Enter your email';
+  let normalMessage = `${global.appName} ${global.appVersion}`;
+  // let normalMessage = 'Enter your email';
   async function onUsernameSubmit(string) {
     // console.log('string: ', string);
 

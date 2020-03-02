@@ -198,7 +198,7 @@ function UserOptions(props) {
   }
   const view = (
     <SwipeListView
-      scrollEnabled
+      // scrollEnabled
       // style={styles.table}
 
       // style={
@@ -228,10 +228,10 @@ function UserOptions(props) {
         // { key: 'Change Password/Sign Out' },
 
         { key: 'Backup Data' },
-        { key: 'Restore Backup' },
 
         { key: '' },
-        // { key: 'Contact Support' },
+        { key: 'Restore Backup' },
+        { key: 'Contact Support' },
         // { key: 'Passcode' },
         
         { key: 'Reset Data' },

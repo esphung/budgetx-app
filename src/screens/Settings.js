@@ -9,6 +9,7 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
             12/06/2019 02:20 AM | Added Log out functionality
             12/06/2019 03:15 PM
             12/09/2019 12:32 PM
+            03/01/2020 02:52 PM | Removed username and email textinputs
 */
 
 import React, { useState, useEffect } from 'react';
@@ -329,11 +330,12 @@ function Settings(props) {
   };
 
 
-  const send = () => {
-    // const userObject = await loadUserObject();
+  const send = async () => {
+    const userObject = await loadSettingsStorage(storageKey);
+    // console.log('userObject: ', userObject);
     MailComposer.composeAsync({
       recipients: [global.adminEmailAddress],
-      subject: `Issue #${Date.now()}`,
+      subject: `Contact Support | ${global.appName} ${global.appVersion}`,  // `Issue #${Date.now()}`,
       body: '', // `<p>${userObject.user.username}</p>`,
       attachments: [],
       isHtml: false,
@@ -554,7 +556,7 @@ function Settings(props) {
   // }, [isPasscodeEnabled])
 
   const view = (
-    <SafeAreaView
+    <View
       style={styles.container}
     >
         <NavigationEvents
@@ -568,6 +570,7 @@ function Settings(props) {
 
         <View style={rectangle5} />
 
+   
         <View
           style={
             {
@@ -581,6 +584,7 @@ function Settings(props) {
         >
           <ProfileRectangle />
         </View>
+   
 
         <View
           style={
@@ -621,7 +625,7 @@ function Settings(props) {
         <View
           style={
             {
-              flex: 0.4,
+              flex: 0.5,
               alignItems: 'center',
               justifyContent: 'center',
 
@@ -699,7 +703,7 @@ function Settings(props) {
           </View>
 
           <View style={{
-            flex: 0.5,
+            flex: 1,
             justifyContent: 'center',
 
 
@@ -711,7 +715,7 @@ function Settings(props) {
             <VersionCredit />
           </View>
         </View>
-    </SafeAreaView>
+    </View>
   );
 
   return view;
