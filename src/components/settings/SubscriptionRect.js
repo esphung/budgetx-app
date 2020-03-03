@@ -87,21 +87,21 @@ function SubscriptionRect() {
 
       <TouchableOpacity disabled style={mask}>
         <View
-          style={
-            {
-              flex: 0.25,
-              backgroundColor: colors.shamrockGreen,
+          // style={
+          //   {
+          //     flex: 0.25,
+          //     backgroundColor: colors.shamrockGreen,
 
-              padding: 10,
+          //     padding: 10,
 
-              // opacity: 0.77,
+          //     // opacity: 0.77,
 
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
-            }
+          //     // borderWidth: 1,
+          //     // borderColor: 'white',
+          //     // borderStyle: 'solid',
+          //   }
 
-          }
+          // }
         >
           <View>
             <Image

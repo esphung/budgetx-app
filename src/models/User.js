@@ -22,13 +22,16 @@ UPDATED:
 
 // import defaultCategories from '../data/categories';
 
+import uuidv4 from '../functions/uuidv4';
+
 // User function with multiple constructors
-export default function User(username) {
-  const currentDate = new Date();
+export default function User() {
+  // const currentDate = new Date();
   // this.id = `${Date.now(currentDate)}`;
   return {
-    id: `${Date.now(currentDate)}`,
-    username: username,
+    // id: `${Date.now(currentDate)}`,
+    id:  uuidv4(),
+    username: '', // username, // User's Storage Key
     email: '' // email;
   }
   // this.phoneNumber = '';

@@ -234,6 +234,7 @@ function SlideUpTransactionRect(props) {
             maxWidth: MAX_PILL_WIDTH,
 
             height: 28,
+            maxWidth: 170,
 
             alignItems: 'center',
             justifyContent: 'center',
@@ -618,8 +619,8 @@ function SlideUpTransactionRect(props) {
                 }}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                decelerationRate={0}
-                snapToAlignment="center"
+                // decelerationRate={0}
+                // snapToAlignment="center"
 
                 data={data}
                 renderItem={({ item }) => <Item item={item} transaction={transaction} />}

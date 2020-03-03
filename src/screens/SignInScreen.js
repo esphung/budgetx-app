@@ -11,8 +11,8 @@ import { NetworkConsumer } from 'react-native-offline';
 // Analytics.record({ name: String!, attributes: Object, metrics: Object })
 
 import Amplify from '@aws-amplify/core';
-import config from '../../aws-exports';
-Amplify.configure(config);
+// import config from '../../aws-exports';
+// Amplify.configure(config);
 
 // Analytics.record({ name: "User authenticated!" });
 // console.log('Analytics recorded user authenticated!');

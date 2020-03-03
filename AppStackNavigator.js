@@ -23,7 +23,7 @@ import { createAppContainer } from 'react-navigation';
 import Home from './src/screens/Home';
 import Settings from './src/screens/Settings';
 // import Search from './src/screens/Search';
-import Terms from './src/screens/Terms';
+// import Terms from './src/screens/Terms';
 
 import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen';
 
@@ -32,7 +32,6 @@ import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 import colors from './colors';
 
 const StackNavigator = createStackNavigator({
-
   Home: {
     screen: Home, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
@@ -47,14 +46,6 @@ const StackNavigator = createStackNavigator({
       headerBackTitle: null,
     }),
   },
-  Terms: {
-    screen: Terms,
-    navigationOptions: () => ({
-      title: 'Terms of Service',
-      headerBackTitle: '',
-    }),
-  },
-
   ChangePasswordScreen: {
     screen: ChangePasswordScreen,
   },

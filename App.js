@@ -46,16 +46,17 @@ import { NetworkProvider } from 'react-native-offline';
 
 import { AppLoading } from 'expo';
 
+import './globals'; // global values
+
 // import { Audio } from 'expo-av';
 
 // Amplify imports and config
 // import Amplify from '@aws-amplify/core';
-import Amplify from '@aws-amplify/core';
+// import Amplify from '@aws-amplify/core';
 // Analytics.record({ name: String!, attributes: Object, metrics: Object })
-import config from './aws-exports';
+// import config from './aws-exports';
 
-
-
+// Amplify.configure(config);
 
 // import Analytics from '@aws-amplify/analytics';
 
@@ -63,20 +64,11 @@ import config from './aws-exports';
 // console.log('Analytics recorded sign in attempt!');
 
 
-
-
-
-
-
 import SwitchNavigator from './SwitchNavigator';
 
 import AppStackNavigator from './AppStackNavigator';
 
-import './globals'; // global values
-
-import Storybook from './storybook';
-
-Amplify.configure(config);
+// import Storybook from './storybook';
 
 // function clearLines(lines) {
 //   let i = 0;
@@ -113,15 +105,15 @@ Amplify.configure(config);
 // clearLines(35);
 // console.log(`Application ${global.appName} Loading:`, Date.now());
 
+// global.userShouldLogin = false;
+
 export default function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
   // const navigator = <NetworkProvider><SwitchNavigator /></NetworkProvider>;
 
-  const navigator = <AppStackNavigator />;
-
-  const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
+  // const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
 
   let view = null;
 
@@ -134,48 +126,30 @@ export default function App() {
         'SFProDisplay-Regular': global.SFProDisplayRegularFont, // require('./assets/fonts/SF-Pro-Display-Regular.otf');
         'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
       });
-
       // _playRecording(); // inside async func
 
       // stored fonts have been loaded
       setFontsAreLoaded(true);
     } catch (err) {
-      console.log('error: ', err);
+      // console.log('error: ', err);
     }
   }
 
-  // let view = (
-  //   <View
-  //     style={{
-  //       flex: 1,
-  //       backgroundColor: 'pink',
-  //     }}
-  //   />
-  // );s
-
-  // let appLoading = (
-  //   <AppLoading
-  //     startAsync={loadApplicationResources}
-  //     onFinish={setIsReady}
-  //     // onError={console.warn}
-  //     onError={() => {
-  //     return <View style={{
-  //       flex: 1,
-  //       backgroundColor: 'blue',
-  //     }} />
-  //     }}
-  //   />
-  // );
-
-  if (global.isStorybookModeOn) {
-    return storybook;
-  }
+  // if (global.isStorybookModeOn) {
+  //   // return storybook;
+  //   return <Storybook />;
+  // }
 
   if (!fontsAreLoaded) {
     loadApplicationResources();
     view = <AppLoading />;
-  } else {
-    view = navigator;
+  }
+  // else if (global.userShouldLogin) {
+  //   view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
+  // }
+  else {
+    view = <AppStackNavigator />; // no login
+    // view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
   }
   return view;
 }

@@ -16,6 +16,8 @@ import React, { useState, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
 
+import { withNavigation } from 'react-navigation';
+
 import {
   // StyleSheet,
   View,
@@ -165,6 +167,7 @@ ${getHTMLObjectRows(data)}
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
+  const { navigation } = props;
 
   const [user, setUser] = useState(null);
 
@@ -176,23 +179,32 @@ function Settings(props) {
 
   const [isReady, setIsReady] = useState(false);
 
-  async function retrieveCognitoUser() {
-    // Auth.currentAuthenticatedUser()
-    //   .then((cognito) => {
-    //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
-    //     // console.log('username:', cognitoUser.username);
-    //     setStorageKey(cognito.username);
+  const [isBackupDisabled, setIsBackupDisabled] = useState(false);
 
-    //     setEmail(cognito.attributes.email);
-    //   })
-    //   .catch((err) => {
-    //     // console.log(err);
-    //     Alert.alert(err);
-    //   });
-  }
+  const [isRestoreDisabled, setIsRestoreDisabled] = useState(false);
+
+  const [currentSettingsVersion, setCurrentSettingsVersion] = useState(0);
+
+  const [optionOpacity, setOptionOpacity] = useState(1.0)
+
+  // async function retrieveCognitoUser() {
+  //   // Auth.currentAuthenticatedUser()
+  //   //   .then((cognito) => {
+  //   //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
+  //   //     // console.log('username:', cognitoUser.username);
+  //   //     setStorageKey(cognito.username);
+
+  //   //     setEmail(cognito.attributes.email);
+  //   //   })
+  //   //   .catch((err) => {
+  //   //     // console.log(err);
+  //   //     Alert.alert(err);
+  //   //   });
+  // }
 
   async function retrieveStoredSettingsTransactions(user_storage_key) {
     // load stored user transactions
+    // console.log('user_storage_key: ', user_storage_key);
     try {
       const storageObj = await loadSettingsStorage(user_storage_key);
 
@@ -203,6 +215,8 @@ function Settings(props) {
           // found stored image
           // console.log(storageObj.transactions);
           setTransactions(storageObj.transactions);
+
+          setCurrentSettingsVersion(storageObj.version);
         }
       }
     } catch (e) {
@@ -215,18 +229,25 @@ function Settings(props) {
   const restoreBackedUpData = async () => {
     let success = false;
     const backup_key = `${storageKey}_BACKUPSETTINGS`
-    // load stored settings
+    // load backed up user settings
     try {
       const storage = await loadSettingsStorage(backup_key);
 
-      console.log(storage);
-      console.log('Restored from:', backup_key);
+      // console.log(storage);
+      // console.log('Restored from:', backup_key);
 
       // set stored user transactions
-      if (storage && storageKey !== null) {
+      if (storage !== null && storageKey !== null) {
         // console.log('stored user settings transactions:', storageObj.transactions);
-        saveSettingsStorage(storageKey, storage)
+        saveSettingsStorage(storageKey, storage);
+
+        setCurrentSettingsVersion(storage.version)
+
         success = true;
+
+        setIsRestoreDisabled(true);
+
+        setIsBackupDisabled(false)
       }
     } catch (e) {
       // statements
@@ -235,30 +256,39 @@ function Settings(props) {
     }
 
     // if (success) {
-    //   Alert.alert('Backup data restored successfully');
+    //   // Alert.alert('Backup data restored successfully');
+    //   // console.log('currentSettingsVersion: ', currentSettingsVersion);s
+    //   setOptionOpacity(0.2)
     // }
   };
-
-
-
 
   const backupStoredSettings = async () => {
     let success = false;
     const backup_key = `${storageKey}_BACKUPSETTINGS`
     // load stored settings
     try {
-      const storage = await loadSettingsStorage(storageKey);
+      const storageObj = await loadSettingsStorage(storageKey);
+      if (!storageObj.version) {
+        storageObj.version = 1;
+      } else {
+        storageObj.version += 1;
+      }
+      console.log('storageObj.version: ', storageObj.version);
 
       // console.log(storage);
       // console.log(backup_key);
       // console.log('Backed up to:', backup_key);
 
       // set stored user transactions
-      if (storage && storageKey !== null) {
+      if (storageObj !== null && storageKey !== null) {
         // console.log('stored user settings transactions:', storageObj.transactions);
-        saveSettingsStorage(backup_key, storage);
+        saveSettingsStorage(backup_key, storageObj);
         // console.log(key)
         success = true;
+
+        setIsBackupDisabled(true);
+
+        setIsRestoreDisabled(false);
       }
     } catch (e) {
       // statements
@@ -268,6 +298,11 @@ function Settings(props) {
 
     // if (success) {
     //   Alert.alert('Data backed up successfully');
+    // }
+
+    // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
+    // if (success) {
+    //   restoreBackedUpData();
     // }
   };
 
@@ -300,6 +335,12 @@ function Settings(props) {
     //     props.navigation.navigate('AuthLoading');
     //   })
     //   .catch((err) => console.log('Error while signing out!', err));
+
+    setIsBackupDisabled(true);
+
+    setIsRestoreDisabled(false);
+
+    navigation.navigate('Home');
   };
 
   /*
@@ -319,7 +360,7 @@ function Settings(props) {
 
   const restoreDataAlert = async () => {
     await Alert.alert(
-      'Restore Data',
+      'Restore Backup Data',
       'Are you sure you want to restore backed up data?',
       [
         { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
@@ -508,10 +549,10 @@ function Settings(props) {
     } else if (name === 'Customize Categories') {
       customizeCategoriesBtnPressed();
     }
-    else if (name === 'Backup Data') {
+    else if (name === 'Backup Local Data') {
       backupDataBtnPressed();
     }
-    else if (name === 'Restore Backup') {
+    else if (name === 'Restore Backup Data') {
       restoreBackupDataBtnPressed();
     }
   }
@@ -521,23 +562,33 @@ function Settings(props) {
     // console.log('Cleared');
   }
 
-  useEffect(() => {
-    if (storageKey) {
-      retrieveStoredSettingsTransactions(storageKey);
-    }
-    return () => {
-      // effect
-    };
-  }, [storageKey]);
+  // useEffect(() => {
+  //   if (storageKey) {
+  //     retrieveStoredSettingsTransactions(storageKey);
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [storageKey]);
 
   useEffect(() => {
-    if (transactions) {
-      setIsReady(true);
+    retrieveStoredSettingsTransactions(storageKey);
+  }, []);
+
+  useEffect(() => {
+    if (currentSettingsVersion) {
+      console.log('currentSettingsVersion: ', currentSettingsVersion);
     }
-    return () => {
-      // effect
-    };
-  }, [transactions])
+  }, [currentSettingsVersion]);
+
+  // useEffect(() => {
+  //   if (transactions) {
+  //     setIsReady(true);
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [transactions])
 
   // useEffect(() => {
   //   // retrieveIsPasscodeEnabled();
@@ -618,6 +669,10 @@ function Settings(props) {
         >
           <UserOptions
             onPress={onPress}
+            isBackupDisabled={isBackupDisabled}
+            optionOpacity={optionOpacity}
+            isRestoreDisabled={isRestoreDisabled}
+            currentSettingsVersion={currentSettingsVersion}
             // isPasscodeEnabled={isPasscodeEnabled}
           />
         </View>
@@ -832,4 +887,4 @@ Settings.propTypes = {
 };
 
 
-export default Settings;
+export default withNavigation(Settings);

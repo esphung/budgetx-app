@@ -14,19 +14,23 @@ UPDATED:    12/11/2019 10:09 PM
 //   return Math.random().toString(36).substr(2, 9);
 // };
 
-import { ID } from '../functions/ID';
+// import { ID } from '../functions/ID';
+
+import uuidv4 from '../functions/uuidv4';
 
 // import colors from '../colors';
 
 export default function Category(name, color, type) {
   const currentDate = new Date();
   const obj = {
-    id: `${Date.now(currentDate)}${ID()}`,
+    id: uuidv4(),
+    // id: `${Date.now(currentDate)}${ID()}`,
     // id: ID(),
     name,
     color,
     type
   };
+  // console.log(obj);
   return obj;
 }
 

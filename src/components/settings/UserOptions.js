@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   // StyleSheet,
@@ -71,12 +71,18 @@ import styles from '../../../styles';
 
 function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
-  const { onPress } = props;
+  const { onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled } = props;
+
+  let isDisabled = true;
+
+  // const [isDisabled, setIsDisabled] = useState(false);
+
+  let opacity = (1.0)
 
   function renderSeparator(item) {
     let view = null;
     // console.log(item.leadingItem.key);
-    if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Backup Data') {
+    if (item.leadingItem.key !== '' && item.leadingItem.key) {
       view = (
         <View
           style={{
@@ -113,18 +119,49 @@ function UserOptions(props) {
   function renderItem(item) {
     let rowHeight = 45;
     let backgroundColor = colors.dark;
-    let isDisabled = false;
     let caret = '>';
+    let textColor = colors.white;
+    // let opacity = 1.0;
 
-    if (item.key === '') {
+    let title = `${item.key}`;
+
+    if (title === '') {
       rowHeight = 24;
       backgroundColor = 'transparent'; // colors.darkTwo;
       isDisabled = true;
-      caret = '';
-      // console.log(item);
+      caret = null;
+    }
+    else if (title === ('Backup Local Data')) {
+      isDisabled = isBackupDisabled;
+      if (isBackupDisabled) {
+        title = 'Successfully Backed Up';
+        textColor = colors.offWhite
+        // caret = currentSettingsVersion
+        caret = null;
+        // backgroundColor = 'transparent';
+      }
+    }
+    else if (title === 'Restore Backup Data') {
+      isDisabled = isRestoreDisabled;
+      if (isDisabled) {
+        title = 'Restored Local Backup';
+        textColor = colors.offWhite
+        // caret = currentSettingsVersion
+        caret = null;
+        // backgroundColor = 'transparent';
+      }
+    }
+    else if (title === 'Reset Data') {
+      textColor = colors.pinkRed;
+      // backgroundColor = 'transparent';
+      caret = null;
+      opacity = 0.5
     }
 
-    const title = `${item.key}`;
+    else {
+      isDisabled = false
+    }
+
     // if (item.key === 'Passcode') {
     //   if (props.isPasscodeEnabled === true) {
     //     title = `Passcode Enabled`;
@@ -146,13 +183,20 @@ function UserOptions(props) {
             height: rowHeight, // 46,
             backgroundColor, // colors.dark,
 
+            opacity: opacity
+
             // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'dotted',
           }
         }
         disabled={isDisabled}
-        onPress={() => onPress(item)}
+        onPress={() => {
+          // setIsDisabled(true),
+          isDisabled = true,
+          onPress(item)
+        }}
+
       >
         <View
           style={{
@@ -176,7 +220,9 @@ function UserOptions(props) {
             }
           }
           >
-            <Text style={styles.listItemTitleStyle}>{title}</Text>
+            <Text style={[styles.listItemTitleStyle, {
+              color:  textColor
+            }]}>{title}</Text>
           </View>
 
         </View>
@@ -198,7 +244,7 @@ function UserOptions(props) {
   }
   const view = (
     <SwipeListView
-      // scrollEnabled
+      scrollEnabled={false}
       // style={styles.table}
 
       // style={
@@ -227,10 +273,10 @@ function UserOptions(props) {
         // { key: 'Passcode' },
         // { key: 'Change Password/Sign Out' },
 
-        { key: 'Backup Data' },
+        { key: 'Backup Local Data' },
 
         { key: '' },
-        { key: 'Restore Backup' },
+        { key: 'Restore Backup Data' },
         { key: 'Contact Support' },
         // { key: 'Passcode' },
         

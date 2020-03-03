@@ -19,8 +19,10 @@ import defaultCategories from '../data/categories';
 
 // AsyncStorage.clear() // DEBUG CLEAR ALL EXISTING APP KEYS!!!
 
+import uuidv4 from '../functions/uuidv4';
+
 export const saveSettingsStorage = (key, settings) => {
-  console.log('saving ' + key + '\'s settings');
+  // console.log('saving ' + key + '\'s settings');
   AsyncStorage.setItem(key, JSON.stringify(settings));
 };
 
@@ -35,17 +37,20 @@ export const clearSettingsStorage = async (key) => {
 
 // LOAD VALUE USERDEFAULTCATEGORIES
 const DEFAULT_SETTINGS = (key) => {
+  // console.log('Creating Default Settings Storage');
   const settings = {
     user: new User(key),
-    image: global.avatar,
+    // image: global.avatar,
     transactions: [],
     categories: defaultCategories,
+    version: 1,
   };
+  // console.log('settings: ', settings);
   return settings;
 };
 
 export const loadSettingsStorage = async (key) => {
-  console.log('loading', key, '\'s settings');
+  // console.log('loading', key, '\'s settings');
   try {
     const storageObject = await AsyncStorage.getItem(key);
 
