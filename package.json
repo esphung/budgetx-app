@@ -12,6 +12,7 @@
     "storybook": "start-storybook -p 7007"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.8.1",
     "@react-native-community/datetimepicker": "2.1.0",
     "@react-native-community/netinfo": "4.6.0",
     "aws-amplify": "^2.2.6",

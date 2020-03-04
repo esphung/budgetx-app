@@ -34,6 +34,7 @@ import getButtonStyle from '../../src/functions/getButtonStyle';
 
 
 function ChangePasswordScreen(props) {
+  const { navigation } = props;
   // hooks
   const [oldPassword, setOldPassword] = useState(null);
 
@@ -92,10 +93,29 @@ function ChangePasswordScreen(props) {
   const signOut = async () => {
     await Auth.signOut()
       .then(() => {
-        // console.log('Sign out complete');
-        AsyncStorage.removeItem('userToken'); // end local user session results
+        AsyncStorage.removeItem('userToken');
 
-        props.navigation.navigate('AuthLoading');
+        AsyncStorage.removeItem('storageKey');
+
+        AsyncStorage.removeItem('isLoginEnabled');
+
+        AsyncStorage.removeItem('isUserAuthenticated');
+
+        console.log('Removed AsyncsStorage Variables ..');
+
+
+        // AsyncStorage.getAllKeys((err, keys) => {
+        //   AsyncStorage.multiGet(keys, (error, stores) => {
+        //     stores.map((result, i, store) => {
+        //       console.log({ [store[i][0]]: store[i][1] });
+        //       return true;
+        //     });
+        //   });
+        // });
+
+        navigation.navigate('AuthLoading');
+
+        console.log('Sign out complete');
       })
       .catch((err) => console.log('Error while signing out!', err));
 
@@ -105,8 +125,9 @@ function ChangePasswordScreen(props) {
   // Confirm sign out
   const signOutAlert = async () => {
     await Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out from the app?',
+      // 'Sign Out',
+      'Sign out?',
+      'If you are not signed in\nALL DATA WILL BE LOST',
       [
         { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
         // Calling signOut

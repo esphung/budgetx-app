@@ -18,6 +18,8 @@ import PropTypes from 'prop-types';
 
 import { withNavigation } from 'react-navigation';
 
+import SignIn from './SignInScreen'
+
 import {
   // StyleSheet,
   View,
@@ -186,6 +188,8 @@ function Settings(props) {
   const [currentSettingsVersion, setCurrentSettingsVersion] = useState(0);
 
   const [optionOpacity, setOptionOpacity] = useState(1.0)
+
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
 
   // async function retrieveCognitoUser() {
   //   // Auth.currentAuthenticatedUser()
@@ -407,7 +411,7 @@ function Settings(props) {
   const resetDataAlertPrompt = () => {
     // RESET DATA PROMPT
     Alert.prompt(
-      'Are you sure you want to reset all data from this app?',
+      'Are you sure you want to reset all data from this device?',
       'Enter DELETE below to remove all data',
       [
         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
@@ -424,7 +428,7 @@ function Settings(props) {
 
 
     // Alert.alert(
-    //   'Reset Data',
+    //   'Reset Device Data',
     //   'Are you sure you want to reset all data from the app?'.toUpperCase(),
     //   [
     //     { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
@@ -602,6 +606,13 @@ function Settings(props) {
     props.navigation.navigate('ChangePasswordScreen');
   }
 
+  function signInBtnPressed() {
+    console.log(props.navigation)
+    // AsyncStorage.removeItem('userToken')
+    props.navigation.navigate('Welcome')
+    // props.navigation.popToTop();
+  }
+
   const backupDataBtnPressed = async () => {
     backupDataAlert();
   }
@@ -622,9 +633,14 @@ function Settings(props) {
       passcodeBtnPressed();
     } else if (name === 'Export Transactions') {
       exportBtnPressed();
-    } else if (name === 'Change Password/Sign Out') {
+    }
+    else if (name === 'Change Password/Sign Out') {
       changePasswordBtnPressed();
-    } else if (name === 'Reset Data') {
+    }
+    else if (name === 'Sign In') {
+      signInBtnPressed();
+    }
+    else if (name === 'Reset Device Data') {
       resetDataBtnPressed();
     } else if (name === 'Customize Categories') {
       customizeCategoriesBtnPressed();
@@ -640,6 +656,14 @@ function Settings(props) {
   const clearState = async () => {
     // retrieveCognitoUser();
     // console.log('Cleared');
+
+    retrieveStoredSettingsTransactions(global.storageKey);
+
+    Auth.currentAuthenticatedUser().then((cognito) => {
+      setIsUserLoggedIn(true);
+    }).catch((err) => console.log('err: ', err))
+
+    // setIsUserLoggedIn(false);
   }
 
   // useEffect(() => {
@@ -652,12 +676,12 @@ function Settings(props) {
   // }, [storageKey]);
 
   useEffect(() => {
-    retrieveStoredSettingsTransactions(storageKey);
+    clearState();
   }, []);
 
   useEffect(() => {
     if (currentSettingsVersion) {
-      console.log('currentSettingsVersion: ', currentSettingsVersion);
+      // console.log('currentSettingsVersion: ', currentSettingsVersion);
     }
   }, [currentSettingsVersion]);
 
@@ -753,6 +777,7 @@ function Settings(props) {
             optionOpacity={optionOpacity}
             isRestoreDisabled={isRestoreDisabled}
             currentSettingsVersion={currentSettingsVersion}
+            isUserLoggedIn={isUserLoggedIn}
             // isPasscodeEnabled={isPasscodeEnabled}
           />
         </View>
@@ -762,7 +787,9 @@ function Settings(props) {
             {
               flex: 0.5,
               alignItems: 'center',
-              justifyContent: 'center',
+              // justifyContent: 'center',
+
+
 
               // justifyContent: 'space-around',
 
@@ -787,7 +814,7 @@ function Settings(props) {
                 flex: 1,
                 alignSelf: 'stretch',
                 // justifyContent: 'space-around',
-                justifyContent: 'center',
+                // justifyContent: 'center',
 
                 // borderWidth: 1,
                 // borderColor: 'white',
@@ -800,9 +827,11 @@ function Settings(props) {
               style={
                 {
                   flex: 1,
-                  alignSelf: 'stretch',
+                  // alignSelf: 'stretch',
                   // justifyContent: 'space-around',
-                  justifyContent: 'center',
+                  // justifyContent: 'center',
+
+                  padding: 4,
 
                   // borderWidth: 1,
                   // borderColor: 'white',
@@ -821,9 +850,11 @@ function Settings(props) {
           <View style={{
             flex: 1,
             flexDirection: 'row',
-            alignSelf: 'stretch',
+            // alignSelf: 'stretch',
             justifyContent: 'center',
             alignItems: 'center',
+
+            // padding: 5,
 
             // borderWidth: 1,
             // borderColor: 'white',
@@ -847,7 +878,7 @@ function Settings(props) {
             // borderStyle: 'solid',
           }}
           >
-            <VersionCredit />
+            {/*<VersionCredit />*/}
           </View>
         </View>
     </View>
@@ -913,7 +944,7 @@ Settings.navigationOptions = ({ navigation }) => {
   // Confirm sign out
   const signOut = async () => {
     await Auth.signOut()
-      .then(() => {
+      .then(async () => {
         // console.log('Sign out complete');
         navigation.navigate('AuthLoading');
       })

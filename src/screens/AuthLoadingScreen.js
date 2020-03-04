@@ -35,6 +35,8 @@ import SpinnerMask from '../../src/components/SpinnerMask';
 
 // console.warn("Warning message");
 
+import uuidv4 from '../functions/uuidv4'
+
 export default function AuthLoadingScreen(props) {
   /*
   * > hooks
@@ -58,19 +60,25 @@ export default function AuthLoadingScreen(props) {
     // console.log('userToken: ', userToken);
     // let userToken = null
     if (userToken) {
-      console.log('Local Storage userToken: ', userToken.substring(0, 13), '...');
+      console.log('Local Storage userToken: ', userToken);
+      global.storageKey = await AsyncStorage.getItem('storageKey');
+      // console.log('Local Storage userToken: ', userToken.substring(0, 25), '...');
     } else {
       // get current authenticated user
       await Auth.currentAuthenticatedUser()
-        .then((cognito) => {
+        .then(async (cognito) => {
           // console.log('cognito: ', cognito);
-          console.log('\nAuthenticated User =>')
-          console.log('cognito.attributes: ', cognito.attributes);
+          // console.log('\nAuthenticated User =>')
+          // console.log('cognito.attributes: ', cognito.attributes);
           userToken = cognito.signInUserSession.accessToken.jwtToken;
           // console.log('Cognito  Session userToken: ', userToken.substring(0, 13), '...');
 
-          AsyncStorage.setItem('userToken', userToken); // save user token
-          global.storageKey = cognito.attributes.sub
+          // AsyncStorage.setItem('userToken', userToken); // save user token
+
+          // AsyncStorage.setItem('storageKey', cognito.attributes.sub);
+          global.storageKey = await AsyncStorage.getItem('storageKey');
+          // console.log('storageKey: ', global.storageKey);
+
         })
         .catch((err) => console.log('err: ', err));
 
@@ -82,11 +90,27 @@ export default function AuthLoadingScreen(props) {
   // Get the logged in users and remember them
   async function loadApp() {
     // try offline stored useruserToken first
-    const userToken = await retrieveCognitoUserToken();
+    let userToken = await retrieveCognitoUserToken();
 
     if (!userToken) {
-      await AsyncStorage.setItem('userToken', 'CURRENT_SESSION'); // save user token
-      console.log('User Not Authenticated');
+      userToken = global.storageKey + '@session_' + (Date.now());
+
+      console.log('userToken: ', userToken);
+      await AsyncStorage.setItem('userToken', userToken); // save user token
+      
+      await AsyncStorage.setItem('isUserAuthenticated', 'false');
+      global.isUserAuthenticated = await AsyncStorage.getItem('isUserAuthenticated');
+
+      if (global.isUserAuthenticated === true) {
+        console.log('isUserAuthenticated: ', isUserAuthenticated);
+        console.log('User Locally Authenticated');
+        global.storageKey = await AsyncStorage.getItem('storageKey');
+      }
+      else {
+        console.log('User Not Locally Authenticated');
+        global.storageKey = uuidv4();
+        await AsyncStorage.setItem('storageKey', global.storageKey)
+      }
     }
 
     // props.navigation.navigate('App');

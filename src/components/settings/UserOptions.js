@@ -71,7 +71,7 @@ import styles from '../../../styles';
 
 function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
-  const { onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled } = props;
+  const { onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn } = props;
 
   let isDisabled = true;
 
@@ -82,7 +82,7 @@ function UserOptions(props) {
   function renderSeparator(item) {
     let view = null;
     // console.log(item.leadingItem.key);
-    if (item.leadingItem.key !== '' && item.leadingItem.key) {
+    if (item.leadingItem.key !== '' && item.leadingItem.key && item.leadingItem.key !== 'Backup Local Data' && item.leadingItem.key !== 'Contact Support') {
       view = (
         <View
           style={{
@@ -150,24 +150,49 @@ function UserOptions(props) {
         caret = null;
         // backgroundColor = 'transparent';
       }
+      if (!isUserLoggedIn) {
+        title = null;
+        textColor = colors.offWhite
+        backgroundColor = 'transparent';
+        isDisabled = true
+        caret = null;
+        rowHeight = 0;
+      }
     }
-    else if (title === 'Reset Data') {
+    else if (title === 'Reset Device Data') {
       textColor = colors.pinkRed;
-      // backgroundColor = 'transparent';
+      backgroundColor = 'transparent';
       caret = null;
       opacity = 0.5
     }
 
-    // else if (title === 'Change Password/Sign Out') {
-    //   title = null;
-    //   textColor = colors.offWhite
-    //   backgroundColor = 'transparent';
-    //   isDisabled = true
-    //   caret = null;
-    //   rowHeight = 0;
-    //   // caret = null;
-    //   // opacity = 0.5
-    // }
+    else if (title === 'Change Password/Sign Out') {
+      isDisabled = !isUserLoggedIn
+      if (!isUserLoggedIn) {
+        title = null;
+        textColor = colors.offWhite
+        backgroundColor = 'transparent';
+        
+        caret = null;
+        rowHeight = 24;
+        // caret = null;
+        // opacity = 0.5
+      }
+    }
+
+    else if (title === 'Sign In') {
+      isDisabled = false
+      if (isUserLoggedIn) {
+        title = null;
+        textColor = colors.offWhite
+        backgroundColor = 'transparent';
+        // isDisabled = true
+        caret = null;
+        rowHeight = 0;
+        // caret = null;
+        // opacity = 0.5
+      }
+    }
 
     else {
       isDisabled = false
@@ -255,43 +280,51 @@ function UserOptions(props) {
   }
   const view = (
     <SwipeListView
-      scrollEnabled={false}
+      scrollEnabled
       // style={styles.table}
 
-      // style={
-      //   {
-      //     flex: 1,
-      //     // borderWidth: 1,
-      //     // borderColor: 'white',
-      //     // borderStyle: 'solid',
-
-      //     // paddingBottom: 50,
-      //   }
-      // }
-      contentContainerStyle={[
-        // {},
-        // styles.container,
+      style={
         {
-        flex: 1,
+          flex: 1,
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
 
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-      }]}
+          paddingBottom: 50,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }
+      }
+      // contentContainerStyle={[
+      //   // {},
+      //   // styles.container,
+      //   {
+      //   // flex: 1,
+
+      //   // borderWidth: 1,
+      //   // borderColor: 'white',
+      //   // borderStyle: 'solid',
+      // }]}
       data={[
+        { key: 'Sign In' },
         { key: 'Customize Categories' },
+        { key: 'Backup Local Data' },
         // { key: 'Export Transactions' },
         // { key: 'Passcode' },
-        { key: 'Change Password/Sign Out' },
+        
+        
 
-        { key: 'Backup Local Data' },
+        
 
         { key: '' },
+        { key: 'Change Password/Sign Out' },
         { key: 'Restore Backup Data' },
         { key: 'Contact Support' },
         // { key: 'Passcode' },
         
-        { key: 'Reset Data' },
+        { key: 'Reset Device Data' },
         
 
       ]}

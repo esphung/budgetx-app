@@ -45,8 +45,24 @@ function WelcomeScreen(props) {
 
                 <Button title="Sign In" onPress={() => handleRoute('SignIn')} />
 
-                {/*<TouchableText title="Forgot Password?" onPress={() => handleRoute('ForgetPassword')} />*/}
+                {/*<View style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
 
+                  justifyContent: 'space-around',
+
+                  padding: 6,
+
+                  // borderWidth: 1,
+                  // borderColor: 'white',
+                  // borderStyle: 'solid',
+                }}>
+                <TouchableText title="Forgot Password?" onPress={() => handleRoute('ForgetPassword')} />
+
+                <TouchableText style={{
+                  color: colors.offWhite,
+                }} title="Skip Login" onPress={() => handleRoute('AuthLoading')} />
+                </View>*/}
               </View>
             </View>
           </View>

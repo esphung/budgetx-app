@@ -7,14 +7,16 @@ import { withNavigation } from 'react-navigation';
 // import { NetworkProvider } from 'react-native-offline'; // ????
 
 import {
+  Alert,
   // StyleSheet,
   View,
   // Button,
-  // TouchableOpacity,
+  TouchableOpacity,
   Text,
   // Image,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator,
+  AsyncStorage
 } from 'react-native';
 
 // AWS Amplify
@@ -24,7 +26,7 @@ import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 // ui colors
 import colors from '../../../colors';
 
-import isValidEmail from '../../../src/functions/isValidEmail';
+// import isValidEmail from '../../../src/functions/isValidEmail';
 
 // import SpinnerMask from '../SpinnerMask';
 
@@ -32,23 +34,21 @@ import isValidEmail from '../../../src/functions/isValidEmail';
 //   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(currentEmail);
 // }
 
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../storage/SettingsStorage';
 
-// import {
-//   loadUserObject,
-//   saveUserObject,
-// } from '../../storage/UserStorage';
-
-
-function isValidName(text) {
-  // var nameRegex = /^[a-zA-Z\-]+$/;
-  const usernameRegex = /^[a-zA-Z0-9]+$/;
-  let bool = false;
-  const regExp = usernameRegex;
-  if (regExp.test(text)) {
-    bool = true;
-  }
-  return bool;
-}
+// function isValidName(text) {
+//   // var nameRegex = /^[a-zA-Z\-]+$/;
+//   const usernameRegex = /^[a-zA-Z0-9]+$/;
+//   let bool = false;
+//   const regExp = usernameRegex;
+//   if (regExp.test(text)) {
+//     bool = true;
+//   }
+//   return bool;
+// }
 
 // const login = <NetworkProvider><SwitchNavigator /></NetworkProvider>;
 
@@ -78,6 +78,12 @@ function UserNameEmailInput(props) {
 
   // const [isInputEnabled, setIsInputEnabled] = useState(false);
 
+  const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
+
+  const [nameLabelText, setNameLabelText] = useState('User ID');
+
+  const [emailLabelText] = useState('Email Address');
+
   const [currentName, setCurrentName] = useState('');
 
   const [currentEmail, setCurrentEmail] = useState('');
@@ -88,9 +94,12 @@ function UserNameEmailInput(props) {
 
   // const [isEmailInputEnabled, setIsEmailInputEnabled] = useState(false);
 
-  const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
+  // const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
 
-  const [shouldClearNameInput, setShouldClearNameInput] = useState(false);
+  const [shouldClearNameInput] = useState(false);
+
+
+  // const [isLoginEnabled, setIsLoginEnabled] = useState(false)
 
   // const [user, setUser] = useState(null);
 
@@ -153,7 +162,7 @@ function UserNameEmailInput(props) {
   // }
 
   function submit(key, value) {
-    console.log(key + ':', value);
+    // console.log(key + ':', value);
     if (key === 'name') {
       setCurrentName(value);
     } else if (key === 'email') {
@@ -226,14 +235,47 @@ function UserNameEmailInput(props) {
   // }, [])
 
   useEffect(() => {
-    Auth.currentAuthenticatedUser().then((cognito) => {
+    Auth.currentAuthenticatedUser().then(async (cognito) => {
       // console.log(cognito.attributes);
       // alert(cognito.attributes.email)
-      setCurrentEmail(cognito.attributes.email)
-      // setCurrentName(cognito.attributes.sub)
+      setCurrentEmail(cognito.attributes.email);
+      setCurrentName(cognito.attributes.sub);
+
+      // setEmailLabelText('Email Address')
+      // setNameLabelText('User ID');
+
+      // setIsLoginEnabled(false)
+
+      AsyncStorage.setItem('isLoginEnabled', 'false');
+      global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled');
+      console.log('isLoginEnabled: ', isLoginEnabled);
+
+      setIsSignUpDisabled(true);
     })
-    .catch((err) => {
+    .catch(async (err) => {
       console.log('err: ', err);
+      const storage = await loadSettingsStorage(storageKey)
+      // console.log('storage.user: ', storage.user);
+      if (storage.user.email) {
+        setCurrentEmail(storage.user.email)
+      } else {
+        setCurrentEmail('Sign Up Here')
+        // setEmailLabelText('Email Address')
+        
+      }
+      if (storage.user.username) {
+        setCurrentName(storage.user.username)
+      } else if (storage.user.id) {
+        setCurrentName(storage.user.id)
+      }
+
+      // setIsLoginEnabled(true)
+      AsyncStorage.setItem('isLoginEnabled', 'true')
+      global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled')
+      console.log('isLoginEnabled: ', isLoginEnabled);
+
+      setIsSignUpDisabled(false);
+
     })
     return () => {
       // effect
@@ -244,7 +286,27 @@ function UserNameEmailInput(props) {
 
   // if (!isLoginEnabled) {
   view = (
-    <View style={{ flex: 1, flexDirection: 'column' }}>
+    <TouchableOpacity
+    disabled={isSignUpDisabled}
+    onPress={async () => {
+      
+      if (global.isLoginEnabled !== 'false') {
+        console.log('isLoginEnabled: ', isLoginEnabled);
+        Alert.alert(
+          'Would you like to sign up?',
+          'Access more features: change your name, multiple users, save data and more',
+          // null,
+          // 'Signing up will allow more features like multiple users per device.',
+          [
+            { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+            { text: 'OK', onPress: () => navigation.navigate('Welcome')
+            },
+          ],
+
+        )
+      }
+
+    }} style={{ flex: 1, flexDirection: 'column' }}>
       <View style={
         {
           flex: 1,
@@ -260,7 +322,7 @@ function UserNameEmailInput(props) {
         {/* User currentName input */}
         <Text style={
           {
-            flex: 0.4,
+            // flex: 0.4,
             // width: 44,
             // height: 20,
             fontFamily: 'SFProDisplay-Regular',
@@ -279,12 +341,15 @@ function UserNameEmailInput(props) {
           }
         }
         >
-        Username
+        {
+          nameLabelText
+        }
         </Text>
-        <TextInput
+        <Text
+
           style={
             {
-              flex: 0.6,
+              flex: 1,
               // width: 120,
               // height: 20,
               fontFamily: 'SFProDisplay-Regular',
@@ -342,7 +407,11 @@ function UserNameEmailInput(props) {
 
           clearTextOnFocus={shouldClearNameInput}
 
-        />
+        >
+        {
+          currentName.substring(0, (global.maxUsernameLength - 1))
+        }
+        </Text>
 
       </View>
       <View style={line2} />
@@ -361,7 +430,7 @@ function UserNameEmailInput(props) {
         {/* User Email input */}
         <Text style={
           {
-            flex: 0.2,
+            // flex: 0.2,
             // width: 44,
             // height: 20,
             fontFamily: 'SFProDisplay-Regular',
@@ -372,7 +441,7 @@ function UserNameEmailInput(props) {
             color: colors.white,
 
             marginLeft: 5,
-            marginBottom: 4,
+            marginBottom: 5,
 
             // borderWidth: 1,
             // borderColor: 'white',
@@ -380,12 +449,14 @@ function UserNameEmailInput(props) {
           }
         }
         >
-        Email
+        {
+          emailLabelText
+        }
         </Text>
-        <TextInput
+        <Text
           style={
             {
-              flex: 0.8,
+              flex: 1,
               // width: 120,
               // height: 20,
               fontFamily: 'SFProDisplay-Regular',
@@ -436,10 +507,14 @@ function UserNameEmailInput(props) {
 
           autoCompleteType="email" // android
 
-        />
+        >
+        {
+          currentEmail
+        }
+        </Text>
 
       </View>
-    </View>
+    </TouchableOpacity>
     );
   // }
   return view;

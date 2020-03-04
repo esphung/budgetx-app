@@ -137,11 +137,7 @@ export default function App() {
   if (!fontsAreLoaded) {
     loadApplicationResources();
     view = <AppLoading />;
-  }
-  // else if (global.userShouldLogin) {
-  //   view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
-  // }
-  else {
+  } else {
     // view = <AppStackNavigator />; // no login
     view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
   }

@@ -32,7 +32,7 @@ export default function User(id) {
     // id: `${Date.now(currentDate)}`,
     id:  id,
     username: '', // username, // User's Storage Key
-    email: '' // email;
+    email: '' // '' // email;
   }
   // this.phoneNumber = '';
   // this.password = '';

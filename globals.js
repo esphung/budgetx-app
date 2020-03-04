@@ -7,6 +7,10 @@ import app from './app.json';
 
 global.storageKey = 'CURRENT_USER';
 
+global.isUserAuthenticated = false;
+
+global.isLoginEnabled = false;
+
 
 // max min lengths
 global.maxAuthCodeLength = 6;
