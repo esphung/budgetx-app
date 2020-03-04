@@ -25,13 +25,13 @@ UPDATED:
 import uuidv4 from '../functions/uuidv4';
 
 // User function with multiple constructors
-export default function User(username) {
+export default function User(id) {
   // const currentDate = new Date();
   // this.id = `${Date.now(currentDate)}`;
   return {
     // id: `${Date.now(currentDate)}`,
-    id:  uuidv4(),
-    username: username, // username, // User's Storage Key
+    id:  id,
+    username: '', // username, // User's Storage Key
     email: '' // email;
   }
   // this.phoneNumber = '';

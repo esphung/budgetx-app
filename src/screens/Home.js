@@ -52,7 +52,7 @@ import {
 //   });
 // }
 
-// import Auth from '@aws-amplify/auth';
+import Auth from '@aws-amplify/auth';
 
 // import { AppLoading } from 'expo';
 
@@ -115,6 +115,8 @@ const initialState = {
   isSlideViewHidden: true,
   isCurrentTransaction: false,
 };
+
+
 
 export default function Home() {
   // constants
@@ -346,9 +348,29 @@ export default function Home() {
   };
 
   async function retrieveUserStoredSettings() {
-    // console.log('loading '  + global.storageKey + '\'s categories');
-    const userObject = await loadSettingsStorage(global.storageKey); // load user object
+       Auth.currentAuthenticatedUser()
+      .then(async (cognito) => {
+        // setUserToken(user.signInUserSession.accessToken.jwtToken);
+        // console.log('username:', cognitoUser.username);
+        // setStorageKey(cognito.username);
+        global.storageKey = cognito.attributes.sub
+
+        const storage = await loadSettingsStorage(global.storageKey)
+        console.log('storage: ', storage);
+
+        setCurrentOwner(storage.user.id);
+
+        setCategories(storage.categories);
+
+        setCurrentTransactions(storage.transactions);
+      })
+      .catch(async (err) => {
+        // console.log(err);
+        // Alert.alert(err);
+
+        const userObject = await loadSettingsStorage(global.storageKey); // load user object
     // console.log(userObject);
+    console.log('storageKey: ', storageKey);
 
     setCurrentOwner(userObject.user.id);
 
@@ -357,17 +379,11 @@ export default function Home() {
     setCurrentTransactions(userObject.transactions);
 
     // console.log('userObject.user: ', userObject.user);
+      });
+    // console.log('loading '  + global.storageKey + '\'s categories');
+    
 
-    // Auth.currentAuthenticatedUser()
-    //   .then((cognito) => {
-    //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
-    //     // console.log('username:', cognitoUser.username);
-    //     setStorageKey(cognito.username);
-    //   })
-    //   .catch((err) => {
-    //     // console.log(err);
-    //     Alert.alert(err);
-    //   });
+
   }
 
   Home.reloadTransactions = () => {
@@ -1028,6 +1044,7 @@ export default function Home() {
 Home.navigationOptions = () => {
   const boldMessage = 'Get device cross-sync'; // `${global.appName} ${global.appVersion} (Basic)`;
   let normalMessage = `${global.appName} ${global.appVersion}`;
+
   // const normalMessage = 'Enter your email';
   async function onUsernameSubmit(string) {
     // console.log('string: ', string);

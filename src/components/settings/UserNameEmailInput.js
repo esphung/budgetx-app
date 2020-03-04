@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 
 // AWS Amplify
-// import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 
 // ui colors
@@ -225,6 +225,21 @@ function UserNameEmailInput(props) {
   //   // setIsInputEnabled(true);
   // }, [])
 
+  useEffect(() => {
+    Auth.currentAuthenticatedUser().then((cognito) => {
+      // console.log(cognito.attributes);
+      // alert(cognito.attributes.email)
+      setCurrentEmail(cognito.attributes.email)
+      // setCurrentName(cognito.attributes.sub)
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    })
+    return () => {
+      // effect
+    };
+  }, [])
+
   let view = null; // spinnerView;
 
   // if (!isLoginEnabled) {
@@ -290,7 +305,7 @@ function UserNameEmailInput(props) {
           }
           placeholder={'Enter username'}
 
-          clearButtonMode="always"
+          clearButtonMode="while-editing"
 
           placeholderTextColor={colors.offWhite}
 
@@ -320,7 +335,8 @@ function UserNameEmailInput(props) {
 
           // enablesReturnKeyAutomatically={true}
 
-          editable={isNameInputEnabled}
+          // editable={isNameInputEnabled}
+          editable={false}
 
           // clearButtonMode="always"
 
@@ -388,9 +404,9 @@ function UserNameEmailInput(props) {
               // borderStyle: 'solid',
             }
           }
-          placeholder="Enter email address"
+          placeholder="No email address"
 
-          clearButtonMode="always"
+          clearButtonMode="while-editing"
 
           placeholderTextColor={colors.offWhite}
 
@@ -412,7 +428,7 @@ function UserNameEmailInput(props) {
 
           onChangeText={handleEmailChange}
 
-          // editable={false}
+          editable={false}
 
           value={currentEmail}
 
