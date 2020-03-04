@@ -45,7 +45,7 @@ function WelcomeScreen(props) {
 
                 <Button title="Sign In" onPress={() => handleRoute('SignIn')} />
 
-                <TouchableText title="Forgot Password?" onPress={() => handleRoute('ForgetPassword')} />
+                {/*<TouchableText title="Forgot Password?" onPress={() => handleRoute('ForgetPassword')} />*/}
 
               </View>
             </View>

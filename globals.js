@@ -7,7 +7,6 @@ import app from './app.json';
 
 global.storageKey = 'CURRENT_USER';
 
-global.appTier = 'Free';
 
 // max min lengths
 global.maxAuthCodeLength = 6;
@@ -16,7 +15,7 @@ global.maxUsernameLength = 24;
 
 global.minUsernameLength = 6;
 
-global.minPasswordLength = 6;
+global.minPasswordLength = 8;
 
 global.SFProDisplayRegularFont = require('./assets/fonts/SF-Pro-Display-Regular.otf');
 

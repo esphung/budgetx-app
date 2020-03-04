@@ -158,6 +158,17 @@ function UserOptions(props) {
       opacity = 0.5
     }
 
+    else if (title === 'Change Password/Sign Out') {
+      title = null;
+      textColor = colors.offWhite
+      backgroundColor = 'transparent';
+      isDisabled = true
+      caret = null;
+      rowHeight = 0;
+      // caret = null;
+      // opacity = 0.5
+    }
+
     else {
       isDisabled = false
     }
@@ -271,7 +282,7 @@ function UserOptions(props) {
         { key: 'Customize Categories' },
         // { key: 'Export Transactions' },
         // { key: 'Passcode' },
-        // { key: 'Change Password/Sign Out' },
+        { key: 'Change Password/Sign Out' },
 
         { key: 'Backup Local Data' },
 

@@ -40,10 +40,12 @@ import {
 } from 'native-base';
 
 
-import { AppLoading } from 'expo';
+// import { AppLoading } from 'expo';
 
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+
+import Dialog from 'react-native-dialog';
 
 import OfflineScreen from './OfflineScreen';
 
@@ -59,15 +61,14 @@ import styles from '../../styles';
 
 import isValidEmail from '../../src/functions/isValidEmail';
 
-import Dialog from 'react-native-dialog';
 
 // import Offline from '../components/Offline';
 
 // import { getButtonStyle } from './functions';
 
-import isValidUsername from '../../src/functions/isValidUsername';
+// import isValidUsername from '../../src/functions/isValidUsername';
 
-import isValidPhoneNumber from '../../src/functions/isValidPhoneNumber';
+// import isValidPhoneNumber from '../../src/functions/isValidPhoneNumber';
 
 import getButtonStyle from '../../src/functions/getButtonStyle';
 
@@ -77,23 +78,23 @@ function SignUpScreen(props) {
   */
   const [isLoading, setIsLoading] = useState(false);
 
-  const [username, setUsername] = useState(null);
+  // const [username, setUsername] = useState(null);
 
   const [password, setPassword] = useState(null);
 
   const [email, setEmail] = useState(null);
 
-  const [phoneNumber, setPhoneNumber] = useState('');
+  // const [phoneNumber, setPhoneNumber] = useState('');
 
   const [authCode, setAuthCode] = useState(null);
 
-  const [flag, setFlag] = useState(null);
+  // const [flag, setFlag] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const [isKeyboardAvoidEnabled, setIsKeyboardAvoidEnabled] = useState(false);
 
-  const [dialCode, setDialCode] = useState(null);
+  // const [dialCode, setDialCode] = useState(null);
 
   const [isSignUpBtnEnabled, setIsSignUpBtnEnabled] = useState(false);
 
@@ -120,69 +121,74 @@ function SignUpScreen(props) {
   /*
   * > Input Refs
   */
-  const usernameInputRef = useRef(null);
+  // const usernameInputRef = useRef(null);
 
   const passwordInputRef = useRef(null);
 
   const emailInputRef = useRef(null);
 
-  const phoneNumberInputRef = useRef(null);
+  // const phoneNumberInputRef = useRef(null);
 
   const authCodeInputRef = useRef(null);
 
-  const clearState = () => {
-    setUsername('');
-    setPassword('');
-    setEmail('');
-    setPhoneNumber('');
-    setAuthCode('');
-    setFlag(null);
-    setModalVisible(false);
-    setIsKeyboardAvoidEnabled(false);
-    setDialCode(null);
+  // const clearState = () => {
+  //   setUsername('');
+  //   setPassword('');
+  //   setEmail('');
+  //   setPhoneNumber('');
+  //   setAuthCode('');
+  //   setFlag(null);
+  //   setModalVisible(false);
+  //   setIsKeyboardAvoidEnabled(false);
+  //   setDialCode(null);
 
 
-    setIsConfirmSignUpBtnEnabled(false);
-    setIsResendCodeBtnEnabled(false);
-    setIsAuthCodeInputEnabled(true);
+  //   setIsConfirmSignUpBtnEnabled(false);
+  //   setIsResendCodeBtnEnabled(false);
+  //   setIsAuthCodeInputEnabled(true);
 
-    setHelpMessage('');
-    setIsDialogVisible(false);
-    setDialogMessage('');
-    setDialogTitle('');
-    setIsConfirmVisible(false);
+  //   setHelpMessage('');
+  //   setIsDialogVisible(false);
+  //   setDialogMessage('');
+  //   setDialogTitle('');
+  //   setIsConfirmVisible(false);
 
-    setIsLoading(false);
-  };
+  //   setIsLoading(false);
+  // };
+
+  // useEffect(() => {
+  //   // Default render of country flag
+  //   const defaultFlag = countries.filter((obj) => obj.name === 'United States')[0].flag;
+  //   // setFlag(defaultFlag);
+
+  //   setDialCode(countries.filter((obj) => obj.name === 'United States')[0].dial_code)
+  //   // setCountryData(countries);
+  //   return () => {
+  //     // effect
+  //   };
+  // }, []);
 
   useEffect(() => {
-    // Default render of country flag
-    const defaultFlag = countries.filter((obj) => obj.name === 'United States')[0].flag;
-    setFlag(defaultFlag);
+    // if (!username || username.length < global.minUsernameLength || !isValidUsername(username)) {
+    //   setHelpMessage('Username invalid');
+    // }
 
-    setDialCode(countries.filter((obj) => obj.name === 'United States')[0].dial_code)
-    // setCountryData(countries);
-    return () => {
-      // effect
-    };
-  }, []);
+    // if (!password) {
+    //   setHelpMessage('Password invalid');
+    // }
 
-  useEffect(() => {
-    if (!username || username.length < global.minUsernameLength || !isValidUsername(username)) {
-      setHelpMessage('Username invalid');
+    if (!email || !password) {
+      setHelpMessage('Enter email and password');
+    } else if (!isValidEmail(email)) {
+      setHelpMessage('Invalid email');
+    } else if (password.length < global.minPasswordLength) {
+      setHelpMessage('Password too short');
     }
 
-    else if (!password) {
-      setHelpMessage('Password invalid');
-    }
 
-    else if (!email || !isValidEmail(email)) {
-      setHelpMessage('Email is invalid');
-    }
-
-    else if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
-      setHelpMessage('Phone is invalid');
-    }
+    // else if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
+    //   setHelpMessage('Phone is invalid');
+    // }
 
     else {
       setHelpMessage('');
@@ -193,31 +199,16 @@ function SignUpScreen(props) {
   });
 
   useEffect(() => {
-    if (
-      username && username.length >= global.minUsernameLength
-      && isValidUsername(username)
-      && password
-      && isValidEmail(email)
-      && isValidPhoneNumber(phoneNumber)
-    ) {
-      // console.log(phoneNumber);
+    if (password && isValidEmail(email) && password.length >= global.minPasswordLength) {
       setIsSignUpBtnEnabled(true);
-      // setIsConfirmSignUpBtnEnabled(true);
-
-      // console.log('Sign up available');
     }
     else {
       setIsSignUpBtnEnabled(false);
-      // setIsConfirmSignUpBtnEnabled(false);
-      // setIsResendCodeBtnEnabled(false);
     }
-    return () => {
-      // effect
-    };
-  }, [username, password, email, phoneNumber]);
+  }, [password, email]);
 
   useEffect(() => {
-    if (!authCode || !username) {
+    if (!authCode || !email) {
       // console.log(username);
       setIsConfirmSignUpBtnEnabled(false);
       setIsResendCodeBtnEnabled(false);
@@ -228,7 +219,7 @@ function SignUpScreen(props) {
     return () => {
       // effect
     };
-  }, [authCode, username]);
+  }, [authCode, email]);
 
   /*
   * > Handlers
@@ -237,16 +228,15 @@ function SignUpScreen(props) {
     // console.log('key:', key);
     // console.log('value:', value);
 
-    if (key === 'username') {
-      setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
-    } else if (key === 'password') {
+    // if (key === 'username') {
+    //   setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
+    // }
+    if (key === 'password') {
       setPassword(value.replace(' ', ''));
     } else if (key === 'email') {
       var re = /^(((\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       // return re.test(String(email).toLowerCase());
       setEmail(value.replace(/^[` ~!#$%^&*()|+\=?;:'",<>\{\}\[\]\\\/]/gi, '').toLowerCase());
-    } else if (key === 'phoneNumber') {
-      setPhoneNumber(value.replace(/[A-z]|[` ~!@#$%^&*()_|\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''));
     } else if (key === 'authCode') {
       setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
     }
@@ -263,29 +253,29 @@ function SignUpScreen(props) {
   }
 
   function handleEmailInputSubmit() {
-    phoneNumberInputRef.current._root.focus();
+    // phoneNumberInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
-  function handlePhoneNumberInputSubmit(value) {
-    if (value === '+') {
-      setPhoneNumber(dialCode);
-      return;
-    }
-    // console.log(value);
-    // console.log(typeof value);
+  // function handlePhoneNumberInputSubmit(value) {
+  //   if (value === '+') {
+  //     setPhoneNumber(dialCode);
+  //     return;
+  //   }
+  //   // console.log(value);
+  //   // console.log(typeof value);
 
-    const regexDialCode = /^(\+?\d{1,3}|\d{1,4})$/;
-    // setPhoneNumber(`${dialCode}${value}`);
-    const phone = value.replace(regexDialCode, '');
-    // value = value.replace(/[+.]{1,3}/g,'');
+  //   const regexDialCode = /^(\+?\d{1,3}|\d{1,4})$/;
+  //   // setPhoneNumber(`${dialCode}${value}`);
+  //   const phone = value.replace(regexDialCode, '');
+  //   // value = value.replace(/[+.]{1,3}/g,'');
 
-    if (!value.includes(dialCode)) {
-      value = `${dialCode}${value}`;
-      setPhoneNumber(`${dialCode}${phone}`);
+  //   if (!value.includes(dialCode)) {
+  //     value = `${dialCode}${value}`;
+  //     setPhoneNumber(`${dialCode}${phone}`);
       
-    }
-  }
+  //   }
+  // }
 
   function handleAuthCodeInputSubmit() {
     // emailInputRef.current._root.focus();
@@ -398,15 +388,15 @@ function SignUpScreen(props) {
     return modal;
   };
 
-  function isPhoneAWSFormat(phone) {
-    // +01234567890
-    if (/[+][0-9]{11}/.test(phone)) {
-      // console.log('Correct format');
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // function isPhoneAWSFormat(phone) {
+  //   // +01234567890
+  //   if (/[+][0-9]{11}/.test(phone)) {
+  //     // console.log('Correct format');
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   function okDialogueBtnPressed() {
     setIsDialogVisible(false);
@@ -435,12 +425,12 @@ function SignUpScreen(props) {
       // Alert.alert('Phone valid');
 
     // rename variable to conform with Amplify Auth field phone attribute
-    const phone_number = phoneNumber; // +01234567890 format
+    // const phone_number = phoneNumber; // +01234567890 format
     // console.log(phone_number);
     await Auth.signUp({
-      username,
-      password,
-      attributes: { email, phone_number },
+      username: email,
+      password: password,
+      // attributes: { email },
     })
       .then(() => {
         isSuccessful = true;
@@ -455,6 +445,7 @@ function SignUpScreen(props) {
         
       })
       .catch((err) => {
+        console.log('err: ', err);
         if (!err.message) {
           // console.log('Error when signing up: ', err.message);
           // Alert.alert('Error when signing up: ', err.message);
@@ -482,25 +473,21 @@ function SignUpScreen(props) {
   async function confirmSignUp() {
     if (authCode !== null) {
       // const { username, authCode } = this.state;
-      if (!username) {
-        usernameInputRef.current._root.focus();
-        Alert.alert('Please provide a username');
-        return;
-      }
-      await Auth.confirmSignUp(username, authCode)
+      // if (!username) {
+      //   usernameInputRef.current._root.focus();
+      //   Alert.alert('Please provide a username');
+      //   return;
+      // }
+      await Auth.confirmSignUp(email, authCode)
         .then(() => {
           props.navigation.navigate('SignIn');
           // console.log('Confirm sign up successful');
           Alert.alert('Confirm sign up successful');
         })
         .catch((err) => {
-          if (!err.message) {
-            // console.log('Error when entering confirmation code: ', err);
-            Alert.alert('Error when entering confirmation code: ', err);
-          } else {
-            // console.log('Error when entering confirmation code: ', err.message);
-            Alert.alert('Error when entering confirmation code: ', err.message);
-          }
+          // console.log('Error when entering confirmation code: ', err.message);
+          Alert.alert('Error when entering confirmation code: ', err.message);
+          
         });
     }
   }
@@ -508,12 +495,12 @@ function SignUpScreen(props) {
   // Resend code if not received already
   async function resendSignUp() {
     // const { username } = this.state;
-    if (!username) {
-      usernameInputRef.current._root.focus();
-      Alert.alert('Please provide a username');
-      return;
-    }
-    await Auth.resendSignUp(username)
+    // if (!username) {
+    //   usernameInputRef.current._root.focus();
+    //   Alert.alert('Please provide a username');
+    //   return;
+    // }
+    await Auth.resendSignUp(email)
       .then(() => {
         Alert.alert('Confirmation code resent successfully!');
         // console.log('Confirmation code resent successfully');
@@ -544,26 +531,28 @@ function SignUpScreen(props) {
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
 
-              <Item rounded style={styles.itemStyle}>
-                  <Ionicons active name="md-person" style={styles.iconStyle} />
+              {/* email section */}
+                <Item rounded style={styles.itemStyle}>
+                  <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder={`Username (mininum length of ${global.minUsernameLength})`}
-                    placeholderTextColor={colors.offWhite} // "#adb4bc"
+                    placeholder="Email"
+                    placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
                     returnKeyType="next"
                     autoCapitalize="none"
                     autoCorrect={false}
-                    onSubmitEditing={handleUsernameInputSubmit}
-                    ref={usernameInputRef}
-                    onChangeText={(value) => onChangeText('username', value)}
+                    secureTextEntry={false}
+                    ref={emailInputRef}
+                    onSubmitEditing={() => handleEmailInputSubmit()}
+                    onChangeText={(value) => onChangeText('email', value)}
+                    // clearButtonMode="always"
 
-                    value={username}
-
-                    maxLength={global.maxUsernameLength}
+                    value={email}
 
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                    maxLength={26}
                   />
                 </Item>
 
@@ -634,7 +623,7 @@ function SignUpScreen(props) {
           <View style={styles.container}>
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
-                <Item rounded style={styles.itemStyle}>
+{/*                <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-person" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
@@ -655,27 +644,8 @@ function SignUpScreen(props) {
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
-                </Item>
-                {/*  password section  */}
-                <Item rounded style={styles.itemStyle}>
-                  <Ionicons active name="md-lock" style={styles.iconStyle} />
-                  <Input
-                    style={styles.input}
-                    placeholder="Password"
-                    placeholderTextColor={colors.offWhite}
-                    returnKeyType="next"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry
-                    onSubmitEditing={handlePasswordInputSubmit}
-                    ref={passwordInputRef}
-                    onChangeText={(value) => onChangeText('password', value)}
-
-                    keyboardAppearance="dark"
-                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
-                    maxLength={16}
-                  />
-                </Item>
+                </Item>*/}
+                
                 {/* email section */}
                 <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
@@ -697,64 +667,28 @@ function SignUpScreen(props) {
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
                     maxLength={26}
+                    // clearButtonMode="always"
                   />
                 </Item>
-                {/*
-                * > phone number section
-                */}
+
+                {/*  password section  */}
                 <Item rounded style={styles.itemStyle}>
-                  <PickCountryModal />
-                  <Ionicons
-                    active
-                    name="md-call"
-                    style={styles.iconStyle}
-                    onPress={() => showModal()}
-                  />
-
-                  {/*
-                  * > country flag
-                  */}
-                  <TouchableOpacity
-                    onPress={showModal}
-                    style={
-                      {
-                        flex: 0.1,
-                        alignItems: 'center',
-
-                        // borderWidth: 1,
-                        // borderColor: 'orange',
-                        // borderStyle: 'solid',
-                      }
-                    }
-                  >
-                    <Text>{flag}</Text>
-                  </TouchableOpacity>
-
-
+                  <Ionicons active name="md-lock" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="+12345678910"
+                    placeholder="Password"
                     placeholderTextColor={colors.offWhite}
-                    keyboardType="phone-pad"
-                    returnKeyType="done"
+                    returnKeyType="next"
                     autoCapitalize="none"
                     autoCorrect={false}
-                    secureTextEntry={false}
-                    ref={phoneNumberInputRef}
-                    value={phoneNumber}
-                    onEndEditing={(value) => handlePhoneNumberInputSubmit(value.nativeEvent.text)}
-                    onSubmitEditing={(value) => handlePhoneNumberInputSubmit(value.nativeEvent.text)}
-                    onChangeText={(val) => {
-                      // console.log(val)
-                      onChangeText('phoneNumber', val);
-                    }}
+                    secureTextEntry
+                    onSubmitEditing={handlePasswordInputSubmit}
+                    ref={passwordInputRef}
+                    onChangeText={(value) => onChangeText('password', value)}
 
                     keyboardAppearance="dark"
-                    onFocus={() => {
-                      // setPhoneNumber('');
-                      setIsKeyboardAvoidEnabled(false);
-                    }}
-                    maxLength={12}
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                    maxLength={16}
                   />
                 </Item>
 
@@ -762,15 +696,15 @@ function SignUpScreen(props) {
                 <View>
                   <TouchableOpacity
                     onPress={() => {
-                      if (isPhoneAWSFormat(phoneNumber) === false) {
-                        // +01234567890
-                        // Alert.alert('Phone is wrong format:', phoneNumber);
-                        setDialogTitle('Phone Number Invalid');
-                        setDialogMessage('This is the correct format of a phone number\n+01234567890');
-                        setIsDialogVisible(true);
-                      }
+                      // if (isPhoneAWSFormat(phoneNumber) === false) {
+                      //   // +01234567890
+                      //   // Alert.alert('Phone is wrong format:', phoneNumber);
+                      //   setDialogTitle('Phone Number Invalid');
+                      //   setDialogMessage('This is the correct format of a phone number\n+01234567890');
+                      //   setIsDialogVisible(true);
+                      // }
 
-                      else if (password.length < global.minPasswordLength) {
+                      if (password.length < global.minPasswordLength) {
                         setDialogTitle('Password Invalid');
                         setDialogMessage(`Password not long enough. Make it atleast ${global.minPasswordLength} letters or numbers.`);
                         setIsDialogVisible(true);

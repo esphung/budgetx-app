@@ -57,7 +57,7 @@ const AuthStackNavigator = createStackNavigator({
   headerMode: 'screen',
   cardStyle: {
     backgroundColor: colors.darkTwo,
-  }
+  },
 });
 
 const AppContainer = createAppContainer(AuthStackNavigator);

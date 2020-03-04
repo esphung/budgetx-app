@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 
 import {
   // StyleSheet,
-  View,
+  // View,
   // Text,
-  ActivityIndicator,
-  // AsyncStorage,
+  // ActivityIndicator,
+  AsyncStorage,
   // Button,
 } from 'react-native';
 
@@ -22,47 +22,109 @@ import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 // // Analytics.record({ name: "User authenticated!" });
 // // console.log('Analytics recorded user authenticated!');
 
-import colors from '../../colors';
+import SpinnerMask from '../../src/components/SpinnerMask';
 
-import styles from '../../styles';
+// import colors from '../../colors';
+
+// import styles from '../../styles';
+
+// /* My Functions */
+// import uuidv4 from '../functions/uuidv4';
+
+// console.disableYellowBox = true;
+
+// console.warn("Warning message");
 
 export default function AuthLoadingScreen(props) {
   /*
   * > hooks
   */
-  const [userToken, setUserToken] = useState(null);
+  // const [userToken, setUserToken] = useState('');
+
+  // async function retrieveStoredUserToken() {
+  //   let userToken = null;
+  //   try {
+  //     // try to retrieve stored userToken
+  //     userToken = await AsyncStorage.getItem('userToken');
+  //   } catch(err) {
+  //     // statements
+  //     console.log('err: ', err);
+  //   }
+  //   return userToken
+  // }
+
+  async function retrieveCognitoUserToken() {
+    let userToken = await AsyncStorage.getItem('userToken');
+    // let userToken = null
+    if (userToken) {
+      console.log('Local Storage userToken: ', userToken.substring(0, 13), '...');
+    } else {
+      // get current authenticated user
+      await Auth.currentAuthenticatedUser()
+        .then((cognito) => {
+          // console.log('cognito: ', cognito);
+          userToken = cognito.signInUserSession.accessToken.jwtToken;
+          // console.log('Cognito  Session userToken: ', userToken.substring(0, 13), '...');
+
+          AsyncStorage.setItem('userToken', userToken);//  save token
+        })
+        .catch((err) => console.log('err: ', err));
+
+      userToken = await AsyncStorage.getItem('userToken');
+    }
+    return userToken;
+  }
 
   // Get the logged in users and remember them
   async function loadApp() {
-    await Auth.currentAuthenticatedUser()
-      .then((user) => {
-        setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // this.setState({userToken: user.signInUserSession.accessToken.jwtToken})
-      })
-      .catch((err) => console.log(err));
-    props.navigation.navigate(userToken ? 'App' : 'Auth');
+    // try offline stored useruserToken first
+    const userToken = await retrieveCognitoUserToken();
+
+    if (!userToken) {
+      console.log('User Not Authenticated');
+    }
+
+    props.navigation.navigate('App');
+
+    // props.navigation.navigate(userToken ? 'App' : 'Auth');
   }
 
+
+
+
+  // useEffect(() => {
+  //   // console.log('Mount');
+  //   loadApp();
+  //   // return () => {
+  //   //   console.log('Clean up');
+  //   // }
+  // }, []);
+
   useEffect(() => {
-    // console.log('Mount');
     loadApp();
+    return () => {
+      // effect
+    };
   }, []);
 
-  useEffect(() => {
-    // if (userToken) {
-    //   // console.log(userToken);
-    // }
-    return () => {
-      props.navigation.navigate(userToken ? 'App' : 'Auth');
-    };
-  }, [userToken]);
+  // useEffect(() => {
+  //   // if (userToken) {
+  //   //   // console.log(userToken);
+  //   // }
+  //   return () => {
+  //     props.navigation.navigate(userToken ? 'App' : 'Auth');
+  //   };
+  // }, [userToken]);
 
-  const view = (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color={colors.white} />
-    </View>
-  );
-  return view;
+  const spinnerMask = <SpinnerMask />;
+
+  // const view = (
+  //   <View style={styles.container}>
+  //     <ActivityIndicator size="large" color={colors.white} />
+  //   </View>
+  // );
+  // return view;
+  return spinnerMask;
 }
 
 // export default AuthLoadingScreen;

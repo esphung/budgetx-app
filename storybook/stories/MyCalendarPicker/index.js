@@ -24,9 +24,9 @@ export default function MyCalendarPicker(props) {
             // justifyContent: 'center',
             // alignItems: 'center',
     
-            margin: 14,
+            // margin: 14,
 
-            paddingBottom: 14,
+            marginBottom: 4,
             // flex: 1,
             // backgroundColor: '#FFFFFF',
             // marginTop: 100,
@@ -60,20 +60,20 @@ export default function MyCalendarPicker(props) {
         todayTextStyle={[
           // styles.textStyle,
           {
-            opacity: 0.3,
+            // opacity: 0.4,
           }
         ]}
 
-        textStyle={styles.textStyle}
+        textStyle={styles.calendarTextStyle}
 
         // scaleFactor={600}
 
-        initialDate={date}
+        // initialDate={date}
 
         // width={250}
-        height={300}
+        height={240}
 
-        enableSwipe={false}
+        // enableSwipe={false}
 
         // dayShape="square"
 

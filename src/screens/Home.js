@@ -916,10 +916,11 @@ export default function Home() {
 
       <View style={
         {
+          
           position: 'absolute',
           // flexDirection: 'row',
           // justifyContent: 'center',
-          // width: '100%',
+          width: '100%',
           // height: '6%', // 53,
           height: 50,
           // maxHeight: '6%',
@@ -928,7 +929,7 @@ export default function Home() {
           // shadowRadius: props.shadowRadius,
           // shadowOpacity: props.shadowOpacity,
 
-          // position: 'absolute',
+          position: 'absolute',
 
           top: '56%', // props.topPosition, // '57%', // 462,
 
@@ -951,8 +952,8 @@ export default function Home() {
         <View
           style={{
 
-            // justifyContent: 'center',
-            // alignItems: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
 
             position: 'absolute',
             flexDirection: 'row',
@@ -1027,7 +1028,7 @@ export default function Home() {
 Home.navigationOptions = () => {
   const boldMessage = 'Get device cross-sync'; // `${global.appName} ${global.appVersion} (Basic)`;
   const normalMessage = `${global.appName} ${global.appVersion}`;
-  // let normalMessage = 'Enter your email';
+  // const normalMessage = 'Enter your email';
   async function onUsernameSubmit(string) {
     // console.log('string: ', string);
 

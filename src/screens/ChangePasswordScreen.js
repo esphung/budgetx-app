@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import {
-  // AsyncStorage,
+  AsyncStorage,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Text,
@@ -93,9 +93,12 @@ function ChangePasswordScreen(props) {
     await Auth.signOut()
       .then(() => {
         // console.log('Sign out complete');
+        AsyncStorage.removeItem('userToken'); // store results
         props.navigation.navigate('AuthLoading');
       })
       .catch((err) => console.log('Error while signing out!', err));
+
+
   };
   
   // Confirm sign out

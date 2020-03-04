@@ -19,6 +19,8 @@ import {
   // Alert,
 } from 'react-native';
 
+// import { NavigationEvents } from 'react-navigation';
+
 // import { AppLoading } from 'expo';
 
 // import Auth from '@aws-amplify/auth';
@@ -29,6 +31,8 @@ import CategoryPill from './CategoryPill';
 
 // ui colors
 import colors from '../../../colors';
+
+// import styles from '../../../styles';
 
 // import {
 //   loadSettingsStorage,
@@ -89,8 +93,6 @@ const ScrollingPillCategoriesView = (props) => {
   //     console.log('Could not retrieve stored user categories\n', e);
   //   }
   // };
-
-
 
 
   // const clearState = async () => {
@@ -161,7 +163,7 @@ const ScrollingPillCategoriesView = (props) => {
     // console.log(items);
     let view = null;
     if (items) {
-      view = items.map((item, index) => (
+      view = items.map((item) => (
         <CategoryPill
           item={item}
           id={item.id}
@@ -187,30 +189,35 @@ const ScrollingPillCategoriesView = (props) => {
   //   />
   // );
 
-  let view = (
-    <View style={
-      {
-        height: '100%',
-        shadowColor: "#0a101b",
-        shadowOffset: {
-          width: 1,
-          height: 1
-        },
-        shadowRadius: 26,
-        shadowOpacity: 1,
+  const view = (
+      
+    <View
+      style={
+        {
+          flex: 1,
+          width: '100%',
+          // height: '100%',
+          shadowColor: '#0a101b',
+          shadowOffset: {
+            width: 1,
+            height: 1,
+          },
+          shadowRadius: 26,
+          shadowOpacity: 1,
 
-        backgroundColor: colors.darkTwo,
+          backgroundColor: colors.darkTwo,
+        }
       }
-    }>
+    >
+   
       <ScrollView
         contentContainerStyle={{
-          
           alignItems: 'center',
           // justifyContent: 'flex-start',
           // flexDirection: 'row',
           paddingLeft: 10,
 
-          paddingRight: 12,
+          paddingRight: 8,
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -222,7 +229,6 @@ const ScrollingPillCategoriesView = (props) => {
         // snapToInterval={MIN_PILL_WIDTH} // your element width
         // snapToAlignment="center"
 
-        // style={styles.scrollView}
       >
         { getCategoryPill(categories) }
 
@@ -234,9 +240,6 @@ const ScrollingPillCategoriesView = (props) => {
   // if (!isReady) {
   //   view = appLoading;
   // }
-
-
-  
   return view;
 };
 

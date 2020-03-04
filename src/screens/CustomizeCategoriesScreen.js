@@ -124,59 +124,16 @@ function CellItem({
   color,
   addCategory,
 }) {
-  const [text, setText] = useState(null);
+  // const [text, setText] = useState(null);
 
-  // const [isLoading, setIsLoading] = useState(false);
-
-
-  // const deleteIconName = selected ? 'md-remove-circle-outline' : 'md-remove-circle';
-
-  // const itemIconName = selected ? 'md-unlock' : 'md-lock';
-
-  // const itemIconName = (global.isColorChangePurchased) ? 'md-unlock' : 'md-lock';
-
-  let isEditable = false;
-  if (!name) {
-    isEditable = true;
-  }
-
-  // const [storageKey, setStorageKey] = useState(null);
-
-  // async function retrieveCognitoUserKey() {
-  //   Auth.currentAuthenticatedUser()
-  //     .then((cognito) => {
-  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //       // console.log('username:', cognitoUser.username);
-  //       setStorageKey(cognito.username);
-
-  //       // setEmail(cognito.attributes.email);
-  //     })
-  //     .catch((err) => {
-  //       // console.log(err);
-  //       Alert.alert(err);
-  //     });
+  // let isEditable = false;
+  // if (!name) {
+  //   isEditable = true;
   // }
-
-  // const handleNameEndEditing = (text) => {
-  //   console.log(text);
-  // }
-
-  // function checkColor(value) {
-  //   return value !== 'dark' || color !== 'darkTwo' || color !== 'darkGreyBlue' || color !== 'offWhite'
-  // }
-
-  // const randomKeyFrom = (obj) => {
-  //   const keys = Object.keys(obj);
-
-  //   // console.log(keys.filter(checkColor))
-
-  //   return obj[keys.filter(checkColor)[Math.floor(Math.random() * keys.length)]];
+  // const handleTextChange = (value) => {
+  //   // console.log(value);
+  //   setText(value);
   // };
-
-  const handleTextChange = (value) => {
-    // console.log(value);
-    setText(value);
-  };
 
   // const colorSelect = (colorId) => {
   //   Alert.alert('Please Purchase Category Color Change');
@@ -185,46 +142,46 @@ function CellItem({
 
 
 
-  async function retrieveCognitoUserKey() {
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // setUserToken(user.signInUserSession.accessToken.jwtToken);
-        // console.log('username:', cognitoUser.username);
-        // setStorageKey(cognito.username);
+  // async function retrieveCognitoUserKey() {
+  //   Auth.currentAuthenticatedUser()
+  //     .then((cognito) => {
+  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
+  //       // console.log('username:', cognitoUser.username);
+  //       // setStorageKey(cognito.username);
 
-        // setEmail(cognito.attributes.email);
-        key = cognito.username;
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
-  }
+  //       // setEmail(cognito.attributes.email);
+  //       key = cognito.username;
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //       Alert.alert(err);
+  //     });
+  // }
 
 
-  const handleTextSubmit = async (value) => {
-    alert('handling text submit')
-    // let key = retrieveCognitoUserKey();
+  // const handleTextSubmit = async (value) => {
+  //   Alert.alert('handling text submit', text)
+  //   // let key = retrieveCognitoUserKey();
 
-    // if (key) {
-    //   // load stored user settings
-    //   const userObject = await loadSettingsStorage(key);
-    // } else {
-    //   alert('error handling text submit')
-    // }
+  //   // if (key) {
+  //   //   // load stored user settings
+  //   //   const userObject = await loadSettingsStorage(key);
+  //   // } else {
+  //   //   alert('error handling text submit')
+  //   // }
 
     
 
-    // const previousObj = searchByName(value, userObject.categories);
+  //   // const previousObj = searchByName(value, userObject.categories);
 
-    // // const randomColor = randomKeyFrom(colors)
+  //   // // const randomColor = randomKeyFrom(colors)
 
-    // if (!previousObj) {
-    //   //  create new payee
-    //   // addCategory(value, randomColor);
-    //   addCategory(value, colors.white);
-    // }
-  };
+  //   // if (!previousObj) {
+  //   //   //  create new payee
+  //   //   // addCategory(value, randomColor);
+  //   //   addCategory(value, colors.white);
+  //   // }
+  // };
 
   // useEffect(() => {
   //   retrieveCognitoUserKey();
@@ -250,8 +207,8 @@ function CellItem({
   return (
     <TouchableOpacity
       // onPress={() => onSelect(id)}
-      // onPress={() => console.log(id)}
-      activeOpacity={1}
+      onPress={() => console.log('category id: ', id)}
+      activeOpacity={1.0}
       style={[
         styles.tableItemStyle,
         {
@@ -283,7 +240,7 @@ function CellItem({
 
           placeholderTextColor={color}
 
-          editable={isEditable}
+          editable={false}
 
           returnKeyType="done"
 
@@ -301,7 +258,7 @@ function CellItem({
 
           maxLength={14}
 
-          value={text}
+          value={name}
         />
 
         <View style={
@@ -368,17 +325,17 @@ const CustomizeCategoriesScreen = () => {
     }
   };
 
-  // fetch aws method
-  async function retrieveCognitoUserKey() {
-    Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        setStorageKey(cognito.username);
-      })
-      .catch((err) => {
-        // console.log(err);
-        Alert.alert(err);
-      });
-  }
+  // // fetch aws method
+  // async function retrieveCognitoUserKey() {
+  //   Auth.currentAuthenticatedUser()
+  //     .then((cognito) => {
+  //       setStorageKey(cognito.username);
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //       Alert.alert(err);
+  //     });
+  // }
 
   // private methods
   const removeCategoryByName = async (name) => {
@@ -399,6 +356,31 @@ const CustomizeCategoriesScreen = () => {
 
     setHelpMessage('Removed category');
   };
+
+  const deleteCategoryByID = async (item) => {
+    const storage = await loadSettingsStorage(storageKey);
+
+    const category = searchByID(item.id, storage.categories);
+
+    console.log('item: ', item);
+
+    console.log('storage.categories.length: ', storage.categories.length);
+
+    let i = 0;
+    for (i; i < storage.categories.length; i += 1) {
+      if (storage.categories[i] === category) {
+        storage.categories.splice(i, 1);
+      }
+    }
+
+    console.log('storage.categories.length: ', storage.categories.length);
+
+    saveSettingsStorage(storageKey, storage);
+
+    setData(storage.categories);
+
+    // Alert.alert('Category Successfully Deleted!');
+  }
 
   const addCategory = async (name, color, type) => {
     // const list = await loadUserCategories();
@@ -562,7 +544,13 @@ const CustomizeCategoriesScreen = () => {
   };
 
   const deleteBtnPressed = async (item) => {
-    await removeCategoryByName(item.name);
+    try {
+      deleteCategoryByID(item);
+    } catch(e) {
+      // statements
+      console.log('e: ', e);
+    }
+    // await removeCategoryByName(item.name);
   };
 
   function renderSeparator(item) {

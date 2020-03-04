@@ -22,6 +22,8 @@ import {
 
 import styles from '../../../styles';
 
+import colors from '../../../colors';
+
 // import SlideViewSeparator from '../SlideViewSeparator';
 
 import SlideUpTransactionRect from './SlideUpTransactionRect';
@@ -55,7 +57,7 @@ function SlideUpView(props) {
       // enabled={isKeyboardAvoidEnabled}
       enabled
       style={{
-        // flex: 1,
+        flex: 1,
         // width: '100%',
         // height: '90%',
         // bottom: '0%',

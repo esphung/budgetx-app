@@ -48,8 +48,6 @@ import { AppLoading } from 'expo';
 
 import './globals'; // global values
 
-// import { Audio } from 'expo-av';
-
 // Amplify imports and config
 // import Amplify from '@aws-amplify/core';
 // import Amplify from '@aws-amplify/core';
@@ -118,16 +116,12 @@ export default function App() {
   let view = null;
 
   async function loadApplicationResources() {
-    // const soundObject = new Audio.Sound();
-
     // fonts
     try {
       await Font.loadAsync({
         'SFProDisplay-Regular': global.SFProDisplayRegularFont, // require('./assets/fonts/SF-Pro-Display-Regular.otf');
         'SFProDisplay-Semibold': global.SFProDisplaySemiboldFont,
       });
-      // _playRecording(); // inside async func
-
       // stored fonts have been loaded
       setFontsAreLoaded(true);
     } catch (err) {
@@ -148,8 +142,8 @@ export default function App() {
   //   view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
   // }
   else {
-    view = <AppStackNavigator />; // no login
-    // view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
+    // view = <AppStackNavigator />; // no login
+    view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
   }
   return view;
 }

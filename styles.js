@@ -11,7 +11,6 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    
 
     // backgroundColor: colors.darkTwo, // '#aa73b7',
     // flexDirection: 'column',
@@ -43,14 +42,14 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'dashed',
   },
-  normalMessage : {
-    width: 'auto',
+  normalMessage: {
+    // width: 'auto',
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
     fontStyle: 'normal',
     letterSpacing: 0.13,
     color: colors.white,
-    
+
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'dashed',
@@ -112,7 +111,7 @@ export default StyleSheet.create({
 
   settingsImage: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
 
   itemSymbolStyle: {
@@ -159,9 +158,9 @@ export default StyleSheet.create({
   },
   itemStyle: {
     marginBottom: 20,
-            // alignItems: 'flex-start',
-            // justifyContent: 'center',
-            // backgroundColor: colors.dark,
+    // alignItems: 'flex-start',
+    // justifyContent: 'center',
+    // backgroundColor: colors.dark,
   },
   iconStyle: {
     // flex: 0.1,
@@ -183,7 +182,7 @@ export default StyleSheet.create({
 
     // borderWidth: 1,
     // borderColor: colors.white,
-    // borderStyle: 'solid',    
+    // borderStyle: 'solid',
   },
   // buttonStyleEnabled: {
   //   alignItems: 'center',
@@ -194,7 +193,7 @@ export default StyleSheet.create({
 
   //   // borderWidth: 1,
   //   // borderColor: colors.white,
-  //   // borderStyle: 'solid',    
+  //   // borderStyle: 'solid',
   // },
   // buttonStyleDisabled: {
   //   alignItems: 'center',
@@ -206,7 +205,7 @@ export default StyleSheet.create({
 
   //   // borderWidth: 1,
   //   // borderColor: colors.white,
-  //   // borderStyle: 'solid',    
+  //   // borderStyle: 'solid',
   // },
   emptyMessageTextStyle: {
     // width: 225,
@@ -224,7 +223,7 @@ export default StyleSheet.create({
 
   buttonText: {
     // fontSize: 18,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     color: colors.white, // '#fff',
     // opacity: 0.6,
     fontSize: 17,
@@ -258,9 +257,35 @@ export default StyleSheet.create({
     // padding: 24,
     // flex: 1,
     justifyContent: 'flex-end',
-    
+
   },
   textStyle: {
+    // fontWeight: '600',
+    // color: colors.white, // '#fff',
+    // // opacity: 0.6,
+    // fontSize: 17,
+
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    lineHeight: 28,
+    // lineHeight: 24,
+    letterSpacing: 0.13,
+    // textAlign: 'center',
+
+    // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 17,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    color: colors.white, // '#ffffff',
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+
+  },
+  calendarTextStyle: {
     // fontWeight: '600',
     // color: colors.white, // '#fff',
     // // opacity: 0.6,
@@ -274,19 +299,23 @@ export default StyleSheet.create({
     letterSpacing: 0.13,
     // textAlign: 'center',
 
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 17,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    letterSpacing: 0.13,
+    // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 15,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
 
   },
   payeeInputText: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
     // fontStyle: 'normal',
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
 
     letterSpacing: 0.13,
 
@@ -305,6 +334,9 @@ export default StyleSheet.create({
     // height: '100%',
     // backgroundColor: colors.darkTwo,
 
+    justifyContent: 'center',
+    alignItems: 'center',
+
     // position: 'absolute',
 
     // top: '10%',
@@ -313,33 +345,44 @@ export default StyleSheet.create({
     // borderColor: 'blue',
     // borderStyle: 'dashed',
 
-
-
-    shadowColor: '#0a101b',
-    shadowOffset: {
-      width: 1,
-      height: 1,
-    },
-    shadowRadius: 26,
-    shadowOpacity: 1,
+    // shadowColor: '#0a101b',
+    // shadowOffset: {
+    //   width: 1,
+    //   height: 1,
+    // },
+    // shadowRadius: 26,
+    // shadowOpacity: 1,
   },
   slideUpTransactionRect: {
+    // flex: 1,
     // height: '100%',
     height: 210,
-    width: 'auto',
+    // width: 'auto',
+    // width: 1000,
 
-    alignItems: 'center',
+    // alignItems: 'center',
 
-    borderRadius: 9,
+    // alignSelf: 'center',
 
+    // borderRadius: 9,
 
+    borderTopWidth: 1,
+    borderTopColor: colors.dark,
+    // borderTopColor: 'transparent',
 
+    borderLeftWidth: 1,
+    borderLeftColor: colors.dark,
+    // borderLeftColor: 'transparent',
+
+    borderRightWidth: 1,
+    borderRightColor: colors.dark,
+    // borderRightColor: 'transparent',
     // borderWidth: 3,
     // borderColor: 'white',
     // borderStyle: 'dashed',
 
     backgroundColor: colors.darkTwo,
-    // backgroundColor: 'blue',
+    // backgroundColor: 'transparent',
 
     // shadowColor: '#0a101b',
     // shadowOffset: {
@@ -351,7 +394,7 @@ export default StyleSheet.create({
   },
   dateAmountRectangle: {
     // position: 'absolute',
-    
+
     // alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -359,6 +402,7 @@ export default StyleSheet.create({
     height: 74,
 
     marginBottom: 6,
+    marginHorizontal: 6,
 
     borderRadius: 9,
     backgroundColor: colors.dark,
@@ -375,7 +419,7 @@ export default StyleSheet.create({
     // borderStyle: 'dashed',
   },
   helpMessageText: {
-    fontWeight: '600',
+    // fontWeight: '600',
     color: colors.white, // '#fff',
     // opacity: 0.6,
     fontSize: 17,

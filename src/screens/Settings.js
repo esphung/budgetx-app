@@ -21,12 +21,12 @@ import { withNavigation } from 'react-navigation';
 import {
   // StyleSheet,
   View,
-  // ScrollView,
-  // Button,
-  // TouchableOpacity,
-  // Text,
-  // Image,
-  // TextInput
+  ScrollView,
+  Button,
+  TouchableOpacity,
+  Text,
+  Image,
+  TextInput,
   SafeAreaView,
   AsyncStorage,
   Alert,
@@ -75,7 +75,7 @@ import {
   clearSettingsStorage,
 } from '../storage/SettingsStorage';
 
-// import Auth from '@aws-amplify/auth';
+import Auth from '@aws-amplify/auth';
 
 // ui colors
 import colors from '../../colors';
@@ -226,7 +226,7 @@ function Settings(props) {
     }
   }
 
-  const restoreBackedUpData = async () => {
+  const restoreBackUpData = async () => {
     let success = false;
     const backup_key = `${storageKey}_BACKUPSETTINGS`
     // load backed up user settings
@@ -248,6 +248,10 @@ function Settings(props) {
         setIsRestoreDisabled(true);
 
         setIsBackupDisabled(false)
+
+        props.navigation.navigate('Home');
+
+        showRestoreCompleteAlert();
       }
     } catch (e) {
       // statements
@@ -302,7 +306,7 @@ function Settings(props) {
 
     // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
     // if (success) {
-    //   restoreBackedUpData();
+    //   restoreBackUpData();
     // }
   };
 
@@ -319,6 +323,27 @@ function Settings(props) {
     );
   };
 
+  function showResetCompleteAlert() {
+    Alert.alert(
+     'Reset Complete',
+     'All your data is gone.'
+    );
+  }
+
+  function showRestoreCompleteAlert() {
+    Alert.alert(
+     'Backup Restored',
+     'Your data has been restored.',
+    );
+  }
+
+  function showContactSupportFailedAlert(text) {
+    Alert.alert(
+     'Contact Support',
+     text
+    );
+  }
+
   // const clearAsyncStorage = async () => {
   //   await AsyncStorage.clear();
   // };
@@ -327,7 +352,6 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
-    // console.log(storageKey);
     clearSettingsStorage(storageKey);
     // await clearAsyncStorage()
     //   .then(() => {
@@ -341,46 +365,73 @@ function Settings(props) {
     setIsRestoreDisabled(false);
 
     navigation.navigate('Home');
+
+    showResetCompleteAlert();
   };
 
   /*
   * > Confirm reset data
   */
-  const resetDataAlert = async () => {
-    await Alert.alert(
-      'Reset Data',
-      'Are you sure you want to reset all data from the app?',
+  const resetDataAlertPrompt = () => {
+    // RESET DATA PROMPT
+    Alert.prompt(
+      'Are you sure you want to reset all data from this app?',
+      'Enter DELETE below to remove all data',
       [
-        { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-        { text: 'OK', onPress: resetData },
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        { text: 'OK', onPress: (input) => {
+          if (input === 'DELETE') {
+            resetData();
+          }
+        }},
       ],
-      { cancelable: false },
-    );
+      // 'secure-text',
+      // 'login-password',
+      'plain-text',
+    )
+
+
+    // Alert.alert(
+    //   'Reset Data',
+    //   'Are you sure you want to reset all data from the app?'.toUpperCase(),
+    //   [
+    //     { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
+    //     { text: 'OK', onPress: resetData },
+    //   ],
+    //   { cancelable: false },
+    // );
   };
 
-  const restoreDataAlert = async () => {
-    await Alert.alert(
+  const restoreDataAlert = () => {
+    Alert.alert(
       'Restore Backup Data',
-      'Are you sure you want to restore backed up data?',
+      'Are you sure you want to restore your most recent backup data?',
       [
         { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-        { text: 'OK', onPress: restoreBackedUpData },
+        { text: 'OK', onPress: restoreBackUpData },
       ],
       { cancelable: false },
     );
   };
 
 
-  const send = async () => {
+  const sendContactSupportEmail = async () => {
+
     const userObject = await loadSettingsStorage(storageKey);
     // console.log('userObject: ', userObject);
-    MailComposer.composeAsync({
-      recipients: [global.adminEmailAddress],
-      subject: `Contact Support | ${global.appName} ${global.appVersion}`,  // `Issue #${Date.now()}`,
-      body: '', // `<p>${userObject.user.username}</p>`,
-      attachments: [],
-      isHtml: false,
-    });
+    try {
+      await MailComposer.composeAsync({
+        recipients: [global.adminEmailAddress],
+        subject: `Contact Support | ${global.appName} ${global.appVersion}`,  // `Issue #${Date.now()}`,
+        body: '', // `<p>${userObject.user.username}</p>`,
+        attachments: [],
+        isHtml: false,
+      });
+    } catch(err) {
+      // could not send to Mail
+      console.log('err: ', err.message);
+      showContactSupportFailedAlert(err.message);
+    }
   };
 
   const sendTransactionsMail = (transactions) => {
@@ -484,7 +535,7 @@ function Settings(props) {
   }
 
   function resetDataBtnPressed() {
-    resetDataAlert();
+    resetDataAlertPrompt();
   }
 
   function rateUsBtnPressed() {
@@ -494,7 +545,7 @@ function Settings(props) {
 
   function contactSupportBtnPressed() {
     // send contact support email
-    send();
+    sendContactSupportEmail();
   }
 
   function termsOfServiceBtnPressed() {
@@ -520,9 +571,6 @@ function Settings(props) {
   }
 
   const backupDataBtnPressed = async () => {
-    // console.log('Backup Data');
-    // await retrieveCognitoUser();
-    // backupStoredSettings(storageKey);
     backupDataAlert();
   }
 
@@ -777,6 +825,44 @@ function Settings(props) {
 }
 
 Settings.navigationOptions = ({ navigation }) => {
+  let signOutBtn = null
+  // let signOutBtn = (
+  //   <View style={
+  //     {
+  //       width: '100%',
+  //       height: '100%',
+
+  //       justifyContent: 'center',
+  //       alignItems: 'center',
+
+  //       marginRight: 14,
+
+  //       // borderWidth: 1,
+  //       // borderColor: 'white',
+  //       // borderStyle: 'solid',
+  //     }
+  //   }
+  //   >
+  //     <TouchableOpacity onPress={signOutAlert}>
+  //       <Text
+  //         style={
+  //           {
+  //             // width: 42,
+  //             height: 20,
+  //             fontFamily: 'SFProDisplay-Regular',
+  //             fontSize: 17,
+  //             fontWeight: 'normal',
+  //             fontStyle: 'normal',
+  //             letterSpacing: 0.13,
+  //             color: colors.pinkRed,
+  //           }
+  //         }
+  //       >
+  //         Log Out
+  //       </Text>
+  //     </TouchableOpacity>
+  //   </View>
+  // );
 
   // Sign out from the app
   const signOutAlert = async () => {
@@ -786,7 +872,8 @@ Settings.navigationOptions = ({ navigation }) => {
       [
         {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
         // Calling signOut
-        { text: 'OK', onPress: () => signOut() },
+        { text: 'OK', onPress: () => {
+          signOut()} },
       ],
       { cancelable: false },
     );
@@ -810,6 +897,7 @@ Settings.navigationOptions = ({ navigation }) => {
     },
     headerTintColor: colors.white,
 
+    headerRight: signOutBtn,
 
 /*    headerRight: (
       <View

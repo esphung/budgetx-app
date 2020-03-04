@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,  useRef } from 'react';
 
 import PropTypes from 'prop-types';
 
@@ -11,8 +11,8 @@ import { NetworkConsumer } from 'react-native-offline';
 // Analytics.record({ name: String!, attributes: Object, metrics: Object })
 
 import Amplify from '@aws-amplify/core';
-// import config from '../../aws-exports';
-// Amplify.configure(config);
+import config from '../../aws-exports';
+Amplify.configure(config);
 
 // Analytics.record({ name: "User authenticated!" });
 // console.log('Analytics recorded user authenticated!');
@@ -75,7 +75,9 @@ function SignInScreen(props) {
 
   // const passwordInputRef = useRef(null);
 
-  const [username, setUsername] = useState(null);
+  const emailInputRef = useRef(null);
+
+  const [email, setEmail] = useState(null);
 
   const [password, setPassword] = useState(null);
 
@@ -128,16 +130,16 @@ function SignInScreen(props) {
   async function resendSignUp() {
     // let isSuccessful = false;
     // const { username } = this.state;
-    if (!username) {
+    if (!email) {
       // usernameInputRef.current._root.focus();
       // Alert.alert('Please provide a username');
-      setHelpMessage('Please provide a username');
+      setHelpMessage('Please provide a email');
       // setDialogTitle('Please provide a username');
       // setIsDialogVisible(true);
       // isSuccessful = true;
       return;
     }
-    await Auth.resendSignUp(username)
+    await Auth.resendSignUp(email)
       .then(() => {
         // Alert.alert('Confirmation code resent successfully!');
         setHelpMessage('Confirmation code resent successfully!');
@@ -220,7 +222,7 @@ function SignInScreen(props) {
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
 
-              <Item rounded style={styles.itemStyle}>
+{/*              <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-person" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
@@ -240,6 +242,30 @@ function SignInScreen(props) {
 
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                  />
+                </Item>*/}
+
+                {/* email section */}
+                <Item rounded style={styles.itemStyle}>
+                  <Ionicons active name="md-mail" style={styles.iconStyle} />
+                  <Input
+                    style={styles.input}
+                    placeholder="Email"
+                    placeholderTextColor={colors.offWhite}
+                    keyboardType="email-address"
+                    returnKeyType="next"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={false}
+                    ref={emailInputRef}
+                    onSubmitEditing={() => handleEmailInputSubmit()}
+                    onChangeText={(value) => onChangeText('email', value)}
+
+                    value={email}
+
+                    keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                    maxLength={26}
                   />
                 </Item>
 
@@ -304,12 +330,12 @@ function SignInScreen(props) {
     // await AsyncStorage.setItem('userToken', userTokenValue);
     // // console.log('userToken set:', userTokenValue);
     // props.navigation.navigate('AuthLoading');
-    await Auth.signIn(username, password)
+    await Auth.signIn(email, password)
       .then((cognito) => {
         // console.log(cognito);
 
-         Analytics.record({ name: "Sign in attempted!"});
-          console.log('Analytics recorded sign in attempt!');
+         // Analytics.record({ name: "Sign in attempted!"});
+         //  console.log('Analytics recorded sign in attempt!');
 
         if (cognito) {
           // set username key here!
@@ -370,13 +396,9 @@ function SignInScreen(props) {
     // console.log('key:', key);
     // console.log('value:', value);
 
-    if (key === 'username') {
-      if (value.length < 6) {
-        setHelpMessage('Username too short');
-      } else {
-        setHelpMessage(null);
-      }
-      setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
+    if (key === 'email') {
+
+      setEmail(value);
     } else if (key === 'password') {
       setPassword(value.replace(' ', ''));
     } else if (key === 'authCode') {
@@ -388,24 +410,22 @@ function SignInScreen(props) {
     // console.log('username:', username);
     // console.log('password:', password);
 
-    if (!username) {
-      setHelpMessage(null);
-    } else if (username && username.length < 6) {
-      setIsSignInBtnEnabled(false);
+    if (email) {
+      setIsSignInBtnEnabled(true);
     }
 
-    else if (username.length >= 6 && isValidUsername(username) && password) {
-      setIsSignInBtnEnabled(true);
-      // console.log(username);
-      // setIsHelpIconVisible(false);
-    } else {
-      setIsSignInBtnEnabled(false);
-    }
+    // else if (username.length >= 6 && isValidUsername(username) && password) {
+    //   setIsSignInBtnEnabled(true);
+    //   // console.log(username);
+    //   // setIsHelpIconVisible(false);
+    // } else {
+    //   setIsSignInBtnEnabled(false);
+    // }
     // return () => {
     //   // effect
     //   // console.log('clean up');
     // };
-  }, [username, password, isLoading, helpMessage]);
+  }, [password, isLoading, helpMessage]);
 
   useEffect(() => {
     if (!authCode || !username) {
@@ -416,7 +436,7 @@ function SignInScreen(props) {
     return () => {
       // effect
     };
-  }, [authCode, username])
+  }, [authCode])
 
   const signin = (
     <SafeAreaView style={styles.container}>
@@ -426,27 +446,27 @@ function SignInScreen(props) {
           <View style={styles.container}>
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
+                {/* email section */}
                 <Item rounded style={styles.itemStyle}>
-                  <Ionicons active name="md-person" style={styles.iconStyle} />
+                  <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="Username"
-                    placeholderTextColor={colors.offWhite} // "#adb4bc"
+                    placeholder="Email"
+                    placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
                     returnKeyType="next"
                     autoCapitalize="none"
                     autoCorrect={false}
-                    onSubmitEditing={() => handleUsernameInputSubmit()}
-                    onChangeText={(value) => onChangeText('username', value)}
+                    secureTextEntry={false}
+                    ref={emailInputRef}
+                    // onSubmitEditing={() => handleEmailInputSubmit()}
+                    onChangeText={(value) => onChangeText('email', value)}
 
-                    // ref={usernameInputRef}
-
-                    value={username}
+                    value={email}
 
                     keyboardAppearance="dark"
-
-                    maxLength={24}
-
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                    maxLength={26}
                   />
                 </Item>
                 <Item rounded style={styles.itemStyle}>

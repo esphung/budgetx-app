@@ -9,8 +9,11 @@ import {
   TouchableOpacity,
   FlatList,
   // ScrollView,
-  Alert,
+  // Alert,
+  // ActivityIndicator,
 } from 'react-native';
+
+import { NavigationEvents } from 'react-navigation';
 
 // import Auth from '@aws-amplify/auth';
 
@@ -29,7 +32,7 @@ import styles from '../../../styles';
 
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
-import MyDateTimePicker from '../../../storybook/stories/MyDateTimePicker';
+// import MyDateTimePicker from '../../../storybook/stories/MyDateTimePicker';
 
 import MyCalendarPicker from '../../../storybook/stories/MyCalendarPicker';
 
@@ -45,7 +48,7 @@ import searchByID from '../../../src/functions/searchByID';
 
 import {
   loadSettingsStorage,
-  saveSettingsStorage,
+  // saveSettingsStorage,
 } from '../../storage/SettingsStorage';
 
 // test label
@@ -163,9 +166,9 @@ function SlideUpTransactionRect(props) {
 
   const [pickerBtnText, setPickerBtnText] = useState('Pick a date');
 
-  const [shouldShowNoteInput, setShouldShowNoteInput] = useState(true);
+  // const [shouldShowNoteInput, setShouldShowNoteInput] = useState(true);
 
-  const [shouldShowNoteInputBtn, setShouldShowNoteInputBtn] = useState(true);
+  // const [shouldShowNoteInputBtn, setShouldShowNoteInputBtn] = useState(true);
 
   // const updateStoredTransactionCategory = async (category) => {
   //   // load stored user transactions
@@ -305,6 +308,7 @@ function SlideUpTransactionRect(props) {
 
       // user categories from stored user
       setCategories(userObject.categories);
+      // console.log('userObject.categories: ', userObject.categories);
       // console.log('User:', userObject.categories);
       // setCurrentCategory(props.currentCategory);
       // setCurrentCategories(props.currentCategories);
@@ -315,20 +319,25 @@ function SlideUpTransactionRect(props) {
   };
 
   const clearState = async () => {
-    // setIsReady(false);
+    setIsReady(false);
     // setShouldShowCategoryBox(true);
     setShouldShowCalendarPicker(false);
-    setShouldShowNoteInput(true);
-    setShouldShowNoteInputBtn(true);
+    setData(null)
+    setDate(null)
+    setAmount(0)
+    setCategories(null)
+    // setShouldShowNoteInput(true);
+    // setShouldShowNoteInputBtn(true);
     // setShadowOffset(props.shadowOffset);
     // setShadowRadius(props.shadowRadius);
     // setShadowOpacity(props.shadowOpacity);
     // setTopPosition(props.topPosition);
     // setZIndex(props.zIndex);
 
-    await retrieveCognitoUserKey();
+    // await retrieveCognitoUserKey();
+    retrieveStoredCategories(storageKey);
     // console.log('Finished');
-    // setIsReady(true);
+    setIsReady(true);
   };
 
   // const chooseCategoryBtnPressed = () => {
@@ -389,18 +398,19 @@ function SlideUpTransactionRect(props) {
   // console.log(getFlatListDataFromObject(colors));
 
   useEffect(() => {
-    clearState();
+    // clearState();
+    retrieveStoredCategories(storageKey);
   }, []);
 
-  useEffect(() => {
-    if (storageKey) {
-      // console.log(storageKey);
-      retrieveStoredCategories(storageKey); // for user categories
-    }
-    return () => {
-      // effect
-    };
-  }, [storageKey]);
+  // useEffect(() => {
+  //   if (storageKey) {
+  //     // console.log(storageKey);
+  //     retrieveStoredCategories(storageKey); // for user categories
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [storageKey]);
 
   useEffect(() => {
     if (categories) {
@@ -415,39 +425,33 @@ function SlideUpTransactionRect(props) {
 
   useEffect(() => {
     // console.log('Mount');
-
     if (!transaction) {
       // reset buttons
       // console.log('Reset');
 
-      clearState();
+      // clearState();
     } else if (transaction) {
       // Mount current transaction
       transaction = (props.transaction);
-
-      if (transaction) {
-        // console.log('transaction');
 
         setAmount(transaction.amount);
 
         setDate(transaction.date);
 
         // setPickerBtnText(transaction.date);
-
-        setPickerBtnText(`${getFormattedDateString(date)}`);
-      }
     }
-  });
+  }, [transaction]);
 
   useEffect(() => {
-    if (amount && date && transaction && data) {
+    if (amount && date && data && transaction) {
+      setPickerBtnText(`${getFormattedDateString(date)}`);
       setDataIsLoaded(true);
       // setIsReady(true)
     }
     return () => {
       // effect
     };
-  }, [amount, date, transaction, data]);
+  }, [amount, date, data, transaction]);
 
   function pickerBtnPressed() {
     // console.log(shouldShowCalendarPicker);
@@ -476,7 +480,18 @@ function SlideUpTransactionRect(props) {
   // );
 
   let calendarPicker = (
-    <MyCalendarPicker date={new Date(date)} onDateChange={props.onDateChange} />
+    <View style={
+      {
+        // flex: 1,
+        // borderTopWidth: 0.5,
+        // borderColor: 'lightgray',
+        // borderStyle: 'solid',
+
+        // padding: 3,
+
+        // marginBottom: 6,
+      }
+    }><MyCalendarPicker date={new Date(date)} onDateChange={props.onDateChange} /></View>
   );
 
   let noteInput = (
@@ -490,7 +505,14 @@ function SlideUpTransactionRect(props) {
   // let noteInputBtn = <TouchableText title="Add Note" onPress={noteInputBtnPressed} />;
 
 
-  // let view = <SpinnerMask />;
+  // let view = <View style={
+  //   {
+  //     flex: 1,
+  //     borderWidth: 1,
+  //     borderColor: 'white',
+  //     borderStyle: 'solid',
+  //   }
+  // }><ActivityIndicator /></View>
   let view = null;
 
   // let box = null;
@@ -516,9 +538,9 @@ function SlideUpTransactionRect(props) {
   //   categoryBox = null;
   // }
 
-  if (!shouldShowNoteInput) {
-    noteInput = null;
-  }
+  // if (!shouldShowNoteInput) {
+  //   noteInput = null;
+  // }
 
   // Calendar
   if (shouldShowCalendarPicker) {
@@ -541,6 +563,7 @@ function SlideUpTransactionRect(props) {
 
   if (isReady && dataIsLoaded && transaction) {
     view = (
+      
       <View
         style={
           [
@@ -548,6 +571,14 @@ function SlideUpTransactionRect(props) {
           ]
         }
       >
+       <NavigationEvents
+        // try only this. and your component will auto refresh when this is the active component
+        onWillFocus={clearState} // {(payload) => clearState()}
+        // other props
+        // onDidFocus={payload => console.log('did focus',payload)}
+        // onWillBlur={clearState} // console.log('will blur',payload)}
+        // onDidBlur={payload => console.log('did blur',payload)}
+      />
       <View
               style={
                 {
@@ -593,8 +624,8 @@ function SlideUpTransactionRect(props) {
 
                 <View
           style={{
-            height: '50%',
-            // backgroundColor: colors.darkTwo,
+            // height: '50%',
+            backgroundColor: colors.darkTwo,
 
             // borderWidth: 1,
             // borderColor: 'red',
@@ -605,31 +636,36 @@ function SlideUpTransactionRect(props) {
 
             <View style={
               {
-                flex: 1,
+                // flex: 1,
               }
             }>
             <FlatList
                 contentContainerStyle={{
                   // alignItems: 'center',
                   // height: 28,
-                  // paddingHorizontal: 10,
+                  paddingHorizontal: 5,
+                  paddingVertical: 3,
 
-                  marginVertical: 10,
+                  // marginVertical: 10,
 
                 }}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 // decelerationRate={0}
-                // snapToAlignment="center"
+                snapToAlignment="center"
 
                 data={data}
                 renderItem={({ item }) => <Item item={item} transaction={transaction} />}
                 keyExtractor={(item) => item.key}
               />
-            </View>
 
               {
             noteInput
+          }
+            </View>
+
+              {
+            // noteInput
           }
           </View>
 
