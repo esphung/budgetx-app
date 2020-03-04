@@ -11,8 +11,10 @@ import {
 
 import colors from '../../../colors';
 
+import styles from '../../../styles';
+
 // arbitrary size limits
-const MAX_PILL_WIDTH = 156;
+const MAX_PILL_WIDTH = 176;
 const MIN_PILL_WIDTH = 54;
 // const MAX_PILL_HEIGHT = 32;
 
@@ -52,7 +54,7 @@ const CategoryPill = (props) => {
           minWidth: MIN_PILL_WIDTH,
           maxWidth: MAX_PILL_WIDTH,
 
-          height: '60%', // 37,
+          height: 35, // '60%', // 37,
 
           alignItems: 'center',
           justifyContent: 'center',
@@ -70,25 +72,32 @@ const CategoryPill = (props) => {
         }
       }
 
-      // key={id}
+      key={item.id}
 
       onPress={onPress}
     >
 
-      <Text style={
+      <Text
+      style={[
+        styles.pillItemText,
         {
-          paddingHorizontal: 12,
-          paddingBottom: 1,
-
-          fontFamily: 'SFProDisplay-Regular',
-          fontSize: 17,
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          letterSpacing: 0.12,
-
           color: textColor,
         }
-      }
+      ]}
+      // style={
+      //   {
+      //     paddingHorizontal: 12,
+      //     paddingBottom: 1,
+
+      //     fontFamily: 'SFProDisplay-Regular',
+      //     fontSize: 17,
+      //     fontWeight: 'normal',
+      //     fontStyle: 'normal',
+      //     letterSpacing: 0.12,
+
+      //     color: textColor,
+      //   }
+      // }
       >
 
         { name }

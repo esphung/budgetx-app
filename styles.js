@@ -15,7 +15,7 @@ export default StyleSheet.create({
     // backgroundColor: colors.darkTwo, // '#aa73b7',
     // flexDirection: 'column',
     // marginTop: 15, // '5%',
-    // marginBottom: 5,
+    // marginBottom: 10,
   },
 
   // container: {
@@ -90,10 +90,10 @@ export default StyleSheet.create({
   userMessageView: {
     flex: 1,
     // flexDirection: 'column',
-    // height: '100%', // 36,
-    // left: 12,
+    height: 36,
+    left: 12,
     // justifyContent: 'center',
-    marginLeft: 12,
+    // marginLeft: 12,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -101,8 +101,8 @@ export default StyleSheet.create({
   },
   settingsBtnTouchableOpacityMask: {
     // flex: 1,
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -124,14 +124,17 @@ export default StyleSheet.create({
   input: {
     alignItems: 'center',
     fontSize: 17,
-    fontWeight: '600',
+    // fontWeight: '600',
     color: colors.white, // '#5a52a5',
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    // fontWeight: 'normal',
+    fontWeight: 'normal',
     fontStyle: 'normal',
     // letterSpacing: 0.17,
-    textAlign: 'left',
+    // textAlign: 'left',
+
+    fontWeight: 'normal',
+    fontStyle: 'normal',
 
     letterSpacing: 0.13,
 
@@ -167,6 +170,8 @@ export default StyleSheet.create({
     color: colors.white, // '#5a52a5',
     fontSize: 17,
     marginLeft: 15,
+
+
 
     // borderWidth: 1,
     // borderColor: 'pink',
@@ -215,18 +220,18 @@ export default StyleSheet.create({
     fontSize: 22,
     fontWeight: 'normal',
     fontStyle: 'normal',
-    lineHeight: 28,
+    // lineHeight: 28,
     letterSpacing: 0.13,
     textAlign: 'center',
     color: colors.offWhite,
   },
 
   buttonText: {
-    // fontSize: 18,
+    fontSize: 18,
     // fontWeight: 'bold',
     color: colors.white, // '#fff',
     // opacity: 0.6,
-    fontSize: 17,
+    // fontSize: 17,
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontWeight: '600',
@@ -236,10 +241,6 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   listItemTitleStyle: {
-    // flex: 1,
-    // width: 67,
-    // height: 20,
-
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 17,
     fontWeight: 'normal',
@@ -247,43 +248,52 @@ export default StyleSheet.create({
     letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
 
-    // paddingLeft: 12,
+    // paddingLeft: 5,
+
+    padding: 5,
 
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',
   },
   innerSlide: {
-    // padding: 24,
-    // flex: 1,
     justifyContent: 'flex-end',
-
   },
   textStyle: {
-    // fontWeight: '600',
-    // color: colors.white, // '#fff',
-    // // opacity: 0.6,
-    // fontSize: 17,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    // lineHeight: 28,
+    // lineHeight: 26,
+    letterSpacing: 0.13,
+    // textAlign: 'center',
+
+    fontSize: 17,
+    color: colors.white, // '#ffffff',
+
+    padding: 5,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+  pillItemText: {
+    paddingHorizontal: 12,
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontWeight: 'normal',
     fontStyle: 'normal',
-    lineHeight: 28,
-    // lineHeight: 24,
-    letterSpacing: 0.13,
+    // lineHeight: 28,
+    // lineHeight: 26,
+    letterSpacing: 0.12,
     // textAlign: 'center',
 
-    // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 17,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.13,
     color: colors.white, // '#ffffff',
 
     // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',
-
   },
   calendarTextStyle: {
     // fontWeight: '600',

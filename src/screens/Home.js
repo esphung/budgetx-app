@@ -152,7 +152,7 @@ export default function Home() {
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
 
   const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
-  
+
   const [isReady, setIsReady] = useState(false);
 
   const [shouldShowScrollingPills, setShouldShowScrollingPills] = useState(false);
@@ -254,8 +254,8 @@ export default function Home() {
     } catch (e) {
       // statements
       // console.log(e);
-    } 
-  }
+    }
+  };
 
 
   const updateStoredTransactionCategory = async (category) => {
@@ -916,7 +916,7 @@ export default function Home() {
 
       <View style={
         {
-          
+
           position: 'absolute',
           // flexDirection: 'row',
           // justifyContent: 'center',
@@ -1027,7 +1027,7 @@ export default function Home() {
 
 Home.navigationOptions = () => {
   const boldMessage = 'Get device cross-sync'; // `${global.appName} ${global.appVersion} (Basic)`;
-  const normalMessage = `${global.appName} ${global.appVersion}`;
+  let normalMessage = `${global.appName} ${global.appVersion}`;
   // const normalMessage = 'Enter your email';
   async function onUsernameSubmit(string) {
     // console.log('string: ', string);

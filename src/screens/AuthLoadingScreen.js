@@ -55,38 +55,46 @@ export default function AuthLoadingScreen(props) {
 
   async function retrieveCognitoUserToken() {
     let userToken = await AsyncStorage.getItem('userToken');
+    // console.log('userToken: ', userToken);
     // let userToken = null
     if (userToken) {
-      console.log('Local Storage userToken: ', userToken.substring(0, 13), '...');
+      console.log('Local Storage userToken subString: ', userToken.substring(0, 24), '...');
     } else {
       // get current authenticated user
       await Auth.currentAuthenticatedUser()
         .then((cognito) => {
           // console.log('cognito: ', cognito);
+          console.log('\nAuthenticated User =>')
+          console.log('cognito.attributes: ', cognito.attributes);
           userToken = cognito.signInUserSession.accessToken.jwtToken;
           // console.log('Cognito  Session userToken: ', userToken.substring(0, 13), '...');
 
-          AsyncStorage.setItem('userToken', userToken);//  save token
+          AsyncStorage.setItem('userToken', userToken); // save user token
         })
         .catch((err) => console.log('err: ', err));
 
       userToken = await AsyncStorage.getItem('userToken');
     }
+
     return userToken;
   }
 
   // Get the logged in users and remember them
   async function loadApp() {
     // try offline stored useruserToken first
-    const userToken = await retrieveCognitoUserToken();
+    let userToken = await retrieveCognitoUserToken();
 
     if (!userToken) {
-      console.log('User Not Authenticated');
+      userToken = await AsyncStorage.setItem('userToken', '123456789'); // save user token
+      console.log('userToken: ', userToken);
+      console.log('User Not Authenticated  => Storing local data');
     }
 
-    props.navigation.navigate('App');
+    // props.navigation.navigate('App');
 
-    // props.navigation.navigate(userToken ? 'App' : 'Auth');
+
+
+    props.navigation.navigate(userToken ? 'App' : 'Auth');
   }
 
 

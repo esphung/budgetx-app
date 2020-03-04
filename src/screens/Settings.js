@@ -228,16 +228,41 @@ function Settings(props) {
 
   const restoreBackUpData = async () => {
     let success = false;
-    const backup_key = `${storageKey}_BACKUPSETTINGS`
+    // let backup_key = `${storageKey}_BACKUP_SETTINGS`
+    // console.log('backup_key: ', backup_key);
     // load backed up user settings
+
     try {
-      const storage = await loadSettingsStorage(backup_key);
+      let storage = await loadSettingsStorage(global.storageKey);
+
+      // global.storageKey = storageObj.user.id
+
+      let backup_key = `${storage.user.id}_BACKUP_SETTINGS`
+      console.log('backup_key: ', backup_key);
+
+
+      storage = await loadSettingsStorage(backup_key);
+
+
+
+
+
+      // global.storageKey = storage.user.id
+      // let backup_key = `${storageKey}_BACKUP_SETTINGS`
+
+      // console.log('backup_key: ', backup_key);
+
+
+
+
 
       // console.log(storage);
       // console.log('Restored from:', backup_key);
 
       // set stored user transactions
+      // global.storageKey = 'CURRENT_USER'
       if (storage !== null && storageKey !== null) {
+        
         // console.log('stored user settings transactions:', storageObj.transactions);
         saveSettingsStorage(storageKey, storage);
 
@@ -255,7 +280,8 @@ function Settings(props) {
       }
     } catch (e) {
       // statements
-      Alert.alert('Could not back up settings');
+      // Alert.alert('Could not back up settings');
+      console.log('e: ', e);
       // console.log(e);
     }
 
@@ -268,10 +294,16 @@ function Settings(props) {
 
   const backupStoredSettings = async () => {
     let success = false;
-    const backup_key = `${storageKey}_BACKUPSETTINGS`
+    // const backup_key = `${storageKey}_BACKUPSETTINGS`
+
     // load stored settings
     try {
       const storageObj = await loadSettingsStorage(storageKey);
+
+      let backup_key = `${storageObj.user.id}_BACKUP_SETTINGS`
+      console.log('backup_key: ', backup_key);
+
+
       if (!storageObj.version) {
         storageObj.version = 1;
       } else {

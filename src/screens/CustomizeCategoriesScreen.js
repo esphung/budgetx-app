@@ -18,7 +18,7 @@ import {
   // AsyncStorage,
   // Alert,
   FlatList,
-  // ActivityIndicator,
+  ActivityIndicator,
   // Button,
   Alert,
   Platform,
@@ -228,7 +228,7 @@ function CellItem({
         <TextInput
           style={
             [
-              styles.textStyle,
+              styles.listItemTitleStyle,
               {
                 color: selected ? colors.white : color,
                 opacity: selected ? 0.9 : 1,
@@ -539,8 +539,13 @@ const CustomizeCategoriesScreen = () => {
 
   const retrieveStoredCategories = async () => {
     const storage = await loadSettingsStorage(storageKey);
-    console.log(storage)
-    setData(storage.categories);
+    // console.log(storage)
+    try {
+      setData(storage.categories);
+    } catch(e) {
+      // statements
+      console.log('e: ', e);
+    }
   };
 
   const deleteBtnPressed = async (item) => {
@@ -554,10 +559,10 @@ const CustomizeCategoriesScreen = () => {
   };
 
   function renderSeparator(item) {
-    let view = <View />;
+    // let view = <View />;
     // console.log(item.leadingItem.key);
     // if (item.leadingItem.key !== '' && item.leadingItem.key !== 'Passcode' && item.leadingItem.key !== 'Change Password') {
-      view = (
+    const view = (
         <View
           style={{
             flex: 1,
@@ -588,7 +593,10 @@ const CustomizeCategoriesScreen = () => {
       );
     // }
 
-    return view;
+    if (data) {
+      return view;
+    }
+    
   }
 
   function renderItem({ item }) {
@@ -657,11 +665,11 @@ const CustomizeCategoriesScreen = () => {
     return hidden;
   }
 
-  function onSelect(category) {
-    // Alert.alert('Purchase category color change');
-    setCurrentCategory(category);
-    setShouldShowColorBox(true);
-  }
+  // function onSelect(category) {
+  //   // Alert.alert('Purchase category color change');
+  //   setCurrentCategory(category);
+  //   setShouldShowColorBox(true);
+  // }
 
   // const onSelect = useCallback(
   //   (id) => {
@@ -679,13 +687,20 @@ const CustomizeCategoriesScreen = () => {
   // }, [selected]);
 
   async function clearState() {
+    setIsReady(false)
     // setTypeInputValue(null);
-    setNameInputValue(null);
+    // setNameInputValue(null);
     setShowDialogBox(false);
+
+    setCurrentCategory(null)
+
+    retrieveStoredCategories()
 
     // retrieveStoredCategories();
     // retrieveCognitoUserKey();
     // console.log('Cleared state');
+
+    setIsReady(true)
   }
 
   // useEffect(() => {
@@ -747,10 +762,10 @@ const CustomizeCategoriesScreen = () => {
   }, [data]);
 
   useEffect(() => {
-    retrieveStoredCategories()
-    return () => {
-      // effect
-    };
+    clearState()
+    // return () => {
+    //   // effect
+    // };
   }, [])
 
   // useEffect(() => {
@@ -1039,7 +1054,7 @@ const CustomizeCategoriesScreen = () => {
     </View>
   );
 
-  const view = (
+  let view = (
     <SafeAreaView style={styles.container}>
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
@@ -1163,26 +1178,39 @@ const CustomizeCategoriesScreen = () => {
     return colorBox;
   }
 
-  const appLoading = (
-    <View
-      style={
-        {
-          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo
-        }
-      }
-    >
-     
-      <AppLoading
-        startAsync={clearState}
-        onFinish={() => setIsReady(true)}
-        onError={console.warn}
-      />
-    </View>
-  );
+  if (!isReady) {
+    view = <View style={
+      {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
 
-  if (isLoading) {
-    return appLoading;
+        backgroundColor: colors.dark,
+
+      }
+    }><ActivityIndicator /></View>
   }
+
+  // const appLoading = (
+  //   <View
+  //     style={
+  //       {
+  //         flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo
+  //       }
+  //     }
+  //   >
+     
+  //     <AppLoading
+  //       startAsync={clearState}
+  //       onFinish={() => setIsReady(true)}
+  //       onError={console.warn}
+  //     />
+  //   </View>
+  // );
+
+  // if (isLoading) {
+  //   return appLoading;
+  // }
 
   return view;
 };

@@ -93,7 +93,8 @@ function ChangePasswordScreen(props) {
     await Auth.signOut()
       .then(() => {
         // console.log('Sign out complete');
-        AsyncStorage.removeItem('userToken'); // store results
+        AsyncStorage.removeItem('userToken'); // end local user session results
+
         props.navigation.navigate('AuthLoading');
       })
       .catch((err) => console.log('Error while signing out!', err));
