@@ -26,6 +26,9 @@ import TransactionItemCell from './TransactionItemCell';
 import MyCalendarPicker from './MyCalendarPicker';
 
 
+// import KeypadView from './KeypadView';
+
+
 // test variables
 const message = 'Hello World';
 
@@ -125,6 +128,17 @@ storiesOf('Components', module)
     />
   </CenterView>
 )
+
+
+// .add('KeypadView',() => 
+//   <CenterView>
+//     <KeypadView
+//       handlePress={() => console.log('Hello')}
+//       addBtnPressed={() => console.log('Hello')}
+//       backspaceBtnPressed={() => console.log('Hello')}
+//     />
+//   </CenterView>
+// )
 
 
 

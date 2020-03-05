@@ -54,7 +54,8 @@ const CategoryPill = (props) => {
           minWidth: MIN_PILL_WIDTH,
           maxWidth: MAX_PILL_WIDTH,
 
-          height: 35, // '60%', // 37,
+          height: '60%', // 37,
+          maxHeight: 37,
 
           alignItems: 'center',
           justifyContent: 'center',

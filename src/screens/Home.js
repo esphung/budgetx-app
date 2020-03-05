@@ -21,12 +21,10 @@ CREATED:    Thu Oct 31 23:17:49 2019
             02/04/2020 05:50 AM | Added Sound
             02/28/2020 02:34 PM | Enabling settings title
             03/02/2020 12:25 PM
+            03/05/2020 10:06 AM
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
-
-
-// import { Audio } from 'expo-av';
 
 import {
   // StyleSheet,
@@ -37,32 +35,14 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-// import AsyncStorage from '@react-native-community/async-storage';
-
-// export function logCurrentStorage() {
-//   AsyncStorage.getAllKeys().then((keyArray) => {
-//     AsyncStorage.multiGet(keyArray).then((keyValArray) => {
-//       const myStorage: any = {};
-//       for (let keyVal of keyValArray) {
-//         myStorage[keyVal[0]] = keyVal[1];
-//       }
-
-//       // console.log('CURRENT STORAGE: ', myStorage);
-//     });
-//   });
-// }
-
 import Auth from '@aws-amplify/auth';
-
-// import { AppLoading } from 'expo';
-
-// import API, { graphqlOperation } from '@aws-amplify/api'; // AppSync Query GraphQL
 
 import { NavigationEvents } from 'react-navigation';
 
 // ui colors
 import colors from '../../colors';
 
+// ui styles
 // import styles from '../../styles';
 
 import {
@@ -98,10 +78,11 @@ import searchByID from '../functions/searchByID';
 import uuidv4 from '../functions/uuidv4';
 
 const initialState = {
+  currentTransactions: [],
+  categories: [],
   currentDate: new Date(),
   currentAmount: 0.00,
   currentCategory: null,
-  transactions: [],
   slideViewBounceValue: new Animated.Value(300),
   currentBalance: 0.00,
   currentSpent: 0.00,
@@ -116,16 +97,11 @@ const initialState = {
   isCurrentTransaction: false,
 };
 
-
-
 export default function Home() {
-  // constants
-  const title  = 'Home';
-
   // state hooks
-  const [currentTransactions, setCurrentTransactions] = useState(initialState.transactions);
+  const [currentTransactions, setCurrentTransactions] = useState(initialState.currentTransactions);
 
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(initialState.categories);
 
   const [currentBalance, setCurrentBalance] = useState(initialState.currentBalance);
 
@@ -165,6 +141,7 @@ export default function Home() {
 
   const showSlideView = useCallback(
     () => {
+      console.log('hello')
       Animated.spring(
         slideViewBounceValue,
         {
@@ -173,24 +150,25 @@ export default function Home() {
           tension: 12, // 32
           friction: 8,
         },
-      ).start();
-      setIsSlideViewHidden(false);
+      ).start(setIsSlideViewHidden(false))
+      
     },
     [slideViewBounceValue],
   );
 
   const hideSlideView = useCallback(
     () => {
+      console.log('bye')
       Animated.spring(
         slideViewBounceValue,
         {
           toValue: 400,
-          velocity: 10,
-          tension: 12,
+          velocity: 5,
+          tension: 2,
           friction: 8,
         },
-      ).start();
-      setIsSlideViewHidden(true);
+      ).start(setIsSlideViewHidden(true))
+
     },
     [slideViewBounceValue],
   );
@@ -390,21 +368,6 @@ export default function Home() {
     retrieveUserStoredSettings();
   };
 
-  // Home.getNormalMessage = () => {
-  //   let name = currentOwner
-  //   console.log('name: ', name);
-  //   // retrieveUserStoredSettings();
-  //   Auth.currentAuthenticatedUser().then((cognito) => {
-  //     alert(cognito.attributes.sub)
-  //     name =  cognito.attributes.sub
-  //   }).catch((err) => {
-  //     console.log('err: ', err);
-  //   })
-
-  //   return name
-  // };
-
-
   async function storeUserTransaction(transaction) {
     // setIsReady(false);
     const userObject = await loadSettingsStorage(global.storageKey); // load user object
@@ -423,10 +386,7 @@ export default function Home() {
     setCurrentType(initialState.currentType);
   }
   async function clearState() {
-
     setIsReady(false);
-
-    // hideSlideView();
 
     // add/remove transactions
     setCurrentTransactions([]);
@@ -447,10 +407,7 @@ export default function Home() {
     setIsSlideViewHidden(initialState.isSlideViewHidden);
     setIsCurrentTransaction(initialState.isCurrentTransaction);
 
-    // setStorageKey(null);
-    // retrieveStoredTransactions(); // load stored user
-    await retrieveUserStoredSettings();
-    // console.log('Cleared');
+    retrieveUserStoredSettings();
   }
   async function removeUserTransaction(transaction) {
     const userObject = await loadSettingsStorage(global.storageKey);
@@ -670,8 +627,10 @@ export default function Home() {
 
   useEffect(() => {
     if (currentTransaction) {
+      showSlideView()
       console.log('currentTransaction: ', currentTransaction);
     } else {
+      hideSlideView();
       console.log('\n');
     }
   }, [currentTransaction]);
@@ -741,7 +700,7 @@ export default function Home() {
     //   // showSlideView()
     // }
 
-    toggleTransactionSlideView(transaction)
+    showNewTransactionSlide(transaction)
   };
 
   const deleteBtnPressed = (transaction) => {
@@ -776,49 +735,27 @@ export default function Home() {
     }
   };
 
-  const toggleTransactionSlideView = (transaction) => {
-     // console.log(transaction);
-    hideSlideView();
-    // setCurrentTransaction(null);
-
-    
-
-    // show slide view if not visible and transaction selected
+  const showNewTransactionSlide = (transaction) => {
+    // show slide view for selecting new current transaction
     if (!currentTransaction) {
       setCurrentTransaction(transaction);
-      showSlideView();
     } else if (currentTransaction === transaction && !isSlideViewHidden) {
-      hideSlideView();
       setCurrentTransaction(null);
     }
-
     else {
       setCurrentTransaction(transaction)
-      showSlideView();
-      
     }
 
   };
 
   const swipeEditBtnPressed = (transaction) => {
-    toggleTransactionSlideView(transaction);
+    showNewTransactionSlide(transaction);
   }
 
   let scrollingPills = (
     <ScrollingPillCategoriesView
       onPress={categoryBtnPressed}
       categories={categories}
-      // currentCategory={currentCategory}
-      // topPosition="56.8%"
-      // shadowOffset={{
-      //   width: 1,
-      //   height: 1,
-      // }}
-      // shadowRadius={26}
-      // shadowOpacity={1}
-
-      // currentCategories={[]}
-
       isSelected={isCurrentCategory}
     />
   );
@@ -852,50 +789,14 @@ export default function Home() {
   }
 
   async function onDateChange(date) {
-    // console.log(new Date(date));
-
     // set new date for transaction
     currentTransaction.date = new Date(date);
-    // console.log(currentTransaction.date);
 
     handleTransactionChange(currentTransactions, currentTransaction);
 
     setCurrentTransaction(null);
 
-    // retrieveUserStoredSettings();
-
-    
-    // save transaction
-
-    // reload transactions list (to update table)
-
-    // clearState();
-
-    // // setIsReady(false);
-    // // hideSlideView();
-
-    // // add/remove transactions
     setCurrentTransactions([]);
-    // // setCurrentBalance(0.00);
-    // // setCurrentSpent(0.00);
-    // // setCurrentPayee(null);
-    // // setCurrentNote(null);
-    // // setCurrentDate(initialState.currentDate);
-    // // setCurrentAmount(initialState.currentAmount);
-    // // setCurrentCategory(initialState.currentCategory);
-    // setCurrentTransaction(initialState.currentTransaction);
-    // // setCurrentType(initialState.currentType);
-    // // setIsNameInputEnabled(true);
-
-
-    // // setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
-    // setIsSlideViewHidden(initialState.isSlideViewHidden);
-    // // setIsCurrentTransaction(initialState.isCurrentTransaction);
-
-    // setStorageKey(null);
-    // // retrieveStoredTransactions(); // load stored user
-    // await retrieveUserStoredSettings();
-    // console.log('Cleared');
   }
 
   const view = (
@@ -974,12 +875,7 @@ export default function Home() {
         }
       }
       >
-
-        {
-          scrollingPills
-        }
-
-
+        { scrollingPills }
         <View
           style={{
 

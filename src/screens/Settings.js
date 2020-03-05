@@ -57,7 +57,7 @@ import DeveloperCredit from '../components/settings/DeveloperCredit';
 
 import DesignerCredit from '../components/settings/DesignerCredit';
 
-// import VersionCredit from '../components/settings/VersionCredit';
+import VersionCredit from '../components/settings/VersionCredit';
 
 import {
   getObjectKeysHTML,
@@ -330,9 +330,9 @@ function Settings(props) {
         // console.log(key)
         success = true;
 
-        setIsBackupDisabled(true);
+        // setIsBackupDisabled(true);
 
-        setIsRestoreDisabled(false);
+        // setIsRestoreDisabled(false);
       }
     } catch (e) {
       // statements
@@ -345,9 +345,10 @@ function Settings(props) {
     // }
 
     // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
-    // if (success) {
-    //   restoreBackUpData();
-    // }
+    if (success) {
+      // restoreBackUpData();
+      showBackupCompleteAlert();
+    }
   };
 
   const backupDataAlert = async () => {
@@ -370,10 +371,17 @@ function Settings(props) {
     );
   }
 
+  function showBackupCompleteAlert() {
+    Alert.alert(
+     'Backup Complete',
+     'Your data has been backed up!',
+    );
+  }
+
   function showRestoreCompleteAlert() {
     Alert.alert(
      'Backup Restored',
-     'Your data has been restored.',
+     'Your data has been restored!',
     );
   }
 
@@ -452,7 +460,7 @@ function Settings(props) {
 
 
     // Alert.alert(
-    //   'Reset Device Data',
+    //   'Reset Data',
     //   'Are you sure you want to reset all data from the app?'.toUpperCase(),
     //   [
     //     { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
@@ -497,9 +505,6 @@ function Settings(props) {
   const sendTransactionsMail = async (transactions) => {
       const html = getTransactionsHTML(transactions);
       console.log('html: ', html);
-
-      
-
       try {
         await MailComposer.composeAsync({
             recipients: [email],
@@ -608,14 +613,14 @@ function Settings(props) {
     sendContactSupportEmail();
   }
 
-  function termsOfServiceBtnPressed() {
-    props.navigation.navigate('Terms');
-  }
+  // function termsOfServiceBtnPressed() {
+  //   props.navigation.navigate('Terms');
+  // }
 
-  function shareBtnPressed() {
-    // onShare()
-    // console.log('Share button pressed');
-  }
+  // function shareBtnPressed() {
+  //   // onShare()
+  //   // console.log('Share button pressed');
+  // }
 
   function exportBtnPressed() {
     // console.log('Export btn pressed');
@@ -633,7 +638,7 @@ function Settings(props) {
   function signInBtnPressed() {
     console.log(props.navigation)
     // AsyncStorage.removeItem('userToken')
-    props.navigation.navigate('Welcome')
+    props.navigation.navigate('SignIn')
     // props.navigation.popToTop();
   }
 
@@ -664,7 +669,7 @@ function Settings(props) {
     else if (name === 'Sign In') {
       signInBtnPressed();
     }
-    else if (name === 'Reset Device Data') {
+    else if (name === 'Reset Data') {
       resetDataBtnPressed();
     } else if (name === 'Customize Categories') {
       customizeCategoriesBtnPressed();
@@ -776,7 +781,14 @@ function Settings(props) {
             }
           }
         >
-          <SubscriptionRect />
+          <SubscriptionRect
+            onPress={() => {
+              if (!isUserLoggedIn) {
+                navigation.navigate('SignUp')
+              }
+            }}
+            isUserLoggedIn={isUserLoggedIn}
+          />
         </View>
 
         {/* User Options */}
@@ -894,7 +906,7 @@ function Settings(props) {
 
           <View style={{
             flex: 1,
-            justifyContent: 'center',
+            // justifyContent: 'center',
 
 
             // borderWidth: 1,
@@ -902,7 +914,7 @@ function Settings(props) {
             // borderStyle: 'solid',
           }}
           >
-            {/*<VersionCredit />*/}
+            <VersionCredit />
           </View>
         </View>
     </View>

@@ -259,7 +259,7 @@ function UserNameEmailInput(props) {
       if (storage.user.email) {
         setCurrentEmail(storage.user.email)
       } else {
-        setCurrentEmail('Enter email here')
+        setCurrentEmail('No email address')
         // setEmailLabelText('Email Address')
         
       }
@@ -291,7 +291,7 @@ function UserNameEmailInput(props) {
     onPress={async () => {
       
       if (global.isLoginEnabled !== 'false') {
-        console.log('isLoginEnabled: ', isLoginEnabled);
+        // console.log('isLoginEnabled: ', isLoginEnabled);
         Alert.alert(
           'Would you like to sign up?',
           'Access more features: change your name, multiple users, save data and more',

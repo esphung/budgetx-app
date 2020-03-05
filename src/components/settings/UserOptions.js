@@ -80,16 +80,17 @@ function UserOptions(props) {
   let opacity = (1.0)
 
   function renderSeparator(item) {
-    let view = null;
-    // console.log(item.leadingItem.key);
-    if (item.leadingItem.key !== '' && item.leadingItem.key && item.leadingItem.key !== 'Backup Local Data' && item.leadingItem.key !== 'Contact Support') {
-      view = (
-        <View
+    let view;
+    console.log('item.leadingItem: ', item.leadingItem);
+
+    if (item.leadingItem.key === 'Contact Support' || item.leadingItem.key === '' || item.leadingItem.key === 'Backup Local Data') return null
+    view = <View
           style={{
             flex: 1,
-            backgroundColor: colors.dark, // 'transparent',
+            backgroundColor: colors.dark,
             justifyContent: 'center',
             alignItems: 'center',
+
 
             // borderWidth: 1,
             // borderColor: colors.dark,
@@ -99,20 +100,17 @@ function UserOptions(props) {
           <View
             style={
               {
-
                 width: '90%', // 346,
                 // alignSelf: 'center',
                 // height: 0.5,
 
                 borderWidth: 0.5,
                 borderColor: colors.darkTwo,
-                // borderStyle: 'solid',
+                borderStyle: 'solid',
               }
             }
           />
         </View>
-      );
-    }
     return view;
   }
 
@@ -131,18 +129,20 @@ function UserOptions(props) {
       isDisabled = true;
       caret = null;
     }
+    /* Backup Data */
     else if (title === ('Backup Local Data')) {
-      isDisabled = isBackupDisabled;
-      if (isBackupDisabled) {
-        title = 'Successfully Backed Up';
+      isDisabled = !isUserLoggedIn
+      if (isDisabled) {
+        // title = 'Successfully Backed Up';
         textColor = colors.offWhite
         // caret = currentSettingsVersion
         caret = null;
         // backgroundColor = 'transparent';
       }
     }
+    /* Restore Backup Data */
     else if (title === 'Restore Backup Data') {
-      isDisabled = isRestoreDisabled;
+      isDisabled = !isUserLoggedIn
       if (isDisabled) {
         title = 'Restored Local Backup';
         textColor = colors.offWhite
@@ -151,38 +151,39 @@ function UserOptions(props) {
         // backgroundColor = 'transparent';
       }
       if (!isUserLoggedIn) {
-        title = null;
+        // title = null;
         textColor = colors.offWhite
-        backgroundColor = 'transparent';
+        // backgroundColor = 'transparent';
         isDisabled = true
         caret = null;
-        rowHeight = 0;
+        // rowHeight = 0;
       }
     }
-    else if (title === 'Reset Device Data') {
+    /* Reset Data */
+    else if (title === 'Reset Data') {
       textColor = colors.pinkRed;
       backgroundColor = 'transparent';
       caret = null;
       opacity = 0.5
     }
-
+    /* Change Password/Sign Out */
     else if (title === 'Change Password/Sign Out') {
       isDisabled = !isUserLoggedIn
-      if (!isUserLoggedIn) {
-        title = null;
+      if (isDisabled) {
+        // title = null;
         textColor = colors.offWhite
-        backgroundColor = 'transparent';
+        // backgroundColor = 'transparent';
         
         caret = null;
-        rowHeight = 24;
+        // rowHeight = 24;
         // caret = null;
         // opacity = 0.5
       }
     }
-
+    /* Sign In */
     else if (title === 'Sign In') {
       isDisabled = false
-      if (isUserLoggedIn) {
+      if (false) {
         title = null;
         textColor = colors.offWhite
         backgroundColor = 'transparent';
@@ -285,12 +286,12 @@ function UserOptions(props) {
 
       style={
         {
-          flex: 1,
+          // flex: 1,
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'solid',
 
-          paddingBottom: 50,
+          // paddingBottom: 50,
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -310,7 +311,6 @@ function UserOptions(props) {
       data={[
         { key: 'Sign In' },
         { key: 'Customize Categories' },
-        // { key: 'Export Transactions' },
         { key: 'Backup Local Data' },
         // { key: 'Passcode' },
         
@@ -320,11 +320,12 @@ function UserOptions(props) {
 
         { key: '' },
         { key: 'Change Password/Sign Out' },
+        // { key: 'Export Transactions' },
         { key: 'Restore Backup Data' },
         { key: 'Contact Support' },
         // { key: 'Passcode' },
         
-        { key: 'Reset Device Data' },
+        { key: 'Reset Data' },
         
 
       ]}

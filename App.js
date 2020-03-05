@@ -24,21 +24,10 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             01/08/2020 05:47 PM | Added transaction item cell Stories
             02/04/2020 04:34 PM | Released version 2.0.0
             02/04/2020 09:00 PM   | Added AWS Analytics
+            03/05/2020 09:12 AM | Released version 2.0.8
 */
 
-
-// console.disableYellowBox = true;
-// global.isStorybookModeOn = true;
-
-// console.log('\033[2J');
-
 import React, { useState } from 'react';
-
-// import {
-//   // StyleSheet,
-//   // Text,
-//   View
-// } from 'react-native';
 
 import * as Font from 'expo-font';
 
@@ -64,56 +53,31 @@ import './globals'; // global values
 
 import SwitchNavigator from './SwitchNavigator';
 
-import AppStackNavigator from './AppStackNavigator';
+// import AppStackNavigator from './AppStackNavigator';
 
-// import Storybook from './storybook';
+import Storybook from './storybook';
 
-// function clearLines(lines) {
-//   let i = 0;
-//   for (i; i < lines; i += 1) {
-//     console.log('\r\n');
-//   }
-// }
+import { clearLines } from './src/functions/clearLines';
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
-// /* Storybook editing */
-// console.disableYellowBox = true;
-
 // global.isStorybookModeOn = true;
 
-// Play audio sounds
-// async function _playRecording() {
-//   const { sound } = await Audio.Sound.createAsync(
-//     require('./assets/hello.mp3'),
-//     {
-//       shouldPlay: true,
-//       isLooping: false,
-//     },
-//     this._updateScreenForSoundStatus,
-//   );
-//   this.sound = sound;
-//   // this.setState({
-//   //   playingStatus: 'playing'
-//   // });
-// }
+// console.disableYellowBox = true;
 
-// // _playRecording(); // inside async function
+const hh = new Date().getHours();
+const mm = new Date().getMinutes();
+const ss = new Date().getSeconds();
 
-// clearLines(35);
-// console.log(`Application ${global.appName} Loading:`, Date.now());
+clearLines(35);
+console.log(`${hh}:${mm}:${ss}`, `${global.appName}`);
 
-// global.userShouldLogin = false;
 
 export default function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
 
-  // const navigator = <NetworkProvider><SwitchNavigator /></NetworkProvider>;
-
-  // const storybook = <NetworkProvider><Storybook /></NetworkProvider>;
-
-  let view = null;
+  let view;
 
   async function loadApplicationResources() {
     // fonts
@@ -125,14 +89,14 @@ export default function App() {
       // stored fonts have been loaded
       setFontsAreLoaded(true);
     } catch (err) {
-      // console.log('error: ', err);
+      console.log('err: ', err);
     }
   }
 
-  // if (global.isStorybookModeOn) {
-  //   // return storybook;
-  //   return <Storybook />;
-  // }
+  if (global.isStorybookModeOn) {
+    // return storybook;
+    return <Storybook />; // <NetworkProvider><Storybook /></NetworkProvider>
+  }
 
   if (!fontsAreLoaded) {
     loadApplicationResources();

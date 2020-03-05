@@ -66,9 +66,17 @@ const mask = {
   // borderStyle: 'solid',
 };
 
-const message = `Thank you for using ${global.appName} version ${global.appVersion}!`;
+// const message = `Thank you for using ${global.appName} version ${global.appVersion}!`;
 
-function SubscriptionRect() {
+function SubscriptionRect(props) {
+  const { onPress, isUserLoggedIn } = props;
+  let text = `Thank you for using ${global.appName} version ${global.appVersion}!`
+
+  if (!isUserLoggedIn) {
+    text = `Tap here to Sign Up and access features.`
+  }
+
+
   const view = (
     <View
       style={{
@@ -85,7 +93,7 @@ function SubscriptionRect() {
       }}
     >
 
-      <TouchableOpacity disabled style={mask}>
+      <TouchableOpacity onPress={onPress} style={mask}>
         <View
           // style={
           //   {
@@ -125,7 +133,9 @@ function SubscriptionRect() {
         }
         >
           <Text style={copy3}>
-            Thank you for using {global.appName} version {global.appVersion}!
+            {
+              text
+            }
           </Text>
         </View>
       </TouchableOpacity>

@@ -33,17 +33,13 @@ import EmptyListMessage from '../../../storybook/stories/EmptyListMessage';
 
 import { getShortDate } from './functions';
 
+import { sortItemsByDate } from '../../functions/sortItemsByDate'
+
 // import SpinnerMask from '../SpinnerMask';
 
 // const ROW_HEIGHT = 44;
 
-function sortItemsByDate(items) {
-  let sorted = items.sort((a, b) => (new Date(a.date) < new Date(b.date)) ? 1 : -1);
 
-  // console.log('Items sorted');
-
-  return sorted;
-}
 
 function sortByHeadersDateDescending(items) {
 
@@ -111,14 +107,14 @@ const MyStickyTable = (props) => {
     // isCurrentTransaction,
   } = props;
 
-  const [data, setData] = useState(null);
+  const [tableData, setTableData] = useState(null);
 
   const [stickyHeaderIndices, setStickyHeaderIndices] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   function getStickyIndices(array) {
-    // const { data } = this.state;
+    // const { tableData } = this.state;
     const indices = [];
     let i = 0;
     for (i; i <= array.length - 1; i += 1) {
@@ -227,10 +223,10 @@ const MyStickyTable = (props) => {
           <View style={styles.rowFront}>
             <TransactionItem
 
-              keyExtractor={(item) => item.id} // {data[index]} // () => console.log(index)
+              keyExtractor={(item) => item.id} // {tableData[index]} // () => console.log(index)
               item={item}
               isSelected={false}
-              onPress={() => onPress(item)} // {onPress} // console.log(data[index])
+              onPress={() => onPress(item)} // {onPress} // console.log(tableData[index])
               currentTransaction={currentTransaction}
               isNameInputEnabled={props.isNameInputEnabled}
               handlePayeeNameChange={props.handlePayeeNameChange}
@@ -286,12 +282,17 @@ const MyStickyTable = (props) => {
   //   return view;
   // }
 
-  useEffect(() => {
+  const clearState = async () => {
     setLoading(true);
+    setTableData(null)
+  };
+
+  useEffect(() => {
+    // setLoading(true);
     if (transactions) {
       let sortedTransactions = sortItemsByDate(transactions);
-      setData(sortByHeadersDateDescending(sortedTransactions));
-      // setLoading(false);
+      setTableData(sortByHeadersDateDescending(sortedTransactions));
+      setLoading(false);
     }
     // return () => {
     //   // effect
@@ -299,16 +300,16 @@ const MyStickyTable = (props) => {
   }, [transactions]);
 
   useEffect(() => {
-    setLoading(true);
-    if (data) {
+    // setLoading(true);
+    if (tableData) {
       setStickyHeaderIndices(getStickyIndices(sortByHeadersDateDescending(transactions)));
 
-      setLoading(false);
+      // setLoading(false);
     }
     // return () => {
     //   // effect
     // };
-  }, [data, transactions]);
+  }, [tableData, transactions]);
 
   const spinnerView = (
     <View
@@ -341,14 +342,14 @@ const MyStickyTable = (props) => {
   if (!loading) {
     view = (
       <SwipeListView
-        data={data}
-        // extraData={setData}
+        data={tableData}
+        // extraData={setTableData}
         renderItem={renderItem}
         keyExtractor={(item, index) => String(index)}
         stickyHeaderIndices={stickyHeaderIndices}
         // renderHiddenItem={renderHiddenItem}
 
-        // // leftOpenValue={0}
+        // // leftOpenVaslue={0}
         // leftOpenValue={55}
         // rightOpenValue={-75}
         // // disableRightSwipe={false}
@@ -443,9 +444,9 @@ export default MyStickyTable;
 // }
 
 // Render_FlatList_Sticky_header() {
-//   const { data } = this.state;
+//   const { tableData } = this.state;
 //   let title =
-// (data.length === 1) ? `${ data.length } Transaction` : `${ data.length } Transactions`;
+// (tableData.length === 1) ? `${ tableData.length } Transaction` : `${ tableData.length } Transactions`;
 
 //   var Sticky_header_View = (
 //   <View style={styles.headerBody}>

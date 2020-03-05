@@ -4,7 +4,7 @@ import React from 'react';
 
 import {
   TouchableOpacity,
-  Platform,
+  // Platform,
   Text,
   Image,
   View,
@@ -20,6 +20,8 @@ import {
 // ui colors
 import colors from '../../../colors';
 
+import styles from '../../../styles';
+
 export default function KeypadButton(props) {
   const { onPress, value } = props;
 
@@ -27,84 +29,31 @@ export default function KeypadButton(props) {
     onPress(value);
   }
 
-  let btnTextColor = colors.white;
+  // let btnTextColor = colors.white;
 
   let btnBorderWidth = 0;
 
   let btnBorderColor = colors.white;
 
-  let label = null;
+  let label;
 
   function numberKey(num) {
-    let view = null;
+    let view;
     view = (
-      <Text
-        style={{
-
-          // width: '100%', // 117,
-          // height: 30,
-          fontFamily: 'SFProDisplay-Regular',
-          fontSize: Platform.OS === 'ios' ? 25 : 20,
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          letterSpacing: 0.29,
-          textAlign: 'center',
-          shadowColor: '#0c1422',
-          shadowOffset: {
-            width: 0,
-            height: 1
-          },
-          shadowRadius: 0,
-          shadowOpacity: 1,
-          color: btnTextColor,
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-
-        }}
-      >
-        {
-          num
-        }
-      </Text>
+      <Text style={styles.numberKeyTitle}>{ num }</Text>
     );
     return view;
   }
-
-
   function addKey() {
-    let view = null;
+    let view;
     view = (
-      <Text
-        style={{
-
-          // width: '100%', // 117,
-          // height: 30,
-          fontFamily: 'SFProDisplay-Regular',
-          fontSize: Platform.OS === 'ios' ? 25 : 20,
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          letterSpacing: 0.29,
-          textAlign: 'center',
-
-          shadowColor: '#0c1422',
-          shadowOffset: {
-            width: 0,
-            height: 1
-          },
-          shadowRadius: 0,
-          shadowOpacity: 1,
-
-          color: btnTextColor,
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }}
-      >
-        Add
-      </Text>
+      <View style={styles.addKeyView}>
+        <Text
+          style={styles.addKeyTitle}
+        >
+          Add
+        </Text>
+      </View>
     );
     return view;
   }
@@ -146,7 +95,8 @@ export default function KeypadButton(props) {
           height: '100%',
           backgroundColor: colors.darkTwo,
         }
-      }>
+      }
+      >
       <Image
         resizeMode="contain"
         style={
@@ -171,10 +121,10 @@ export default function KeypadButton(props) {
     // console.log(value);
   }
   else if (value === 'Add') {
-    // console.log(this.props.value)
-    btnTextColor = colors.shamrockGreen;
-    btnBorderWidth = 1;
-    btnBorderColor = colors.shamrockGreen;
+    // // console.log(this.props.value)
+    // btnTextColor = colors.shamrockGreen;
+    // btnBorderWidth = 1;
+    // btnBorderColor = colors.shamrockGreen;
 
     label = addKey();
   }

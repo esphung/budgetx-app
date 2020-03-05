@@ -11,23 +11,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-
-    // backgroundColor: colors.darkTwo, // '#aa73b7',
-    // flexDirection: 'column',
-    // marginTop: 15, // '5%',
-    // marginBottom: 10,
   },
-
-  // container: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-
-  //   // backgroundColor: colors.darkTwo, // '#aa73b7',
-  //   // flexDirection: 'column',
-  //   // marginTop: 15, // '5%',
-  //   // marginBottom: 5,
-  // },
   headerLeft: {
     // flex: 1,
     flexDirection: 'row',
@@ -62,6 +46,80 @@ export default StyleSheet.create({
     letterSpacing: 0.13,
     color: colors.white,
     fontWeight: '600',
+  },
+  /* keypad styles */
+  keypadRow: {
+    // flex: Platform.OS === 'ios' ? 0.25 : 0.3,
+    flex: 0.25,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+
+    // marginLeft: 4,
+    // marginRight: 4,
+
+    marginVertical: 1,
+
+    paddingVertical: 3,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
+  },
+  numberKeyTitle: {
+    width: '100%', // 117,
+    // height: 30,
+    fontFamily: 'SFProDisplay-Regular',
+    fontSize: Platform.OS === 'ios' ? 25 : 20,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.29,
+    textAlign: 'center',
+    shadowColor: '#0c1422',
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowRadius: 0,
+    shadowOpacity: 1,
+    color: colors.white,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+  addKeyView: {
+    width: '100%', // 117,
+    height: '100%',
+    justifyContent: 'center',
+
+    backgroundColor: colors.darkTwo,
+
+    shadowColor: '#0c1422',
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowRadius: 0,
+    shadowOpacity: 1,
+
+    borderWidth: 1,
+    borderColor: colors.shamrockGreen,
+
+    borderRadius: 5,
+  },
+  addKeyTitle: {
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: Platform.OS === 'ios' ? 25 : 20,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.29,
+    textAlign: 'center',
+    color: colors.shamrockGreen,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
 
   userImageMaskView: {
@@ -212,18 +270,28 @@ export default StyleSheet.create({
   //   // borderColor: colors.white,
   //   // borderStyle: 'solid',
   // },
-  emptyMessageTextStyle: {
+  /* Transactions Table */
+  emptyTableTitleStyle: {
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontWeight: '600',
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+  emptyTableMessageStyle: {
     // width: 225,
     // height: 84,
-    opacity: 0.6,
+    opacity: 0.65,
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 22,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    // lineHeight: 28,
-    letterSpacing: 0.13,
     textAlign: 'center',
     color: colors.offWhite,
+
+    padding: 4,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
 
   buttonText: {

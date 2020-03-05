@@ -31,7 +31,7 @@ global.settingsIcon = require('./assets/settings-icon.png');
 
 global.xIconWhite = require('./assets/x-icon-white.png');
 
-// global.walletFilledMoneyToolIcon = require('./assets/wallet-filled-money-tool.png');
+global.walletIcon = require('./assets/wallet-filled-money-tool.png');
 
 global.avatar = require('./assets/avatar.png');
 

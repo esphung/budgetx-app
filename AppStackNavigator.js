@@ -29,6 +29,10 @@ import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen';
 
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 
+import SignInScreen from './src/screens/SignInScreen';
+
+import SignUpScreen from './src/screens/SignUpScreen';
+
 import colors from './colors';
 
 const StackNavigator = createStackNavigator({
@@ -54,6 +58,20 @@ const StackNavigator = createStackNavigator({
     navigationOptions: () => ({
       title: 'Customize Categories',
       headerBackTitle: '',
+    }),
+  },
+  SignIn: {
+    screen: SignInScreen,
+    navigationOptions: () => ({
+      title: 'Log In to Your Account',
+      headerBackTitle: null,
+    }),
+  },
+  SignUp: {
+    screen: SignUpScreen,
+    navigationOptions: () => ({
+      title: 'Create a New Account',
+      headerBackTitle: null,
     }),
   },
 },
