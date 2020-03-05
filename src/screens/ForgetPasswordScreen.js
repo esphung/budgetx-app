@@ -47,14 +47,20 @@ import isValidUsername from '../../src/functions/isValidUsername';
 
 import getButtonStyle from '../../src/functions/getButtonStyle';
 
+import isValidEmail from '../../src/functions/isValidEmail';
+
 function ForgotPasswordScreen(props) {
   // input refs
+  const emailInputRef = useRef(null)
+
   const newPasswordInputRef = useRef(null);
 
   const authCodeInputRef = useRef(null);
 
   // state hooks
   const [username, setUsername] = useState(null);
+
+  const [email, setEmail] = useState(null)
 
   const [authCode, setAuthCode] = useState(null);
 
@@ -71,7 +77,8 @@ function ForgotPasswordScreen(props) {
   const [helpMessage, setHelpMessage] = useState(null);
 
   useEffect(() => {
-    if (!username || username.length < 6 || !isValidUsername(username)) {
+    // if (!username || username.length < 6 || !isValidUsername(username)) {
+    if (!email || !isValidEmail(email)) {
       setIsSendCodeBtnEnabled(false);
     } else {
       setIsSendCodeBtnEnabled(true);      
@@ -79,10 +86,10 @@ function ForgotPasswordScreen(props) {
     return () => {
       // effect
     };
-  }, [username]);
+  }, [email]);
 
   useEffect(() => {
-    if (!authCode || !newPassword || !username) {
+    if (!authCode || !newPassword || !email) {
 
       // if (!username) {
       //   setHelpMessage('Username required');
@@ -107,17 +114,26 @@ function ForgotPasswordScreen(props) {
 
   // input handlers
   function onChangeText(key, value) {
-    // console.log('key:', key);
-    // console.log('value:', value);
-    if (key === 'username') {
-      // setUsername(value);
-       if (value.length < 6) {
-        setHelpMessage('Username too short');
-      } else {
-        setHelpMessage(null);
-      }
-      setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
-    } else if (key === 'authCode') {
+    console.log('key:', key);
+    console.log('value:', value);
+
+    if (key === 'email') {
+      setEmail(value);
+    }
+
+
+
+    // if (key === 'username') {
+    //   // setUsername(value);
+    //    if (value.length < 6) {
+    //     setHelpMessage('Username too short');
+    //   } else {
+    //     setHelpMessage(null);
+    //   }
+    //   setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
+    // }
+
+    if (key === 'authCode') {
       setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
       // setAuthCode(value);
     } else if (key === 'newPassword') {
@@ -129,6 +145,10 @@ function ForgotPasswordScreen(props) {
   function handleUsernameInputSubmit() {
     // newPasswordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
+  }
+
+  function handleEmailInputSubmit() {
+
   }
 
   function handleNewPasswordInputSubmit() {
@@ -147,7 +167,7 @@ function ForgotPasswordScreen(props) {
   async function forgotPassword() {
     setIsLoading(true);
     // const { username } = this.state;
-    await Auth.forgotPassword(username)
+    await Auth.forgotPassword(email)
       .then((data) => {
         console.log('New code sent', data);
         Alert.alert('Code was emailed')
@@ -169,7 +189,7 @@ function ForgotPasswordScreen(props) {
   async function forgotPasswordSubmit() {
     setIsLoading(true);
     // const { username, authCode, newPassword } = this.state;
-    await Auth.forgotPasswordSubmit(username, authCode, newPassword)
+    await Auth.forgotPasswordSubmit(email, authCode, newPassword)
       .then(() => {
         props.navigation.navigate('SignIn');
         console.log('New password submitted successfully!');
@@ -225,7 +245,7 @@ function ForgotPasswordScreen(props) {
             {/* Infos */}
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
-                {/* Username */}
+                {/* Username
                 <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-person" style={styles.iconStyle} />
                   <Input
@@ -245,6 +265,32 @@ function ForgotPasswordScreen(props) {
                     // onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
                 </Item>
+              */}
+
+                              {/* email section */}
+                <Item rounded style={styles.itemStyle}>
+                  <Ionicons active name="md-mail" style={styles.iconStyle} />
+                  <Input
+                    style={styles.input}
+                    placeholder="Email"
+                    placeholderTextColor={colors.offWhite}
+                    keyboardType="email-address"
+                    returnKeyType="next"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={false}
+                    ref={emailInputRef}
+                    onSubmitEditing={() => handleEmailInputSubmit()}
+                    onChangeText={(value) => onChangeText('email', value)}
+
+                    value={email}
+
+                    keyboardAppearance="dark"
+                    onFocus={() => setIsKeyboardAvoidEnabled(false)}
+                    maxLength={26}
+                  />
+                </Item>
+
                 <TouchableOpacity
                   disabled={!isSendCodeBtnEnabled}
                   onPress={forgotPassword}

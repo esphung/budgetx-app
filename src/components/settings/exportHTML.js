@@ -22,48 +22,46 @@ export function convertObjectToHTML(item) {
   Object.keys(item).forEach((key) => {
     // Loop thru object keys' values and add HTML for it's table cell
 
-    // if (key === 'id') {
-    //   // do not add id
-    //   array.push(`<td>${item[key]}</td>\n`);
-    // }
+  if (item[key] !== null) {
+      // if (key === 'id') {
+      //   // do not add id
+      //   array.push(`\n<td>${item[key]}</td>\n`);
+      // }
 
-    // if (key === 'type') {
-    //   // do not add id
-    //   array.push(`<td>${capitalize(item[key])}</td>\n`);
-    // }
-
-
-    // Date
-    if (key === 'date') {
-      array.push(`<td>${getShortDate(item[key])}</td>\n`);
-    }
-
-    // Category
-    if (key === 'category') {
-      // console.log(item[key]);
-      array.push(`<td>${item[key].name}</td>\n`);
-    }
-
-    // Payee
-    if (key === 'payee') {
-      array.push(`<td>${item[key].name}</td>\n`);
-    }
-
-    // Amount
-    if (key === 'amount') {
-      array.push(`<td>$${item[key].toFixed(2)}</td>\n`);
-    }
-
-    // Note
-    if (key === 'note') {
-      // console.log(item[key]);
-      if (item[key]) {
-        array.push(`<td>${item[key]}</td>\n`);
-      } else {
-        array.push(`<td></td>\n`);
+      if (key === 'type') {
+        // do not add id
+        array.push(`\n<td>${(item[key])}</td>`);
       }
-    }
 
+      // Date
+      if (key === 'date') {
+        array.push(`\n<td>${getShortDate(item[key])}</td>`);
+      }
+
+      // Category
+      if (key === 'category') {
+        // console.log(item[key]);
+        array.push(`\n<td>${item[key].name}</td>`);
+      }
+
+      // Payee
+      if (key === 'payee') {
+        array.push(`\n<td>${item[key].name}</td>`);
+      }
+
+      // Amount
+      if (key === 'amount') {
+        array.push(`\n<td>$${item[key].toFixed(2)}</td>`);
+      }
+
+      // Note
+      if (key === 'note') {
+        // console.log(item[key]);
+        array.push(`\n<td>${item[key]}</td>`);
+      }
+    } else {
+      array.push(`\n<td></td>`);
+    }
   });
   return array.join('');
 }

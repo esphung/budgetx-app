@@ -33,7 +33,9 @@ import { NavigationEvents } from 'react-navigation';
 
 // import { Asset } from 'expo-asset';
 
-import { AppLoading } from 'expo';
+// import { AppLoading } from 'expo';
+
+import Auth from '@aws-amplify/auth';
 
 // ui colors
 import colors from '../../../colors';
@@ -41,54 +43,38 @@ import colors from '../../../colors';
 import styles from '../../../styles';
 
 const HeaderLeftView = (props) => {
-  const { onUsernameSubmit, boldMessage, normalMessage } = props;
+  const { onUsernameSubmit, getNormalMessage } = props;
 
   // console.log('props: ', props);
-  // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+  const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
   // const [normalMessage, setNormalMessage] = useState('Enter your email');
   // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
-  // const [normalMessage, setNormalMessage] = useState('Enter your username');
+  const [normalMessage, setNormalMessage] = useState(`${global.appName} ${global.appVersion}`);
+
   const [image, setImage] = useState(global.avatar);
+
   const [isReady, setIsReady] = useState(false);
 
+  const [text, onChangeText] = React.useState(normalMessage);
 
-  const [value, onChangeText] = React.useState(normalMessage);
+  useEffect(() => {
+    clearState()
+    // return () => {
+    //   // effect
+    // };
+  }, []);
 
-  // useEffect(() => {
-  //   console.log('value: ', value);
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [value]);
+  const clearState = async () => {
+    setBoldMessage('Get cross-device sync');
 
-  function _cacheResourcesAsync() {
-    // // console.log('loading');
-    // Auth.currentAuthenticatedUser()
-    //   .then((cognito) => {
-    //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
-    //     // console.log('username:', cognitoUser.username);
-    //     // setStorageKey(cognito.username);
+    Auth.currentAuthenticatedUser().then((cognito) => {
+      setNormalMessage(cognito.attributes.email)
+    }).catch((err) => {
+      // console.log('err: ', err);
+      setNormalMessage(`${global.appName} ${global.appVersion}`);
+    });
 
-    //     // setNormalMessage(`${cognito.attributes.email}`);
-    //     setNormalMessage(`${cognito.username}`);
-
-    //   })
-    //   .catch((err) => {
-    //     // console.log(err);
-    //     // Alert.alert(err);
-    //   });
-
-  }
-
-  // useEffect(() => {
-  //   if (storageKey) {
-  //     // load user storage
-  //     retrieveStoredSettingsImage(storageKey);
-  //   }
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [storageKey])
+  };
 
   const imageView = (
     <TouchableOpacity
@@ -104,6 +90,7 @@ const HeaderLeftView = (props) => {
   )
 
   return (
+      
       <View style={
         styles.headerLeft
         // {
@@ -119,6 +106,14 @@ const HeaderLeftView = (props) => {
         // }
       }
       >
+      <NavigationEvents
+        // try only this. and your component will auto refresh when this is the active component
+        onWillFocus={clearState} // {(payload) => clearState()}
+        // other props
+        // onDidFocus={payload => console.log('did focus',payload)}
+        // onWillBlur={clearState} // console.log('will blur',payload)}
+        // onDidBlur={payload => console.log('did blur',payload)}
+      />
         {
           imageView
         }
@@ -128,26 +123,26 @@ const HeaderLeftView = (props) => {
             {
               boldMessage
             }
-
           </Text>
 
-          <TextInput
-            placeholder={normalMessage}
+          <Text
+            // placeholder={normalMessage}
             style={styles.normalMessage}
-            editable={false}
-            onChangeText={(text) => onChangeText(text)}
-            onSubmitEditing={() => onUsernameSubmit(value)}
-            value={value}
-            clearButtonMode="while-editing"
-            clearTextOnFocus
-            autoCorrect={false}
-            autoCapitalize="none"
-            enablesReturnKeyAutomatically
+            // editable={false}
+            // onChangeText={(text) => onChangeText(text)}
+            // onSubmitEditing={() => onUsernameSubmit(text)}
+            // // value={text}
+            // clearButtonMode="while-editing"
+            // clearTextOnFocus
+            // autoCorrect={false}
+            // autoCapitalize="none"
+            // enablesReturnKeyAutomatically
           >
             {
-              // normalMessage
+              normalMessage
+
             }
-          </TextInput>
+          </Text>
 
         </View>
 

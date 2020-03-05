@@ -67,6 +67,8 @@ import getButtonStyle from '../../src/functions/getButtonStyle';
 
 import isValidUsername from '../../src/functions/isValidUsername';
 
+import isValidEmail from '../../src/functions/isValidEmail';
+
 import Dialog from "react-native-dialog";
 
 function SignInScreen(props) {

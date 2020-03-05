@@ -38,7 +38,7 @@ export const clearSettingsStorage = async (key) => {
 
 // LOAD VALUE USERDEFAULTCATEGORIES
 const DEFAULT_SETTINGS = async () => {
-  console.log('Creating Default Settings Storage');
+  // console.log('Creating Default Settings Storage');
   const settings = {
     user: new User(global.storageKey),
     // image: global.avatar,
@@ -46,7 +46,7 @@ const DEFAULT_SETTINGS = async () => {
     categories: defaultCategories,
     version: 1,
   };
-  console.log('settings.user: ', settings.user);
+  // console.log('settings.user: ', settings.user);
 
   await AsyncStorage.setItem('userToken', String(global.storageKey + '@session' + uuidv4()));
   return settings;
@@ -65,24 +65,3 @@ export const loadSettingsStorage = async (key) => {
   }
 };
 
-/*
-* > Categories
-*/
-// export const saveUserCategories = (key, categories) => {
-//   AsyncStorage.setItem(key, JSON.stringify(categories));
-// };
-
-// // LOAD VALUE USERDEFAULTCATEGORIES
-// const DEFAULT_USERCATEGORIES = defaultCategories;
-
-// export const loadUserCategories = async (key) => {
-//   try {
-//     const storageObject = await AsyncStorage.getItem(key);
-
-//     if (storageObject === null) { return defaultCategories; }
-
-//     return JSON.parse(storageObject);
-//   } catch (error) {
-//     throw new Error('Error loading storageObject', error);
-//   }
-// };

@@ -80,9 +80,9 @@ function UserNameEmailInput(props) {
 
   const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
 
-  const [nameLabelText, setNameLabelText] = useState('User ID');
+  const [nameLabelText] = useState('User ID');
 
-  const [emailLabelText] = useState('Email Address');
+  const [emailLabelText] = useState('Email');
 
   const [currentName, setCurrentName] = useState('');
 
@@ -259,7 +259,7 @@ function UserNameEmailInput(props) {
       if (storage.user.email) {
         setCurrentEmail(storage.user.email)
       } else {
-        setCurrentEmail('Sign Up Here')
+        setCurrentEmail('Enter email here')
         // setEmailLabelText('Email Address')
         
       }

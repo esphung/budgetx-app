@@ -310,8 +310,8 @@ function UserOptions(props) {
       data={[
         { key: 'Sign In' },
         { key: 'Customize Categories' },
+        { key: 'Export Transactions' },
         { key: 'Backup Local Data' },
-        // { key: 'Export Transactions' },
         // { key: 'Passcode' },
         
         

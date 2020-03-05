@@ -45,7 +45,7 @@ function WelcomeScreen(props) {
 
                 <Button title="Sign In" onPress={() => handleRoute('SignIn')} />
 
-                {/*<View style={{
+                <View style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
 
@@ -59,10 +59,8 @@ function WelcomeScreen(props) {
                 }}>
                 <TouchableText title="Forgot Password?" onPress={() => handleRoute('ForgetPassword')} />
 
-                <TouchableText style={{
-                  color: colors.offWhite,
-                }} title="Skip Login" onPress={() => handleRoute('AuthLoading')} />
-                </View>*/}
+
+                </View>
               </View>
             </View>
           </View>

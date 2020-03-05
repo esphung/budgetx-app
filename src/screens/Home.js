@@ -34,7 +34,7 @@ import {
   // ScrollView,
   Animated,
   // Alert,
-  // AsyncStorage,
+  AsyncStorage,
 } from 'react-native';
 
 // import AsyncStorage from '@react-native-community/async-storage';
@@ -356,7 +356,7 @@ export default function Home() {
         global.storageKey = cognito.attributes.sub
 
         const storage = await loadSettingsStorage(global.storageKey)
-        console.log('storage: ', storage);
+        // console.log('storage: ', storage);
 
         setCurrentOwner(storage.user.id);
 
@@ -370,7 +370,7 @@ export default function Home() {
 
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
     // console.log(userObject);
-    console.log('storageKey: ', storageKey);
+    // console.log('storageKey: ', storageKey);
 
     setCurrentOwner(userObject.user.id);
 
@@ -389,6 +389,21 @@ export default function Home() {
   Home.reloadTransactions = () => {
     retrieveUserStoredSettings();
   };
+
+  // Home.getNormalMessage = () => {
+  //   let name = currentOwner
+  //   console.log('name: ', name);
+  //   // retrieveUserStoredSettings();
+  //   Auth.currentAuthenticatedUser().then((cognito) => {
+  //     alert(cognito.attributes.sub)
+  //     name =  cognito.attributes.sub
+  //   }).catch((err) => {
+  //     console.log('err: ', err);
+  //   })
+
+  //   return name
+  // };
+
 
   async function storeUserTransaction(transaction) {
     // setIsReady(false);
@@ -1045,10 +1060,13 @@ Home.navigationOptions = () => {
   const boldMessage = 'Get device cross-sync'; // `${global.appName} ${global.appVersion} (Basic)`;
   let normalMessage = `${global.appName} ${global.appVersion}`;
 
+  // const getNormalMessage = () => {
+  //   Home.getNormalMessage();
+  // };
+
   // const normalMessage = 'Enter your email';
   async function onUsernameSubmit(string) {
     // console.log('string: ', string);
-
     const storageObj = await loadSettingsStorage(string);
     // console.log(storageObj);
 
@@ -1066,7 +1084,13 @@ Home.navigationOptions = () => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    headerLeft: <HeaderLeftView onUsernameSubmit={onUsernameSubmit} boldMessage={boldMessage} normalMessage={normalMessage} />,
+    headerLeft: (
+    <HeaderLeftView
+     onUsernameSubmit={onUsernameSubmit}
+     // getNormalMessage={getNormalMessage}
+     // boldMessage={boldMessage}
+     // normalMessage={normalMessage}
+     />),
     headerRight: <HeaderRightView />,
   };
   return header;

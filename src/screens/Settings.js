@@ -57,7 +57,7 @@ import DeveloperCredit from '../components/settings/DeveloperCredit';
 
 import DesignerCredit from '../components/settings/DesignerCredit';
 
-import VersionCredit from '../components/settings/VersionCredit';
+// import VersionCredit from '../components/settings/VersionCredit';
 
 import {
   getObjectKeysHTML,
@@ -149,6 +149,10 @@ function getTransactionsHTML(data) {
   let html = '';
 
   const keys = `${getObjectKeysHTML(data)}`;
+  // console.log('keys: ', keys);
+
+  const objectRows = getHTMLObjectRows(data)
+  // console.log('objectRows: ', objectRows);
 
   const table = `
 <div>
@@ -156,7 +160,7 @@ function getTransactionsHTML(data) {
 <tr>
 ${keys}
 </tr>
-${getHTMLObjectRows(data)}
+${objectRows}
 </table>
 
 </div>${'\n'}
@@ -305,7 +309,7 @@ function Settings(props) {
       const storageObj = await loadSettingsStorage(storageKey);
 
       let backup_key = `${storageObj.user.id}_BACKUP_SETTINGS`
-      console.log('backup_key: ', backup_key);
+      // console.log('backup_key: ', backup_key);
 
 
       if (!storageObj.version) {
@@ -313,7 +317,7 @@ function Settings(props) {
       } else {
         storageObj.version += 1;
       }
-      console.log('storageObj.version: ', storageObj.version);
+      // console.log('storageObj.version: ', storageObj.version);
 
       // console.log(storage);
       // console.log(backup_key);
@@ -373,9 +377,9 @@ function Settings(props) {
     );
   }
 
-  function showContactSupportFailedAlert(text) {
+  function showMailSenderFailedAlert(text) {
     Alert.alert(
-     'Contact Support',
+     'Mail Sender',
      text
     );
   }
@@ -388,7 +392,27 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
-    clearSettingsStorage(storageKey);
+    // clearSettingsStorage(storageKey);
+
+
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (error, stores) => {
+        stores.map((result, i, store) => {
+          if (store[i][0] === (global.storageKey)) {
+            console.log({ [store[i][0]]: store[i][1] });
+            AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
+          } else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
+            AsyncStorage.removeItem(store[i][0]) // Remove Backups
+          }
+          return true;
+        });
+      });
+    });
+
+
+    // AsyncStorage.clear();
+
+
     // await clearAsyncStorage()
     //   .then(() => {
     //     // console.log('Reset complete');
@@ -396,13 +420,13 @@ function Settings(props) {
     //   })
     //   .catch((err) => console.log('Error while signing out!', err));
 
-    setIsBackupDisabled(true);
+    // setIsBackupDisabled(true);
 
-    setIsRestoreDisabled(false);
+    // setIsRestoreDisabled(false);
 
-    navigation.navigate('Home');
+    navigation.navigate('AuthLoading');
 
-    showResetCompleteAlert();
+    // showResetCompleteAlert();
   };
 
   /*
@@ -411,8 +435,8 @@ function Settings(props) {
   const resetDataAlertPrompt = () => {
     // RESET DATA PROMPT
     Alert.prompt(
-      'Are you sure you want to reset all data from this device?',
-      'Enter DELETE below to remove all data',
+      'Are you sure you want to remove your data from this device?',
+      'Enter DELETE to remove your settings and backups',
       [
         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
         { text: 'OK', onPress: (input) => {
@@ -466,24 +490,32 @@ function Settings(props) {
     } catch(err) {
       // could not send to Mail
       console.log('err: ', err.message);
-      showContactSupportFailedAlert(err.message);
+      showMailSenderFailedAlert(err.message);
     }
   };
 
-  const sendTransactionsMail = (transactions) => {
+  const sendTransactionsMail = async (transactions) => {
     try {
       // statements
       const html = getTransactionsHTML(transactions);
+      console.log('html: ', html);
+
+      try {
+        await MailComposer.composeAsync({
+          recipients: [email],
+          subject: 'Exported Transactions',
+          body: html,
+          attachments: [],
+          isHtml: true,
+        });
+
+      } catch(e) {
+        // statements
+        console.log(e);
+        showMailSenderFailedAlert(e.message);
+      }
 
       
-      MailComposer.composeAsync({
-        recipients: [email],
-        subject: 'Exported Transactions',
-        body: html,
-        attachments: [],
-        isHtml: true,
-      });
-
     } catch(e) {
       // statements
       console.log(e);
