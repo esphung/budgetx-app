@@ -495,32 +495,24 @@ function Settings(props) {
   };
 
   const sendTransactionsMail = async (transactions) => {
-    try {
-      // statements
       const html = getTransactionsHTML(transactions);
       console.log('html: ', html);
 
+      
+
       try {
         await MailComposer.composeAsync({
-          recipients: [email],
-          subject: 'Exported Transactions',
-          body: html,
-          attachments: [],
-          isHtml: true,
-        });
-
-      } catch(e) {
-        // statements
-        console.log(e);
-        showMailSenderFailedAlert(e.message);
+            recipients: [email],
+            subject: 'Exported Transactions',
+            body: html.replace('\n', ''),
+            attachments: [],
+            isHtml: true,
+          });
+      } catch(err) {
+        // could not send to Mail
+        console.log('err: ', err.message);
+        showMailSenderFailedAlert(err.message);
       }
-
-      
-    } catch(e) {
-      // statements
-      console.log(e);
-    }
-
 
     // MailComposer.composeAsync({
     //   recipients: [user.email],
