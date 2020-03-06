@@ -21,7 +21,8 @@ CREATED:    Thu Oct 31 23:17:49 2019
             02/04/2020 05:50 AM | Added Sound
             02/28/2020 02:34 PM | Enabling settings title
             03/02/2020 12:25 PM
-            03/05/2020 10:06 AM
+            03/05/2020 10:06 AM | Published 2.1.0
+            03/05/2020 02:01 PM | Storybooks
 */
 
 import React, { useState, useEffect, useCallback } from 'react';

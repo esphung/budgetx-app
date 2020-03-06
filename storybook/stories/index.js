@@ -1,8 +1,20 @@
+/*
+FILENAME:  index.js
+PURPOSE:   storybook index
+AUTHOR:    Eric Phung
+CREATED:   03/05/2020 01:44 PM
+UPDATED:   03/05/2020 01:43 PM
+*/
 import React from 'react';
 // import { Text } from 'react-native';
 
+import {YellowBox} from 'react-native';
+YellowBox.ignoreWarnings(['Warning:']);
+
+import { randomName, capFirst, randomInt } from '../../src/functions/generateRandomName';
+
 import { storiesOf } from '@storybook/react-native';
-import { action } from '@storybook/addon-actions';
+// import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 
 // import Button from './Button';
@@ -17,6 +29,8 @@ import HelpMessage from './HelpMessage';
 import InfoBox from './InfoBox';
 import TouchableText from './TouchableText';
 
+import BalanceView from './BalanceView'
+
 
 // Transactions Table Components
 import EmptyListMessage from './EmptyListMessage';
@@ -28,88 +42,108 @@ import MyCalendarPicker from './MyCalendarPicker';
 
 // import KeypadView from './KeypadView';
 
+console.disableYellowBox = true;
+
 
 // test variables
 const message = 'Hello World';
 
 const test_date = new Date(1998, 7, 2);
 
-storiesOf('Components', module)
-// .add('to Welcome Screen', () => <Welcome />)
+let random_double = randomInt(0, 100) + randomInt(0, 100) / 100
+// console.log('random_double: ', random_double);
 
-.add('Button', () => 
+
+
+// storiesOf('Login', () => module)
+
+// .add('to Welcome Screen', () => <CenterView/>)
+
+// .add('Button', () => 
+//   <CenterView>
+//     <Button
+//       title="Button"
+//       onPress={() => console.log(message)}
+//     />
+//   </CenterView>
+// )
+// .add('TouchableText', () => 
+//   <CenterView>
+//     <TouchableText
+//       title="TouchableText"
+//       onPress={() => console.log(message)}
+//     />
+//   </CenterView>
+// )
+
+// .add('BlueButton', () => 
+//   <CenterView>
+//     <BlueButton
+//       title="Blue Button"
+//       onPress={() => console.log(message)}
+//     />
+//   </CenterView>
+// )
+
+// .add('HelpMessage', () => 
+//   <CenterView>
+//     <HelpMessage message={message} />
+//   </CenterView>
+// )
+
+// .add('InfoBox', () => 
+//   <CenterView>
+//     <InfoBox title={message} />
+//   </CenterView>
+// )
+
+storiesOf('HomeScreen', module)
+.add('BalanceView', () =>
   <CenterView>
-    <Button
-      title="Button"
-      onPress={() => console.log(message)}
+    <BalanceView
+      currentBalanceValue={-1 * random_double}
+      currentSpentValue={random_double}
     />
   </CenterView>
 )
-.add('TouchableText', () => 
-  <CenterView>
-    <TouchableText
-      title="TouchableText"
-      onPress={() => console.log(message)}
-    />
-  </CenterView>
-)
 
-.add('BlueButton', () => 
-  <CenterView>
-    <BlueButton
-      title="Blue Button"
-      onPress={() => console.log(message)}
-    />
-  </CenterView>
-)
-
-.add('HelpMessage', () => 
-  <CenterView>
-    <HelpMessage message={message} />
-  </CenterView>
-)
-
-.add('InfoBox', () => 
-  <CenterView>
-    <InfoBox title={message} />
-  </CenterView>
-)
 
 // Transactions Table
 
+storiesOf('HomeScreen', module)
 .add('EmptyListMessage', () => 
   <CenterView>
     <EmptyListMessage />
   </CenterView>
 )
 
-.add('TransactionItemCell', () => 
-  <CenterView>
-    <TransactionItemCell
-      item={
-        {
-          payee: {
-            name: 'Joe Budden'
-          },
-          date: new Date(),
-          amount: 3423.23,
-          category: {
-            name: 'Groceries',
-            color: 'pink',
-          },
-        }
-      }
+// .add('TransactionItemCell', () => 
+//   <CenterView>
+//     <TransactionItemCell
+//       item={
+//         {
+//           payee: {
+//             name: 'Joe Budden'
+//           },
+//           date: new Date(),
+//           amount: 3423.23,
+//           category: {
+//             name: 'Groceries',
+//             color: 'pink',
+//           },
+//         }
+//       }
 
-      // onPress={() => alert('Hello')}
-    />
-  </CenterView>
-)
+//       // onPress={() => alert('Hello')}
+//     />
+//   </CenterView>
+// )
 
-.add('CategoryLabel', () => 
-  <CenterView>
-    <CategoryLabel name={message} textColor="gray" />
-  </CenterView>
-)
+// .add('CategoryLabel', () => 
+//   <CenterView>
+//     <CategoryLabel name={message} textColor="gray" />
+//   </CenterView>
+// )
 
 
 
@@ -120,14 +154,14 @@ storiesOf('Components', module)
 // )
 
 
-.add('MyCalendarPicker',() => 
-  <CenterView>
-    <MyCalendarPicker
-      date={test_date}
-      onDateChange={() => console.log('Hello')}
-    />
-  </CenterView>
-)
+// .add('MyCalendarPicker',() => 
+//   <CenterView>
+//     <MyCalendarPicker
+//       date={test_date}
+//       onDateChange={() => console.log('Hello')}
+//     />
+//   </CenterView>
+// )
 
 
 // .add('KeypadView',() => 

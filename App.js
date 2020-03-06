@@ -61,9 +61,7 @@ import { clearLines } from './src/functions/clearLines';
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
-// global.isStorybookModeOn = true;
-
-// console.disableYellowBox = true;
+global.isStorybookModeOn = true;
 
 const hh = new Date().getHours();
 const mm = new Date().getMinutes();
@@ -93,16 +91,15 @@ export default function App() {
     }
   }
 
-  if (global.isStorybookModeOn) {
+  if (global.isStorybookModeOn && fontsAreLoaded) {
     // return storybook;
-    return <Storybook />; // <NetworkProvider><Storybook /></NetworkProvider>
+    return <NetworkProvider><Storybook /></NetworkProvider>;
   }
 
   if (!fontsAreLoaded) {
     loadApplicationResources();
     view = <AppLoading />;
   } else {
-    // view = <AppStackNavigator />; // no login
     view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
   }
   return view;

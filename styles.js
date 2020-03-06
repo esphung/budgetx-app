@@ -38,7 +38,6 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'dashed',
   },
-
   boldMessage: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontSize: 15,
@@ -46,6 +45,113 @@ export default StyleSheet.create({
     letterSpacing: 0.13,
     color: colors.white,
     fontWeight: '600',
+  },
+  /* Balance View */
+  // balanceViewPosition: {
+  //   top: '14%', // 110,
+  //   position: 'absolute',
+
+  //   borderWidth: 1,
+  //   borderColor: 'white',
+  //   borderStyle: 'dotted',
+  // },
+  balanceView: {
+    width: '85%', // 346,
+    height: 74,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 9,
+    backgroundColor: colors.dark,
+    shadowColor: '#0f1725',
+    shadowOffset: {
+      width: 5,
+      height: 5
+    },
+    shadowRadius: 16,
+    shadowOpacity: 1,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+  separator: {
+    width: 1,
+    height: '70%',
+    marginVertical: 10,
+    backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
+    opacity: 0.1,
+  },
+
+  currentBalanceTitle: {
+    // width: 113,
+    width: '100%',
+    height: 20,
+
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 15,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    textAlign: 'center',
+    textAlignVertical: 'top',
+    color: colors.shamrockGreen,
+
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+
+  currentSpentTitle: {
+    // width: 113,
+    width: '100%',
+    height: 20,
+
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 15,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    textAlign: 'center',
+    color: colors.pinkRed,
+
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+  currentBalanceValue: {
+    // width: 37,
+    width: '100%',
+    height: 30,
+
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 25,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    textAlign: 'center',
+    color: colors.white,
+
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+
+  currentSpentValue: {
+    // width: 37,
+    width: '100%',
+    height: 30,
+
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 25,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    textAlign: 'center',
+    color: colors.white,
+
+    // borderWidth: global.borderWidth,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
   /* keypad styles */
   keypadRow: {
