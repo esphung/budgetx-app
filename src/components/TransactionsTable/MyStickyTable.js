@@ -29,7 +29,7 @@ import SwipeDelete from '../SwipeDelete';
 
 import SwipeEdit from '../SwipeEdit';
 
-import EmptyListMessage from '../../../storybook/stories/EmptyListMessage';
+import EmptyListMessage from '../table/EmptyListMessage';
 
 import { getShortDate } from './functions';
 
@@ -97,7 +97,7 @@ function sortByHeadersDateDescending(items) {
 const MyStickyTable = (props) => {
   // get passed props
   const {
-    tableTop,
+    // tableTop,
     // tableHeight,
     // tablePosition,
     onPress,
@@ -130,7 +130,7 @@ const MyStickyTable = (props) => {
     // console.log('Rendering Empty Component');
     const view = (
       <ScrollView contentContainerStyle={{
-        flex: 1,
+        // flex: 1,
 
         // borderWidth: 3,
         // borderColor: 'white',
@@ -146,12 +146,12 @@ const MyStickyTable = (props) => {
           // position: tablePosition, // 'absolute'
           // top: tableTop, // '30%', // 240,
 
-          flex: 1,
+          // flex: 1,
 
-          alignItems: 'center',
-          // justifyContent: 'center',
+          // alignItems: 'center',
+          // // justifyContent: 'center',
 
-          paddingTop: 12,
+          // paddingTop: 12,
 
           // backgroundColor: 'pink',
 
@@ -320,9 +320,9 @@ const MyStickyTable = (props) => {
           // // height: tableHeight, // '32%',
           // // position: tablePosition, // 'absolute'
           // top: tableTop, // '30%', // 240,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
+          // flex: 1,
+          // justifyContent: 'center',
+          // alignItems: 'center',
           // backgroundColor: colors.darkTwo,
 
           // opacity: 0.3,
@@ -337,71 +337,46 @@ const MyStickyTable = (props) => {
     </View>
   );
 
-  let view = spinnerView;
+  let view; // = spinnerView;
 
-  if (!loading) {
-    view = (
-      <SwipeListView
-        data={tableData}
-        // extraData={setTableData}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => String(index)}
-        stickyHeaderIndices={stickyHeaderIndices}
-        // renderHiddenItem={renderHiddenItem}
+  let table = (
+    <SwipeListView
+      data={tableData}
+      // extraData={setTableData}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => String(index)}
+      stickyHeaderIndices={stickyHeaderIndices}
+      // renderHiddenItem={renderHiddenItem}
 
-        // // leftOpenVaslue={0}
-        // leftOpenValue={55}
-        // rightOpenValue={-75}
-        // // disableRightSwipe={false}
-        // //  disableLeftSwipe
+      // // leftOpenVaslue={0}
+      // leftOpenValue={55}
+      // rightOpenValue={-75}
+      // // disableRightSwipe={false}
+      // //  disableLeftSwipe
 
-        // ItemSeparatorComponent={this.FlatListItemSeparator}
-        // ListHeaderComponent={this.Render_FlatList_Sticky_header}
-        // ListEmptyComponent={Render_Empty_Component}
+      // ItemSeparatorComponent={this.FlatListItemSeparator}
+      // ListHeaderComponent={this.Render_FlatList_Sticky_header}
+      // ListEmptyComponent={Render_Empty_Component}
 
-        showsVerticalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
 
-        // optimization
-        // initialNumToRender={24}
-        // windowSize={12} // {21}
-        // removeClippedSubviews={true}
-        // maxToRenderPerBatch={2}
-      />
-    );
-  }
+      // optimization
+      // initialNumToRender={24}
+      // windowSize={12} // {21}
+      // removeClippedSubviews={true}
+      // maxToRenderPerBatch={2}
+    />
+  );
+
+  
+  view = table;   
+
 
   if (transactions.length <= 0) {
     view = Render_Empty_Component();
   }
 
-  return (
-    <View style={
-      {
-        // flex: 1,
-        width: '100%',
-        // height: tableHeight, // '32%',
-
-
-        height: '32.5%',
-        position: 'absolute',
-        top: tableTop, // '30%', // 240,
-
-        zIndex: -1,
-
-        // paddingBottom: 30,
-        marginBottom: 20,
-
-        // borderWidth: 2,
-        // borderColor: 'white',
-        // borderStyle: 'dashed',
-
-        // backgroundColor: 'pink',
-      }
-    }
-    >
-      { view }
-    </View>
-  );
+  return view;
 };
 
 // tableTop,

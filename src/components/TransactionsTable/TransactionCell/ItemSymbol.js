@@ -26,7 +26,7 @@ function ItemSymbol(props) {
           styles.itemSymbolStyle,
           {
             color: color,
-            // fontFamily: 'SFProDisplay-Semibold',
+            fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
             // fontSize: 17,
             // fontWeight: 'normal',
             // fontStyle: 'normal',

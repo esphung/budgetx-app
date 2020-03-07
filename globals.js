@@ -13,6 +13,8 @@ global.isUserAuthenticated = false;
 
 global.isLoginEnabled = false;
 
+global.amountInputMaxLength = 7;
+
 
 // max min lengths
 global.maxAuthCodeLength = 6;

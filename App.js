@@ -61,8 +61,6 @@ import { clearLines } from './src/functions/clearLines';
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
-global.isStorybookModeOn = true;
-
 const hh = new Date().getHours();
 const mm = new Date().getMinutes();
 const ss = new Date().getSeconds();

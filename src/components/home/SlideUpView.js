@@ -55,10 +55,10 @@ function SlideUpView(props) {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       // enabled={isKeyboardAvoidEnabled}
-      enabled
+      // enabled
       style={{
-        flex: 1,
-        // width: '100%',
+        // flex: 1,
+        width: '100%',
         // height: '90%',
         // bottom: '0%',
         
@@ -67,7 +67,7 @@ function SlideUpView(props) {
 
         // top: '38%', // WITH CALENDAR PICKER!!
 
-        top: top,
+        // top: top,
 
         // top: 480,
         // borderWidth: 1,

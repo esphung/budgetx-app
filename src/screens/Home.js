@@ -34,6 +34,8 @@ import {
   Animated,
   // Alert,
   AsyncStorage,
+  SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 
 import Auth from '@aws-amplify/auth';
@@ -44,7 +46,7 @@ import { NavigationEvents } from 'react-navigation';
 import colors from '../../colors';
 
 // ui styles
-// import styles from '../../styles';
+import styles from '../../styles';
 
 import {
   loadSettingsStorage,
@@ -98,6 +100,13 @@ const initialState = {
   isCurrentTransaction: false,
 };
 
+// Transaction handling functions
+const incrementTransactionVersion = (transaction) => {
+  transaction.version += 1;
+  // alert(`transaction.version: ${transaction.version}`);s
+};
+
+
 export default function Home() {
   // state hooks
   const [currentTransactions, setCurrentTransactions] = useState(initialState.currentTransactions);
@@ -140,9 +149,11 @@ export default function Home() {
 
   const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
 
+  const [isUpdatingTransaction, setIsUpdatingTransaction] = useState(false);
+
   const showSlideView = useCallback(
     () => {
-      console.log('hello')
+      // console.log('hello');
       Animated.spring(
         slideViewBounceValue,
         {
@@ -151,31 +162,31 @@ export default function Home() {
           tension: 12, // 32
           friction: 8,
         },
-      ).start(setIsSlideViewHidden(false))
-      
+      ).start(setIsSlideViewHidden(false));
     },
     [slideViewBounceValue],
   );
 
   const hideSlideView = useCallback(
     () => {
-      console.log('bye')
+      // console.log('bye');
       Animated.spring(
         slideViewBounceValue,
         {
-          toValue: 400,
+          toValue: 100,
           velocity: 5,
           tension: 2,
           friction: 8,
         },
-      ).start(setIsSlideViewHidden(true))
-
+      ).start(setIsSlideViewHidden(true));
     },
     [slideViewBounceValue],
   );
 
-  const handleTransactionChange = async (transactions, updatedTransaction) => {
+  const updateStoredTransaction = async (transactions, updatedTransaction) => {
     // console.log(transactions);
+    // update current transactions list in local storage
+    setIsUpdatingTransaction(true);
     try {
       const storageObj = await loadSettingsStorage(global.storageKey);
 
@@ -188,11 +199,10 @@ export default function Home() {
       setCurrentTransactions(storageObj.transactions);
 
       setCurrentTransaction(updatedTransaction);
-    } catch(error) {
-      // statements
-      // console.log(e);
-      console.log('error: ', error);
+    } catch (error) {
+      console.log('updateStoredTransaction error: ', error);
     }
+    setIsUpdatingTransaction(false);
   };
 
   const handlePayeeNameChange = async (string, transaction) => {
@@ -214,9 +224,12 @@ export default function Home() {
         found.payee = new Payee(string);
         // console.log(found);
 
-        found.version = found.version + 1;
+        // found.version = found.version + 1;
+        // found.version += 1;
+        // alert(found.version);
+        incrementTransactionVersion(found);
 
-        console.log('found.version: ', found.version);
+        // console.log('found.version: ', found.version);
 
         const pos = list.indexOf(found);
 
@@ -268,7 +281,7 @@ export default function Home() {
 
         saveSettingsStorage(global.storageKey, storageObj);
 
-        handleTransactionChange(storageObj.transactions, storageObj.transactions[pos]);
+        updateStoredTransaction(storageObj.transactions, storageObj.transactions[pos]);
       }
     } catch (e) {
       // statements
@@ -429,22 +442,15 @@ export default function Home() {
 
       saveSettingsStorage(global.storageKey, userObject);
 
-      // setCurrentPayee(null);
-      // setCurrentNote(null);
-      // setCurrentAmount(initialState.currentAmount);
-      // setCurrentCategory(initialState.currentCategory);
-      // setCurrentTransaction(initialState.currentTransaction);
-      // setCurrentType(initialState.currentType);
-
       // hide slide view
-      hideSlideView();
+      // hideSlideView();
+      setCurrentTransaction(null)
     }
   }
 
   function createNewTransaction() {
     console.log('\nCreating New Transaction');
     // Transaction(date, amount, owner, payee, category, type, note, version)
-
     // convert amount to money format
     let amount = (currentAmount / 100);
 
@@ -474,7 +480,7 @@ export default function Home() {
   // value changes
   function handleChange(value) {
     // check for limit of 11 digits
-    if (String(value).length <= 11) {
+    if (String(value).length <= global.amountInputMaxLength) {
       setCurrentAmount(value);
     }
   }
@@ -487,47 +493,22 @@ export default function Home() {
     // setTimeout(_playClickSound, 30);
   }
 
-  // const createNewTransaction = () => {
-  //   let transaction = null;
-
-  //   // check if category is selected and amount is provided by user
-  //   if ((currentCategory) && (currentAmount > 0) && currentType) {
-  //     // do date stuff here
-
-  //     // convert amount to money format
-  //     let amount = currentAmount / 100;
-  //     amount = (currentType === 'INCOME') ? amount : amount * -1; // INCOME/EXPENSE
-
-  //     // do payee stuff here
-  //     transaction = new Transaction(
-  //       // currentTransactions.length, // id
-  //       new Date(), // current date
-  //       amount, // current camount
-  //       {}, // payee obj
-  //       currentCategory, // category object
-  //       currentCategory.type, // type
-  //     );
-  //     // console.log(transaction);
-  //   }
-  //   return transaction;
-  // };
-
   function addBtnPressed() {
-    // console.log('global.storageKey: ', global.storageKey);
-    console.log('Add Transaction Btn Pressed =>');
+    // // console.log('global.storageKey: ', global.storageKey);
+    // console.log('Add Transaction Btn Pressed =>');
 
-    // Check for input values
-    console.log('currentDate',  currentDate);
-    console.log('currentAmount: ', currentAmount);
-    console.log('currentOwner: ', currentOwner);
-    console.log('currentPayee', currentPayee);
-    console.log('currentCategory: ', currentCategory);
-    console.log('currentType: ', currentType);
-    console.log('currentNote: ', currentNote);
-    console.log('currentVersion: ', currentVersion);
-    // console.log('\n');
+    // // Check for input values
+    // console.log('currentDate',  currentDate);
+    // console.log('currentAmount: ', currentAmount);
+    // console.log('currentOwner: ', currentOwner);
+    // console.log('currentPayee', currentPayee);
+    // console.log('currentCategory: ', currentCategory);
+    // console.log('currentType: ', currentType);
+    // console.log('currentNote: ', currentNote);
+    // console.log('currentVersion: ', currentVersion);
+    // // console.log('\n');
 
-    console.log('uuidv4(): ', uuidv4());
+    // // console.log('uuidv4(): ', uuidv4());
 
     if (!currentDate || !currentAmount || !currentOwner || !currentCategory || !currentType) {
       console.log('\nError: Missing New Transaction Input');
@@ -542,22 +523,11 @@ export default function Home() {
   }
 
   function backspaceBtnPressed() {
-    // if (currentAmount) {
-      const strValue = String(currentAmount);
-      // pop last char from string value
-      const newStr = strValue.substring(0, strValue.length - 1);
-      handleChange(newStr);
-      // _playClickSound();
-    // } else {
-    //   return;
-    // }
+    const strValue = String(currentAmount);
+    // pop last char from string value
+    const newStr = strValue.substring(0, strValue.length - 1);
+    handleChange(newStr);
   }
-
-  // function handlePress(value) {
-  //   numberBtnPressed(value);
-  //   _playClickSound();
-  // };
-
   // current transaction updates
   useEffect(() => {
     if (currentTransactions) {
@@ -568,29 +538,14 @@ export default function Home() {
       // calculate spent
       const spent = (calculateMonthSpent(currentTransactions));
       setCurrentSpent(spent);
-
       // console.log('currentTransactions:', currentTransactions.length);
     }
   }, [currentTransactions]);
 
   useEffect(() => {
-    // if (currentCategory) {
-    //   setCurrentType(currentCategory.type);
-    // }
     if (currentCategory) {
-      console.log('currentCategory: ', currentCategory);
-
+      // console.log('currentCategory: ', currentCategory);
       setCurrentType(currentCategory.type.toUpperCase());
-
-      // if (currentCategory.name.includes('Income')) {
-      //   console.log('SELECTED INCOME CATEGORY!');
-
-      //   // set current type input
-      //   // setCurrentType(currentCategory.type.toUpperCase());
-      //   // console.log('currentCategory: ', currentCategory);
-      // }
-    } else {
-      console.log('\n');
     }
   }, [currentCategory]);
 
@@ -629,63 +584,40 @@ export default function Home() {
   useEffect(() => {
     if (currentTransaction) {
       showSlideView()
-      console.log('currentTransaction: ', currentTransaction);
+      // console.log('currentTransaction: ', currentTransaction);
     } else {
       hideSlideView();
       console.log('\n');
     }
   }, [currentTransaction]);
 
-  useEffect(() => {
-    if (currentType) {
-      console.log('currentType: ', currentType);
-    }
-    return () => {
-      // current type input effect
-    };
-  }, [currentType]);
-
-  useEffect(() => {
-    if (currentOwner) {
-      console.log('currentOwner: ', currentOwner);
-    }
-    return () => {
-      //current Owner input effect
-    };
-  }, [currentOwner]);
+  // useEffect(() => {
+  //   if (currentType) {
+  //     // console.log('currentType: ', currentType);
+  //   }
+  //   return () => {
+  //     // current type input effect
+  //   };
+  // }, [currentType]);
 
   // useEffect(() => {
-  //   // // toggle slideup view
-  //   // if (currentTransaction) {
-  //   //   showSlideView();
-
-  //   //   // setCurrentAmount(Math.abs(currentTransaction.amount * 100));
-  //   //   // setCurrentCategory(currentTransaction.category);
-
-  //   //   // categoryBtnPressed(currentTransaction.category);
-  //   //   // console.log(currentCategory)
-  //   // } else if (!currentTransaction) {
-  //   //   hideSlideView();
-  //   // }
-  //   // return () => {
-  //   //   // effect
-  //   //   hideSlideView();
-
-  //   //   // setCurrentAmount(initialState.currentAmount);
-  //   //   // setCurrentCategory(initialState.currentCategory);
-  //   // };
-  // }, [currentTransaction, hideSlideView, showSlideView]);
-
-  // async function didMount() {
-  //   try {
-  //       const items = await API.graphql(graphqlOperation(ListBooks));
-  //       console.log('items: ', items);
-  //       // this.setState({ items: items.data.listBooks.items });
-  //       setCurrentTransactions(items.data.listBooks.items);
-  //   } catch (err) {
-  //       console.log('error: ', err);
+  //   if (currentOwner) {
+  //     // console.log('currentOwner: ', currentOwner);
   //   }
-  // }
+  //   return () => {
+  //     //current Owner input effect
+  //   };
+  // }, [currentOwner]);
+
+  // useEffect(() => {
+  //   console.log('isUpdatingTransaction: ', isUpdatingTransaction);
+  //   if (isUpdatingTransaction === true) {
+  //     // show activity indicator
+  //     view = updateTransactionIndicator
+  //   } else {
+  //     // hide activity indicator
+  //   }
+  // }, [isUpdatingTransaction]);
 
   // actions
   const transactionBtnPressed = (transaction) => {
@@ -721,38 +653,51 @@ export default function Home() {
       setCurrentCategory(category); // set other
     }
   };
-
-  // const handleNoteChange = (note) => {
-  //   // setCurrentNote(note);
-  //   console.log(note);
-  // }
-
   const isCurrentCategory = (category) => {
+    let bool;
     if (currentCategory !== category) { // (!currentCategories.includes(category)) {
-      return false;
+      bool = false;
     }
     if (currentCategory === category) { // || (currentCategories.includes(category))) {
-      return true;
+      bool = true;
     }
+    return bool;
   };
-
   const showNewTransactionSlide = (transaction) => {
     // show slide view for selecting new current transaction
     if (!currentTransaction) {
       setCurrentTransaction(transaction);
     } else if (currentTransaction === transaction && !isSlideViewHidden) {
       setCurrentTransaction(null);
+    } else {
+      setCurrentTransaction(transaction);
     }
-    else {
-      setCurrentTransaction(transaction)
-    }
-
   };
-
   const swipeEditBtnPressed = (transaction) => {
     showNewTransactionSlide(transaction);
-  }
+  };
 
+  let stickyTable = (
+    <MyStickyTable
+      transactions={currentTransactions}
+      currentTransaction={currentTransaction}
+      key={currentTransactions}
+
+      tableTop="25.5%"
+      tableHeight="32%"
+      // tablePosition="absolute"
+
+      onPress={(transaction) => transactionBtnPressed(transaction)}
+      deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
+      // isCurrentTransaction={isCurrentTransaction}
+
+      swipeEditBtnPressed={swipeEditBtnPressed}
+
+      isNameInputEnabled={isNameInputEnabled}
+
+      handlePayeeNameChange={handlePayeeNameChange}
+    />
+  );
   let scrollingPills = (
     <ScrollingPillCategoriesView
       onPress={categoryBtnPressed}
@@ -760,7 +705,6 @@ export default function Home() {
       isSelected={isCurrentCategory}
     />
   );
-
   let amountInput = (
     <AmountInputView
       isEditable={false}
@@ -768,14 +712,13 @@ export default function Home() {
       handleChange={handleChange}
     />
   );
-
   let keypad = (
     <KeypadView
       handlePress={numberBtnPressed}
       addBtnPressed={addBtnPressed}
       backspaceBtnPressed={backspaceBtnPressed}
     />
-    );
+  );
 
   if (!shouldShowScrollingPills) {
     scrollingPills = null;
@@ -793,27 +736,58 @@ export default function Home() {
     // set new date for transaction
     currentTransaction.date = new Date(date);
 
-    handleTransactionChange(currentTransactions, currentTransaction);
+    updateStoredTransaction(currentTransactions, currentTransaction);
 
     setCurrentTransaction(null);
 
     setCurrentTransactions([]);
   }
 
-  const view = (
-    <View
-      // scrollEnabled={false}
-      // contentContainerStyle={styles.container}>
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-        // backgroundColor: colors.darkTwo,
+  const updateTransactionIndicator = <ActivityIndicator size="large" color="#0000ff" />;
+
+
+  let transactionSlide =  (
+    <SlideUpView
+      slideViewBounceValue={slideViewBounceValue}
+      transaction={currentTransaction}
+      // updateStoredTransaction={updateStoredTransaction}
+      // handleNoteChange={handleNoteChange}
+      dismiss={() => {
+        setCurrentTransaction(initialState.currentTransaction);
       }}
+      updateStoredTransactionNote={updateStoredTransactionNote}
+
+      updateStoredTransactionCategory={updateStoredTransactionCategory}
+
+      onDateChange={onDateChange}
+    />
+  );
+
+
+
+  let view = (
+    <SafeAreaView
+      style={
+        [
+          // styles.container,
+          {
+            flex: 1,
+            alignItems: 'center',
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          },
+        ]
+      }
     >
+    {
+      /* show updating transaction activity indicator */
+      isUpdatingTransaction &&
+      <View style={styles.loading}>
+        <ActivityIndicator size='large' />
+      </View>
+    }
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         onWillFocus={clearState} // {(payload) => clearState()}
@@ -822,53 +796,54 @@ export default function Home() {
         // onWillBlur={clearState} // console.log('will blur',payload)}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
-      <BalanceView
-        currentBalanceValue={currentBalance}
-        currentSpentValue={currentSpent}
-      />
+      {/* Balance View */}
+      <View
+        style={
+          {
+            flex: 0.1,
+            width: '100%',
+            // flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            // top: '14%', // 110,
+            top: 70,
+            // top: '9%',
+            // position: 'absolute',
 
-      <MyStickyTable
-        transactions={currentTransactions}
-        currentTransaction={currentTransaction}
-        key={currentTransactions}
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'dotted',
+          }
+        }
+      >
+        <BalanceView
+          currentBalanceValue={currentBalance}
+          currentSpentValue={currentSpent}
+        />
+      </View>
 
-        tableTop="25.5%"
-        tableHeight="32%"
-        // tablePosition="absolute"
-
-        onPress={(transaction) => transactionBtnPressed(transaction)}
-        deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
-        // isCurrentTransaction={isCurrentTransaction}
-
-        swipeEditBtnPressed={swipeEditBtnPressed}
-
-        isNameInputEnabled={isNameInputEnabled}
-
-        handlePayeeNameChange={handlePayeeNameChange}
-      />
-
+      {/* sticky table, scrolling pills, amount view,  keypad with transactions */}
       <View style={
         {
-
-          position: 'absolute',
-          // flexDirection: 'row',
-          // justifyContent: 'center',
+          flex: 0.75,
           width: '100%',
-          // height: '6%', // 53,
-          height: 50,
-          // maxHeight: '6%',
-          // shadowColor: '#0a101b',
-          // shadowOffset: props.shadowOffset,
-          // shadowRadius: props.shadowRadius,
-          // shadowOpacity: props.shadowOpacity,
 
-          position: 'absolute',
+          // alignItems: 'stretch',
+          // height: tableHeight, // '32%',
+          top: 90,
 
-          top: '56%', // props.topPosition, // '57%', // 462,
+          // height: 250,
 
-          // zIndex: -2,
+          // height: '40%',
 
-          // zIndex: props.zIndex, // display ontop of datepickerbox
+          // height: '32.5%',
+          // position: 'absolute',
+          // top: tableTop, // '30%', // 240,
+
+          // zIndex: -1,
+
+          // paddingBottom: 30,
+          // marginBottom: 20,
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -876,80 +851,33 @@ export default function Home() {
         }
       }
       >
-        { scrollingPills }
-        <View
-          style={{
+        <View style={{ flex: 0.75, }}>{ stickyTable }</View>
+        
+        {/* Scrolling pills, amount view and keypad */}
+        <View style={{ flex: 1, }}>
+          { scrollingPills }
+          { amountInput }
 
-            justifyContent: 'center',
-            alignItems: 'center',
+           
 
-            position: 'absolute',
-            flexDirection: 'row',
-            width: '100%',
-            height: '100%',
-            // backgroundColor: colors.dark,
+          <View style={{ flex: 1, }}>
+            { keypad }
+              
+          </View>
 
-            top: '100%', // 460,
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'dashed',
-          }}
-        >
-
-          {
-            amountInput
-          }
         </View>
-
+        
       </View>
 
-      <View
-        style={{
+      {
+              /* show updating transaction activity indicator */
+              
+              transactionSlide
+            }
+                  
 
-          position: 'absolute',
-
-          top: '69%', // 460,
-
-          marginTop: 4,
-
-          width: '100%',
-
-          height: '26%', // 252,
-
-          backgroundColor: colors.darkTwo,
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }}
-      >
-
-        {
-          keypad
-        }
-
-      </View>
-
-      <SlideUpView
-        slideViewBounceValue={slideViewBounceValue}
-        transaction={currentTransaction}
-        handleTransactionChange={handleTransactionChange}
-        // handleNoteChange={handleNoteChange}
-        dismiss={() => {
-          setCurrentTransaction(initialState.currentTransaction);
-        }}
-        updateStoredTransactionNote={updateStoredTransactionNote}
-
-        updateStoredTransactionCategory={updateStoredTransactionCategory}
-
-        onDateChange={onDateChange}
-      />
-
-    </View>
-
+    </SafeAreaView>
   );
-
   return view;
 }
 

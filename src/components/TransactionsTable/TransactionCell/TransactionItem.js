@@ -53,37 +53,39 @@ function TransactionItem(props) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={
-        {
-          // flex: 1,
-          // justifyContent: 'center',
-          // alignItems: 'center',
+      // style={
+      //   {
+      //     // flex: 1,
+      //     // justifyContent: 'center',
+      //     // alignItems: 'center',
 
-          // borderWidth: 1,
-          // borderColor: '#ffffff',
-          // borderStyle: 'solid',
+      //     // borderWidth: 1,
+      //     // borderColor: '#ffffff',
+      //     // borderStyle: 'solid',
 
-          // marginHorizontal: 5,
+      //     // marginHorizontal: 5,
 
-          paddingVertical: 8,
+      //     // paddingVertical: 8,
 
-          paddingHorizontal: 4,
+      //     // paddingHorizontal: 4,
 
-          // backgroundColor
-        }
-      }
+      //     // backgroundColor
+      //   }
+      // }
     >
       <View style={{
-        flex: 1,
+        // flex: 1,
         flexDirection: 'row',
 
       }}
       >
 
         <View style={{
-          flex: 0.25,
+          flex: 0.2,
           justifyContent: 'center',
           alignItems: 'center',
+
+          paddingBottom: 3,
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -115,7 +117,7 @@ function TransactionItem(props) {
         <View
           style={
             {
-              flex: 1, // 1
+              flex: 0.95, // 1
               justifyContent: 'center',
               // alignItems: 'center',
 
@@ -130,7 +132,20 @@ function TransactionItem(props) {
 
         {/* <ItemDate item={item} /> */}
 
-        <ItemAmount item={item} />
+        <View
+          style={
+            {
+              flex: 0.82, // 1
+              justifyContent: 'center',
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }
+          }
+        >
+          <ItemAmount item={item} />
+        </View>
       </View>
     </TouchableOpacity>
   );

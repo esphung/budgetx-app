@@ -14,11 +14,11 @@ configure(() => {
 // const StorybookUIRoot = getStorybookUI({});
 const StorybookUIRoot = getStorybookUI({
   // asyncStorage: AsyncStorage, // testing
-  // port: 7007,
-  // host: "0.0.0.0",
-  // onDeviceUI: true, // showing tab menu
-  resetStorybook: true
-  // disableWebsockets: false
+  port: 7007,
+  host: "0.0.0.0",
+  onDeviceUI: true, // showing tab menu
+  resetStorybook: false,
+  disableWebsockets: false
 });
 
 // If you are using React Native vanilla and after installation you don't see your app name here, write it manually.

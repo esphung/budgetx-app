@@ -18,56 +18,42 @@ import getCurrencySymbol from '../../../functions/getCurrencySymbol';
 function ItemAmount(props) {
   const { item } = props;
   return (
-    <View style={{
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      // width: '100%',
-      marginRight: 4,
-
-      // borderWidth: 1,
-      // borderColor: 'white',
-      // borderStyle: 'solid',
-    }}
-    >
-
-      <Text>
-
-        <Text style={{
-          width: '100%',
-          height: 20,
-          fontFamily: 'SFProDisplay-Regular',
-          fontSize: 17,
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          letterSpacing: 0.29,
-          color: colors.offWhite,
-        }}
-        >
-          {`${getCurrencySymbol(item.amount)}`}
-
-        </Text>
-
-        <Text style={{
-          width: '100%',
-          height: 20,
-          fontFamily: 'SFProDisplay-Regular',
-          fontSize: 17,
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          letterSpacing: 0.29,
-
-          color: colors.white,
-
-        }}
-        >
-          {`${Math.abs(item.amount).toFixed(2)}`}
-
-        </Text>
+    <Text  style={
+      {
+        paddingRight: 10,
+      }
+    }>
+      <Text style={{
+        // width: '100%',
+        // height: 20,
+        fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+        fontSize: 17,
+        // fontWeight: 'normal',
+        // fontStyle: 'normal',
+        // letterSpacing: 0.29,
+        textAlign: 'right',
+        color: colors.offWhite,
+      }}
+      >
+        {`${getCurrencySymbol(item.amount)}`}
       </Text>
 
-    </View>
+      <Text style={{
+        // width: '100%',
+        // height: 20,
+        fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+        fontSize: 17,
+        // fontWeight: 'normal',
+        // fontStyle: 'normal',
+        // letterSpacing: 0.29,
+
+        color: colors.white,
+      }}
+      >
+        {`${Math.abs(item.amount).toFixed(2)}`}
+
+      </Text>
+    </Text>
   );
 }
 

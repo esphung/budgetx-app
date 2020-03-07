@@ -236,11 +236,11 @@ function SlideUpTransactionRect(props) {
             minWidth: MIN_PILL_WIDTH,
             maxWidth: MAX_PILL_WIDTH,
 
-            height: 28,
+            // height: 28,
             maxWidth: 170,
 
-            alignItems: 'center',
-            justifyContent: 'center',
+            // alignItems: 'center',
+            // justifyContent: 'center',
 
             marginHorizontal: 4,
             // marginVertical: 10,
@@ -273,7 +273,7 @@ function SlideUpTransactionRect(props) {
             styles.textStyle,
             {
               paddingHorizontal: 12,
-              paddingBottom: 1,
+              // paddingBottom: 1,
               color
             }
           ]}
@@ -643,8 +643,8 @@ function SlideUpTransactionRect(props) {
                 contentContainerStyle={{
                   // alignItems: 'center',
                   // height: 28,
-                  paddingHorizontal: 5,
-                  paddingVertical: 3,
+                  // paddingHorizontal: 5,
+                  // paddingVertical: 3,
 
                   // marginVertical: 10,
 
@@ -670,7 +670,7 @@ function SlideUpTransactionRect(props) {
           </View>
 
           {
-            calendarPicker
+            // calendarPicker
           }
       </View>
     );

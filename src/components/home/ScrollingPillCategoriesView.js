@@ -194,18 +194,19 @@ const ScrollingPillCategoriesView = (props) => {
     <View
       style={
         {
-          flex: 1,
-          width: '100%',
-          // height: '100%',
-          shadowColor: '#0a101b',
-          shadowOffset: {
-            width: 1,
-            height: 1,
-          },
-          shadowRadius: 26,
-          shadowOpacity: 1,
+          alignItems: 'center',
+          height: 50,
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
 
-          backgroundColor: colors.darkTwo,
+          shadowColor: '#0a101b',
+            shadowOffset: {
+              width: 1,
+              height: 1,
+            },
+            shadowRadius: 26,
+            shadowOpacity: 1,
         }
       }
     >
@@ -222,6 +223,11 @@ const ScrollingPillCategoriesView = (props) => {
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'solid',
+          backgroundColor: colors.darkTwo,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',   
         }}
         horizontal
         showsHorizontalScrollIndicator={false}

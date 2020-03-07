@@ -12,6 +12,17 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    opacity: 0.1,
+  },
   headerLeft: {
     // flex: 1,
     flexDirection: 'row',
@@ -30,8 +41,8 @@ export default StyleSheet.create({
     // width: 'auto',
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
-    fontStyle: 'normal',
-    letterSpacing: 0.13,
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
     color: colors.white,
 
     // borderWidth: 1,
@@ -41,23 +52,17 @@ export default StyleSheet.create({
   boldMessage: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontSize: 15,
-    fontStyle: 'normal',
-    letterSpacing: 0.13,
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
     color: colors.white,
     fontWeight: '600',
   },
   /* Balance View */
-  // balanceViewPosition: {
-  //   top: '14%', // 110,
-  //   position: 'absolute',
-
-  //   borderWidth: 1,
-  //   borderColor: 'white',
-  //   borderStyle: 'dotted',
-  // },
   balanceView: {
-    width: '85%', // 346,
-    height: 74,
+    width: '90%', // 346,
+    minWidth: 346,
+    // height: 74
+    maxHeight: '95%',
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 9,
@@ -65,7 +70,7 @@ export default StyleSheet.create({
     shadowColor: '#0f1725',
     shadowOffset: {
       width: 5,
-      height: 5
+      height: 5,
     },
     shadowRadius: 16,
     shadowOpacity: 1,
@@ -76,45 +81,44 @@ export default StyleSheet.create({
   },
   separator: {
     width: 1,
-    height: '70%',
+    // height: '70%',
+    height: 50,
     marginVertical: 10,
     backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
     opacity: 0.1,
   },
-
   currentBalanceTitle: {
     // width: 113,
     width: '100%',
-    height: 20,
+    // height: 20,
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
     // fontWeight: 'normal',
     // fontStyle: 'normal',
-    // letterSpacing: 0.13,
+    // letterSpacing: 0.12,
     textAlign: 'center',
-    textAlignVertical: 'top',
+    // textAlignVertical: 'top',
     color: colors.shamrockGreen,
 
-    // borderWidth: global.borderWidth,
+    // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',
   },
-
   currentSpentTitle: {
     // width: 113,
     width: '100%',
-    height: 20,
+    // height: 20,
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
     // fontWeight: 'normal',
     // fontStyle: 'normal',
-    // letterSpacing: 0.13,
+    // letterSpacing: 0.12,
     textAlign: 'center',
     color: colors.pinkRed,
 
-    // borderWidth: global.borderWidth,
+    // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'solid',
   },
@@ -135,11 +139,10 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'solid',
   },
-
   currentSpentValue: {
     // width: 37,
     width: '100%',
-    height: 30,
+    // height: 30,
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 25,
@@ -153,6 +156,104 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'solid',
   },
+
+  /* Transactions Table */
+  emptyTableTitleStyle: {
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontWeight: '600',
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+  emptyTableMessageStyle: {
+    // width: 225,
+    // height: 84,
+    opacity: 0.65,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 22,
+    textAlign: 'center',
+    color: colors.offWhite,
+
+    padding: 4,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  },
+
+  /* Amount Input */
+  amountInputView: {
+    height: 46,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: colors.dark,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dashed',
+  },
+  amountInputLabel: {
+    // flex: 0.9,
+    flex: 1,
+
+
+    // width: '100%',
+    // height: '70%', // 30,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 19,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    color: colors.offWhite,
+
+    marginVertical: 8,
+    marginLeft: 12,
+
+    // paddingTop: 5,
+    // paddingLeft: 3,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
+  },
+  amountInputCurrency: {
+    // width: 200,
+    // height: '70%', // 30,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 25,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.29,
+    textAlign: 'right',
+    color: '#ffffff',
+
+    // marginVertical: 8,
+    paddingRight: 6,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
+  },
+  amountInputSymbol: {
+    // width: '100%',
+    // height: '70%', // 30,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 25,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.29,
+    textAlign: 'center',
+    color: colors.offWhite,
+
+    // marginVertical: 8,
+    // marginRight: 12,
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
+  },
+
   /* keypad styles */
   keypadRow: {
     // flex: Platform.OS === 'ios' ? 0.25 : 0.3,
@@ -175,7 +276,7 @@ export default StyleSheet.create({
   numberKeyTitle: {
     width: '100%', // 117,
     // height: 30,
-    fontFamily: 'SFProDisplay-Regular',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: Platform.OS === 'ios' ? 25 : 20,
     // fontWeight: 'normal',
     // fontStyle: 'normal',
@@ -272,35 +373,34 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'dashed',
   },
-
   settingsImage: {
     width: '100%',
     height: '100%',
   },
-
   itemSymbolStyle: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontSize: 17,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    letterSpacing: 0.13,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    textAlign: 'right',
   },
   input: {
-    alignItems: 'center',
+    // alignItems: 'center',
     fontSize: 17,
     // fontWeight: '600',
     color: colors.white, // '#5a52a5',
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
     // letterSpacing: 0.17,
     // textAlign: 'left',
 
-    fontWeight: 'normal',
-    fontStyle: 'normal',
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
 
-    letterSpacing: 0.13,
+    // letterSpacing: 0.13,
 
     // borderWidth: 1,
     // borderColor: 'orange',
@@ -376,30 +476,6 @@ export default StyleSheet.create({
   //   // borderColor: colors.white,
   //   // borderStyle: 'solid',
   // },
-  /* Transactions Table */
-  emptyTableTitleStyle: {
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontWeight: '600',
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  emptyTableMessageStyle: {
-    // width: 225,
-    // height: 84,
-    opacity: 0.65,
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 22,
-    textAlign: 'center',
-    color: colors.offWhite,
-
-    padding: 4,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-
   buttonText: {
     fontSize: 18,
     // fontWeight: 'bold',
@@ -501,7 +577,7 @@ export default StyleSheet.create({
     // fontStyle: 'normal',
     // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
 
-    letterSpacing: 0.13,
+    // letterSpacing: 0.13,
 
     // color: 'pink',
 
@@ -514,7 +590,7 @@ export default StyleSheet.create({
   },
   slideView: {
     // flex: 1,
-    // width: '100%',
+    width: '100%',
     // height: '100%',
     // backgroundColor: colors.darkTwo,
 
