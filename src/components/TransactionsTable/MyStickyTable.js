@@ -105,6 +105,7 @@ const MyStickyTable = (props) => {
     currentTransaction,
     transactions,
     // isCurrentTransaction,
+    isUpdatingTransaction
   } = props;
 
   const [tableData, setTableData] = useState(null);
@@ -222,6 +223,7 @@ const MyStickyTable = (props) => {
           </View>
           <View style={styles.rowFront}>
             <TransactionItem
+              isUpdatingTransaction={isUpdatingTransaction}
 
               keyExtractor={(item) => item.id} // {tableData[index]} // () => console.log(index)
               item={item}

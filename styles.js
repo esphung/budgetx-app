@@ -21,7 +21,10 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
 
-    opacity: 0.1,
+    // opacity: 0.1,
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
   headerLeft: {
     // flex: 1,
@@ -616,7 +619,7 @@ export default StyleSheet.create({
   slideUpTransactionRect: {
     // flex: 1,
     // height: '100%',
-    height: 210,
+    height: 220,
     // width: 'auto',
     // width: 1000,
 

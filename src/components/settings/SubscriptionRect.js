@@ -9,10 +9,13 @@ import {
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { NetworkConsumer } from 'react-native-offline';
+
 // ui colors
 import colors from '../../../colors';
 
-import InfoBox from '../../../storybook/stories/InfoBox';
+// import InfoBox from '../../../storybook/stories/InfoBox';
+
 
 // text style
 const copy3 = {
@@ -73,8 +76,74 @@ function SubscriptionRect(props) {
   let text = `Thank you for using ${global.appName} version ${global.appVersion}!`
 
   if (!isUserLoggedIn) {
-    text = `Tap here to Sign Up and access features.`
+    text = `Tap here to sign up and access features.`
   }
+
+  // if (!isUserOnline) {
+  //   text = 'You are currently offline or have unstable connectivity';
+  // }
+
+  const offline = (
+    <View
+      style={{
+        flex: 1,
+
+        padding: 14,
+
+        alignItems: 'center',
+        justifyContent: 'center',
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }}
+    >
+
+      <TouchableOpacity disabled onPress={onPress} style={mask}>
+        <View
+          // style={
+          //   {
+          //     flex: 0.25,
+          //     backgroundColor: colors.shamrockGreen,
+
+          //     padding: 10,
+
+          //     // opacity: 0.77,
+
+          //     // borderWidth: 1,
+          //     // borderColor: 'white',
+          //     // borderStyle: 'solid',
+          //   }
+
+          // }
+        >
+          <View>
+            <Image
+              resizeMode="contain"
+              style={oval2}
+              source={global.bankImageGreen}
+            />
+          </View>
+        </View>
+        <View style={
+          {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+
+        }
+        >
+          <Text style={copy3}>You are currently offline or have unstable connectivity</Text>
+        </View>
+      </TouchableOpacity>
+
+    </View>
+  );
 
 
   const view = (
@@ -142,7 +211,11 @@ function SubscriptionRect(props) {
 
     </View>
   );
-  return view;
+  return <NetworkConsumer>
+      {
+        ({ isConnected }) => (isConnected ? view : offline)
+      }
+    </NetworkConsumer>
 }
 
 export default SubscriptionRect;

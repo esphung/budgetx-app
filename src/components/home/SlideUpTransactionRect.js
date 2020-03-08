@@ -63,9 +63,9 @@ const dateLabel = {
   // height: '30%',
   fontFamily: 'SFProDisplay-Regular',
   // fontSize: 15,
-  fontWeight: 'normal',
-  fontStyle: 'normal',
-  letterSpacing: 0.13,
+  // fontWeight: 'normal',
+  // fontStyle: 'normal',
+  // letterSpacing: 0.13,
   textAlign: 'center',
   color: colors.tangerine,
 
@@ -77,7 +77,7 @@ const dateLabel = {
 // amountlabel style
 const amountLabel = {
   // width: 66,
-  // height: 30,
+  height: 30,
 
   // flex: 1,
 
@@ -123,7 +123,7 @@ const MIN_PILL_WIDTH = 54;
 // }
 
 function SlideUpTransactionRect(props) {
-  let { transaction,  updateStoredTransactionCategory } = props;
+  let { transaction,  updateTransactionCategory, updateTransactionNote } = props;
 
 
   const [dataIsLoaded, setDataIsLoaded] = useState(false);
@@ -263,7 +263,7 @@ function SlideUpTransactionRect(props) {
 
           if (found) {
             transaction.category = found;
-            updateStoredTransactionCategory(item.value);
+            updateTransactionCategory(item.value);
           }
         }}
       >
@@ -497,8 +497,7 @@ function SlideUpTransactionRect(props) {
   let noteInput = (
     <NoteTextInput
       transaction={transaction}
-      // handleNoteChange={handleNoteChange}
-      updateStoredTransactionNote={props.updateStoredTransactionNote}
+      updateTransactionNote={updateTransactionNote}
     />
   );
 
@@ -542,20 +541,20 @@ function SlideUpTransactionRect(props) {
   //   noteInput = null;
   // }
 
-  // Calendar
-  if (shouldShowCalendarPicker) {
-    // showing calendar
-    // set slide window height
-    props.setWindowHeight('38%');
-    // noteInputBtn = null;
-    // noteInput = null;
-  } else if (!shouldShowCalendarPicker) {
-    // hiding calendar
-    props.setWindowHeight('58%');
-    calendarPicker = null;
+  // // Calendar
+  // if (shouldShowCalendarPicker) {
+  //   // showing calendar
+  //   // set slide window height
+  //   props.setWindowHeight('38%');
+  //   // noteInputBtn = null;
+  //   // noteInput = null;
+  // } else if (!shouldShowCalendarPicker) {
+  //   // hiding calendar
+  //   props.setWindowHeight('58%');
+  //   calendarPicker = null;
 
-    // pickerBtn = touchableText;
-  }
+  //   // pickerBtn = touchableText;
+  // }
 
   // if (!shouldShowNoteInputBtn) {
   //   noteInputBtn = null;
@@ -567,7 +566,7 @@ function SlideUpTransactionRect(props) {
       <View
         style={
           [
-            styles.slideUpTransactionRect
+            styles.slideUpTransactionRect,
           ]
         }
       >
@@ -580,22 +579,22 @@ function SlideUpTransactionRect(props) {
         // onDidBlur={payload => console.log('did blur',payload)}
       />
       <View
-              style={
-                {
-                  // flexDirection: 'row',
+        style={
+          {
+            // flexDirection: 'row',
 
-                  justifyContent: 'center',
-                  alignItems: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
 
-                  // borderWidth: 1,
-                  // borderColor: 'white',
-                  // borderStyle: 'solid',
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
 
-                  // paddingHorizontal: 6,
+            // paddingHorizontal: 6,
 
-                }
-              }
-            >
+          }
+        }
+      >
 
         <SlideViewSeparator />
 
@@ -622,7 +621,7 @@ function SlideUpTransactionRect(props) {
   
         </View>
 
-                <View
+        <View
           style={{
             // height: '50%',
             backgroundColor: colors.darkTwo,
@@ -660,17 +659,14 @@ function SlideUpTransactionRect(props) {
               />
 
               {
-            noteInput
-          }
+                noteInput
+              }
             </View>
-
-              {
-            // noteInput
-          }
           </View>
 
           {
-            // calendarPicker
+            shouldShowCalendarPicker &&
+            calendarPicker
           }
       </View>
     );

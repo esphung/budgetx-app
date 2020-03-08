@@ -38,6 +38,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
+import { NetInfo } from 'react-native';
+
 import Auth from '@aws-amplify/auth';
 
 import { NavigationEvents } from 'react-navigation';
@@ -252,7 +254,7 @@ export default function Home() {
   };
 
 
-  const updateStoredTransactionCategory = async (category) => {
+  const updateTransactionCategory = async (category) => {
     // console.log('categor: ', categor);
     // load stored user transactions
     try {
@@ -292,7 +294,7 @@ export default function Home() {
   };
 
 
-  const updateStoredTransactionNote = async (string) => {
+  const updateTransactionNote = async (string) => {
     // console.log(string);
 
     // console.log(currentTransaction.id);
@@ -678,7 +680,9 @@ export default function Home() {
   };
 
   let stickyTable = (
+
     <MyStickyTable
+      isUpdatingTransaction={isUpdatingTransaction}
       transactions={currentTransactions}
       currentTransaction={currentTransaction}
       key={currentTransactions}
@@ -755,9 +759,9 @@ export default function Home() {
       dismiss={() => {
         setCurrentTransaction(initialState.currentTransaction);
       }}
-      updateStoredTransactionNote={updateStoredTransactionNote}
+      updateTransactionNote={updateTransactionNote}
 
-      updateStoredTransactionCategory={updateStoredTransactionCategory}
+      updateTransactionCategory={updateTransactionCategory}
 
       onDateChange={onDateChange}
     />
@@ -781,13 +785,7 @@ export default function Home() {
         ]
       }
     >
-    {
-      /* show updating transaction activity indicator */
-      isUpdatingTransaction &&
-      <View style={styles.loading}>
-        <ActivityIndicator size='large' />
-      </View>
-    }
+    
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         onWillFocus={clearState} // {(payload) => clearState()}
@@ -852,29 +850,15 @@ export default function Home() {
       }
       >
         <View style={{ flex: 0.75, }}>{ stickyTable }</View>
-        
         {/* Scrolling pills, amount view and keypad */}
         <View style={{ flex: 1, }}>
           { scrollingPills }
           { amountInput }
-
-           
-
-          <View style={{ flex: 1, }}>
-            { keypad }
-              
-          </View>
-
+          <View style={{ flex: 1, }}>{ keypad }</View>
         </View>
-        
       </View>
-
-      {
-              /* show updating transaction activity indicator */
+      { transactionSlide }
               
-              transactionSlide
-            }
-                  
 
     </SafeAreaView>
   );

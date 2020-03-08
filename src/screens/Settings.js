@@ -35,6 +35,8 @@ import {
   Share,
 } from 'react-native';
 
+// import { NetInfo } from 'react-native';
+
 // import { Ionicons } from 'expo-vector-icons';
 
 import * as StoreReview from 'expo-store-review';
@@ -193,7 +195,9 @@ function Settings(props) {
 
   const [optionOpacity, setOptionOpacity] = useState(1.0)
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  const [isUserOnline, setIsUserOnline] = useState(false);
 
   // async function retrieveCognitoUser() {
   //   // Auth.currentAuthenticatedUser()

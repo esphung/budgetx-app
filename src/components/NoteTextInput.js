@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { TextInput, View, Alert } from 'react-native';
 
 // AWS Amplify
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 // ui colors
 import colors from '../../colors';
@@ -16,47 +16,48 @@ import styles from '../../styles';
 // } from '../storage/SettingsStorage';
 
 export default function NoteTextInput(props) {
+  const { updateTransactionNote, transaction } = props;
+  // console.log('props: ', props);
   const [note, setNote] = useState('');
 
-  const [isReady, setIsReady] = useState(false);
+  // const [isReady, setIsReady] = useState(false);
 
-  const [storageKey, setStorageKey] = useState(null);
+  // const [storageKey, setStorageKey] = useState(null);
 
-  const [transaction, setTransaction] = useState(null);
+  // const [transaction, setTransaction] = useState(null);
 
-  function reset() {
-    setTransaction(props.transaction);
-  }
+  // function reset() {
+  //   setTransaction(transaction);
+  // }
 
 
-  useEffect(() => {
-    reset();
-    return () => {
-      // effect
-    };
-  }, []);
+  // useEffect(() => {
+  //   reset();
+  //   return () => {
+  //     // effect
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    if (note) {
-      setIsReady(true);
-    }
-    return () => {
-      // effect
-    };
-  }, [note]);
+  // useEffect(() => {
+  //   if (note) {
+  //     setIsReady(true);
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [note]);
 
-  useEffect(() => {
-    reset();
-    return () => {
-      // effect
-    };
-  });
+  // useEffect(() => {
+  //   reset();
+  //   return () => {
+  //     // effect
+  //   };
+  // });
 
   useEffect(() => {
     if (transaction) {
       // console.log(transaction);
       setNote(transaction.note);
-       setIsReady(true);
     }
     // else {
     //   setNote('');
@@ -66,7 +67,7 @@ export default function NoteTextInput(props) {
     };
   }, [transaction]);
 
-  if (isReady) {
+  // if (isReady) {
     return (
       <TextInput
         style={
@@ -75,17 +76,20 @@ export default function NoteTextInput(props) {
             styles.textStyle,
           {
             height: 50,
-            // width: '80%',
-            // flex: 1,
 
             paddingLeft: 12,
 
             margin: 4,
 
+            // marginTop: 3,
+
             // backgroundColor: colors.dark,
 
-            // borderWidth: 8,
-            // borderColor: colors.darkTwo,
+            borderTopWidth: 1,
+            borderTopColor: colors.dark,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
             // borderStyle: 'solid',
           }]
         }
@@ -95,10 +99,10 @@ export default function NoteTextInput(props) {
         value={note}
         keyboardAppearance="dark"
         returnKeyType="done"
-        onEndEditing={() => props.updateStoredTransactionNote(note)}
-        onSubmitEditing={() => props.updateStoredTransactionNote(note)}
+        onEndEditing={() => updateTransactionNote(note)}
+        // onSubmitEditing={() => props.updateTransactionNote(note)}
         autoCompleteType="off"
-        autoCorrect={false}
+        // autoCorrect={false}
 
         clearButtonMode="while-editing"
 
@@ -106,7 +110,7 @@ export default function NoteTextInput(props) {
       />
       
     );
-  }
+  // }
   return <View />;
 }
 

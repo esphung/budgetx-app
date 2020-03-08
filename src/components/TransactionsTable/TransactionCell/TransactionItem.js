@@ -6,6 +6,7 @@ import {
   // Text,
   // ScrollView,
   TouchableOpacity, // better for not opening slide view
+  ActivityIndicator
 } from 'react-native';
 
 // import {
@@ -16,6 +17,8 @@ import {
 
 // ui colors
 import colors from '../../../../colors';
+
+import styles from '../../../../styles';
 
 import CategoryLabel from '../../../../storybook/stories/CategoryLabel';
 
@@ -32,6 +35,7 @@ function TransactionItem(props) {
     onPress,
     currentTransaction,
     isNameInputEnabled,
+    isUpdatingTransaction
   } = props;
 
   // console.log('item: ', item);
@@ -73,6 +77,13 @@ function TransactionItem(props) {
       //   }
       // }
     >
+    {
+      isUpdatingTransaction && (currentTransaction.id  === item.id) &&
+      <View style={styles.loading}>
+        <ActivityIndicator size='small' />
+      </View>
+    }
+
       <View style={{
         // flex: 1,
         flexDirection: 'row',

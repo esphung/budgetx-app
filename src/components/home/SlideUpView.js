@@ -34,10 +34,10 @@ function SlideUpView(props) {
   const {
     slideViewBounceValue,
     transaction,
-    updateStoredTransactionNote,
+    updateTransactionNote,
     // clearState,
     dismiss,
-    updateStoredTransactionCategory
+    updateTransactionCategory
   } = props;
 
   // console.log(transaction);
@@ -107,13 +107,13 @@ function SlideUpView(props) {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.innerSlide}>
               <SlideUpTransactionRect
-                handleTransactionChange={props.handleTransactionChange}
+                // handleTransactionChange={props.handleTransactionChange}
                 dismiss={dismiss}
-                updateStoredTransactionNote={updateStoredTransactionNote}
+                updateTransactionNote={updateTransactionNote}
                 transaction={transaction}
                 onDateChange={props.onDateChange}
-                setWindowHeight={setWindowHeight}
-                updateStoredTransactionCategory={updateStoredTransactionCategory}
+                // setWindowHeight={setWindowHeight}
+                updateTransactionCategory={updateTransactionCategory}
               />
             </View>
           </TouchableWithoutFeedback>
