@@ -14,7 +14,7 @@ import { NetworkConsumer } from 'react-native-offline';
 // ui colors
 import colors from '../../../colors';
 
-// import InfoBox from '../../../storybook/stories/InfoBox';
+import InfoBox from '../../../storybook/stories/InfoBox';
 
 
 // text style
@@ -77,6 +77,9 @@ function SubscriptionRect(props) {
 
   if (!isUserLoggedIn) {
     text = `Tap here to sign up and access features.`
+    // return <InfoBox title='Tap here to sign up and access features.' />
+  } else if (isUserLoggedIn) {
+    return <InfoBox title={text} />
   }
 
   // if (!isUserOnline) {
@@ -84,65 +87,7 @@ function SubscriptionRect(props) {
   // }
 
   const offline = (
-    <View
-      style={{
-        flex: 1,
-
-        padding: 14,
-
-        alignItems: 'center',
-        justifyContent: 'center',
-
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-      }}
-    >
-
-      <TouchableOpacity disabled onPress={onPress} style={mask}>
-        <View
-          // style={
-          //   {
-          //     flex: 0.25,
-          //     backgroundColor: colors.shamrockGreen,
-
-          //     padding: 10,
-
-          //     // opacity: 0.77,
-
-          //     // borderWidth: 1,
-          //     // borderColor: 'white',
-          //     // borderStyle: 'solid',
-          //   }
-
-          // }
-        >
-          <View>
-            <Image
-              resizeMode="contain"
-              style={oval2}
-              source={global.bankImageGreen}
-            />
-          </View>
-        </View>
-        <View style={
-          {
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-          }
-
-        }
-        >
-          <Text style={copy3}>You are currently offline or have unstable connectivity</Text>
-        </View>
-      </TouchableOpacity>
-
-    </View>
+    <InfoBox title="You are currently offline or have unstable connectivity" />
   );
 
 
@@ -162,7 +107,7 @@ function SubscriptionRect(props) {
       }}
     >
 
-      <TouchableOpacity onPress={onPress} style={mask}>
+      <TouchableOpacity disabled={isUserLoggedIn} onPress={onPress} style={mask}>
         <View
           // style={
           //   {

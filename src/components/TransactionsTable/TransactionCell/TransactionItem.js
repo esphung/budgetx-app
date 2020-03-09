@@ -78,8 +78,17 @@ function TransactionItem(props) {
       // }
     >
     {
-      isUpdatingTransaction && (currentTransaction.id  === item.id) &&
-      <View style={styles.loading}>
+      isUpdatingTransaction && currentTransaction && (currentTransaction.id === item.id) &&
+      <View style={
+        [
+          {
+            backgroundColor: colors.dark,
+            opacity:  0.4,
+          },
+          styles.loading
+          ]
+        }
+      >
         <ActivityIndicator size='small' />
       </View>
     }

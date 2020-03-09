@@ -29,6 +29,8 @@ UPDATED:    Fri Nov  1 13:20:51 2019
 
 import React, { useState } from 'react';
 
+import { View } from "react-native";
+
 import * as Font from 'expo-font';
 
 import { NetworkProvider } from 'react-native-offline';
@@ -58,6 +60,8 @@ import SwitchNavigator from './SwitchNavigator';
 import Storybook from './storybook';
 
 import { clearLines } from './src/functions/clearLines';
+
+import FlashMessage from "react-native-flash-message";
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
@@ -98,7 +102,24 @@ export default function App() {
     loadApplicationResources();
     view = <AppLoading />;
   } else {
-    view = <NetworkProvider><SwitchNavigator /></NetworkProvider>; // has login
+    view =
+    <NetworkProvider>
+      <View style={{ flex: 1 }}>
+        <SwitchNavigator />
+        {/* GLOBAL FLASH MESSAGE COMPONENT INSTANCE */}
+        <FlashMessage style={
+          {
+            opacity: 0.9,
+            alignItems: 'center',
+            justifyContent: 'center',
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        } position="bottom" />{/* <--- here as last component */}
+      </View>
+    </NetworkProvider>; // has login
   }
   return view;
 }

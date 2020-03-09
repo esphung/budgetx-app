@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 
+import { showMessage, hideMessage } from "react-native-flash-message";
+
 // import the Analytics category
 // import Analytics from '@aws-amplify/analytics';
 // Analytics.record({ name: String!, attributes: Object, metrics: Object })
@@ -341,11 +343,10 @@ function SignInScreen(props) {
 
         if (cognito) {
           // set username key here!
+          showMessage(`Signed in as ${cognito.attributes.email}`)
           props.navigation.navigate('AuthLoading');
           // setIsLoading(false);
         }
-
-
 
       })
       .catch((err) => {

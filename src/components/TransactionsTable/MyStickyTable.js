@@ -285,16 +285,20 @@ const MyStickyTable = (props) => {
   // }
 
   const clearState = async () => {
-    setLoading(true);
+    // setLoading(true);
     setTableData(null)
   };
 
   useEffect(() => {
     // setLoading(true);
     if (transactions) {
+      // let sortedTransactions = sortItemsByDate(transactions);
+      // setTableData(sortByHeadersDateDescending(sortedTransactions));
+      // setLoading(false);
+
       let sortedTransactions = sortItemsByDate(transactions);
       setTableData(sortByHeadersDateDescending(sortedTransactions));
-      setLoading(false);
+      // setLoading(false);
     }
     // return () => {
     //   // effect
@@ -371,13 +375,17 @@ const MyStickyTable = (props) => {
   );
 
   
-  view = table;   
-
+  view = (
+    <View>
+    {
+      true && table
+    }
+    </View>
+  )
 
   if (transactions.length <= 0) {
     view = Render_Empty_Component();
   }
-
   return view;
 };
 
@@ -391,7 +399,7 @@ const MyStickyTable = (props) => {
 // isCurrentTransaction,
 
 MyStickyTable.propTypes = {
-  tableTop: PropTypes.string.isRequired,
+  // tableTop: PropTypes.string.isRequired,
   // tableHeight: PropTypes.string.isRequired,
   // tablePosition: PropTypes.string.isRequired,
 

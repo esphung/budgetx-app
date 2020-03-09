@@ -81,7 +81,7 @@ function UserOptions(props) {
 
   function renderSeparator(item) {
     let view;
-    console.log('item.leadingItem: ', item.leadingItem);
+    // console.log('item.leadingItem: ', item.leadingItem);
 
     if (item.leadingItem.key === 'Contact Support' || item.leadingItem.key === '' || item.leadingItem.key === 'Backup Local Data') return null
     view = <View

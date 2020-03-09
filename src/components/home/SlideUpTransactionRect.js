@@ -10,7 +10,7 @@ import {
   FlatList,
   // ScrollView,
   // Alert,
-  // ActivityIndicator,
+  ActivityIndicator,
 } from 'react-native';
 
 import { NavigationEvents } from 'react-navigation';
@@ -86,9 +86,9 @@ const amountLabel = {
   height: '50%',
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 25,
-  fontWeight: 'normal',
-  fontStyle: 'normal',
-  letterSpacing: 0.13,
+  // fontWeight: 'normal',
+  // fontStyle: 'normal',
+  // letterSpacing: 0.13,
   textAlign: 'center',
   color: colors.white,
 
@@ -106,39 +106,25 @@ const amountLabel = {
 const MAX_PILL_WIDTH = 156;
 
 const MIN_PILL_WIDTH = 54;
-// const MAX_PILL_HEIGHT = 32;
 
-// // find previous obj if exists
-// function searchByID(key, myArray) {
-//   // console.log(nameKey);
-//   let obj = null;
-//   let i = 0;
-//   for (i; i < myArray.length; i += 1) {
-//     // console.log(myArray[i].id, nameKey);
-//     if (myArray[i].id === key) {
-//       obj = myArray[i];
-//     }
-//   }
-//   return obj;
-// }
 
 function SlideUpTransactionRect(props) {
-  let { transaction,  updateTransactionCategory, updateTransactionNote } = props;
+  let { transaction, updateTransactionCategory, updateTransactionNote, updateTransactionDate, shouldShowCalendarPicker, setShouldShowCalendarPicker, setTop, isUpdatingTransaction } = props;
 
 
-  const [dataIsLoaded, setDataIsLoaded] = useState(false);
+  // const [dataIsLoaded, setDataIsLoaded] = useState(false);
 
   // const [textLabel, setTextLabel] = useState('');
 
-  const [amount, setAmount] = useState(0.00);
+  const [currentAmount, setCurrentAmount] = useState(0);
 
-  const [date, setDate] = useState(null);
+  const [currentDate, setCurrentDate] = useState(null);
 
   // const [transaction, setTransaction] = useState(props.transaction);
 
   // const [shouldShowCategoryBox, setShouldShowCategoryBox] = useState(true);
 
-  const [categories, setCategories] = useState(null);
+  const [categories, setCategories] = useState([]);
 
   const [isReady, setIsReady] = useState(false);
 
@@ -152,7 +138,7 @@ function SlideUpTransactionRect(props) {
 
   // const [storageKey, setStorageKey] = useState('CURRENT_USER');
 
-  const [data, setData] = useState(null);
+  const [flatListData, setFlatListData] = useState([]);
 
   // const [pickerDate, setPickerDate] = useState("2016-05-15");
 
@@ -162,9 +148,9 @@ function SlideUpTransactionRect(props) {
   //   setShouldShowCategoryBox(true);
   // };
 
-  const [shouldShowCalendarPicker, setShouldShowCalendarPicker] = useState(false);
+  // const [shouldShowCalendarPicker, setShouldShowCalendarPicker] = useState(false);
 
-  const [pickerBtnText, setPickerBtnText] = useState('Pick a date');
+  const [pickerBtnText, setPickerBtnText] = useState('Pick a currentDate');
 
   // const [shouldShowNoteInput, setShouldShowNoteInput] = useState(true);
 
@@ -300,11 +286,11 @@ function SlideUpTransactionRect(props) {
     //   });
   }
 
-  const retrieveStoredCategories = async (key) => {
+  const retrieveStoredCategories = async () => {
     // console.log(key);
     // load stored user categories
     try {
-      const userObject = await loadSettingsStorage(key);
+      const userObject = await loadSettingsStorage(global.storageKey);
 
       // user categories from stored user
       setCategories(userObject.categories);
@@ -322,10 +308,10 @@ function SlideUpTransactionRect(props) {
     setIsReady(false);
     // setShouldShowCategoryBox(true);
     setShouldShowCalendarPicker(false);
-    setData(null)
-    setDate(null)
-    setAmount(0)
-    setCategories(null)
+    setFlatListData([])
+    setCurrentDate(null)
+    setCurrentAmount(0)
+    setCategories([])
     // setShouldShowNoteInput(true);
     // setShouldShowNoteInputBtn(true);
     // setShadowOffset(props.shadowOffset);
@@ -335,18 +321,18 @@ function SlideUpTransactionRect(props) {
     // setZIndex(props.zIndex);
 
     // await retrieveCognitoUserKey();
-    retrieveStoredCategories(storageKey);
+    retrieveStoredCategories();
     // console.log('Finished');
-    setIsReady(true);
+    // setIsReady(true);
   };
 
-  // const chooseCategoryBtnPressed = () => {
-  //   if (shouldShowCategoryBox) {
-  //     setShouldShowCategoryBox(false);
-  //   } else {
-  //     setShouldShowCategoryBox(true);
-  //   }
-  // };
+  const chooseCategoryBtnPressed = () => {
+    if (shouldShowCategoryBox) {
+      setShouldShowCategoryBox(false);
+    } else {
+      setShouldShowCategoryBox(true);
+    }
+  };
 
   function getFlatListDataFromObject(obj) {
     // console.log(obj);
@@ -365,7 +351,7 @@ function SlideUpTransactionRect(props) {
       // console.log('id', index, key, values[index]);
       list.push(item);
     });
-    // console.log(data);
+    // console.log(flatListData);
     return list;
   }
 
@@ -399,8 +385,21 @@ function SlideUpTransactionRect(props) {
 
   useEffect(() => {
     // clearState();
-    retrieveStoredCategories(storageKey);
+    retrieveStoredCategories();
   }, []);
+
+  useEffect(() => {
+    if (shouldShowCalendarPicker) {
+      setTop(-180);
+      // setIsNoteInputEditable(false);
+    } else if (!shouldShowCalendarPicker) {
+      setTop(0);
+      // setIsNoteInputEditable(true);
+    }
+    return () => {
+      // effect
+    };
+  }, [shouldShowCalendarPicker]);
 
   // useEffect(() => {
   //   if (storageKey) {
@@ -414,9 +413,9 @@ function SlideUpTransactionRect(props) {
 
   useEffect(() => {
     if (categories) {
-      setData(getFlatListDataFromObject(categories));
+      setFlatListData(getFlatListDataFromObject(categories));
 
-      setIsReady(true);
+      // setIsReady(true);
     }
     return () => {
       // effect
@@ -425,40 +424,36 @@ function SlideUpTransactionRect(props) {
 
   useEffect(() => {
     // console.log('Mount');
-    if (!transaction) {
-      // reset buttons
-      // console.log('Reset');
+    if (transaction) {
+      setCurrentAmount(transaction.amount);
 
-      // clearState();
-    } else if (transaction) {
-      // Mount current transaction
-      transaction = (props.transaction);
+      setCurrentDate(transaction.date);
 
-        setAmount(transaction.amount);
+      setPickerBtnText(`${getFormattedDateString(transaction.date)}`);
 
-        setDate(transaction.date);
 
-        // setPickerBtnText(transaction.date);
-    }
-  }, [transaction]);
 
-  useEffect(() => {
-    if (amount && date && data && transaction) {
-      setPickerBtnText(`${getFormattedDateString(date)}`);
-      setDataIsLoaded(true);
-      // setIsReady(true)
+      setIsReady(true)
+
+      // setShouldShowCalendarPicker(false);
+
+      // setPickerBtnText(transaction.currentDate);
+
+      // setShouldShowCalendarPicker(false);
+      // setIsNoteInputEditable(true);
     }
     return () => {
-      // effect
-    };
-  }, [amount, date, data, transaction]);
+      setShouldShowCalendarPicker(false);
+    }
+
+  }, [transaction]);
 
   function pickerBtnPressed() {
     // console.log(shouldShowCalendarPicker);
-    if (shouldShowCalendarPicker) {
-      setShouldShowCalendarPicker(false); // hide cal
-    } else {
+    if (!shouldShowCalendarPicker) {
       setShouldShowCalendarPicker(true); // show cal
+    } else {
+      setShouldShowCalendarPicker(false);
     }
   }
 
@@ -469,14 +464,14 @@ function SlideUpTransactionRect(props) {
   //     decelerationRate={0}
   //     snapToAlignment="center"
 
-  //     data={data}
+  //     flatListData={flatListData}
   //     renderItem={({ item }) => <Item item={item} transaction={transaction} />}
   //     keyExtractor={(item) => item.key}
   //   />
   // );
 
   // const datePicker = (
-  //   <MyDateTimePicker date={new Date(date)} />
+  //   <MyDateTimePicker currentDate={new Date(currentDate)} />
   // );
 
   let calendarPicker = (
@@ -490,14 +485,26 @@ function SlideUpTransactionRect(props) {
         // padding: 3,
 
         // marginBottom: 6,
+        alignItems: 'center',
+        // justifyContent: 'center',
+
+        // paddingVertical: 3,
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
       }
-    }><MyCalendarPicker date={new Date(date)} onDateChange={props.onDateChange} /></View>
+    }>
+      <MyCalendarPicker isUpdatingTransaction={isUpdatingTransaction} initalDate={new Date(currentDate)} updateTransactionDate={updateTransactionDate} />
+    </View>
   );
 
   let noteInput = (
     <NoteTextInput
       transaction={transaction}
       updateTransactionNote={updateTransactionNote}
+      setShouldShowCalendarPicker={setShouldShowCalendarPicker}
+      // isUpdatingTransaction={isUpdatingTransaction}
     />
   );
 
@@ -512,7 +519,7 @@ function SlideUpTransactionRect(props) {
   //     borderStyle: 'solid',
   //   }
   // }><ActivityIndicator /></View>
-  let view = null;
+  // let view = null;
 
   // let box = null;
 
@@ -530,6 +537,7 @@ function SlideUpTransactionRect(props) {
       }
       title={pickerBtnText}
       onPress={pickerBtnPressed}
+
     />
   );
 
@@ -560,30 +568,69 @@ function SlideUpTransactionRect(props) {
   //   noteInputBtn = null;
   // }
 
-  if (isReady && dataIsLoaded && transaction) {
-    view = (
-      
-      <View
-        style={
+  let updatingTransactionIndicator = (
+    <View style={
+      {
+        flex: 1,
+        left: 0,
+        right: 0,
+        top: -100,
+        bottom: -100,
+
+        justifyContent: 'center',
+
+        backgroundColor: colors.dark,
+
+        position: 'absolute',
+
+        opacity: 0.1,
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }
+    }>
+      <ActivityIndicator size="large" color={colors.offWhite} />
+    </View>
+  );
+
+  // if (isReady && dataIsLoaded && transaction) {
+  let view = (
+    <View style={
           [
             styles.slideUpTransactionRect,
+            {
+              borderTopWidth: 1,
+              borderTopColor: colors.dark,
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+
+              zIndex: -1,
+            }
           ]
         }
       >
-       <NavigationEvents
-        // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={clearState} // {(payload) => clearState()}
-        // other props
-        // onDidFocus={payload => console.log('did focus',payload)}
-        // onWillBlur={clearState} // console.log('will blur',payload)}
-        // onDidBlur={payload => console.log('did blur',payload)}
-      />
+  {
+    transaction &&
+      <View>
+        <NavigationEvents
+          // try only this. and your component will auto refresh when this is the active component
+          onWillFocus={() => {
+          clearState()
+          }} // {(payload) => clearState()}
+          // other props
+          // onDidFocus={payload => console.log('did focus',payload)}
+          // onWillBlur={clearState} // console.log('will blur',payload)}
+          // onDidBlur={payload => console.log('did blur',payload)}
+        />
+      
       <View
         style={
           {
             // flexDirection: 'row',
 
-            justifyContent: 'center',
+            // justifyContent: 'center',
             alignItems: 'center',
 
             // borderWidth: 1,
@@ -591,6 +638,7 @@ function SlideUpTransactionRect(props) {
             // borderStyle: 'solid',
 
             // paddingHorizontal: 6,
+            // marginTop: 10,
 
           }
         }
@@ -598,39 +646,64 @@ function SlideUpTransactionRect(props) {
 
         <SlideViewSeparator />
 
-        <View style={styles.dateAmountRectangle}>
+        {
+          isReady && (
+            <View style={styles.dateAmountRectangle}>
+              <View style={
+                {
 
-          {/* <Text style={dateLabel}>{ textLabel }</Text> */}
-
-          {
-            touchableText
-          }
-
-          <Text style={amountLabel}>
-            <Text style={{ color: colors.offWhite }}>
-              {`${getCurrencySymbol(amount)}`}
+                  // position: 'absolute',
+                }
+              }>
+              {
+                touchableText
+              }
+              </View>
+            <Text style={amountLabel}>
+              <Text style={{ color: colors.offWhite }}>
+                {`${getCurrencySymbol(currentAmount)}`}
+              </Text>
+              {`${Math.abs(currentAmount).toFixed(2)}`}
             </Text>
-            {`${Math.abs(amount).toFixed(2)}`}
-          </Text>
-        </View>
-
-
-
-
-
-  
+          </View>
+          )
+        }
         </View>
 
         <View
           style={{
             // height: '50%',
-            backgroundColor: colors.darkTwo,
+            // backgroundColor: colors.darkTwo,
 
             // borderWidth: 1,
             // borderColor: 'red',
             // borderStyle: 'solid',
+
+            padding: 2,
+
+            // backgroundColor: colors.darkTwo,
           }}
         >
+         {
+              shouldShowCalendarPicker && (
+              <View style={
+                {
+                  // position: 'absolute',
+                  // left: 0,
+                  // right: 0,
+                  top: -75,
+                }
+              }>
+              {
+                calendarPicker
+              }
+
+              {
+                touchableText
+              }
+              </View>
+              )
+            }
 
 
             <View style={
@@ -638,39 +711,43 @@ function SlideUpTransactionRect(props) {
                 // flex: 1,
               }
             }>
+            
             <FlatList
                 contentContainerStyle={{
                   // alignItems: 'center',
-                  // height: 28,
-                  // paddingHorizontal: 5,
-                  // paddingVertical: 3,
+                  paddingHorizontal: 5,
+                  paddingVertical: 6,
 
-                  // marginVertical: 10,
+                  // marginVertical: 3,
 
                 }}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 // decelerationRate={0}
-                snapToAlignment="center"
+                // snapToAlignment="cesnter"
 
-                data={data}
+                data={flatListData}
                 renderItem={({ item }) => <Item item={item} transaction={transaction} />}
                 keyExtractor={(item) => item.key}
               />
 
               {
+                // !isUpdatingTransaction &&
                 noteInput
               }
+
+              {
+                !isReady && updatingTransactionIndicator
+              }
+
             </View>
           </View>
 
-          {
-            shouldShowCalendarPicker &&
-            calendarPicker
-          }
+          
       </View>
-    );
   }
+  </View>
+);
   return view;
 }
 

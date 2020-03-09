@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 
+import { showMessage, hideMessage } from "react-native-flash-message";
+
 import {
   AsyncStorage,
   TouchableOpacity,
@@ -101,7 +103,7 @@ function ChangePasswordScreen(props) {
 
         AsyncStorage.removeItem('isUserAuthenticated');
 
-        console.log('Removed AsyncsStorage Variables ..');
+        // console.log('Removed AsyncsStorage Variables ..');
 
 
         // AsyncStorage.getAllKeys((err, keys) => {
@@ -115,7 +117,8 @@ function ChangePasswordScreen(props) {
 
         navigation.navigate('AuthLoading');
 
-        console.log('Sign out complete');
+        // console.log('Sign out complete');
+        showMessage('Signed out');
       })
       .catch((err) => console.log('Error while signing out!', err));
 

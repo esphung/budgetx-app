@@ -20,6 +20,10 @@ import { withNavigation } from 'react-navigation';
 
 import SignIn from './SignInScreen'
 
+import { showMessage, hideMessage } from "react-native-flash-message";
+
+import NetInfo from "@react-native-community/netinfo";
+
 import {
   // StyleSheet,
   View,
@@ -214,6 +218,14 @@ function Settings(props) {
   //   //   });
   // }
 
+  function handleFirstConnectivityChange(isConnected) {
+    console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      handleFirstConnectivityChange
+    );
+  }
+
   async function retrieveStoredSettingsTransactions(user_storage_key) {
     // load stored user transactions
     // console.log('user_storage_key: ', user_storage_key);
@@ -369,24 +381,27 @@ function Settings(props) {
   };
 
   function showResetCompleteAlert() {
-    Alert.alert(
-     'Reset Complete',
-     'All your data is gone.'
-    );
+    // Alert.alert(
+    //  'Reset Complete',
+    //  'All your data is gone.'
+    // );
+    showMessage('All your data is gone.');
   }
 
   function showBackupCompleteAlert() {
-    Alert.alert(
-     'Backup Complete',
-     'Your data has been backed up!',
-    );
+    // Alert.alert(
+    //  'Backup Complete',
+    //  'Your data has been backed up!',
+    // );
+    showMessage('Your data has been backed up!')
   }
 
   function showRestoreCompleteAlert() {
-    Alert.alert(
-     'Backup Restored',
-     'Your data has been restored!',
-    );
+    // Alert.alert(
+    //  'Backup Restored',
+    //  'Your data has been restored!',
+    // );
+    showMessage('Your data has been restored!');
   }
 
   function showMailSenderFailedAlert(text) {
@@ -411,7 +426,7 @@ function Settings(props) {
       AsyncStorage.multiGet(keys, (error, stores) => {
         stores.map((result, i, store) => {
           if (store[i][0] === (global.storageKey)) {
-            console.log({ [store[i][0]]: store[i][1] });
+            // console.log({ [store[i][0]]: store[i][1] });
             AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
           } else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
             AsyncStorage.removeItem(store[i][0]) // Remove Backups
@@ -631,7 +646,8 @@ function Settings(props) {
     if (transactions.length > 0) {
       sendTransactionsMail(transactions);
     } else {
-      Alert.alert('You have no transactions')
+      // Alert.alert('You have no transactions');
+      showMessage('You have no transactions');
     }
   }
 
@@ -690,11 +706,26 @@ function Settings(props) {
     // retrieveCognitoUser();
     // console.log('Cleared');
 
+    NetInfo.isConnected.fetch().then(isConnected => {
+      // console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+      {
+        // isConnected ? showFlashMessage('Online') : showFlashMessage('Offline');
+        isConnected ? null : showMessage('You are currently offline');
+      }
+    });
+    
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      handleFirstConnectivityChange
+    );
+
     retrieveStoredSettingsTransactions(global.storageKey);
 
     Auth.currentAuthenticatedUser().then((cognito) => {
       setIsUserLoggedIn(true);
-    }).catch((err) => console.log('err: ', err))
+    }).catch((err) => console.log('err: ', err));
+
+
 
     // setIsUserLoggedIn(false);
   }
@@ -778,6 +809,7 @@ function Settings(props) {
           style={
             {
               flex: 0.3,
+              justifyContent: 'center',
 
               // borderWidth: 1,
               // borderColor: 'white',

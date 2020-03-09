@@ -514,11 +514,11 @@ export default StyleSheet.create({
   },
   textStyle: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
     // lineHeight: 28,
     // lineHeight: 26,
-    letterSpacing: 0.13,
+    // letterSpacing: 0.13,
     // textAlign: 'center',
 
     fontSize: 17,
@@ -597,8 +597,8 @@ export default StyleSheet.create({
     // height: '100%',
     // backgroundColor: colors.darkTwo,
 
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
 
     // position: 'absolute',
 
@@ -619,7 +619,7 @@ export default StyleSheet.create({
   slideUpTransactionRect: {
     // flex: 1,
     // height: '100%',
-    height: 220,
+    height: 210,
     // width: 'auto',
     // width: 1000,
 
@@ -629,16 +629,16 @@ export default StyleSheet.create({
 
     // borderRadius: 9,
 
-    borderTopWidth: 1,
-    borderTopColor: colors.dark,
-    // borderTopColor: 'transparent',
+    // borderTopWidth: 1,
+    // borderTopColor: colors.dark,
+    // // borderTopColor: 'transparent',
 
-    borderLeftWidth: 1,
-    borderLeftColor: colors.dark,
-    // borderLeftColor: 'transparent',
+    // borderLeftWidth: 1,
+    // borderLeftColor: colors.dark,
+    // // borderLeftColor: 'transparent',
 
-    borderRightWidth: 1,
-    borderRightColor: colors.dark,
+    // borderRightWidth: 1,
+    // borderRightColor: colors.dark,
     // borderRightColor: 'transparent',
     // borderWidth: 3,
     // borderColor: 'white',
@@ -661,11 +661,12 @@ export default StyleSheet.create({
     // alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 346,
+    // width: 346,
+    width: '95%',
     height: 74,
 
-    marginBottom: 6,
-    marginHorizontal: 6,
+    // marginBottom: 6,
+    // marginHorizontal: 6,
 
     borderRadius: 9,
     backgroundColor: colors.dark,
