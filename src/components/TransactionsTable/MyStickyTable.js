@@ -16,6 +16,7 @@ import {
   FlatList,
   SafeAreaView,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -298,37 +299,38 @@ const MyStickyTable = (props) => {
   let view; // = spinnerView;
 
   /* Working  ios vversion of table */
-  // let table = (
-  //   <FlatList
-  //     data={tableData}
-  //     // extraData={setTableData}
-  //     renderItem={renderItem}
-  //     keyExtractor={(item, index) => String(index)}
-  //     key={(item) => String(item.id)} // android ??
-  //     stickyHeaderIndices={stickyHeaderIndices}
-  //     // renderHiddenItem={renderHiddenItem}
+  let ios_table = (
+    <FlatList
+      data={tableData}
+      // extraData={setTableData}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => String(index)}
+      stickyHeaderIndices={stickyHeaderIndices}
+      // renderHiddenItem={renderHiddenItem}
 
-  //     // // leftOpenVaslue={0}
-  //     // leftOpenValue={55}
-  //     // rightOpenValue={-75}
-  //     // // disableRightSwipe={false}
-  //     // //  disableLeftSwipe
+      // // leftOpenVaslue={0}
+      // leftOpenValue={55}
+      // rightOpenValue={-75}
+      // // disableRightSwipe={false}
+      // //  disableLeftSwipe
 
-  //     // ItemSeparatorComponent={this.FlatListItemSeparator}
-  //     // ListHeaderComponent={this.Render_FlatList_Sticky_header}
-  //     // ListEmptyComponent={Render_Empty_Component}
+      // ItemSeparatorComponent={this.FlatListItemSeparator}
+      // ListHeaderComponent={this.Render_FlatList_Sticky_header}
+      // ListEmptyComponent={Render_Empty_Component}
 
-  //     showsVerticalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
 
-  //     // optimization
-  //     // initialNumToRender={24}
-  //     // windowSize={12} // {21}
-  //     // removeClippedSubviews={true}
-  //     // maxToRenderPerBatch={2}
-  //   />
-  // );
+      // optimization
+      // initialNumToRender={24}
+      // windowSize={12} // {21}
+      // removeClippedSubviews={true}
+      // maxToRenderPerBatch={2}
+    />
+  );
 
-  let table = (
+  /* android table */
+
+  let android_table = (
         <SafeAreaView style={{
           // // flex: 1,
 
@@ -385,20 +387,28 @@ const MyStickyTable = (props) => {
   )
 
   
-  view = (
-    <View>
-    {
-      // transactions &&
-      // tableData &&
-      table
-    }
-    </View>
-  )
+  // view = (
+  //   <View>
+  //   {
+  //     // transactions &&
+  //     // tableData &&
+  //     // table
+
+  //     Platform.OS === 'ios' && ios_table
+  //   }
+  //   </View>
+  // )
 
   if (transactions.length <= 0) {
     view = Render_Empty_Component();
   }
-  return view;
+  // return view;
+
+  if (Platform.OS === 'ios') {
+    return ios_table
+  } else {
+    return android_table
+  }
 };
 
 MyStickyTable.propTypes = {
