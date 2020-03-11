@@ -393,7 +393,7 @@ function SlideUpTransactionRect(props) {
       setTop(-180);
       // setIsNoteInputEditable(false);
     } else if (!shouldShowCalendarPicker) {
-      setTop(0);
+      setTop(80);
       // setIsNoteInputEditable(true);
     }
     return () => {
@@ -699,20 +699,23 @@ function SlideUpTransactionRect(props) {
               }
 
               {
-                touchableText
+                <TouchableText
+                  style={
+                    dateLabel
+                    // {
+                    //   color: colors.tangerine,
+                    // }
+                  }
+                  title="Go Back"
+                  onPress={pickerBtnPressed}
+
+                />
               }
               </View>
               )
             }
 
-
-            <View style={
-              {
-                // flex: 1,
-              }
-            }>
-            
-            <FlatList
+             <FlatList
                 contentContainerStyle={{
                   // alignItems: 'center',
                   paddingHorizontal: 5,
@@ -740,7 +743,6 @@ function SlideUpTransactionRect(props) {
                 !isReady && updatingTransactionIndicator
               }
 
-            </View>
           </View>
 
           

@@ -60,7 +60,7 @@ export default function AuthLoadingScreen(props) {
     // console.log('userToken: ', userToken);
     // let userToken = null
     if (userToken) {
-      console.log('Local Storage userToken: ', userToken);
+      // console.log('Local Storage userToken: ', userToken);
       global.storageKey = await AsyncStorage.getItem('storageKey');
       // console.log('Local Storage userToken: ', userToken.substring(0, 25), '...');
     } else {
@@ -80,7 +80,10 @@ export default function AuthLoadingScreen(props) {
           // console.log('storageKey: ', global.storageKey);
 
         })
-        .catch((err) => console.log('err: ', err));
+        .catch((err) => {
+          // console.log('err: ', err);
+          
+        });
 
       userToken = await AsyncStorage.getItem('userToken');
     }

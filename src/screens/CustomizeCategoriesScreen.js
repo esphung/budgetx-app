@@ -303,6 +303,8 @@ const CustomizeCategoriesScreen = () => {
 
   const [helpMessage, setHelpMessage] = useState(null);
 
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+
   // static methods
   CustomizeCategoriesScreen.resetCategories = async () => {
     // console.log(key);
@@ -339,6 +341,7 @@ const CustomizeCategoriesScreen = () => {
 
   // private methods
   const removeCategoryByName = async (name) => {
+    setIsAddingCategory(true);
     // setIsLoading(true);
     const storage = await loadSettingsStorage(storageKey);
 
@@ -355,6 +358,8 @@ const CustomizeCategoriesScreen = () => {
     // setIsLoading(false);
 
     setHelpMessage('Removed category');
+
+    setIsAddingCategory(false);
   };
 
   const deleteCategoryByID = async (item) => {
@@ -383,6 +388,7 @@ const CustomizeCategoriesScreen = () => {
   }
 
   const addCategory = async (name, color, type) => {
+    setIsAddingCategory(true);
     // const list = await loadUserCategories();
     const userObject = await loadSettingsStorage(storageKey);
     // console.log(userObject.user.categories);
@@ -433,6 +439,8 @@ const CustomizeCategoriesScreen = () => {
 
       setData(list);
     }
+    setIsAddingCategory(false);
+ 
     return obj;
   };
 
@@ -687,20 +695,22 @@ const CustomizeCategoriesScreen = () => {
   // }, [selected]);
 
   async function clearState() {
-    setIsReady(false)
+    setIsReady(false);
     // setTypeInputValue(null);
     // setNameInputValue(null);
     setShowDialogBox(false);
 
-    setCurrentCategory(null)
+    setCurrentCategory(null);
 
-    retrieveStoredCategories()
+    setIsAddingCategory(false);
+
+    // retrieveStoredCategories();
 
     // retrieveStoredCategories();
     // retrieveCognitoUserKey();
     // console.log('Cleared state');
 
-    setIsReady(true)
+    setIsReady(true);
   }
 
   // useEffect(() => {
@@ -762,10 +772,12 @@ const CustomizeCategoriesScreen = () => {
   }, [data]);
 
   useEffect(() => {
-    clearState()
-    // return () => {
-    //   // effect
-    // };
+    clearState();
+    retrieveStoredCategories();
+    return () => {
+      // effect
+      setIsReady(true);
+    };
   }, [])
 
   // useEffect(() => {
@@ -835,22 +847,29 @@ const CustomizeCategoriesScreen = () => {
       <Dialog.Container
         // blurComponentIOS={blurComponentIOS}
         headerStyle={{
-          backgroundColor: 'pink'
+          // backgroundColor: 'pink',
+          backgroundColor: colors.dark,
         }}
-        style={{
-          // backgroundColor: colors.dark,
-        }} visible={shouldShowDialog}>
-        <Dialog.Title style={{
-            color: colors.dark,
-            // width: 153,
-            // height: 36,
-            fontFamily: 'SFProDisplay-Semibold',
-            fontSize: 17,
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            letterSpacing: 0.1,
-            // color: "#ffffff"
-          }}>Choose a name</Dialog.Title>
+        contentStyle={{
+          backgroundColor: colors.dark,
+        }}
+        footerStyle={
+          {
+            backgroundColor: colors.dark,
+          }
+        }
+
+        visible={shouldShowDialog}>
+        <Dialog.Title style={
+         [
+           styles.textStyle,
+           {
+             fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
+             fontWeight: '600',
+             fontSize: 17,
+           }
+         ]
+        }>Choose a name</Dialog.Title>
         <Dialog.Description style={{
             color: colors.darkTwo,
 
@@ -867,46 +886,25 @@ const CustomizeCategoriesScreen = () => {
         </Dialog.Description>
         <Dialog.Input
           style={{
-            // backgroundColor: colors.darkTwo,
+            marginBottom: 20,
             textAlign: 'center',
             borderWidth: 1,
-            borderColor: colors.dark,
+            borderColor: colors.white, // colors.dark,
             borderStyle: 'solid',
             borderRadius: 19,
+
           }}
           onChangeText={(text) => setNameInputValue(text)}
           maxLength={MAX_NAME_LENGTH}
           autoCorrect
         />
         <Dialog.Button
-          style={{
-            color: colors.dark,
-
-            // width: 153,
-            // height: 36,
-            fontFamily: 'SFProDisplay-Regular',
-            fontSize: 15,
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            letterSpacing: 0.1,
-            // color: "#ffffff"
-          }}
+          style={styles.buttonText}
           onPress={cancelBtnPressed}
           label="Cancel"
         />
         <Dialog.Button
-          style={{
-            color: colors.dark,
-
-            // width: 153,
-            // height: 36,
-            fontFamily: 'SFProDisplay-Regular',
-            fontSize: 15,
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            letterSpacing: 0.1,
-            // color: "#ffffff"
-          }}
+          style={styles.buttonText}
           onPress={() => {
             if (nameInputValue) {
               addCategory(nameInputValue, colors.white, 'expense');
@@ -1167,6 +1165,11 @@ const CustomizeCategoriesScreen = () => {
         }} />
       </View>
       </View>
+      {
+        isAddingCategory &&
+        // true &&
+        <ActivityIndicator color={colors.offWhite} size="small" />
+      }
     </SafeAreaView>
   );
 

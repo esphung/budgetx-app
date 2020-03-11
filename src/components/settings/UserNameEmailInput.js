@@ -282,31 +282,30 @@ function UserNameEmailInput(props) {
     };
   }, [])
 
-  let view = null; // spinnerView;
-
-  // if (!isLoginEnabled) {
-  view = (
+  let view = (
     <TouchableOpacity
-    disabled={isSignUpDisabled}
-    onPress={async () => {
-      
-      if (global.isLoginEnabled !== 'false') {
-        // console.log('isLoginEnabled: ', isLoginEnabled);
-        Alert.alert(
-          'Would you like to sign up?',
-          'Access more features: change your name, multiple users, save data and more',
-          // null,
-          // 'Signing up will allow more features like multiple users per device.',
-          [
-            { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-            { text: 'OK', onPress: () => navigation.navigate('Welcome')
-            },
-          ],
-
-        )
+      disabled={isSignUpDisabled}
+      onPress={
+        async () => {
+          // New User Sign Up Alert
+          console.log('global.isLoginEnabled: ', global.isLoginEnabled);
+          if (global.isLoginEnabled !== 'false') {
+            // console.log('isLoginEnabled: ', isLoginEnabled);
+            Alert.alert(
+              'Would you like to sign up?',
+              'Access more features: change your name, multiple users, save data and more',
+              // null,
+              // 'Signing up will allow more features like multiple users per device.',
+              [
+                { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                { text: 'OK', onPress: () => navigation.navigate('Welcome')
+                },
+              ],
+            )
+          }
+        }
       }
-
-    }} style={{ flex: 1, flexDirection: 'column' }}>
+    style={{ flex: 1, flexDirection: 'column' }}>
       <View style={
         {
           flex: 1,

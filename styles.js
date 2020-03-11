@@ -62,9 +62,10 @@ export default StyleSheet.create({
   },
   /* Balance View */
   balanceView: {
+    position: Platform.OS === 'ios' ? 'relative' : 'absolute',
     width: '90%', // 346,
     minWidth: 346,
-    // height: 74
+    // height: 74,
     maxHeight: '95%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -643,6 +644,8 @@ export default StyleSheet.create({
     // borderWidth: 3,
     // borderColor: 'white',
     // borderStyle: 'dashed',
+
+
 
     backgroundColor: colors.darkTwo,
     // backgroundColor: 'transparent',

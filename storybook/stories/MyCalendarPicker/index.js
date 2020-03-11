@@ -54,7 +54,7 @@ export default function MyCalendarPicker(props) {
     
             // marginHorizontal: 7,
 
-            width: '95%',
+            width: '97%',
 
             // paddingBottom: 10,
 
@@ -103,20 +103,30 @@ export default function MyCalendarPicker(props) {
 
           todayBackgroundColor="transparent"
           todayTextStyle={[
-            styles.textStyle,
+            // styles.textStyle,
+            {
+              fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
+              fontSize: 15,
+              color: colors.white,
+          },
             {
               opacity: 0.5,
             }
           ]}
 
-          textStyle={styles.textStyle}
+          // textStyle={styles.textStyle}
+          textStyle={{
+            fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
+            fontSize: 15,
+            color: colors.white,
+          }}
 
           // scaleFactor={600}
 
           initialDate={initialDate}
 
           // width={250}
-          height={350}
+          height={380}
 
           // enableSwipe // ={false}
 

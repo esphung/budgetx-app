@@ -1,3 +1,10 @@
+/*
+FILENAME:  MyStickyTable.js
+PURPOSE:   MyStickyTable
+AUTHOR:    Eric Phung
+CREATED:   ...
+UPDATED:   03/10/2020 11:49 AM | 2.1.6 wasn't working on  Android
+*/
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -5,7 +12,10 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
-  // Text,
+  Text,
+  FlatList,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -35,23 +45,22 @@ import { getShortDate } from './functions';
 
 import { sortItemsByDate } from '../../functions/sortItemsByDate'
 
-// import SpinnerMask from '../SpinnerMask';
-
-// const ROW_HEIGHT = 44;
-
-
+const DATA = [
+  {
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+    title: 'First Item',
+  },
+  {
+    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+    title: 'Second Item',
+  },
+  {
+    id: '58694a0f-3da1-471f-bd96-145571e29d72',
+    title: 'Third Item',
+  },
+];
 
 function sortByHeadersDateDescending(items) {
-
-  // console.log(items[0].date);
-  // sort items
-
-  // let sorted = items.sort((a, b) => (a.date.getTime < b.date.getTime) ? 1 : -1);
-
-  // console.log(sorted[0].date);
-
-
-
   // push first header with a date
   let header = new Header();
 
@@ -72,8 +81,6 @@ function sortByHeadersDateDescending(items) {
 
   list.push(header);
 
-  // console.log(list)
-
   // if list, compare header date to next item  dates
   for (i; i <= items.length - 1; i += 1) {
     currentItem = items[i];
@@ -86,13 +93,26 @@ function sortByHeadersDateDescending(items) {
     }
     // add current item to list
     list.push(currentItem);
-
-    // console.log(transactions[i].getInfo());
   }
-  // console.log(list)
-  // console.log('Sorted Data List')
   return list; // .sort((a, b) => (a.date.getTime < b.date.getTime) ? 1 : -1)
 }
+
+function Item({ id, title, selected, onSelect }) {
+  return (
+    <TouchableOpacity
+      onPress={() => onSelect(id)}
+      style={[
+        styles.item,
+        { backgroundColor: selected ? '#6e3b6e' : '#f9c2ff' },
+      ]}
+    >
+      <Text style={styles.title}>{title}</Text>
+    </TouchableOpacity>
+  );
+}
+
+
+let cellOpacity = 1.0; // 0.2;
 
 const MyStickyTable = (props) => {
   // get passed props
@@ -114,8 +134,19 @@ const MyStickyTable = (props) => {
 
   const [loading, setLoading] = useState(true);
 
-  function getStickyIndices(array) {
-    // const { tableData } = this.state;
+  const [selected, setSelected] = React.useState(new Map());
+
+  const onSelect = React.useCallback(
+    id => {
+      const newSelected = new Map(selected);
+      newSelected.set(id, !selected.get(id));
+
+      setSelected(newSelected);
+    },
+    [selected],
+  );
+
+  const getStickyIndices = (array) => {
     const indices = [];
     let i = 0;
     for (i; i <= array.length - 1; i += 1) {
@@ -123,46 +154,25 @@ const MyStickyTable = (props) => {
         indices.push(i);
       }
     }
-    // console.log(indices);
     return indices;
   }
 
   function Render_Empty_Component() {
     // console.log('Rendering Empty Component');
     const view = (
-      <ScrollView contentContainerStyle={{
-        // flex: 1,
-
-        // borderWidth: 3,
-        // borderColor: 'white',
-        // borderStyle: 'dashed',
-      }}
-      >
-        <View style={styles.rowFront}>
-          <StickyDateHeader date={new Date()} />
-        </View>
-        <View style={{
-          // width: '100%',
-          // height: tableHeight, // '32%',
-          // position: tablePosition, // 'absolute'
-          // top: tableTop, // '30%', // 240,
-
-          // flex: 1,
-
-          // alignItems: 'center',
-          // // justifyContent: 'center',
-
-          // paddingTop: 12,
-
-          // backgroundColor: 'pink',
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
 
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'dashed',
-
         }}
-        >
-
+      >
+        <View style={styles.rowFront}>
+          <StickyDateHeader date={new Date()} />
+        </View>
+        <View>
           <EmptyListMessage />
 
         </View>
@@ -173,212 +183,214 @@ const MyStickyTable = (props) => {
 
   function renderItem({ item }) {
     const { header, date } = item;
-    if (header) {
-      return (
-        <SwipeRow
-          disableRightSwipe
-          disableLeftSwipe
-          // leftOpenValue={20 + parseInt(index) * 5}
-          // rightOpenValue={-150}
-        >
-          <View style={styles.rowBack} />
-          <View style={styles.rowFront}>
-            <StickyDateHeader date={date} />
-          </View>
-        </SwipeRow>
-      );
-    } else {
-      return (
 
-        <SwipeRow
-          // disableRightSwipe
-          // disableLeftSwipe
-          // leftOpenValue={20 + parseInt(index) * 5}
-          // rightOpenValue={-150}
-          leftOpenValue={55}
-          rightOpenValue={-75}
+    let cell = (header) ? (
+      // cell is a table header item
+      <SwipeRow
+        disableRightSwipe
+        disableLeftSwipe
+        // leftOpenValue={20 + parseInt(index) * 5}
+        // rightOpenValue={-150}
+      >
+        <View style={styles.rowBack} />
+        <View style={styles.rowFront}>
+          <StickyDateHeader date={date} />
+        </View>
+      </SwipeRow>
+    ) : (
+      // cell is a transaction item
+      <SwipeRow
+        // disableRightSwipe
+        // disableLeftSwipe
+        // leftOpenValue={20 + parseInt(index) * 5}
+        // rightOpenValue={-150}
+        leftOpenValue={55}
+        rightOpenValue={-75}
 
-        >
-          <View style={styles.rowBack}>
+      >
+        <View style={styles.rowBack}>
 
-            <View style={styles.rowBackLeft}>
-              <SwipeEdit
-                keyExtractor={item.id}
-                onPress={() => props.swipeEditBtnPressed(item)}
-              />
-            </View>
-            <View style={styles.rowBackRight}>
-              <SwipeDelete
-                keyExtractor={item.id}
-                onDeleteBtnPress={() => deleteBtnPressed(item)}
-              />
-
-              {/*
-               <CustomSwipeCell
-                  // keyExtractor={() => String(index)}
-                  onDeleteBtnPress={() => deleteBtnPressed(item)}
-                />
-              */}
-            </View>
-          </View>
-          <View style={styles.rowFront}>
-            <TransactionItem
-              isUpdatingTransaction={isUpdatingTransaction}
-
-              keyExtractor={(item) => item.id} // {tableData[index]} // () => console.log(index)
-              item={item}
-              isSelected={false}
-              onPress={() => onPress(item)} // {onPress} // console.log(tableData[index])
-              currentTransaction={currentTransaction}
-              isNameInputEnabled={props.isNameInputEnabled}
-              handlePayeeNameChange={props.handlePayeeNameChange}
+          <View style={styles.rowBackLeft}>
+            <SwipeEdit
+              keyExtractor={item.id}
+              onPress={() => props.swipeEditBtnPressed(item)}
             />
           </View>
-        </SwipeRow>
+          <View style={styles.rowBackRight}>
+            <SwipeDelete
+              keyExtractor={item.id}
+              onDeleteBtnPress={() => deleteBtnPressed(item)}
+            />
 
-      );
-    }
+            {/*
+             <CustomSwipeCell
+                // keyExtractor={() => String(index)}
+                onDeleteBtnPress={() => deleteBtnPressed(item)}
+              />
+            */}
+          </View>
+        </View>
+        <View style={styles.rowFront}>
+          <TransactionItem
+            isUpdatingTransaction={isUpdatingTransaction}
+
+            keyExtractor={(item) => item.id} // {tableData[index]} // () => console.log(index)
+            item={item}
+            isSelected={false}
+            onPress={() => onPress(item)} // {onPress} // console.log(tableData[index])
+            currentTransaction={currentTransaction}
+            isNameInputEnabled={props.isNameInputEnabled}
+            handlePayeeNameChange={props.handlePayeeNameChange}
+          />
+        </View>
+      </SwipeRow>
+    );
+    let view = (
+      <View
+        style={
+          {
+            // flex: 1,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'dashed',
+
+            opacity: cellOpacity,
+          }
+        }
+        >{ cell }</View>
+    )
+    return view
   }
-
-  // function renderHiddenItem({ item }) {
-  //   const { header } = item;
-  //   let view = <View />;
-  //   if (header) {
-  //     view = (
-  //       <View style={{
-  //         flex: 1,
-  //         // borderWidth: 1,
-  //         // borderColor: 'white',
-  //         // borderStyle: 'solid',
-  //         backgroundColor: colors.dark,
-  //       }}
-  //       />
-  //     );
-  //   } else if (!header) {
-  //     view = (
-  //     <View style={styles.rowBack}>
-
-  //       <View style={styles.rowBackLeft}>
-  //         <SwipeEdit
-  //           keyExtractor={item.id}
-  //           onPress={() => props.swipeEditBtnPressed(item)}
-  //         />
-  //       </View>
-  //       <View style={styles.rowBackRight}>
-  //         <SwipeDelete
-  //           keyExtractor={item.id}
-  //           onDeleteBtnPress={() => deleteBtnPressed(item)}
-  //         />
-
-  //         {/*
-  //          <CustomSwipeCell
-  //             // keyExtractor={() => String(index)}
-  //             onDeleteBtnPress={() => deleteBtnPressed(item)}
-  //           />
-  //         */}
-  //       </View>
-  //     </View>
-  //     );
-  //   }
-
-  //   return view;
-  // }
-
-  const clearState = async () => {
-    // setLoading(true);
-    setTableData(null)
-  };
+  // const clearState = async () => {
+  //   setTableData(null);
+  // };
 
   useEffect(() => {
-    // setLoading(true);
-    if (transactions) {
-      // let sortedTransactions = sortItemsByDate(transactions);
-      // setTableData(sortByHeadersDateDescending(sortedTransactions));
-      // setLoading(false);
+    // component did mount
+    console.log('tableData: ', tableData);
+    console.log('Mounted table');
+    return () => {
+      // effect
+    };
+  }, []);
 
-      let sortedTransactions = sortItemsByDate(transactions);
+  useEffect(() => {
+    if (transactions) {
+      const sortedTransactions = sortItemsByDate(transactions);
       setTableData(sortByHeadersDateDescending(sortedTransactions));
-      // setLoading(false);
     }
-    // return () => {
-    //   // effect
-    // };
   }, [transactions]);
 
   useEffect(() => {
-    // setLoading(true);
     if (tableData) {
-      setStickyHeaderIndices(getStickyIndices(sortByHeadersDateDescending(transactions)));
-
-      // setLoading(false);
+      const headeredTableData = sortByHeadersDateDescending(transactions);
+      setStickyHeaderIndices(getStickyIndices(headeredTableData));
     }
-    // return () => {
-    //   // effect
-    // };
   }, [tableData, transactions]);
 
-  const spinnerView = (
-    <View
-      style={
-        {
-          // width: '100%',
-
-          // // height: tableHeight, // '32%',
-          // // position: tablePosition, // 'absolute'
-          // top: tableTop, // '30%', // 240,
-          // flex: 1,
-          // justifyContent: 'center',
-          // alignItems: 'center',
-          // backgroundColor: colors.darkTwo,
-
-          // opacity: 0.3,
-
-          // borderWidth: 2,
-          // borderColor: 'white',
-          // borderStyle: 'dashed',
-        }
-      }
-    >
-      <ActivityIndicator size="large" color={colors.offWhite} />
-    </View>
-  );
+  // const spinnerView = (
+  //   <View>
+  //     <ActivityIndicator size="large" color={colors.offWhite} />
+  //   </View>
+  // );
 
   let view; // = spinnerView;
 
+  /* Working  ios vversion of table */
+  // let table = (
+  //   <FlatList
+  //     data={tableData}
+  //     // extraData={setTableData}
+  //     renderItem={renderItem}
+  //     keyExtractor={(item, index) => String(index)}
+  //     key={(item) => String(item.id)} // android ??
+  //     stickyHeaderIndices={stickyHeaderIndices}
+  //     // renderHiddenItem={renderHiddenItem}
+
+  //     // // leftOpenVaslue={0}
+  //     // leftOpenValue={55}
+  //     // rightOpenValue={-75}
+  //     // // disableRightSwipe={false}
+  //     // //  disableLeftSwipe
+
+  //     // ItemSeparatorComponent={this.FlatListItemSeparator}
+  //     // ListHeaderComponent={this.Render_FlatList_Sticky_header}
+  //     // ListEmptyComponent={Render_Empty_Component}
+
+  //     showsVerticalScrollIndicator={false}
+
+  //     // optimization
+  //     // initialNumToRender={24}
+  //     // windowSize={12} // {21}
+  //     // removeClippedSubviews={true}
+  //     // maxToRenderPerBatch={2}
+  //   />
+  // );
+
   let table = (
-    <SwipeListView
+        <SafeAreaView style={{
+          // // flex: 1,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}>
+      <SwipeListView
+      scrollEnabled
+        // data={DATA}
+        // renderItem={({ item }) => (
+        //   <Item
+        //     id={item.id}
+        //     title={item.title}
+        //     selected={!!selected.get(item.id)}
+        //     onSelect={onSelect}
+        //   />
+        // )}
+        // keyExtractor={item => item.id}
+        // extraData={selected}
+
       data={tableData}
-      // extraData={setTableData}
+      extraData={selected}
       renderItem={renderItem}
-      keyExtractor={(item, index) => String(index)}
-      stickyHeaderIndices={stickyHeaderIndices}
-      // renderHiddenItem={renderHiddenItem}
-
-      // // leftOpenVaslue={0}
-      // leftOpenValue={55}
-      // rightOpenValue={-75}
-      // // disableRightSwipe={false}
-      // //  disableLeftSwipe
-
-      // ItemSeparatorComponent={this.FlatListItemSeparator}
-      // ListHeaderComponent={this.Render_FlatList_Sticky_header}
-      // ListEmptyComponent={Render_Empty_Component}
-
+      keyExtractor={item => item.id}
+      // stickyHeaderIndices={stickyHeaderIndices}
       showsVerticalScrollIndicator={false}
 
-      // optimization
-      // initialNumToRender={24}
-      // windowSize={12} // {21}
-      // removeClippedSubviews={true}
-      // maxToRenderPerBatch={2}
-    />
-  );
+
+  //     keyExtractor={(item, index) => String(index)}
+  //     key={(item) => String(item.id)} // android ??
+  //     stickyHeaderIndices={stickyHeaderIndices}
+  //     // renderHiddenItem={renderHiddenItem}
+
+  //     // // leftOpenVaslue={0}
+  //     // leftOpenValue={55}
+  //     // rightOpenValue={-75}
+  //     // // disableRightSwipe={false}
+  //     // //  disableLeftSwipe
+
+  //     // ItemSeparatorComponent={this.FlatListItemSeparator}
+  //     // ListHeaderComponent={this.Render_FlatList_Sticky_header}
+  //     // ListEmptyComponent={Render_Empty_Component}
+
+  //     showsVerticalScrollIndicator={false}
+
+  //     // optimization
+  //     // initialNumToRender={24}
+  //     // windowSize={12} // {21}
+  //     // removeClippedSubviews={true}
+  //     // maxToRenderPerBatch={2}
+      />
+    </SafeAreaView>
+  )
 
   
   view = (
     <View>
     {
-      true && table
+      // transactions &&
+      // tableData &&
+      table
     }
     </View>
   )
@@ -389,23 +401,9 @@ const MyStickyTable = (props) => {
   return view;
 };
 
-// tableTop,
-// tableHeight,
-// tablePosition,
-// onPress,
-// deleteBtnPressed,
-// currentTransaction,
-// transactions,
-// isCurrentTransaction,
-
 MyStickyTable.propTypes = {
-  // tableTop: PropTypes.string.isRequired,
-  // tableHeight: PropTypes.string.isRequired,
-  // tablePosition: PropTypes.string.isRequired,
-
   onPress: PropTypes.func.isRequired,
   deleteBtnPressed: PropTypes.func.isRequired,
-
   currentTransaction: PropTypes.object,
   transactions: PropTypes.array.isRequired,
   // isCurrentTransaction: PropTypes.bool.isRequired,

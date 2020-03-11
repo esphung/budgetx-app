@@ -71,7 +71,8 @@ const HeaderLeftView = (props) => {
       setNormalMessage(cognito.attributes.email)
     }).catch((err) => {
       // console.log('err: ', err);
-      setNormalMessage(`${global.appName} ${global.appVersion}`);
+      // setNormalMessage(`${global.appName} ${global.appVersion}`);
+      setNormalMessage('Enter your email');
     });
 
   };

@@ -29,7 +29,11 @@ UPDATED:    Fri Nov  1 13:20:51 2019
 
 import React, { useState } from 'react';
 
-import { View } from "react-native";
+import {
+  View,
+  Platform,
+  StyleSheet,
+ } from "react-native";
 
 import * as Font from 'expo-font';
 
@@ -70,7 +74,12 @@ const mm = new Date().getMinutes();
 const ss = new Date().getSeconds();
 
 clearLines(35);
-console.log(`${hh}:${mm}:${ss}`, `${global.appName}`);
+console.log(`${hh}:${mm}:${ss}`, `${global.appName} App ${global.appVersion}`);
+
+const styles = StyleSheet.create({
+  height: Platform.OS === 'ios' ? 200 : 100,
+});
+
 
 
 export default function App() {

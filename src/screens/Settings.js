@@ -24,6 +24,8 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 
 import NetInfo from "@react-native-community/netinfo";
 
+import Dialog from 'react-native-dialog';
+
 import {
   // StyleSheet,
   View,
@@ -181,15 +183,15 @@ function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
   const { navigation } = props;
 
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
-  const [email, setEmail] = useState(null);
+  // const [email, setEmail] = useState(null);
 
-  const [transactions, setTransactions] = useState([]);
+  const [currentTransactions, setCurrentTransactions] = useState([]);
 
-  // const [storageKey, setStorageKey] = useState(null);
+  // // const [storageKey, setStorageKey] = useState(null);
 
-  const [isReady, setIsReady] = useState(false);
+  // const [isReady, setIsReady] = useState(false);
 
   const [isBackupDisabled, setIsBackupDisabled] = useState(false);
 
@@ -202,6 +204,16 @@ function Settings(props) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   const [isUserOnline, setIsUserOnline] = useState(false);
+
+  const [shouldShowDialog, setShowDialogBox] = useState(false);
+
+  const [input, setInput] = useState('');
+
+  const [textColor, setTextColor] = useState(colors.offWhite);
+
+  const [isOkBtnDisabled, setIsOkBtnDisabled] = useState(true);
+
+  const [currentOwner, setCurrentOwner] = useState('');
 
   // async function retrieveCognitoUser() {
   //   // Auth.currentAuthenticatedUser()
@@ -226,28 +238,70 @@ function Settings(props) {
     );
   }
 
-  async function retrieveStoredSettingsTransactions(user_storage_key) {
-    // load stored user transactions
-    // console.log('user_storage_key: ', user_storage_key);
-    try {
-      const storageObj = await loadSettingsStorage(user_storage_key);
+  function retrieveStoredSettings() {
+    Auth.currentAuthenticatedUser().then(async (cognito) => {
+      const storage = await loadSettingsStorage(global.storageKey);
+      
+      setCurrentOwner(storage.user.id);
 
-      // set stored user transactions
-      if (storageObj) {
-        // console.log('stored user settings transactions:', storageObj.transactions);
-        if (storageObj.transactions) {
-          // found stored image
-          // console.log(storageObj.transactions);
-          setTransactions(storageObj.transactions);
+      // setCategories(storage.categories);
 
-          setCurrentSettingsVersion(storageObj.version);
+      setCurrentTransactions(storage.transactions);
+
+      setCurrentSettingsVersion(storage.version);
+
+      setIsUserLoggedIn(true); // cognito (logged in)
+
+      showMessage({
+        message: `Logged in as ${cognito.attributes.email}`,
+        backgroundColor: colors.dark,
+        type: 'success',
+        icon: {
+          icon: 'auto',
+          position: 'right'
         }
-      }
-    } catch (e) {
-      // statements
-      Alert.alert('Could not load settings');
-      // console.log(e);
-    }
+      });
+    }).catch(async (auth_error) => {
+
+        const userObject = await loadSettingsStorage(global.storageKey); // load user object
+        // console.log(userObject);
+        // console.log('storageKey: ', storageKey);
+
+        setCurrentOwner(userObject.user.id);
+
+        // setCategories(userObject.categories);
+
+        setCurrentTransactions(userObject.transactions);
+
+        setCurrentSettingsVersion(userObject.version);
+
+        // showMessage({
+        //   message: `You are ${auth_error}`,
+        //   description:`Data could be lost`,
+        // });
+
+        setIsUserLoggedIn(false); //  local (not logged in)
+
+        showMessage({
+          message: `You are ${auth_error}`,
+          description: 'Data will be lost.',
+          position: 'bottom',
+
+          type: 'danger', // "success", "info", "warning", "danger"
+          backgroundColor: colors.dark, // "purple", // background color
+          // color: colors.white, // "#606060", // text color
+
+          // textStyle: styles.textStyle,s
+          
+          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+
+          onPress: () => {
+            signInBtnPressed();
+          }
+        });  
+      
+    });
+
   }
 
   const restoreBackUpData = async () => {
@@ -262,29 +316,10 @@ function Settings(props) {
       // global.storageKey = storageObj.user.id
 
       let backup_key = `${storage.user.id}_BACKUP_SETTINGS`
-      console.log('backup_key: ', backup_key);
-
+      // console.log('backup_key: ', backup_key);
 
       storage = await loadSettingsStorage(backup_key);
 
-
-
-
-
-      // global.storageKey = storage.user.id
-      // let backup_key = `${storageKey}_BACKUP_SETTINGS`
-
-      // console.log('backup_key: ', backup_key);
-
-
-
-
-
-      // console.log(storage);
-      // console.log('Restored from:', backup_key);
-
-      // set stored user transactions
-      // global.storageKey = 'CURRENT_USER'
       if (storage !== null && storageKey !== null) {
         
         // console.log('stored user settings transactions:', storageObj.transactions);
@@ -415,6 +450,20 @@ function Settings(props) {
   //   await AsyncStorage.clear();
   // };
 
+  useEffect(() => {
+    if (input === 'DELETE') {
+      setTextColor(colors.pinkRed);
+      setIsOkBtnDisabled(false);
+    }
+    else {
+      setTextColor(colors.offWhite);
+      setIsOkBtnDisabled(true);
+    }    
+    return () => {
+      // effect
+    };
+  }, [input])
+
   /*
   * > reset data from the app
   */
@@ -456,37 +505,158 @@ function Settings(props) {
     // showResetCompleteAlert();
   };
 
-  /*
-  * > Confirm reset data
-  */
+  const resetDataDialogBox = (
+    <View
+      style={
+        {
+          flex: 1,
+          position: 'absolute',
+
+          top:  0,
+          left:  0,
+          right: 0,
+          bottom: 25,
+
+          // borderWidth: 1,
+          // borderColor: 'red',
+          // borderStyle: 'solid',
+        }
+      }
+    >
+      <Dialog.Container
+        // blurComponentIOS={blurComponentIOS}
+        headerStyle={{
+          // backgroundColor: 'pink',
+          backgroundColor: colors.dark,
+        }}
+        contentStyle={{
+          backgroundColor: colors.dark,
+        }}
+        footerStyle={
+          {
+            backgroundColor: colors.dark,
+          }
+        }
+        buttonSeparatorStyle={
+          // {
+          //   backgroundColor: 'red',
+          // }
+          styles.seperator
+        }
+        // style={{
+        //   backgroundColor: colors.dark,
+        // }}
+        visible={shouldShowDialog}
+      >
+        <Dialog.Title style={
+         [
+           styles.textStyle,
+           {
+             fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
+             fontWeight: '600',
+             fontSize: 17,
+           }
+         ]
+        }>Are you sure you want to remove your data from this device?</Dialog.Title>
+        <Dialog.Description style={
+          [
+            {
+              // backgroundColor: colors.dark,
+            },
+            styles.textStyle,
+            {
+              color: colors.darkTwo,
+            }
+          ]
+        }
+        >
+          Enter DELETE to remove your settings and backups
+        </Dialog.Description>
+        <Dialog.Input
+          style=
+          { 
+            [
+              // styles.input,
+              // styles.itemStyle,
+              {
+                marginBottom: 20,
+                textAlign: 'center',
+                borderWidth: 1,
+                borderColor: colors.white, // colors.dark,
+                borderStyle: 'solid',
+                borderRadius: 19,
+
+                color: textColor,
+
+                opacity: 0.9,
+              }
+            ]
+          }
+          onChangeText={(text) => {
+            setInput(text)
+          }}
+          maxLength={'DELETE'.length}
+          autoCorrect
+          value={input}
+          // autoFocus
+        />
+        <Dialog.Button
+          style={
+            styles.buttonText
+            // {
+            //   color: (isOkBtnDisabled) ? colors.offWhite : colors.white,
+            // }
+          }
+          onPress={() => {
+            setShowDialogBox(false);
+          }}
+          label="Cancel"
+        />
+        <Dialog.Button
+          style={[
+            styles.buttonText,
+            {
+              color: (isOkBtnDisabled) ? colors.offWhite : colors.white,
+            }
+          ]}
+          onPress={resetData}
+          label="Ok"
+          disabled={isOkBtnDisabled}
+        />
+      </Dialog.Container>
+    </View>
+  );
+
+  // Reset Data Alert
   const resetDataAlertPrompt = () => {
     // RESET DATA PROMPT
-    Alert.prompt(
-      'Are you sure you want to remove your data from this device?',
-      'Enter DELETE to remove your settings and backups',
-      [
-        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        { text: 'OK', onPress: (input) => {
-          if (input === 'DELETE') {
-            resetData();
-          }
-        }},
-      ],
-      // 'secure-text',
-      // 'login-password',
-      'plain-text',
-    )
+    
 
+    if (Platform.OS === 'ios') {
+      // user on ios
+      Alert.prompt(
+        'Are you sure you want to remove your data from this device?',
+        'Enter DELETE to remove your settings and backups',
+        [
+          { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+          {
+            text: 'OK',
+            onPress: (input)=> {
+              if (input === 'DELETE') {
+                resetData();
+              }
+            }
+          },
+        ],
+        // 'secure-text',
+        // 'login-password',
+        'plain-text',
+      );
 
-    // Alert.alert(
-    //   'Reset Data',
-    //   'Are you sure you want to reset all data from the app?'.toUpperCase(),
-    //   [
-    //     { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-    //     { text: 'OK', onPress: resetData },
-    //   ],
-    //   { cancelable: false },
-    // );
+    } else {
+      //  user on android
+      setShowDialogBox(true);
+    }
   };
 
   const restoreDataAlert = () => {
@@ -643,8 +813,8 @@ function Settings(props) {
 
   function exportBtnPressed() {
     // console.log('Export btn pressed');
-    if (transactions.length > 0) {
-      sendTransactionsMail(transactions);
+    if (currentTransactions.length > 0) {
+      sendTransactionsMail(currentTransactions);
     } else {
       // Alert.alert('You have no transactions');
       showMessage('You have no transactions');
@@ -701,11 +871,7 @@ function Settings(props) {
       restoreBackupDataBtnPressed();
     }
   }
-
   const clearState = async () => {
-    // retrieveCognitoUser();
-    // console.log('Cleared');
-
     NetInfo.isConnected.fetch().then(isConnected => {
       // console.log('First, is ' + (isConnected ? 'online' : 'offline'));
       {
@@ -719,28 +885,14 @@ function Settings(props) {
       handleFirstConnectivityChange
     );
 
-    retrieveStoredSettingsTransactions(global.storageKey);
+    // retrieveStoredSettings();
 
-    Auth.currentAuthenticatedUser().then((cognito) => {
-      setIsUserLoggedIn(true);
-    }).catch((err) => console.log('err: ', err));
-
-
-
-    // setIsUserLoggedIn(false);
+    
   }
-
-  // useEffect(() => {
-  //   if (storageKey) {
-  //     retrieveStoredSettingsTransactions(storageKey);
-  //   }
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [storageKey]);
 
   useEffect(() => {
     clearState();
+    retrieveStoredSettings();
   }, []);
 
   useEffect(() => {
@@ -953,6 +1105,9 @@ function Settings(props) {
             <VersionCredit />
           </View>
         </View>
+        {
+          shouldShowDialog && resetDataDialogBox
+        }
     </View>
   );
 
