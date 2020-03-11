@@ -162,6 +162,7 @@ const MyStickyTable = (props) => {
     // console.log('Rendering Empty Component');
     const view = (
       <ScrollView
+      scrollEnabled={false}
         contentContainerStyle={{
           flex: 1,
 
@@ -173,7 +174,14 @@ const MyStickyTable = (props) => {
         <View style={styles.rowFront}>
           <StickyDateHeader date={new Date()} />
         </View>
-        <View>
+        <View style={
+          {
+            margin: 12,
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+        }>
           <EmptyListMessage />
 
         </View>
@@ -296,10 +304,10 @@ const MyStickyTable = (props) => {
   //   </View>
   // );
 
-  let view; // = spinnerView;
+  // let view; // = spinnerView;
 
   /* Working  ios vversion of table */
-  let ios_table = (
+  const ios_table = (
     <FlatList
       data={tableData}
       // extraData={setTableData}
@@ -330,7 +338,7 @@ const MyStickyTable = (props) => {
 
   /* android table */
 
-  let android_table = (
+  const android_table = (
         <SafeAreaView style={{
           // // flex: 1,
 
@@ -339,7 +347,7 @@ const MyStickyTable = (props) => {
           // borderStyle: 'solid',
         }}>
       <SwipeListView
-      scrollEnabled
+        scrollEnabled
         // data={DATA}
         // renderItem={({ item }) => (
         //   <Item
@@ -383,10 +391,9 @@ const MyStickyTable = (props) => {
   //     // removeClippedSubviews={true}
   //     // maxToRenderPerBatch={2}
       />
-    </SafeAreaView>
-  )
+        </SafeAreaView>
+  );
 
-  
   // view = (
   //   <View>
   //   {
@@ -400,22 +407,19 @@ const MyStickyTable = (props) => {
   // )
 
   if (transactions.length <= 0) {
-    view = Render_Empty_Component();
-  }
-  // return view;
-
-  if (Platform.OS === 'ios') {
-    return ios_table
+    return Render_Empty_Component();
+  } else if (Platform.OS === 'ios') {
+    return ios_table;
   } else {
-    return android_table
+    return android_table;
   }
 };
 
 MyStickyTable.propTypes = {
   onPress: PropTypes.func.isRequired,
   deleteBtnPressed: PropTypes.func.isRequired,
-  currentTransaction: PropTypes.object,
-  transactions: PropTypes.array.isRequired,
+  // currentTransaction: PropTypes.object,
+  // transactions: PropTypes.array.isRequired,
   // isCurrentTransaction: PropTypes.bool.isRequired,
   swipeEditBtnPressed: PropTypes.func.isRequired,
   isNameInputEnabled: PropTypes.bool.isRequired,

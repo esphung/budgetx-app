@@ -25,6 +25,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             03/05/2020 02:01 PM | Storybooks
             03/09/2020 12:23 AM | update transactions
             03/10/2020 11:44 AM | 2.1.7
+            03/11/2020 02:59 AM
 
 */
 
@@ -49,7 +50,7 @@ import Auth from '@aws-amplify/auth';
 import { NavigationEvents } from 'react-navigation';
 
 // import { showMessage, hideMessage } from "react-native-flash-message";
-import { showMessage } from "react-native-flash-message";
+import { showMessage } from 'react-native-flash-message';
 
 // ui colors
 import colors from '../../colors';
@@ -150,17 +151,15 @@ export default function Home(props) {
 
   const [
     slideViewBounceValue,
-    setSlideViewBounceValue
+    setSlideViewBounceValue,
   ] = useState(initialState.slideViewBounceValue);
 
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
 
-  // const [isCurrentTransaction, setIsCurrentTransaction] = useState(initialState.isCurrentTransaction);
-
-  // const [isReady, setIsReady] = useState(false);
-
   const [shouldShowScrollingPills, setShouldShowScrollingPills] = useState(false);
+
   const [shouldShowAmountInput, setShouldShowAmountInput] = useState(false);
+
   const [shouldShowKeypad, setShouldShowKeypad] = useState(false);
 
   const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
@@ -172,9 +171,9 @@ export default function Home(props) {
 
   const [top, setTop] = useState(0);
 
-  const [isNoteInputEditable, setIsNoteInputEditable] = useState(true);
+  // const [isNoteInputEditable, setIsNoteInputEditable] = useState(true);
 
-  const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
+  // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
 
   const showSlideView = useCallback(
     () => {
@@ -209,7 +208,7 @@ export default function Home(props) {
   );
 
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
-    // console.log('updatedTransaction.type: ', updatedTransaction.type);
+    // console.log('updatedTransaction: ', updatedTransaction);
     saveUndoHistory();
 
     setIsUpdatingTransaction(true);
@@ -219,70 +218,47 @@ export default function Home(props) {
     try {
       const storageObj = await loadSettingsStorage(global.storageKey);
 
-      const list = transactions;
+      // const list = transactions;
 
-        const pos = transactions.indexOf(updatedTransaction);
+      const pos = transactions.indexOf(updatedTransaction);
 
-        transactions[pos] = updatedTransaction;
+      transactions[pos] = updatedTransaction;
 
-        storageObj.transactions = transactions;
+      storageObj.transactions = transactions;
 
-        saveSettingsStorage(global.storageKey, storageObj);
+      await saveSettingsStorage(global.storageKey, storageObj);
 
+      // RELOAD TRANSACTIONS AND SHOW UPDATED ONE
+      const storage = await loadSettingsStorage(global.storageKey);
 
+      setCurrentOwner(storage.user.id);
 
-        // RELOAD TRANSACTIONS AND SHOW UPDATED ONE
+      setCategories(storage.categories);
 
-        const storage = await loadSettingsStorage(global.storageKey);
+      setCurrentTransactions(storage.transactions);
 
-        // update storage settings from online settings
-        // user email
-        // updateStorageEmail(cognito.attributes.email);
-        // console.log('storage.user.email: ', storage.user.email);
+      setCurrentTransaction(null);
 
-        setCurrentOwner(storage.user.id);
-
-        setCategories(storage.categories);
-
-        setCurrentTransactions(storageObj.transactions);
-
-        setCurrentTransaction(searchByID(transactions[pos].id, storageObj.transactions));
-        
+      // setCurrentTransaction(searchByID(transactions[pos].id, storage.transactions));
     } catch (error) {
-      console.log('updateStoredTransaction error: ', error);
+      // console.log('updateStoredTransaction error: ', error);
     }
     setIsUpdatingTransaction(false);
 
     showMessage({
-          message: 'Updated transaction',
-          duration: 550,
-          position: 'top',
+      message: 'Updated transaction',
+      duration: 550,
+      position: 'top',
 
-          // description: "My message description",
-          type: 'success', // "success", "info", "warning", "danger"
-          backgroundColor: colors.dark, // "purple", // background color
-          color: colors.white, // "#606060", // text color
+      // description: "My message description",
+      type: 'success', // "success", "info", "warning", "danger"
+      backgroundColor: colors.dark, // "purple", // background color
+      color: colors.white, // "#606060", // text color
 
-          textStyle: styles.textStyle,
-          
-          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-          // onPress: () => {
-            // THIS FUNC/CB WILL BE CALLED AFTER MESSAGE IS PRESSED 
-          // },
+      textStyle: styles.textStyle,
 
-          // onPress: () => {
-          //   // let user undo action
-          //   loadUndoHistory();
-
-          //   setCurrentTransactions([])
-
-          //   setCurrentTransaction(null)
-          // },
-      });
-          
-
-    
-
+      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+    });
   };
 
   const handlePayeeNameChange = async (string, transaction) => {
@@ -291,15 +267,11 @@ export default function Home(props) {
       // console.log(transaction);
       const list = storageObj.transactions;
 
-      const found = searchByID(transaction.id, list);
-
-      // // console.log(found);
-
-   
+      const found = searchByID(transaction.id, list);   
       if (found) {
         found.payee = new Payee(string);
 
-        updateStoredTransaction(list, found)
+        updateStoredTransaction(list, found);
       }
     } catch (e) {
       // statements
@@ -309,17 +281,14 @@ export default function Home(props) {
 
 
   const updateTransactionCategory = async (category) => {
-
     // load stored user transactions
     const storageObj = await loadSettingsStorage(global.storageKey);
-
-    console.log('category.type: ', category.type);
+    // console.log('category.type: ', category.type);
     try {
       const found = searchByID(currentTransaction.id, storageObj.transactions);
 
       if (category.id === found.category.id) return
 
-      
         found.category = category;
 
         found.type = category.type;
@@ -343,25 +312,16 @@ export default function Home(props) {
         // saveSettingsStorage(global.storageKey, storageObj);
 
         updateStoredTransaction(storageObj.transactions, found);
-      
     } catch (e) {
       // statements
       // Alert.alert('Could not update transaction');
       // console.log(e);
-      console.log('e: ', e);
+      // console.log('e: ', e);
     }
-
-    // updateStoredTransaction(storageObj.transactions, currentTransaction);
-
-    // showMessage('Successfully updated transaction category');
   };
 
 
   const updateTransactionNote = async (string) => {
-    // console.log(string);
-
-    // console.log(currentTransaction.id);
-
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(global.storageKey);
@@ -411,9 +371,7 @@ export default function Home(props) {
       // statements
       // showMessage('Could not load settings');
       console.log('e: ', e);
-    }
-
-    
+    }    
   };
 
   const updateStorageEmail = async (email) => {
@@ -764,9 +722,9 @@ export default function Home(props) {
     } else {
       setIsNameInputEnabled(true);
     }
-    return () => {
-      // effect
-    };
+    // return () => {
+    //   // effect
+    // };
   }, [isSlideViewHidden]);
 
   // useEffect(() => {
@@ -783,7 +741,7 @@ export default function Home(props) {
       // console.log('currentTransaction: ', currentTransaction);
     } else {
       hideSlideView();
-      console.log('\n');
+      // console.log('\n');
     }
   }, [currentTransaction]);
 

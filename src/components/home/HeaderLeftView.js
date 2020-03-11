@@ -57,29 +57,31 @@ const HeaderLeftView = (props) => {
 
   const [text, onChangeText] = React.useState(normalMessage);
 
-  useEffect(() => {
-    clearState()
-    // return () => {
-    //   // effect
-    // };
-  }, []);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  // useEffect(() => {
+  //   clearState()
+  //   // return () => {
+  //   //   // effect
+  //   // };
+  // }, []);
 
   const clearState = async () => {
     setBoldMessage('Get cross-device sync');
 
     Auth.currentAuthenticatedUser().then((cognito) => {
-      setNormalMessage(cognito.attributes.email)
+      setNormalMessage(cognito.attributes.email);
+      setIsUserLoggedIn(true);
     }).catch((err) => {
       // console.log('err: ', err);
       // setNormalMessage(`${global.appName} ${global.appVersion}`);
       setNormalMessage('Enter your email');
     });
-
   };
 
   const imageView = (
     <TouchableOpacity
-    disabled={true}
+    disabled
     style={styles.userImageMaskView}
   >
     <Image
@@ -126,6 +128,7 @@ const HeaderLeftView = (props) => {
             }
           </Text>
 
+          <TouchableOpacity disabled={isUserLoggedIn}>
           <Text
             // placeholder={normalMessage}
             style={styles.normalMessage}
@@ -144,6 +147,7 @@ const HeaderLeftView = (props) => {
 
             }
           </Text>
+          </TouchableOpacity>
 
         </View>
 
