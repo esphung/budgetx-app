@@ -1,24 +1,20 @@
-# Financely #
+# Financely | Budget X #
+### React Native + Expo App  ###
 <img src="assets/icon.png" alt="512x512 App Icon" width="100" />
 
-    PURPOSE:    personal finance mobile app  made with RN and Expo
-    AUTHOR:     Eric Phung
-    CREATED:    Sun Nov  3 04:53:21 2019
-    UPDATED:
-                11/06/2019 02:57 PM
-                11/12/2019 05:03 AM
-                11/13/2019 05:22 AM
-                11/11/2019 09:09 AM
-                11/12/2019 02:17 PM
-                11/13/2019 05:22 AM
-                11/27/2019 12:41 AM
-                12/03/2019 11:47 AM
-                12/04/2019 04:01 PM
-                12/05/2019 12:19 PM
-                12/12/2019 02:12 AM | Ready for push to App Store
-                01/07/2020 06:39 PM | Released 1.1.4
-                01/08/2020 08:47 AM 1.1.7 release
-                01/29/2020 03:33 PM | End of January pickup into Feb 1st
-                
+[App Store](https://apps.apple.com/us/app/financely/id1491309602)
+
+[Google Play](https://play.google.com/store/apps/details?id=com.ericphung.financely)
 
 
+#### App Description ####
+Financely is a new mobile app for organizing and managing your personal expenses. Achieve financial peace of mind and do it beautifully. With a simple interface and minimalistic one-page design, logging your day-to-day transactions has never been more fluid.
+
+#### App Features ####
+- Beautiful and easy-to-use interface
+- Add, edit or remove your transactions
+- Add an editable note to any transaction
+- Create, edit or remove categories to fit your spending
+- Customize categories by name and color
+- Export your transaction data
+- Enjoy am Ad-free experience!
