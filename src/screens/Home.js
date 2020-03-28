@@ -244,12 +244,20 @@ export default function Home(props) {
 
       // description: "My message description",
       type: 'success', // "success", "info", "warning", "danger"
-      backgroundColor: colors.dark, // "purple", // background color
+      // backgroundColor: colors.dark, // "purple", // background color
       color: colors.white, // "#606060", // text color
 
       textStyle: styles.textStyle,
 
       icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+
+      // onPress: () => {
+      //   // let user undo action
+      //   loadUndoHistory();
+
+      //   setCurrentTransaction(null);
+      // },
+      
     });
   };
 
@@ -738,9 +746,9 @@ export default function Home(props) {
 
         textStyle: styles.textStyle,
 
-        backgroundColor: colors.dark, // "purple", // background color
+        // backgroundColor: colors.dark, // "purple", // background color
 
-        duration:  1000,
+        duration:  2505,
       })
     return () => {
       // isStoringNewTransaction effect
@@ -752,12 +760,12 @@ export default function Home(props) {
       {
         // message: 'Removed a stored transaction',
         // description: 'Press here to undo',
-        message: 'Press here: Undo',
+        message: 'Deleted transaction: Undo',
         type: 'warning',
         // position: 'top',
         icon: { icon: 'auto', position: 'right' },
 
-        backgroundColor: colors.dark, // "purple", // background color
+        // backgroundColor: colors.dark, // "purple", // background color
 
         textStyle: styles.textStyle,
 
@@ -769,6 +777,7 @@ export default function Home(props) {
         duration: 2500,
       }
     )
+
     return () => {
       // isRemovingStoredTransaction effect
     };
@@ -889,6 +898,7 @@ export default function Home(props) {
       onPress={categoryBtnPressed}
       categories={categories}
       isSelected={isCurrentCategory}
+      // currentCategory={currentCategory}
     />
   );
   let amountInput = (
@@ -959,6 +969,7 @@ export default function Home(props) {
       setTop={setTop}
 
       isUpdatingTransaction={isUpdatingTransaction}
+      isSelected={isCurrentCategory}
     />
 
 

@@ -102,11 +102,6 @@ const amountLabel = {
   // borderStyle: 'solid',
 };
 
-// arbitrary size limits
-const MAX_PILL_WIDTH = 156;
-
-const MIN_PILL_WIDTH = 54;
-
 
 function SlideUpTransactionRect(props) {
   let { transaction, updateTransactionCategory, updateTransactionNote, updateTransactionDate, shouldShowCalendarPicker, setShouldShowCalendarPicker, setTop, isUpdatingTransaction } = props;
@@ -223,9 +218,8 @@ function SlideUpTransactionRect(props) {
             maxWidth: MAX_PILL_WIDTH,
 
             // height: 28,
-            maxWidth: 170,
 
-            // alignItems: 'center',
+            alignItems: 'center',
             // justifyContent: 'center',
 
             marginHorizontal: 4,

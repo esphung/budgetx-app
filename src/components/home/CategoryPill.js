@@ -14,8 +14,8 @@ import colors from '../../../colors';
 import styles from '../../../styles';
 
 // arbitrary size limits
-const MAX_PILL_WIDTH = 176;
-const MIN_PILL_WIDTH = 54;
+// const MAX_PILL_WIDTH = 176;
+// const MIN_PILL_WIDTH = 54;
 // const MAX_PILL_HEIGHT = 32;
 
 
@@ -29,6 +29,8 @@ const CategoryPill = (props) => {
     onPress,
     isEnabled
   } = props;
+
+  // console.log('currentCategory: ', currentCategory);
 
 
   let textColor = color;

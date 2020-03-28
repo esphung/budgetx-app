@@ -19,6 +19,9 @@ global.emailAddressInput = '';
 
 global.maxEmailLength = 26;
 
+global.MAX_PILL_WIDTH = 176;
+global.MIN_PILL_WIDTH = 54;
+
 
 // max min lengths
 global.maxAuthCodeLength = 6;

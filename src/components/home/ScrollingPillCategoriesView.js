@@ -63,7 +63,7 @@ const ScrollingPillCategoriesView = (props) => {
 
   // const [storageKey, setStorageKey] = useState(null);
 
-  const { onPress, categories } = props;
+  const { onPress, categories, currentCategory } = props;
 
   // async function retrieveCognitoUserKey() {
   //   // console.log('loading');
@@ -172,7 +172,7 @@ const ScrollingPillCategoriesView = (props) => {
           textColor={item.color}
           key={item.id}
           onPress={() => onPress(item)}
-          // currentCategory={currentCategory}
+          currentCategory={currentCategory}
           isSelected={props.isSelected(item)}
           isEnabled
         />

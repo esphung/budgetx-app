@@ -43,6 +43,8 @@ import { AppLoading } from 'expo';
 
 import './globals'; // global values
 
+import colors from './colors'
+
 // Amplify imports and config
 // import Amplify from '@aws-amplify/core';
 // import Amplify from '@aws-amplify/core';
@@ -116,18 +118,24 @@ export default function App() {
       <View style={{ flex: 1 }}>
         <SwitchNavigator />
         {/* GLOBAL FLASH MESSAGE COMPONENT INSTANCE */}
-        <FlashMessage style={
-          {
-            opacity: 0.9,
-            alignItems: 'center',
-            justifyContent: 'center',
+        <FlashMessage
+          style={
+            {
+              opacity: 0.9,
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
+              alignItems: 'center',
+
+              justifyContent: 'center',
+
+              backgroundColor: colors.dark,
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }
           }
-        }
-      position="top" />{/* <--- here as last component */}
+          position="top"
+        />{/* <--- here as last component */}
       </View>
     </NetworkProvider>; // has login
   }
