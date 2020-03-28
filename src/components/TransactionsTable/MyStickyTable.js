@@ -277,14 +277,14 @@ const MyStickyTable = (props) => {
   //   setTableData(null);
   // };
 
-  useEffect(() => {
-    // component did mount
-    console.log('tableData: ', tableData);
-    console.log('Mounted table');
-    return () => {
-      // effect
-    };
-  }, []);
+  // useEffect(() => {
+  //   // component did mount
+  //   console.log('tableData: ', tableData);
+  //   console.log('Mounted table');
+  //   return () => {
+  //     // effect
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (transactions) {

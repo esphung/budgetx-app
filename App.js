@@ -126,7 +126,8 @@ export default function App() {
             // borderColor: 'white',
             // borderStyle: 'solid',
           }
-        } position="bottom" />{/* <--- here as last component */}
+        }
+      position="top" />{/* <--- here as last component */}
       </View>
     </NetworkProvider>; // has login
   }

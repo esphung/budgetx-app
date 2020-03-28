@@ -231,7 +231,7 @@ function Settings(props) {
   // }
 
   function handleFirstConnectivityChange(isConnected) {
-    console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+    // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
     NetInfo.isConnected.removeEventListener(
       'connectionChange',
       handleFirstConnectivityChange
@@ -239,7 +239,8 @@ function Settings(props) {
   }
 
   function retrieveStoredSettings() {
-    Auth.currentAuthenticatedUser().then(async (cognito) => {
+    Auth.currentAuthenticatedUser()
+    .then(async (cognito) => {
       const storage = await loadSettingsStorage(global.storageKey);
       
       setCurrentOwner(storage.user.id);
@@ -252,16 +253,17 @@ function Settings(props) {
 
       setIsUserLoggedIn(true); // cognito (logged in)
 
-      showMessage({
-        message: `Logged in as ${cognito.attributes.email}`,
-        backgroundColor: colors.dark,
-        type: 'success',
-        icon: {
-          icon: 'auto',
-          position: 'right'
-        }
-      });
-    }).catch(async (auth_error) => {
+      // showMessage({
+      //   message: `Logged in as ${cognito.attributes.email}`,
+      //   backgroundColor: colors.dark,
+      //   type: 'success',
+      //   icon: {
+      //     icon: 'auto',
+      //     position: 'right'
+      //   }
+      // });
+    })
+    .catch(async (auth_error) => {
 
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
         // console.log(userObject);
@@ -285,7 +287,7 @@ function Settings(props) {
         showMessage({
           message: `You are ${auth_error}`,
           // description: 'Data will be lost.',
-          position: 'bottom',
+          // position: 'bottom',
 
           type: 'danger', // "success", "info", "warning", "danger"
           backgroundColor: colors.dark, // "purple", // background color
@@ -387,7 +389,7 @@ function Settings(props) {
       }
     } catch (e) {
       // statements
-      console.log('Could not back up settings');
+      console.log('Could not back up settings', e);
       // console.log(e);
     }
 
@@ -468,41 +470,22 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
-    // clearSettingsStorage(storageKey);
-
-
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (error, stores) => {
         stores.map((result, i, store) => {
           if (store[i][0] === (global.storageKey)) {
+            // remove items with username key
             // console.log({ [store[i][0]]: store[i][1] });
             AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
           } else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
+            // remove backups with username key
             AsyncStorage.removeItem(store[i][0]) // Remove Backups
           }
           return true;
         });
       });
     });
-
-
-    // AsyncStorage.clear();
-
-
-    // await clearAsyncStorage()
-    //   .then(() => {
-    //     // console.log('Reset complete');
-    //     props.navigation.navigate('AuthLoading');
-    //   })
-    //   .catch((err) => console.log('Error while signing out!', err));
-
-    // setIsBackupDisabled(true);
-
-    // setIsRestoreDisabled(false);
-
     navigation.navigate('AuthLoading');
-
-    // showResetCompleteAlert();
   };
 
   const resetDataDialogBox = (

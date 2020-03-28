@@ -81,6 +81,8 @@ import Category from '../models/Category';
 
 import defaultCategories from '../data/categories';
 
+import uuidv4 from '../functions/uuidv4';
+
 const MAX_NAME_LENGTH = 15;
 
 // import {
@@ -404,7 +406,7 @@ const CustomizeCategoriesScreen = () => {
         Alert.alert('Category already exists');
       } else {
         // create same name obj of diff type
-        obj = new Category(name, color, type);
+        obj = new Category(uuidv4(), name, color, type);
 
         list.unshift(obj);
 
@@ -423,7 +425,7 @@ const CustomizeCategoriesScreen = () => {
 
     if (!obj) {
       // create new category
-      obj = new Category(name, color, type);
+      obj = new Category(uuidv4(), name, color, type);
       if (obj.type === 'income') {
         obj.color = colors.shamrockGreen;
       }
@@ -523,7 +525,7 @@ const CustomizeCategoriesScreen = () => {
         if (foundCategory) {
           // console.log('Found:', foundCategory);
           // change out category
-          const category = new Category(foundCategory.name, foundCategory.color, foundCategory.type);
+          const category = new Category(foundCategory.id, foundCategory.name, foundCategory.color, foundCategory.type);
           // category.id = foundCategory.id;
           // element.category = searchByID(foundCategory.id, list);
           element.category = category; // searchByID(foundCategory.id, data);
