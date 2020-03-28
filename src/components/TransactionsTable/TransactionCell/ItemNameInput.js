@@ -16,19 +16,19 @@ import colors from '../../../../colors';
 
 import styles from '../../../../styles';
 
-// import {
-//   loadSettingsStorage,
-//   saveSettingsStorage,
-// } from '../../../storage/SettingsStorage';
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../../storage/SettingsStorage';
 
-// import {
-//   loadPayees,
-//   savePayees
-// } from '../../../storage/PayeesStorage';
+import {
+  loadPayees,
+  savePayees
+} from '../../../storage/PayeesStorage';
 
-// import Payee from '../../../models/Payee';
+import Payee from '../../../models/Payee';
 
-// import searchByName from '../../../functions/searchByName';
+import searchByName from '../../../functions/searchByName';
 
 // import searchByID from '../../../functions/searchByID';
 
@@ -38,11 +38,13 @@ class ItemNameInput extends Component {
 
     const { payee, isNameInputEnabled } = props.item;
 
-    let name = ''
+    let name = '';
 
     if (payee) {
       name = payee.name
     }
+
+
 
     this.state = {
       text: '',
@@ -59,8 +61,17 @@ class ItemNameInput extends Component {
 
 
   async componentDidMount() {
-    const { payee } = this.state;
-    await this.setState({ text: payee });
+    const { payee } = this.props.item;
+
+    let name;
+    if (payee) {
+      name = payee.name
+    }
+    await this.setState({ text: name });
+
+    // if (this.props.item.payee.name) {
+    //   await this.setState({ text: this.props.item.payee.name })
+    // }
 
     // Auth.currentAuthenticatedUser()
     //   .then((cognito) => {
@@ -73,89 +84,98 @@ class ItemNameInput extends Component {
     //   });
   }
 
-  handleTextChange(text) {
-    this.setState({ text });
-    // console.log(text);
-  }
-
-  // async submitBtnPressed(text) {
-  //   // console.log(text);
-  //   const { item } = this.props; // current transaction item
-
-  //   // load default payees
-  //   const payeesObject = await loadPayees();
-
-  //   const { payees } = payeesObject;
-  //   // console.log(payees);
-
-  //   // check if previous payee exists
-  //   const previousPayee = searchByName(text, payees);
-
-  //   if (previousPayee) {
-  //     // const { storageKey } = this.state;
-  //     // load stored user
-  //     const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
-
-
-  //     // find current transaction fromm user transactions list
-  //     let i = userObject.transactions.length - 1;
-  //     for (i; i >= 0; i -= 1) {
-  //       if (userObject.transactions[i].id === item.id) {
-  //         // set user transaction payee
-  //         userObject.transactions[i].payee = previousPayee;
-
-  //         // console.log(transactions[i]);
-
-  //         // save transactions list
-  //         // saveUserObject(userObject);
-  //         saveSettingsStorage(this.state.storageKey, userObject);
-
-  //         // return from here
-  //         return;
-  //       }
-  //     }
-  //   } else {
-  //     // clean scrub name
-
-  //     //  create new payee
-  //     const payee = new Payee(text);
-
-  //     // add payee to list
-  //     payees.push(payee);
-  //     // console.log(payees);
-
-  //     // save new list of payees
-  //     savePayees(payeesObject);
-
-  //     // load user saved transactions
-  //     const userObject = await loadSettingsStorage(this.state.storageKey);
-
-  //     // // find current transaction from list
-  //     let i = userObject.transactions.length - 1;
-  //     for (i; i >= 0; i -= 1) {
-  //       if (userObject.transactions[i].id === item.id) {
-  //         // set transaction payee
-  //         userObject.transactions[i].payee = payee;
-
-  //         // console.log(transactions[i]);
-
-  //         // save transactions list
-  //         // saveUserObject(userObject);
-  //         saveSettingsStorage(this.state.storageKey, userObject);
-
-  //         // return from here
-  //         return;
-  //       }
-  //     }
-  //   }
-  //   this.setState({ text });
-  //   // console.log('Submit:', text);
+  // async componentWillUnmount() {
+  //   const { payee } = this.state;
+  //   await this.setState({ text: payee });
   // }
 
-  submitBtnPressed(text, transaction) {
-    // console.log(text);
-    this.props.handlePayeeNameChange(text, transaction);
+  handleTextChange(text) {
+    // // console.log('this.props: ', this.props);
+    // this.props.item.payee = new Payee(text);
+    // this.setState({ text: this.props.item.payee.name });
+    // // console.log(text);
+
+    this.submitBtnPressed(text)
   }
+
+  async submitBtnPressed(text) {
+    // console.log(text);
+    const { item } = this.props; // current transaction item
+
+    // load default payees
+    const payeesObject = await loadPayees();
+
+    const { payees } = payeesObject;
+    // console.log(payees);
+
+    // check if previous payee exists
+    const previousPayee = searchByName(text, payees);
+
+    if (previousPayee) {
+      // const { storageKey } = this.state;
+      // load stored user
+      const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
+
+
+      // find current transaction fromm user transactions list
+      let i = userObject.transactions.length - 1;
+      for (i; i >= 0; i -= 1) {
+        if (userObject.transactions[i].id === item.id) {
+          // set user transaction payee
+          userObject.transactions[i].payee = previousPayee;
+
+          // console.log(transactions[i]);
+
+          // save transactions list
+          // saveUserObject(userObject);
+          saveSettingsStorage(this.state.storageKey, userObject);
+
+          // return from here
+          return;
+        }
+      }
+    } else {
+      // clean scrub name
+
+      //  create new payee
+      const payee = new Payee(text);
+
+      // add payee to list
+      payees.push(payee);
+      // console.log(payees);
+
+      // save new list of payees
+      savePayees(payeesObject);
+
+      // load user saved transactions
+      const userObject = await loadSettingsStorage(this.state.storageKey);
+
+      // // find current transaction from list
+      let i = userObject.transactions.length - 1;
+      for (i; i >= 0; i -= 1) {
+        if (userObject.transactions[i].id === item.id) {
+          // set transaction payee
+          userObject.transactions[i].payee = payee;
+
+          // console.log(transactions[i]);
+
+          // save transactions list
+          // saveUserObject(userObject);
+          saveSettingsStorage(this.state.storageKey, userObject);
+
+          // return from here
+          // return;
+        }
+      }
+    }
+    this.setState({ text });
+    // console.log('Submit:', text);
+  }
+
+  // submitBtnPressed(text, transaction) {
+  //   // console.log(text);
+  //   this.props.handlePayeeNameChange(text, transaction);
+  // }
 
   render() {
     const placeholderText = '';
@@ -221,13 +241,26 @@ class ItemNameInput extends Component {
 
           maxLength={24}
 
-          onSubmitEditing={(event) => this.submitBtnPressed(event.nativeEvent.text, this.props.item)}
+          // onSubmitEditing={(event) => this.submitBtnPressed(event.nativeEvent.text, this.props.item)}
 
-          onChangeText={this.handleTextChange}
+          onSubmitEditing={
+            async () => {
+              const storage =  await loadSettingsStorage(global.storageKey);
+              this.props.updateStoredTransaction(this.props.item, storage.transactions)
+            }
+          }
+          // onChangeText={this.handleTextChange}
+          onChangeText={
+            (text) => {
+              this.setState({ text:  text })
+              // console.log('text: ', text);
+              this.props.item.payee = new Payee(text);
+              // this.props.updateStoredTransaction(this.props.item)
+            }
+            // (text) =>  this.submitBtnPressed(text)
+          }
 
-          editable={this.isInputEnabled}
-
-          value={text}
+          value={this.state.text} // this.props.item.payee.name
 
           clearButtonMode={isClearButtonModeEnabled}
 
@@ -246,9 +279,9 @@ class ItemNameInput extends Component {
   }
 }
 
-ItemNameInput.propTypes = {
-  item: PropTypes.object.isRequired,
-};
+// ItemNameInput.propTypes = {
+//   item: PropTypes.object.isRequired,
+// };
 
 
 export default ItemNameInput;

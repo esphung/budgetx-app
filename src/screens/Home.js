@@ -26,6 +26,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             03/09/2020 12:23 AM | update transactions
             03/10/2020 11:44 AM | 2.1.7
             03/11/2020 02:59 AM
+            03/11/2020 04:11 PM | 3.0.3
 
 */
 
@@ -171,6 +172,8 @@ export default function Home(props) {
 
   const [top, setTop] = useState(0);
 
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
   // const [isNoteInputEditable, setIsNoteInputEditable] = useState(true);
 
   // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
@@ -207,37 +210,47 @@ export default function Home(props) {
     [slideViewBounceValue],
   );
 
+  const incrementedVersionNumber = (version) => {
+    var incremented = version + 1;
+    return incremented;
+  }
+
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
     // console.log('updatedTransaction: ', updatedTransaction);
-    saveUndoHistory();
+    saveUndoHistory(); // so user can undo changes later
 
-    setIsUpdatingTransaction(true);
+    setIsUpdatingTransaction(true); // to show activity indicator
 
-    incrementVersion(updatedTransaction);
+    incrementVersion(updatedTransaction); // update transaction version
 
+    const pos = transactions.indexOf(updatedTransaction); // get index transaction
+
+    transactions[pos] =  updatedTransaction
+
+    // save current trransaction list to
     try {
-      const storageObj = await loadSettingsStorage(global.storageKey);
-
-      // const list = transactions;
-
-      const pos = transactions.indexOf(updatedTransaction);
-
-      transactions[pos] = updatedTransaction;
+      const storageObj = await loadSettingsStorage(global.storageKey); // get stored transactions
 
       storageObj.transactions = transactions;
 
-      await saveSettingsStorage(global.storageKey, storageObj);
+      saveSettingsStorage(global.storageKey, storageObj);
 
-      // RELOAD TRANSACTIONS AND SHOW UPDATED ONE
-      const storage = await loadSettingsStorage(global.storageKey);
+      setCurrentTransactions(storageObj.transactions)
 
-      setCurrentOwner(storage.user.id);
+      
 
-      setCategories(storage.categories);
 
-      setCurrentTransactions(storage.transactions);
 
-      setCurrentTransaction(null);
+      // // RELOAD TRANSACTIONS AND SHOW UPDATED ONE
+      // const storage = await loadSettingsStorage(global.storageKey);
+
+      // setCurrentOwner(storage.user.id);
+
+      // setCategories(storage.categories);
+
+      // setCurrentTransactions(storage.transactions);
+
+      // setCurrentTransaction(null);
 
       // setCurrentTransaction(searchByID(transactions[pos].id, storage.transactions));
     } catch (error) {
@@ -312,6 +325,10 @@ export default function Home(props) {
         // saveSettingsStorage(global.storageKey, storageObj);
 
         updateStoredTransaction(storageObj.transactions, found);
+
+        setCurrentTransaction(null);
+
+        setCurrentTransaction(found);
     } catch (e) {
       // statements
       // Alert.alert('Could not update transaction');
@@ -401,6 +418,8 @@ export default function Home(props) {
         setCategories(storage.categories);
 
         setCurrentTransactions(storage.transactions);
+
+        setIsUserLoggedIn(true);
       })
       .catch(async (err) => {
         // console.log(err);
@@ -416,23 +435,23 @@ export default function Home(props) {
 
         setCurrentTransactions(userObject.transactions);
 
-        showMessage({
-          message: `You are ${err}`,
-          // description: 'Data will be lost.',
-          position: 'bottom',
+        // showMessage({
+        //   message: `You are ${err}`,
+        //   // description: 'Data will be lost.',
+        //   position: 'bottom',
 
-          type: 'danger', // "success", "info", "warning", "danger"
-          backgroundColor: colors.dark, // "purple", // background color
-          // color: colors.white, // "#606060", // text color
+        //   type: 'danger', // "success", "info", "warning", "danger"
+        //   backgroundColor: colors.dark, // "purple", // background color
+        //   // color: colors.white, // "#606060", // text color
 
-          textStyle: styles.textStyle,
+        //   textStyle: styles.textStyle,
           
-          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+        //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
 
-          onPress: () => {
-            props.navigation.navigate('Settings')
-          }
-        });  
+        //   onPress: () => {
+        //     props.navigation.navigate('Settings')
+        //   }
+        // });  
 
     // console.log('userObject.user: ', userObject.user);
       });
@@ -446,6 +465,29 @@ export default function Home(props) {
   };
 
   async function storeNewTransaction(transaction) {
+    if (!isUserLoggedIn && currentTransactions.length >= 7) {
+      showMessage({
+        description: 'Maximum transactions reached for unauthorized users',
+
+        message: 'Please sign up for free',
+
+        textStyle: styles.textStyle,
+
+        type: 'warning',
+
+        icon: {
+          icon: 'auto',
+          position: 'right'
+        },
+
+        onPress: 
+          () => {
+            props.navigation.navigate('SignUp')
+          }
+        
+      })
+      return
+    }
     setIsStoringNewTransaction(true);
 
     const userObject = await loadSettingsStorage(global.storageKey); // load user object
@@ -496,7 +538,9 @@ export default function Home(props) {
     setIsSlideViewHidden(initialState.isSlideViewHidden);
     // setIsCurrentTransaction(initialState.isCurrentTransaction);
 
-    // retrieveUserStoredSettings();
+    retrieveUserStoredSettings();
+
+    setIsUserLoggedIn(false);
   }
   async function removeStoredTransaction(transaction) {
     setIsRemovingStoredTransaction(true);
@@ -895,7 +939,9 @@ export default function Home(props) {
 
       isNameInputEnabled={isNameInputEnabled}
 
-      handlePayeeNameChange={handlePayeeNameChange}
+      // handlePayeeNameChange={handlePayeeNameChange}
+
+      updateStoredTransaction={(item) => updateStoredTransaction(currentTransactions, item)}
     />
   );
   let scrollingPills = (
@@ -939,8 +985,20 @@ export default function Home(props) {
 
     updateStoredTransaction(currentTransactions, currentTransaction);
 
-    retrieveUserStoredSettings();
+    // RELOAD TRANSACTIONS AND SHOW UPDATED ONE
+    const storage = await loadSettingsStorage(global.storageKey);
 
+    // setCurrentOwner(storage.user.id);
+
+    setCategories([]);
+
+    setCurrentTransactions([]);
+
+    setCurrentTransaction(null);
+
+    clearState();
+
+    retrieveUserStoredSettings();
   }
 
   const updateTransactionIndicator = <ActivityIndicator size="large" color={colors.white} />;
@@ -989,7 +1047,7 @@ export default function Home(props) {
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         // onWillFocus={clearState} // {(payload) => clearState()}
-        onWillFocus={retrieveUserStoredSettings}
+        onWillFocus={clearState}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         onWillBlur={clearState} // console.log('will blur',payload)}
@@ -1068,7 +1126,7 @@ export default function Home(props) {
   return view;
 }
 
-Home.navigationOptions = () => {
+Home.navigationOptions = (props) => {
   const boldMessage = 'Get device cross-sync'; // `${global.appName} ${global.appVersion} (Basic)`;
   let normalMessage = `${global.appName} ${global.appVersion}`;
 

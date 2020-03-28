@@ -286,24 +286,25 @@ function UserNameEmailInput(props) {
     <TouchableOpacity
       disabled={isSignUpDisabled}
       onPress={
-        async () => {
-          // New User Sign Up Alert
-          console.log('global.isLoginEnabled: ', global.isLoginEnabled);
-          if (global.isLoginEnabled !== 'false') {
-            // console.log('isLoginEnabled: ', isLoginEnabled);
-            Alert.alert(
-              'Would you like to sign up?',
-              'Access more features: change your name, multiple users, save data and more',
-              // null,
-              // 'Signing up will allow more features like multiple users per device.',
-              [
-                { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                { text: 'OK', onPress: () => navigation.navigate('Welcome')
-                },
-              ],
-            )
-          }
-        }
+        () => navigation.navigate('SignUp')
+        // async () => {
+        //   // New User Sign Up Alert
+        //   console.log('global.isLoginEnabled: ', global.isLoginEnabled);
+        //   if (global.isLoginEnabled !== 'false') {
+        //     // console.log('isLoginEnabled: ', isLoginEnabled);
+        //     Alert.alert(
+        //       'Would you like to sign up?',
+        //       'Access more features: change your name, multiple users, save data and more',
+        //       // null,
+        //       // 'Signing up will allow more features like multiple users per device.',
+        //       [
+        //         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        //         { text: 'OK', onPress: () => navigation.navigate('SignUp')
+        //         },
+        //       ],
+        //     )
+        //   }
+        // }
       }
     style={{ flex: 1, flexDirection: 'column' }}>
       <View style={

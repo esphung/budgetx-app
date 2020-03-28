@@ -95,7 +95,7 @@ function sortByHeadersDateDescending(items) {
     // add current item to list
     list.push(currentItem);
   }
-  return list; // .sort((a, b) => (a.date.getTime < b.date.getTime) ? 1 : -1)
+  return list  // .sort((a, b) => (a.date.getTime < b.date.getTime) ? 1 : 0)
 }
 
 function Item({ id, title, selected, onSelect }) {
@@ -126,7 +126,8 @@ const MyStickyTable = (props) => {
     currentTransaction,
     transactions,
     // isCurrentTransaction,
-    isUpdatingTransaction
+    isUpdatingTransaction,
+    updateStoredTransaction,
   } = props;
 
   const [tableData, setTableData] = useState(null);
@@ -249,7 +250,8 @@ const MyStickyTable = (props) => {
             onPress={() => onPress(item)} // {onPress} // console.log(tableData[index])
             currentTransaction={currentTransaction}
             isNameInputEnabled={props.isNameInputEnabled}
-            handlePayeeNameChange={props.handlePayeeNameChange}
+            // handlePayeeNameChange={props.handlePayeeNameChange}
+            updateStoredTransaction={updateStoredTransaction}
           />
         </View>
       </SwipeRow>

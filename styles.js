@@ -45,7 +45,7 @@ export default StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
     // fontStyle: 'normal',
-    // letterSpacing: 0.13,
+    letterSpacing: 0.13,
     color: colors.white,
 
     // borderWidth: 1,
@@ -56,7 +56,7 @@ export default StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontSize: 15,
     // fontStyle: 'normal',
-    // letterSpacing: 0.13,
+    letterSpacing: 0.13,
     color: colors.white,
     fontWeight: '600',
   },

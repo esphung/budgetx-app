@@ -32,6 +32,7 @@ const AuthStackNavigator = createStackNavigator({
   },
   SignIn: {
     screen: SignInScreen,
+    initialParams:{ itemId: 42 },
     navigationOptions: () => ({
       title: 'Log In to Your Account',
       headerBackTitle: null,

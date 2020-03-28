@@ -77,11 +77,11 @@ function SignInScreen(props) {
   // state hooks
   // const usernameInputRef = useRef(null);
 
-  // const passwordInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
 
   const emailInputRef = useRef(null);
 
-  const [email, setEmail] = useState(null);
+  const [email, setEmail] = useState(global.emailAddressInput);
 
   const [password, setPassword] = useState(null);
 
@@ -439,7 +439,16 @@ function SignInScreen(props) {
     return () => {
       // effect
     };
-  }, [authCode])
+  }, [authCode]);
+
+  useEffect(() => {
+    if (email) {
+      passwordInputRef.current._root.focus();
+    }
+    // return () => {
+    //   // effect
+    // };
+  }, []);
 
   const signin = (
     <SafeAreaView style={styles.container}>
@@ -470,6 +479,13 @@ function SignInScreen(props) {
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
                     maxLength={26}
+
+                    
+
+                    autoCompleteType="email"
+
+
+                    textContentType="emailAddress"
                   />
                 </Item>
                 <Item rounded style={styles.itemStyle}>
@@ -482,7 +498,7 @@ function SignInScreen(props) {
                     autoCapitalize="none"
                     autoCorrect={false}
                     secureTextEntry
-                    // ref={passwordInputRef}
+                    ref={passwordInputRef}
                     onSubmitEditing={() => handlePasswordInputSubmit()}
                     onChangeText={(value) => onChangeText('password', value)}
 
@@ -491,6 +507,10 @@ function SignInScreen(props) {
                     maxLength={16}
 
                     keyboardAppearance="dark"
+
+                    autoCompleteType="password"
+
+                    textContentType="password"
                   />
                 </Item>
                 <TouchableOpacity

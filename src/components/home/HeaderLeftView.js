@@ -11,7 +11,7 @@ UPDATED:    12/04/2019 05:07 PM   | commented out Font loader
 */
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import {
   StyleSheet,
@@ -27,7 +27,15 @@ import {
   TextInput,
 } from 'react-native';
 
+import {
+  Container,
+  Item,
+  Input,
+} from 'native-base';
+
 import { NavigationEvents } from 'react-navigation';
+
+import { withNavigation } from 'react-navigation';
 
 // import { NetworkConsumer } from 'react-native-offline';
 
@@ -37,27 +45,36 @@ import { NavigationEvents } from 'react-navigation';
 
 import Auth from '@aws-amplify/auth';
 
+import { showMessage } from 'react-native-flash-message';
+
 // ui colors
 import colors from '../../../colors';
 
 import styles from '../../../styles';
 
-const HeaderLeftView = (props) => {
+import isValidEmail from '../../functions/isValidEmail';
+
+function HeaderLeftView(props) {
   const { onUsernameSubmit, getNormalMessage } = props;
 
+  const { navigation } = props;
+
   // console.log('props: ', props);
-  const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
-  // const [normalMessage, setNormalMessage] = useState('Enter your email');
   // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
-  const [normalMessage, setNormalMessage] = useState(`${global.appName} ${global.appVersion}`);
+  const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+  const [normalMessage, setNormalMessage] = useState('Enter your email');
+  // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+  // const [normalMessage, setNormalMessage] = useState(`${global.appName} ${global.appVersion}`);
 
   const [image, setImage] = useState(global.avatar);
 
   const [isReady, setIsReady] = useState(false);
 
-  const [text, onChangeText] = React.useState(normalMessage);
+  // const [text, onChangeText] = React.useState(normalMessage);
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  const emailInputRef = useRef(null);
 
   // useEffect(() => {
   //   clearState()
@@ -67,15 +84,19 @@ const HeaderLeftView = (props) => {
   // }, []);
 
   const clearState = async () => {
-    setBoldMessage('Get cross-device sync');
+    // setBoldMessage('Get cross-device sync');
+    // setNormalMessage('Enter your email');
+
+    global.emailAddressInput = '';
 
     Auth.currentAuthenticatedUser().then((cognito) => {
+      setBoldMessage('Get cross-device sync');
       setNormalMessage(cognito.attributes.email);
       setIsUserLoggedIn(true);
     }).catch((err) => {
       // console.log('err: ', err);
       // setNormalMessage(`${global.appName} ${global.appVersion}`);
-      setNormalMessage('Enter your email');
+      // setNormalMessage('Enter your email');
     });
   };
 
@@ -90,7 +111,18 @@ const HeaderLeftView = (props) => {
       source={image} // {global.placeholder500x500}
     />
   </TouchableOpacity>
-  )
+  );
+
+  function clearEmailInput() {
+    // console.log('emailInputRef.current._root.focus(): ', emailInputRef.current._root.focus());
+    emailInputRef.current._root.clear();
+  }
+
+  function showSignInScreen(email) {
+    // console.log('navigation: ', navigation);
+    // console.log('email: ', email);
+    props.navigation.navigate('SignIn');
+  }
 
   return (
       
@@ -113,7 +145,7 @@ const HeaderLeftView = (props) => {
         // try only this. and your component will auto refresh when this is the active component
         onWillFocus={clearState} // {(payload) => clearState()}
         // other props
-        // onDidFocus={payload => console.log('did focus',payload)}
+        onDidFocus={clearState}
         // onWillBlur={clearState} // console.log('will blur',payload)}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
@@ -122,32 +154,92 @@ const HeaderLeftView = (props) => {
         }
 
         <View style={styles.userMessageView}>
-          <Text style={styles.boldMessage}>
+          <Input editable={false} style={styles.boldMessage}>
             {
               boldMessage
             }
-          </Text>
+          </Input>
 
-          <TouchableOpacity disabled={isUserLoggedIn}>
-          <Text
-            // placeholder={normalMessage}
+          {/*<TouchableOpacity disabled={isUserLoggedIn}>*/}
+        
+          <Input
+            editable={!isUserLoggedIn}
+
+            placeholder={normalMessage}
             style={styles.normalMessage}
             // editable={false}
             // onChangeText={(text) => onChangeText(text)}
-            // onSubmitEditing={() => onUsernameSubmit(text)}
+
+            ref={emailInputRef}
+
+            onSubmitEditing={(input) =>
+                {
+                  // console.log('input.nativeEvent.text: ', input.nativeEvent.text);
+                  // if (isValidEmail(input.nativeEvent.text)) {
+                  if (isValidEmail(input.nativeEvent.text)) {
+                    // valid email input format
+                    global.emailAddressInput = input.nativeEvent.text;
+
+                    // showMessage({
+                    //   message: `Email: ${global.emailAddressInput}`,
+                    // });
+
+                    showSignInScreen(input.nativeEvent.text);
+                    
+                  } else {
+                    // email input is invalid format
+                    // console.log('input: ', input);
+                    global.emailAddressInput = '';
+
+                    showMessage({
+                      message: 'Enter valid email address',
+                      duration: 1150,
+                      position: 'top',
+
+                      // description: "My message description",
+                      type: 'danger', // "success", "info", "warning", "danger"
+                      backgroundColor: colors.dark, // "purple", // background color
+                      color: colors.white, // "#606060", // text color
+
+                      textStyle: styles.textStyle,
+
+                      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+                    });
+
+                    clearEmailInput();
+                  }
+                }
+            }
+
+            clearTextOnFocus
+
+
+
             // // value={text}
-            // clearButtonMode="while-editing"
+            clearButtonMode="while-editing"
             // clearTextOnFocus
-            // autoCorrect={false}
-            // autoCapitalize="none"
+            autoCorrect={false}
+            autoCapitalize="none"
             // enablesReturnKeyAutomatically
+
+            autoCompleteType="email"
+
+            keyboardType="email-address"
+
+            textContentType="emailAddress"
+
+            maxLength={global.maxEmailLength}
+
+            keyboardAppearance="dark"
           >
             {
               normalMessage
 
             }
-          </Text>
-          </TouchableOpacity>
+          </Input>
+          
+          
+          
 
         </View>
 
@@ -155,4 +247,4 @@ const HeaderLeftView = (props) => {
     );
 };
 
-export default HeaderLeftView;
+export default withNavigation(HeaderLeftView);

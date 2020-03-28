@@ -35,7 +35,8 @@ function TransactionItem(props) {
     onPress,
     currentTransaction,
     isNameInputEnabled,
-    isUpdatingTransaction
+    isUpdatingTransaction,
+    updateStoredTransaction
   } = props;
 
   // console.log('item: ', item);
@@ -147,7 +148,7 @@ function TransactionItem(props) {
             }
           }
         >
-          <ItemNameInput isNameInputEnabled={isNameInputEnabled} item={item} handlePayeeNameChange={props.handlePayeeNameChange} />
+          <ItemNameInput updateStoredTransaction={updateStoredTransaction} isNameInputEnabled={isNameInputEnabled} item={item} handlePayeeNameChange={props.handlePayeeNameChange} />
         </View>
 
         {/* <ItemDate item={item} /> */}

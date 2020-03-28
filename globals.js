@@ -15,6 +15,10 @@ global.isLoginEnabled = false;
 
 global.amountInputMaxLength = 7;
 
+global.emailAddressInput = '';
+
+global.maxEmailLength = 26;
+
 
 // max min lengths
 global.maxAuthCodeLength = 6;

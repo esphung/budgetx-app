@@ -284,7 +284,7 @@ function Settings(props) {
 
         showMessage({
           message: `You are ${auth_error}`,
-          description: 'Data will be lost.',
+          // description: 'Data will be lost.',
           position: 'bottom',
 
           type: 'danger', // "success", "info", "warning", "danger"
