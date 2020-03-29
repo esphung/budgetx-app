@@ -1,0 +1,20 @@
+{
+    "appName": "budgetxappanalytics",
+    "roleName": "pinpointLambdaRolea37baa52",
+    "cloudWatchPolicyName": "cloudWatchPolicya37baa52",
+    "pinpointPolicyName": "pinpointPolicya37baa52",
+    "authPolicyName": "pinpoint_amplify_a37baa52",
+    "unauthPolicyName": "pinpoint_amplify_a37baa52",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}

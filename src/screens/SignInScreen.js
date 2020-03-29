@@ -38,6 +38,9 @@ import {
   // Animated,
 } from 'react-native';
 
+// import the Analytics category
+import Analytics from '@aws-amplify/analytics';
+
 import {
   Container,
   Item,
@@ -338,12 +341,19 @@ function SignInScreen(props) {
       .then((cognito) => {
         // console.log(cognito);
 
-         // Analytics.record({ name: "Sign in attempted!"});
-         //  console.log('Analytics recorded sign in attempt!');
+        
 
         if (cognito) {
           // set username key here!
-          showMessage(`Signed in as ${cognito.attributes.email}`)
+          showMessage(`Signed in as ${cognito.attributes.email}`);
+
+          // create an event handler
+          Analytics.record({
+            name: "Sign in attempt successful!",
+            attributes: { username: cognito.attributes.email }
+          });
+
+
           props.navigation.navigate('AuthLoading');
           // setIsLoading(false);
         }
@@ -363,8 +373,18 @@ function SignInScreen(props) {
           setIsResendCodeBtnEnabled(true);
 
           setIsConfirmVisible(true);
+
+                    // create an event handler
+          Analytics.record({
+            name: "Sign in attempt failed!",
+            // attributes: { username: cognito.attributes.email }
+          });
+
         }
       });
+
+      // Analytics.record({ name: "Sign in attempted!"});
+      // console.log('Analytics recorded sign in attempt!');
 
       // send record of sign in attempt to analytics
       // Analytics.record({ name: "Sign in attempted!"});

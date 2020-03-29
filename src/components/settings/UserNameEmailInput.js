@@ -248,12 +248,12 @@ function UserNameEmailInput(props) {
 
       AsyncStorage.setItem('isLoginEnabled', 'false');
       global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled');
-      console.log('isLoginEnabled: ', isLoginEnabled);
+      // console.log('isLoginEnabled: ', isLoginEnabled);
 
       setIsSignUpDisabled(true);
     })
     .catch(async (err) => {
-      console.log('err: ', err);
+      // console.log('err: ', err);
       const storage = await loadSettingsStorage(storageKey)
       // console.log('storage.user: ', storage.user);
       if (storage.user.email) {
@@ -272,7 +272,7 @@ function UserNameEmailInput(props) {
       // setIsLoginEnabled(true)
       AsyncStorage.setItem('isLoginEnabled', 'true')
       global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled')
-      console.log('isLoginEnabled: ', isLoginEnabled);
+      // console.log('isLoginEnabled: ', isLoginEnabled);
 
       setIsSignUpDisabled(false);
 

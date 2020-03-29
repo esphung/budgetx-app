@@ -44,6 +44,9 @@ import {
   Platform,
 } from 'react-native';
 
+// import the Analytics category
+import Analytics from '@aws-amplify/analytics';
+
 // import { NetInfo } from 'react-native';
 
 import Auth from '@aws-amplify/auth';
@@ -410,6 +413,12 @@ export default function Home(props) {
         setCurrentTransactions(storage.transactions);
 
         setIsUserLoggedIn(true);
+
+        // create an event handler
+        Analytics.record({
+          name: "Authorized user retrieved stored settings!",
+          attributes: { user_id: storage.user.id }
+        });
       })
       .catch(async () => {
         // Alert.alert(err);
@@ -423,8 +432,17 @@ export default function Home(props) {
         setCategories(userObject.categories);
 
         setCurrentTransactions(userObject.transactions);
+
+        setIsUserLoggedIn(false);
+
+        // create an event handler
+        Analytics.record({
+          name: "Unauthorized user retrieved stored settings!",
+          attributes: { user_id: userObject.user.id }
+        });
       });
     saveUndoHistory();
+
   }
 
   Home.reloadTransactions = () => {

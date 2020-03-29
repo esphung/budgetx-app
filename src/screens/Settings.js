@@ -41,6 +41,9 @@ import {
   Share,
 } from 'react-native';
 
+// // import the Analytics category
+// import Analytics from '@aws-amplify/analytics';
+
 // import { NetInfo } from 'react-native';
 
 // import { Ionicons } from 'expo-vector-icons';
@@ -179,6 +182,8 @@ ${objectRows}
   return html;
 }
 
+
+
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
   const { navigation } = props;
@@ -215,6 +220,15 @@ function Settings(props) {
 
   const [currentOwner, setCurrentOwner] = useState('');
 
+  // // create an event handler
+  // const recordBtnPress = () => {
+  //   Analytics.record({
+  //     name: "Button Clicked!",
+  //     attributes: { username: currentOwner }
+  //   });
+  // }
+
+
   // async function retrieveCognitoUser() {
   //   // Auth.currentAuthenticatedUser()
   //   //   .then((cognito) => {
@@ -229,6 +243,7 @@ function Settings(props) {
   //   //     Alert.alert(err);
   //   //   });
   // }
+
 
   function handleFirstConnectivityChange(isConnected) {
     // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
@@ -299,6 +314,7 @@ function Settings(props) {
 
           onPress: () => {
             signInBtnPressed();
+            recordBtnPress();
           }
         });  
       
@@ -809,7 +825,7 @@ function Settings(props) {
   }
 
   function signInBtnPressed() {
-    console.log(props.navigation)
+    // console.log(props.navigation);
     // AsyncStorage.removeItem('userToken')
     props.navigation.navigate('SignIn')
     // props.navigation.popToTop();
