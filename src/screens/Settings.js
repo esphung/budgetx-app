@@ -10,6 +10,7 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
             12/06/2019 03:15 PM
             12/09/2019 12:32 PM
             03/01/2020 02:52 PM | Removed username and email textinputs
+            03/29/2020 10:49 AM | Fixed flash messages to not break app
 */
 
 import React, { useState, useEffect } from 'react';
@@ -305,17 +306,17 @@ function Settings(props) {
           // position: 'bottom',
 
           type: 'danger', // "success", "info", "warning", "danger"
-          backgroundColor: colors.dark, // "purple", // background color
+          // backgroundColor: colors.dark, // "purple", // background color
           // color: colors.white, // "#606060", // text color
 
           // textStyle: styles.textStyle,s
           
           icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
 
-          onPress: () => {
-            signInBtnPressed();
-            recordBtnPress();
-          }
+          // onPress: () => {
+          //   signInBtnPressed();
+          //   recordBtnPress();
+          // }
         });  
       
     });

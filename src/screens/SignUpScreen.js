@@ -5,6 +5,7 @@ AUTHOR:     Eric Phung
 CREATED:    12/10/2019 02:26 PM
 UPDATED:    12/10/2019 02:26 PM
             12/30/2019 02:48 AM | Offline screen redirect
+            03/29/2020 11:31 AM | Moved countries.js
 */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -45,6 +46,11 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
+// import the Analytics category
+import Analytics from '@aws-amplify/analytics';
+
+import { showMessage } from 'react-native-flash-message';
+
 import Dialog from 'react-native-dialog';
 
 import OfflineScreen from './OfflineScreen';
@@ -53,7 +59,7 @@ import SpinnerMask from '../components/SpinnerMask';
 
 import HelpMessage from '../../storybook/stories/HelpMessage';
 
-import countries from '../../Countries';
+import countries from '../data/countries';
 
 import colors from '../../colors';
 
@@ -445,27 +451,49 @@ function SignUpScreen(props) {
         
       })
       .catch((err) => {
-        console.log('err: ', err);
-        if (!err.message) {
+        // console.log('err: ', err);
+        isSuccessful = false;
+        if (err) {
           // console.log('Error when signing up: ', err.message);
           // Alert.alert('Error when signing up: ', err.message);
 
-          setDialogTitle('Error when signing up!');
-          setDialogMessage(err.message);
-          setIsDialogVisible(true);
+          showMessage({
+            message: 'Sign Up Failed!',
+            description: err.message,
+            type: 'danger',
+          });
 
-          }
+          // record analytics
+          const name = `Failed user sign up`;
+          Analytics.record({ name: name });
+          // console.log(`Analytic Recorded: ${name}`);
+
+          // setDialogTitle('Error when signing up!');
+          // setDialogMessage(err.message);
+          // setIsDialogVisible(true);
+        }
       });
     setIsLoading(false);
 
     if (isSuccessful) {
-      setDialogTitle('Sign Up Successful!');
-      setDialogMessage('Enter the confirmation code you received.');
-      setIsDialogVisible(true);
+      // setDialogTitle('Sign Up Successful!');
+      // setDialogMessage('Enter the confirmation code you received.');
+      // setIsDialogVisible(true);
+
+      showMessage({
+        message: 'Sent confirmation code!',
+        description: 'Please check your email!',
+        type: 'success',
+      });
 
       setIsResendCodeBtnEnabled(true);
 
       setIsConfirmVisible(true);
+
+      // record analytics
+      const name = `Successful user sign up`;
+      Analytics.record({ name: name });
+      // console.log(`Analytic Recorded: ${name}`);
     }
   }
 
@@ -482,11 +510,22 @@ function SignUpScreen(props) {
         .then(() => {
           props.navigation.navigate('SignIn');
           // console.log('Confirm sign up successful');
-          Alert.alert('Confirm sign up successful');
+          // Alert.alert('Confirm sign up successful');
+
+          showMessage({
+            message: 'Sign Up Successful!',
+            type: 'success',
+          });
         })
         .catch((err) => {
           // console.log('Error when entering confirmation code: ', err.message);
-          Alert.alert('Error when entering confirmation code: ', err.message);
+          // Alert.alert('Error when entering confirmation code: ', err.message);
+
+          showMessage({
+            message: 'Error when entering confirmation code',
+            description: err.message,
+            type: 'danger',
+          });
           
         });
     }
@@ -494,26 +533,22 @@ function SignUpScreen(props) {
 
   // Resend code if not received already
   async function resendSignUp() {
-    // const { username } = this.state;
-    // if (!username) {
-    //   usernameInputRef.current._root.focus();
-    //   Alert.alert('Please provide a username');
-    //   return;
-    // }
     await Auth.resendSignUp(email)
-      .then(() => {
-        Alert.alert('Confirmation code resent successfully!');
-        // console.log('Confirmation code resent successfully');
-      })
-      .catch((err) => {
-        if (!err.message) {
-          // console.log('Error requesting new confirmation code: ', err);
-          Alert.alert('Error requesting new confirmation code: ', err);
-        } else {
-          // console.log('Error requesting new confirmation code: ', err.message);
-          Alert.alert('Error requesting new confirmation code: ', err.message);
-        }
+    .then(() => {
+      // Alert.alert('Confirmation code resent successfully!');
+      showMessage({
+        message: 'Confirmation code resent successfully!',
+        type: 'success',
       });
+      // console.log('Confirmation code resent successfully');
+    })
+    .catch((err) => {
+      showMessage({
+        message: 'Error requesting new confirmation code: ',
+        description: err.message,
+        type: 'success',
+      });
+    });
   }
 
   const confirm = (

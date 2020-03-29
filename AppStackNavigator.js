@@ -60,13 +60,6 @@ const StackNavigator = createStackNavigator({
       headerBackTitle: '',
     }),
   },
-  SignIn: {
-    screen: SignInScreen,
-    navigationOptions: () => ({
-      title: 'Log In to Your Account',
-      headerBackTitle: null,
-    }),
-  },
   SignUp: {
     screen: SignUpScreen,
     navigationOptions: () => ({
@@ -74,6 +67,14 @@ const StackNavigator = createStackNavigator({
       headerBackTitle: null,
     }),
   },
+  SignIn: {
+    screen: SignInScreen,
+    navigationOptions: () => ({
+      title: 'Log In to Your Account',
+      headerBackTitle: null,
+    }),
+  },
+
 },
 {
   headerMode: 'screen', 

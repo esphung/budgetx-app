@@ -80,6 +80,7 @@ function HeaderRightView(props) {
       {/* ==== Settings Button ==== */}
 
       <TouchableOpacity
+        testID="UniqueId204"
         onPress={settingsBtnPressed}
         style={styles.settingsBtnTouchableOpacityMask}
       >

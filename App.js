@@ -1,3 +1,22 @@
+
+// import React, { Component } from 'react';
+// import {
+//   TextInput,
+//   View,
+// } from 'react-native';
+
+// export default class NewMessageForm extends Component {
+//   render() {
+//     return (
+//       <View>
+//         <TextInput
+//           testID="messageText"
+//         />
+//       </View>
+//     );
+//   }
+// }
+
 /*
 FILENAME:   App.js
 PURPOSE:    Entry point for budget x app
@@ -23,8 +42,9 @@ UPDATED:    Fri Nov  1 13:20:51 2019
                                   Added routes.js
             01/08/2020 05:47 PM | Added transaction item cell Stories
             02/04/2020 04:34 PM | Released version 2.0.0
-            02/04/2020 09:00 PM   | Added AWS Analytics
+            02/04/2020 09:00 PM | Added AWS Analytics
             03/05/2020 09:12 AM | Released version 2.0.8
+            03/29/2020 11:24 AM | Added device record analytics
 */
 
 import React, { useState } from 'react';
@@ -35,6 +55,9 @@ import {
   StyleSheet,
  } from "react-native";
 
+// import the Analytics category
+import Analytics from '@aws-amplify/analytics';
+
 import * as Font from 'expo-font';
 
 import { NetworkProvider } from 'react-native-offline';
@@ -43,7 +66,7 @@ import { AppLoading } from 'expo';
 
 import './globals'; // global values
 
-import colors from './colors'
+import colors from './colors';
 
 // Amplify imports and config
 // import Amplify from '@aws-amplify/core';
@@ -65,24 +88,28 @@ import SwitchNavigator from './SwitchNavigator';
 
 import Storybook from './storybook';
 
-import { clearLines } from './src/functions/clearLines';
+// import { clearLines } from './src/functions/clearLines';
 
 import FlashMessage from "react-native-flash-message";
 
+// clearLines(15);
+
 // import API, { graphqlOperation } from '@aws-amplify/api';
 
-const hh = new Date().getHours();
-const mm = new Date().getMinutes();
-const ss = new Date().getSeconds();
+// const hh = new Date().getHours();
+// const mm = new Date().getMinutes();
+// const ss = new Date().getSeconds();
 
-clearLines(35);
-console.log(`${hh}:${mm}:${ss}`, `${global.appName} App ${global.appVersion}`);
+// console.log(`${hh}:${mm}:${ss}`, `${global.appName} App ${global.appVersion}`);
 
-const styles = StyleSheet.create({
-  height: Platform.OS === 'ios' ? 200 : 100,
-});
+// const styles = StyleSheet.create({
+//   height: Platform.OS === 'ios' ? 200 : 100,
+// });
 
-
+// record running device analytics
+const name = `Running application on ${Platform.OS} ${Platform.Version}`;
+Analytics.record({ name: name });
+// console.log(`Analytic Recorded: ${name}`);
 
 export default function App() {
   // state hooks
@@ -104,6 +131,7 @@ export default function App() {
     }
   }
 
+  /* redirect user to storybook view if debugging */
   if (global.isStorybookModeOn && fontsAreLoaded) {
     // return storybook;
     return <NetworkProvider><Storybook /></NetworkProvider>;
@@ -117,25 +145,21 @@ export default function App() {
     <NetworkProvider>
       <View style={{ flex: 1 }}>
         <SwitchNavigator />
-        {/* GLOBAL FLASH MESSAGE COMPONENT INSTANCE */}
+        {/* Global Flash Message */}
         <FlashMessage
           style={
             {
-              opacity: 0.9,
-
               alignItems: 'center',
-
               justifyContent: 'center',
-
               backgroundColor: colors.dark,
-
+              opacity: 0.9,
               // borderWidth: 1,
               // borderColor: 'white',
               // borderStyle: 'solid',
             }
           }
           position="top"
-        />{/* <--- here as last component */}
+        />{/* <--- flash message is here as last component */}
       </View>
     </NetworkProvider>; // has login
   }

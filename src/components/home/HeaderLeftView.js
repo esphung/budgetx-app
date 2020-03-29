@@ -125,21 +125,21 @@ function HeaderLeftView(props) {
   }
 
   return (
-      
-      <View style={
-        styles.headerLeft
-        // {
-        //   flexDirection: 'row',
-        //   marginTop: 20,
-        //   marginLeft: 15,
+      <View
+        style={
+          styles.headerLeft
+          // {
+          //   flexDirection: 'row',
+          //   marginTop: 20,
+          //   marginLeft: 15,
 
-        //   alignItems: 'center',
+          //   alignItems: 'center',
 
-        //   borderWidth: 1,
-        //   borderColor: 'white',
-        //   borderStyle: 'solid',
-        // }
-      }
+          //   borderWidth: 1,
+          //   borderColor: 'white',
+          //   borderStyle: 'solid',
+          // }
+        }
       >
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
@@ -163,6 +163,9 @@ function HeaderLeftView(props) {
           {/*<TouchableOpacity disabled={isUserLoggedIn}>*/}
         
           <Input
+
+            testID="emailTextID"
+
             editable={!isUserLoggedIn}
 
             placeholder={normalMessage}

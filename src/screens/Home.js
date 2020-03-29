@@ -27,7 +27,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             03/10/2020 11:44 AM | 2.1.7
             03/11/2020 02:59 AM
             03/11/2020 04:11 PM | 3.0.3
-
+            03/29/2020 12:33 PM | Added Detox
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
