@@ -29,7 +29,7 @@ describe('First tests', () => {
     await reloadApp();
   });
   
-  it('Enter invalid email and submit', async () => {
+  it('Show Settings Page', async () => {
     // expect(element(by.id('emailTextID')).toBeVisible());
     await element(by.id('UniqueId204')).tap();
     // await element(by.id('UniqueId204')).typeText('invalid email 123456789');

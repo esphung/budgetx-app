@@ -262,6 +262,8 @@ export default function Home(props) {
       // },
       
     });
+
+    Analytics.record({ name: 'Updated a stored transaction' });
   };
 
   // const handlePayeeNameChange = async (name, transaction) => {
@@ -328,6 +330,8 @@ export default function Home(props) {
       // console.log(e);
       // console.log('e: ', e);
     }
+
+    Analytics.record({ name: 'Updated a transaction category' });
   };
 
 
@@ -343,6 +347,8 @@ export default function Home(props) {
       found.note = string;
 
       updateStoredTransaction(list, found);
+
+      hideSlideView();
 
       // showMessage('Updated stored transaction');
 
@@ -382,6 +388,8 @@ export default function Home(props) {
       // showMessage('Could not load settings');
       console.log('e: ', e);
     }
+
+    Analytics.record({ name: 'Updated a transaction note' });
   };
 
   // const updateStorageEmail = async (email) => {
@@ -498,6 +506,8 @@ export default function Home(props) {
     saveUndoHistory();
 
     setIsStoringNewTransaction(false);
+
+    Analytics.record({ name: 'Stored a new transaction' });
   }
   async function clearState() {
     // setIsReady(false);
@@ -555,6 +565,8 @@ export default function Home(props) {
     }
 
     setIsRemovingStoredTransaction(false);
+
+    Analytics.record({ name: 'Removed a stored transaction' });
   }
 
   function createNewTransaction() {
@@ -651,7 +663,6 @@ export default function Home(props) {
       // statements
       console.log('e:', e);
       // console.log(e);
-      
     }
 
     // alert('saved history');
