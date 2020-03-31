@@ -268,59 +268,24 @@ function Settings(props) {
       setCurrentSettingsVersion(storage.version);
 
       setIsUserLoggedIn(true); // cognito (logged in)
-
-      // showMessage({
-      //   message: `Logged in as ${cognito.attributes.email}`,
-      //   backgroundColor: colors.dark,
-      //   type: 'success',
-      //   icon: {
-      //     icon: 'auto',
-      //     position: 'right'
-      //   }
-      // });
     })
     .catch(async (auth_error) => {
-
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
-        // console.log(userObject);
-        // console.log('storageKey: ', storageKey);
-
+   
         setCurrentOwner(userObject.user.id);
-
-        // setCategories(userObject.categories);
 
         setCurrentTransactions(userObject.transactions);
 
         setCurrentSettingsVersion(userObject.version);
 
-        // showMessage({
-        //   message: `You are ${auth_error}`,
-        //   description:`Data could be lost`,
-        // });
-
         setIsUserLoggedIn(false); //  local (not logged in)
 
-        showMessage({
-          message: `You are ${auth_error}`,
-          // description: 'Data will be lost.',
-          // position: 'bottom',
-
-          type: 'danger', // "success", "info", "warning", "danger"
-          // backgroundColor: colors.dark, // "purple", // background color
-          // color: colors.white, // "#606060", // text color
-
-          // textStyle: styles.textStyle,s
-          
-          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-
-          // onPress: () => {
-          //   signInBtnPressed();
-          //   recordBtnPress();
-          // }
-        });  
-      
+        // showMessage({
+        //   message: `You are ${auth_error}`,
+        //   type: 'danger', // "success", "info", "warning", "danger"
+        //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+        // });  
     });
-
   }
 
   const restoreBackUpData = async () => {
@@ -879,15 +844,10 @@ function Settings(props) {
         isConnected ? null : showMessage('You are currently offline');
       }
     });
-    
     NetInfo.isConnected.addEventListener(
       'connectionChange',
       handleFirstConnectivityChange
     );
-
-    // retrieveStoredSettings();
-
-    
   }
 
   useEffect(() => {

@@ -33,12 +33,8 @@ CREATED:    Thu Oct 31 23:17:49 2019
 import React, { useState, useEffect, useCallback } from 'react';
 
 import {
-  // StyleSheet,
   View,
-  // ScrollView,
   Animated,
-  // Alert,
-  // AsyncStorage,
   SafeAreaView,
   ActivityIndicator,
   Platform,
@@ -53,7 +49,6 @@ import Auth from '@aws-amplify/auth';
 
 import { NavigationEvents } from 'react-navigation';
 
-// import { showMessage, hideMessage } from "react-native-flash-message";
 import { showMessage } from 'react-native-flash-message';
 
 // ui colors
