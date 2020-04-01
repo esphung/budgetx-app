@@ -730,13 +730,13 @@ export default function Home(props) {
       currentCategoryVersion, // version
     );
 
-    saveCategory(category);
+    // saveCategory(category);s
 
     // /* Create New Payee */
     const payee = new Payee(uuidv4(), '', currentOwner, 0);
     // // console.log('payee: ', payee);
 
-    savePayee(payee);
+    // savePayee(payee);
 
     const transaction = new Transaction(
       uuidv4(), // id
