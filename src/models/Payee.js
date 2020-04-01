@@ -1,8 +1,11 @@
-// Payee function class
-
-export default function Payee(name) {
-  const currentDate = new Date();
-  this.id = `${Date.now(currentDate)}`;
-  this.name = name; // (name) ? name : '';
-  this.created = currentDate;
+function Payee(id, name, owner, version) {
+  const obj = {
+    id,
+    name,
+    owner,
+    version
+  };
+  return obj;
 }
+
+export default Payee

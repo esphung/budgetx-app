@@ -578,19 +578,7 @@ export default StyleSheet.create({
   payeeInputText: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 15,
-    // fontStyle: 'normal',
-    // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-
-    // letterSpacing: 0.13,
-
-    // color: 'pink',
-
-    // color: item.category.color +  '7f',
-    // color: colors.white,
-    // backgroundColor: colors.darkTwo,
-
-    // textAlignVertical: 'center',
-
+    color: colors.white,
   },
   slideView: {
     // flex: 1,

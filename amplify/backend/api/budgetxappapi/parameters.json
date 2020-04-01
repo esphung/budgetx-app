@@ -1,0 +1,11 @@
+{
+    "AppSyncApiName": "budgetxappapi",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": "false",
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authbudgetxapp8c51ee66",
+            "Outputs.UserPoolId"
+        ]
+    }
+}

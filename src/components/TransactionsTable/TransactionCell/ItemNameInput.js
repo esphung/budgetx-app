@@ -1,287 +1,333 @@
-import React, { Component } from 'react';
 
-import PropTypes from 'prop-types';
-
-import {
-  TextInput,
-  // View,
-  // Platform,
-  Alert,
-} from 'react-native';
-
-// import Auth from '@aws-amplify/auth';
+import React, { Component, useState, useEffect } from 'react';
+import { Text, TextInput, View } from 'react-native';
 
 // ui colors
 import colors from '../../../../colors';
 
 import styles from '../../../../styles';
 
-import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-} from '../../../storage/SettingsStorage';
+export default function PizzaTranslator(props) {
+  let { transaction, updateTransactionPayee, isNameInputEnabled } = props;
 
-import {
-  loadPayees,
-  savePayees
-} from '../../../storage/PayeesStorage';
+  // console.log('transaction: ', transaction);
 
-import Payee from '../../../models/Payee';
+  const [text, setText] = useState('');
 
-import searchByName from '../../../functions/searchByName';
-
-// import searchByID from '../../../functions/searchByID';
-
-class ItemNameInput extends Component {
-  constructor(props) {
-    super(props);
-
-    const { payee, isNameInputEnabled } = props.item;
-
-    let name = '';
-
-    if (payee) {
-      name = payee.name
-    }
-
-
-
-    this.state = {
-      text: '',
-      payee: name,
-      // storageKey: null,
+  useEffect(() => {
+    // updateTransactionPayee(transaction, text);
+    // console.log('text: ', text);
+    return () => {
+      // effect
     };
+  }, [text]);
+  return (
+    <View style={{padding: 10,}}>
+      <TextInput
+        style={styles.payeeInputText}
+        // placeholder="Enter name"
+        onChangeText={text => setText(text)}
 
-    this.handleTextChange = this.handleTextChange.bind(this);
+        onSubmitEditing={() => updateTransactionPayee(transaction, text)}
+        defaultValue={transaction.payee.name}
 
-    this.submitBtnPressed = this.submitBtnPressed.bind(this);
+        keyboardAppearance="dark" // ios
 
-    // this.endEditing = this.endEditing.bind(this);
-  }
+        editable={isNameInputEnabled}
 
+        returnKeyType="done"
 
-  async componentDidMount() {
-    const { payee } = this.props.item;
+        autoCorrect
 
-    let name;
-    if (payee) {
-      name = payee.name
-    }
-    await this.setState({ text: name });
+        autoCompleteType="name"
 
-    // if (this.props.item.payee.name) {
-    //   await this.setState({ text: this.props.item.payee.name })
-    // }
+        spellCheck
 
-    // Auth.currentAuthenticatedUser()
-    //   .then((cognito) => {
-    //     // setStorageKey(cognito.username);
-    //     this.setState({ storageKey: cognito.username });
-    //   })
-    //   .catch((err) => {
-    //     // console.log(err);
-    //     Alert.alert(err);
-    //   });
-  }
+        autoCapitalize="words" // "words"
 
-  // async componentWillUnmount() {
-  //   const { payee } = this.state;
-  //   await this.setState({ text: payee });
-  // }
-
-  handleTextChange(text) {
-    // // console.log('this.props: ', this.props);
-    // this.props.item.payee = new Payee(text);
-    // this.setState({ text: this.props.item.payee.name });
-    // // console.log(text);
-
-    this.submitBtnPressed(text)
-  }
-
-  async submitBtnPressed(text) {
-    // console.log(text);
-    const { item } = this.props; // current transaction item
-
-    // load default payees
-    const payeesObject = await loadPayees();
-
-    const { payees } = payeesObject;
-    // console.log(payees);
-
-    // check if previous payee exists
-    const previousPayee = searchByName(text, payees);
-
-    if (previousPayee) {
-      // const { storageKey } = this.state;
-      // load stored user
-      const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
+        maxLength={24}
+      />
+     {/* <Text style={{padding: 10, fontSize: 20}}>
+        { text.split(' ').map((word) => word && '🍕').join(' ') }
+      </Text>*/}
+    </View>
+  );
+}
 
 
-      // find current transaction fromm user transactions list
-      let i = userObject.transactions.length - 1;
-      for (i; i >= 0; i -= 1) {
-        if (userObject.transactions[i].id === item.id) {
-          // set user transaction payee
-          userObject.transactions[i].payee = previousPayee;
 
-          // console.log(transactions[i]);
+// import React, { Component } from 'react';
 
-          // save transactions list
-          // saveUserObject(userObject);
-          saveSettingsStorage(this.state.storageKey, userObject);
+// import PropTypes from 'prop-types';
 
-          // return from here
-          return;
-        }
-      }
-    } else {
-      // clean scrub name
+// import {
+//   TextInput,
+//   // View,
+//   // Platform,
+//   Alert,
+// } from 'react-native';
 
-      //  create new payee
-      const payee = new Payee(text);
+// // import Auth from '@aws-amplify/auth';
 
-      // add payee to list
-      payees.push(payee);
-      // console.log(payees);
+// // ui colors
+// import colors from '../../../../colors';
 
-      // save new list of payees
-      savePayees(payeesObject);
+// import styles from '../../../../styles';
 
-      // load user saved transactions
-      const userObject = await loadSettingsStorage(this.state.storageKey);
+// import {
+//   loadSettingsStorage,
+//   saveSettingsStorage,
+// } from '../../../storage/SettingsStorage';
 
-      // // find current transaction from list
-      let i = userObject.transactions.length - 1;
-      for (i; i >= 0; i -= 1) {
-        if (userObject.transactions[i].id === item.id) {
-          // set transaction payee
-          userObject.transactions[i].payee = payee;
+// import {
+//   loadPayees,
+//   savePayees
+// } from '../../../storage/PayeesStorage';
 
-          // console.log(transactions[i]);
+// import Payee from '../../../models/Payee';
 
-          // save transactions list
-          // saveUserObject(userObject);
-          saveSettingsStorage(this.state.storageKey, userObject);
+// import searchByName from '../../../functions/searchByName';
 
-          // return from here
-          // return;
-        }
-      }
-    }
-    this.setState({ text });
-    // console.log('Submit:', text);
-  }
+// // import searchByID from '../../../functions/searchByID';
 
-  // submitBtnPressed(text, transaction) {
-  //   // console.log(text);
-  //   this.props.handlePayeeNameChange(text, transaction);
-  // }
+// class ItemNameInput extends Component {
+//   constructor(props) {
+//     super(props);
 
-  render() {
-    const placeholderText = '';
+//     const { payee, isNameInputEnabled } = props.item;
 
-    const { text } = this.state;
+//     let name = '';
 
-    const color = colors.white;
+//     if (payee) {
+//       name = payee.name
+//     }
 
-    let opacity = 0.1;
 
-    let isClearButtonModeEnabled = 'never';
+
+//     this.state = {
+//       text: '',
+//       payee: name,
+//       // storageKey: null,
+//     };
+
+//     this.handleTextChange = this.handleTextChange.bind(this);
+
+//     this.submitBtnPressed = this.submitBtnPressed.bind(this);
+
+//     // this.endEditing = this.endEditing.bind(this);
+//   }
+
+
+//   async componentDidMount() {
+//     const { payee } = this.props.item;
+
+//     let name;
+//     if (payee) {
+//       name = payee.name
+//     }
+//     await this.setState({ text: name });
+
+//     // if (this.props.item.payee.name) {
+//     //   await this.setState({ text: this.props.item.payee.name })
+//     // }
+
+//     // Auth.currentAuthenticatedUser()
+//     //   .then((cognito) => {
+//     //     // setStorageKey(cognito.username);
+//     //     this.setState({ storageKey: cognito.username });
+//     //   })
+//     //   .catch((err) => {
+//     //     // console.log(err);
+//     //     Alert.alert(err);
+//     //   });
+//   }
+
+//   // async componentWillUnmount() {
+//   //   const { payee } = this.state;
+//   //   await this.setState({ text: payee });
+//   // }
+
+//   handleTextChange(text) {
+//     // // console.log('this.props: ', this.props);
+//     // this.props.item.payee = new Payee(text);
+//     // this.setState({ text: this.props.item.payee.name });
+//     // // console.log(text);
+
+//     this.submitBtnPressed(text)
+//   }
+
+//   async submitBtnPressed(text) {
+//     // console.log(text);
+//     const { item } = this.props; // current transaction item
+
+//     // load default payees
+//     const payeesObject = await loadPayees();
+
+//     const { payees } = payeesObject;
+//     // console.log(payees);
+
+//     // check if previous payee exists
+//     const previousPayee = searchByName(text, payees);
+
+//     if (previousPayee) {
+//       // const { storageKey } = this.state;
+//       // load stored user
+//       const userObject = await loadSettingsStorage(this.state.storageKey); // load storage object
+
+
+//       // find current transaction fromm user transactions list
+//       let i = userObject.transactions.length - 1;
+//       for (i; i >= 0; i -= 1) {
+//         if (userObject.transactions[i].id === item.id) {
+//           // set user transaction payee
+//           userObject.transactions[i].payee = previousPayee;
+
+//           // console.log(transactions[i]);
+
+//           // save transactions list
+//           // saveUserObject(userObject);
+//           saveSettingsStorage(this.state.storageKey, userObject);
+
+//           // return from here
+//           return;
+//         }
+//       }
+//     } else {
+//       // clean scrub name
+
+//       //  create new payee
+//       const payee = new Payee(text);
+
+//       // add payee to list
+//       payees.push(payee);
+//       // console.log(payees);
+
+//       // save new list of payees
+//       savePayees(payeesObject);
+
+//       // load user saved transactions
+//       const userObject = await loadSettingsStorage(this.state.storageKey);
+
+//       // // find current transaction from list
+//       let i = userObject.transactions.length - 1;
+//       for (i; i >= 0; i -= 1) {
+//         if (userObject.transactions[i].id === item.id) {
+//           // set transaction payee
+//           userObject.transactions[i].payee = payee;
+
+//           // console.log(transactions[i]);
+
+//           // save transactions list
+//           // saveUserObject(userObject);
+//           saveSettingsStorage(this.state.storageKey, userObject);
+
+//           // return from here
+//           // return;
+//         }
+//       }
+//     }
+//     this.setState({ text });
+//     // console.log('Submit:', text);
+//   }
+
+//   // submitBtnPressed(text, transaction) {
+//   //   // console.log(text);
+//   //   this.props.handlePayeeNameChange(text, transaction);
+//   // }
+
+//   render() {
+//     const placeholderText = '';
+
+//     const { text } = this.state;
+
+//     const color = colors.white;
+
+//     let opacity = 0.1;
+
+//     let isClearButtonModeEnabled = 'never';
 
  
 
-    // item has payee
-    if (text && text !== placeholderText) {
-      opacity = 1;
-      isClearButtonModeEnabled = 'while-editing';
-    }
+//     // item has payee
+//     if (text && text !== placeholderText) {
+//       opacity = 1;
+//       isClearButtonModeEnabled = 'while-editing';
+//     }
 
-    return (
+//     return (
       
-        <TextInput
-          style={
-            [
-              // {
-              //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-              //   fontSize: 15,
-              //   fontStyle: 'normal',
-              //   letterSpacing: 0.1,
-              //   // color: '#ffffff',
+//         <TextInput
+//           style={
+//             [
+//               // {
+//               //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+//               //   fontSize: 15,
+//               //   fontStyle: 'normal',
+//               //   letterSpacing: 0.1,
+//               //   // color: '#ffffff',
 
-              //   // color: item.category.color +  '7f',
-              //   color: colors.white,
-              //   // backgroundColor: colors.darkTwo,
+//               //   // color: item.category.color +  '7f',
+//               //   color: colors.white,
+//               //   // backgroundColor: colors.darkTwo,
 
-              // },
+//               // },
 
-              styles.payeeInputText,
-              {
-                // color: '#ffffff',
-                color,
-                opacity,
-              }
-            ]
-          }
+//               styles.payeeInputText,
+//               {
+//                 // color: '#ffffff',
+//                 color,
+//                 opacity,
+//               }
+//             ]
+//           }
 
-          placeholder={placeholderText}
+//           placeholder={placeholderText}
 
-          placeholderTextColor="#ffffff7f"
+//           placeholderTextColor="#ffffff7f"
 
-          keyboardAppearance="dark" // ios
+//           keyboardAppearance="dark" // ios
 
-          // textContentType="name" // ios
+//           // textContentType="name" // ios
 
-          // keyboardType="name-phone-pad"
+//           // keyboardType="name-phone-pad"
 
-          returnKeyType="done"
+//           returnKeyType="done"
 
-          autoCorrect
+//           autoCorrect
 
-          autoCapitalize="sentences" // "words"
+//           autoCapitalize="sentences" // "words"
 
-          maxLength={24}
+//           maxLength={24}
 
-          // onSubmitEditing={(event) => this.submitBtnPressed(event.nativeEvent.text, this.props.item)}
+//           // onSubmitEditing={(event) => this.submitBtnPressed(event.nativeEvent.text, this.props.item)}
 
-          onSubmitEditing={
-            async () => {
-              const storage =  await loadSettingsStorage(global.storageKey);
-              this.props.updateStoredTransaction(this.props.item, storage.transactions)
-            }
-          }
-          // onChangeText={this.handleTextChange}
-          onChangeText={
-            (text) => {
-              this.setState({ text:  text })
-              // console.log('text: ', text);
-              this.props.item.payee = new Payee(text);
-              // this.props.updateStoredTransaction(this.props.item)
-            }
-            // (text) =>  this.submitBtnPressed(text)
-          }
+//           // onSubmitEditing={this.props.updateTransactionPayee}
+          
+//           // onChangeText={this.handleTextChange}
+//           onChangeText={this.props.updateTransactionPayee}
 
-          value={this.state.text} // this.props.item.payee.name
+//           value={this.props.currentPayeeName} // this.props.item.payee.name
 
-          clearButtonMode={isClearButtonModeEnabled}
+//           clearButtonMode={isClearButtonModeEnabled}
 
-          editable={this.props.isNameInputEnabled}
+//           editable={this.props.isNameInputEnabled}
 
-          // onFocus={() => {
-          //   if (!text) {
-          //     // transaction has no existing payee name, clear placeholder
+//           // onFocus={() => {
+//           //   if (!text) {
+//           //     // transaction has no existing payee name, clear placeholder
 
-          //   }
-          // }}
+//           //   }
+//           // }}
 
-          // onEndEditing={() => this.setState({ text: payee.name })}
-        />
-    );
-  }
-}
+//           // onEndEditing={() => this.setState({ text: payee.name })}
+//         />
+//     );
+//   }
+// }
 
-// ItemNameInput.propTypes = {
-//   item: PropTypes.object.isRequired,
-// };
+// // ItemNameInput.propTypes = {
+// //   item: PropTypes.object.isRequired,
+// // };
 
 
-export default ItemNameInput;
+// export default ItemNameInput;

@@ -185,6 +185,18 @@ ${objectRows}
 
 
 
+
+const isUserCurrentlyOnline = async () => {
+  let bool = false;
+  await NetInfo.fetch().then(state => {
+    bool = state.isConnected;
+    // console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+  });
+  return bool;
+};
+
+
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
   const { navigation } = props;
@@ -211,7 +223,7 @@ function Settings(props) {
 
   const [isUserOnline, setIsUserOnline] = useState(false);
 
-  const [shouldShowDialog, setShowDialogBox] = useState(false);
+  const [shouldShowResetDialog, setShowResetDialogBox] = useState(false);
 
   const [input, setInput] = useState('');
 
@@ -220,6 +232,42 @@ function Settings(props) {
   const [isOkBtnDisabled, setIsOkBtnDisabled] = useState(true);
 
   const [currentOwner, setCurrentOwner] = useState('');
+
+  const [shouldShowOfflineDialogBox, setShouldShowOfflineDialogBox] = useState(false);
+
+  const [shouldShowCloudSyncDialogBox, setShouldShowCloudSyncDialogBox] = useState(false);
+
+
+  const crossDeviceSync = () => {}
+
+  const crossDeviceSyncDialogBox = (
+    <View>
+      <Dialog.Container headerStyle={{
+          // backgroundColor: 'pink',
+          // backgroundColor: colors.dark,
+        }}
+        contentStyle={{
+          // backgroundColor: colors.dark,
+        }}
+        footerStyle={
+          {
+            // backgroundColor: colors.dark,
+          }
+        }
+        visible={true}
+        >
+        <Dialog.Title>Cross-Device Sync</Dialog.Title>
+        <Dialog.Description>
+          With cross-device sync you can access your transactions on any device.
+        </Dialog.Description>
+        <Dialog.Button label="Cancel" onPress={() => setShouldShowCloudSyncDialogBox(false)} />
+        <Dialog.Button label="Purchase" onPress={() => {
+          setShouldShowCloudSyncDialogBox(false)
+          crossDeviceSync()
+        }} />
+      </Dialog.Container>
+    </View>
+  );
 
   // // create an event handler
   // const recordBtnPress = () => {
@@ -245,6 +293,19 @@ function Settings(props) {
   //   //   });
   // }
 
+  const dialogBox = (
+  <View>
+    <Dialog.Container visible={true}>
+      <Dialog.Title>Offline</Dialog.Title>
+      <Dialog.Description>
+        Cannot sync without internet connection
+      </Dialog.Description>
+      <Dialog.Button label="Cancel" onPress={() => setShouldShowOfflineDialogBox(false)} />
+      <Dialog.Button label="Ok" onPress={() => setShouldShowOfflineDialogBox(false)} />
+    </Dialog.Container>
+  </View>
+);
+
 
   function handleFirstConnectivityChange(isConnected) {
     // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
@@ -263,9 +324,9 @@ function Settings(props) {
 
       // setCategories(storage.categories);
 
-      setCurrentTransactions(storage.transactions);
+      // setCurrentTransactions(storage.transactions);
 
-      setCurrentSettingsVersion(storage.version);
+      // setCurrentSettingsVersion(storage.version);
 
       setIsUserLoggedIn(true); // cognito (logged in)
     })
@@ -274,9 +335,9 @@ function Settings(props) {
    
         setCurrentOwner(userObject.user.id);
 
-        setCurrentTransactions(userObject.transactions);
+        // setCurrentTransactions(userObject.transactions);
 
-        setCurrentSettingsVersion(userObject.version);
+        // setCurrentSettingsVersion(userObject.version);
 
         setIsUserLoggedIn(false); //  local (not logged in)
 
@@ -347,11 +408,11 @@ function Settings(props) {
       // console.log('backup_key: ', backup_key);
 
 
-      if (!storageObj.version) {
-        storageObj.version = 1;
-      } else {
-        storageObj.version += 1;
-      }
+      // if (!storageObj.version) {
+      //   storageObj.version = 1;
+      // } else {
+      //   storageObj.version += 1;
+      // }
       // console.log('storageObj.version: ', storageObj.version);
 
       // console.log(storage);
@@ -511,7 +572,7 @@ function Settings(props) {
         // style={{
         //   backgroundColor: colors.dark,
         // }}
-        visible={shouldShowDialog}
+        visible={shouldShowResetDialog}
       >
         <Dialog.Title style={
          [
@@ -522,7 +583,7 @@ function Settings(props) {
              fontSize: 17,
            }
          ]
-        }>Are you sure you want to remove your data from this device?</Dialog.Title>
+        }>Remove all data from this device?</Dialog.Title>
         <Dialog.Description style={
           [
             {
@@ -535,7 +596,8 @@ function Settings(props) {
           ]
         }
         >
-          Enter DELETE to remove your settings and backups
+          
+        Please type DELETE'
         </Dialog.Description>
         <Dialog.Input
           style=
@@ -573,7 +635,7 @@ function Settings(props) {
             // }
           }
           onPress={() => {
-            setShowDialogBox(false);
+            setShowResetDialogBox(false);
           }}
           label="Cancel"
         />
@@ -600,8 +662,8 @@ function Settings(props) {
     if (Platform.OS === 'ios') {
       // user on ios
       Alert.prompt(
-        'Are you sure you want to remove your data from this device?',
-        'Enter DELETE to remove your settings and backups',
+        'Remove all data from this device?',
+        'Please type DELETE',
         [
           { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
           {
@@ -620,7 +682,7 @@ function Settings(props) {
 
     } else {
       //  user on android
-      setShowDialogBox(true);
+      setShowResetDialogBox(true);
     }
   };
 
@@ -805,6 +867,17 @@ function Settings(props) {
     restoreDataAlert();
   }
 
+  const crossDeviceSyncBtnPressed = async () => {
+    // check if user online
+    if (await !isUserCurrentlyOnline()) setShouldShowOfflineDialogBox(true)
+
+    // check if user logged in
+    if (!isUserLoggedIn) return
+
+    // alert => would you like to sync transactions in the cross-device with this device?
+    setShouldShowCloudSyncDialogBox(true);
+  }
+
   function onPress(btn) {
     const name = btn.key;
 
@@ -823,6 +896,9 @@ function Settings(props) {
     }
     else if (name === 'Sign In') {
       signInBtnPressed();
+    }
+    else if (name === 'Cross-Device Sync') {
+      crossDeviceSyncBtnPressed();
     }
     else if (name === 'Reset Data') {
       resetDataBtnPressed();
@@ -890,6 +966,12 @@ function Settings(props) {
     <View
       style={styles.container}
     >
+    {
+      shouldShowOfflineDialogBox && dialogBox
+    }
+    {
+      shouldShowCloudSyncDialogBox && crossDeviceSyncDialogBox
+    }
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={clearState} // {(payload) => clearState()}
@@ -1066,7 +1148,7 @@ function Settings(props) {
           </View>
         </View>
         {
-          shouldShowDialog && resetDataDialogBox
+          shouldShowResetDialog && resetDataDialogBox
         }
     </View>
   );

@@ -149,6 +149,7 @@ export default function App() {
         <FlashMessage
           style={
             {
+              flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: colors.dark,

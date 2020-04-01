@@ -29,14 +29,17 @@ import ItemNameInput from './ItemNameInput';
 // import ItemDate from './ItemDate';
 import ItemAmount from './ItemAmount';
 
-function TransactionItem(props) {
+function TransactionItem(props, index) {
   const {
     item,
     onPress,
     currentTransaction,
     isNameInputEnabled,
     isUpdatingTransaction,
-    updateStoredTransaction
+    updateStoredTransaction,
+    currentPayeeName,
+    setCurrentPayeeName,
+    updateTransactionPayee
   } = props;
 
   // console.log('item: ', item);
@@ -148,7 +151,15 @@ function TransactionItem(props) {
             }
           }
         >
-          <ItemNameInput updateStoredTransaction={updateStoredTransaction} isNameInputEnabled={isNameInputEnabled} item={item} handlePayeeNameChange={props.handlePayeeNameChange} />
+          <ItemNameInput
+            currentPayeeName={currentPayeeName}
+            updateTransactionPayee={updateTransactionPayee}
+            updateStoredTransaction={updateStoredTransaction}
+            isNameInputEnabled={isNameInputEnabled}
+            transaction={item}
+            handlePayeeNameChange={props.handlePayeeNameChange}
+            updateTransactionPayee={updateTransactionPayee}
+            />
         </View>
 
         {/* <ItemDate item={item} /> */}

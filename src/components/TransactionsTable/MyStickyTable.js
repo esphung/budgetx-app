@@ -128,6 +128,8 @@ const MyStickyTable = (props) => {
     // isCurrentTransaction,
     isUpdatingTransaction,
     updateStoredTransaction,
+    currentPayeeName,
+    updateTransactionPayee
   } = props;
 
   const [tableData, setTableData] = useState(null);
@@ -252,6 +254,9 @@ const MyStickyTable = (props) => {
             isNameInputEnabled={props.isNameInputEnabled}
             // handlePayeeNameChange={props.handlePayeeNameChange}
             updateStoredTransaction={updateStoredTransaction}
+            updateTransactionPayee={updateTransactionPayee}
+            currentPayeeName={currentPayeeName}
+            updateTransactionPayee={updateTransactionPayee}
           />
         </View>
       </SwipeRow>

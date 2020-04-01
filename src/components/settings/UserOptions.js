@@ -183,6 +183,20 @@ function UserOptions(props) {
     /* Sign In */
     else if (title === 'Sign In') {
       isDisabled = false
+      if (isUserLoggedIn) {
+        title = null;
+        textColor = colors.offWhite
+        backgroundColor = 'transparent';
+        // isDisabled = true
+        caret = null;
+        rowHeight = 0;
+        // caret = null;
+        // opacity = 0.5
+      }
+    }
+      /* Cross-Device Sync */
+    else if (title === 'Cross-Device Sync') {
+      isDisabled = false
       if (false) {
         title = null;
         textColor = colors.offWhite
@@ -310,6 +324,7 @@ function UserOptions(props) {
       // }]}
       data={[
         { key: 'Sign In' },
+        { key: 'Cross-Device Sync' },
         { key: 'Customize Categories' },
         { key: 'Backup Local Data' },
         // { key: 'Passcode' },

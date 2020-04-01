@@ -1,12 +1,9 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createTransaction = /* GraphQL */ `
-  mutation CreateTransaction(
-    $input: CreateTransactionInput!
-    $condition: ModelTransactionConditionInput
-  ) {
-    createTransaction(input: $input, condition: $condition) {
+export const onCreateTransaction = /* GraphQL */ `
+  subscription OnCreateTransaction($owner: String!) {
+    onCreateTransaction(owner: $owner) {
       id
       date
       amount
@@ -43,12 +40,9 @@ export const createTransaction = /* GraphQL */ `
     }
   }
 `;
-export const updateTransaction = /* GraphQL */ `
-  mutation UpdateTransaction(
-    $input: UpdateTransactionInput!
-    $condition: ModelTransactionConditionInput
-  ) {
-    updateTransaction(input: $input, condition: $condition) {
+export const onUpdateTransaction = /* GraphQL */ `
+  subscription OnUpdateTransaction($owner: String!) {
+    onUpdateTransaction(owner: $owner) {
       id
       date
       amount
@@ -85,12 +79,9 @@ export const updateTransaction = /* GraphQL */ `
     }
   }
 `;
-export const deleteTransaction = /* GraphQL */ `
-  mutation DeleteTransaction(
-    $input: DeleteTransactionInput!
-    $condition: ModelTransactionConditionInput
-  ) {
-    deleteTransaction(input: $input, condition: $condition) {
+export const onDeleteTransaction = /* GraphQL */ `
+  subscription OnDeleteTransaction($owner: String!) {
+    onDeleteTransaction(owner: $owner) {
       id
       date
       amount
@@ -127,12 +118,9 @@ export const deleteTransaction = /* GraphQL */ `
     }
   }
 `;
-export const createPayee = /* GraphQL */ `
-  mutation CreatePayee(
-    $input: CreatePayeeInput!
-    $condition: ModelPayeeConditionInput
-  ) {
-    createPayee(input: $input, condition: $condition) {
+export const onCreatePayee = /* GraphQL */ `
+  subscription OnCreatePayee($owner: String!) {
+    onCreatePayee(owner: $owner) {
       id
       name
       owner
@@ -163,12 +151,9 @@ export const createPayee = /* GraphQL */ `
     }
   }
 `;
-export const updatePayee = /* GraphQL */ `
-  mutation UpdatePayee(
-    $input: UpdatePayeeInput!
-    $condition: ModelPayeeConditionInput
-  ) {
-    updatePayee(input: $input, condition: $condition) {
+export const onUpdatePayee = /* GraphQL */ `
+  subscription OnUpdatePayee($owner: String!) {
+    onUpdatePayee(owner: $owner) {
       id
       name
       owner
@@ -199,12 +184,9 @@ export const updatePayee = /* GraphQL */ `
     }
   }
 `;
-export const deletePayee = /* GraphQL */ `
-  mutation DeletePayee(
-    $input: DeletePayeeInput!
-    $condition: ModelPayeeConditionInput
-  ) {
-    deletePayee(input: $input, condition: $condition) {
+export const onDeletePayee = /* GraphQL */ `
+  subscription OnDeletePayee($owner: String!) {
+    onDeletePayee(owner: $owner) {
       id
       name
       owner
@@ -235,12 +217,9 @@ export const deletePayee = /* GraphQL */ `
     }
   }
 `;
-export const createCategory = /* GraphQL */ `
-  mutation CreateCategory(
-    $input: CreateCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    createCategory(input: $input, condition: $condition) {
+export const onCreateCategory = /* GraphQL */ `
+  subscription OnCreateCategory($owner: String!) {
+    onCreateCategory(owner: $owner) {
       id
       name
       color
@@ -262,12 +241,9 @@ export const createCategory = /* GraphQL */ `
     }
   }
 `;
-export const updateCategory = /* GraphQL */ `
-  mutation UpdateCategory(
-    $input: UpdateCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    updateCategory(input: $input, condition: $condition) {
+export const onUpdateCategory = /* GraphQL */ `
+  subscription OnUpdateCategory($owner: String!) {
+    onUpdateCategory(owner: $owner) {
       id
       name
       color
@@ -289,12 +265,9 @@ export const updateCategory = /* GraphQL */ `
     }
   }
 `;
-export const deleteCategory = /* GraphQL */ `
-  mutation DeleteCategory(
-    $input: DeleteCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    deleteCategory(input: $input, condition: $condition) {
+export const onDeleteCategory = /* GraphQL */ `
+  subscription OnDeleteCategory($owner: String!) {
+    onDeleteCategory(owner: $owner) {
       id
       name
       color

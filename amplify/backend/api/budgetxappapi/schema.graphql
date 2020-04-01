@@ -1,0 +1,56 @@
+
+type Transaction @model
+	@auth(
+		rules:[
+		    # # Defaults to use the "owner" field.
+		    { allow: owner },
+
+		    # # Authorize the update mutation and both queries. Use `queries: null` to disable auth for queries.
+		    # { allow: owner, ownerField: "editors", operations: [update] }
+  		]) {
+  		id: ID!
+		date: String!
+		amount: Float! # amount: String!
+		owner: String!
+		# payee: String
+		payee: Payee @connection(name: "TransactionPayee")
+		category: Category @connection(name: "TransactionCategory")
+		type: String
+		note: String
+		version: Int
+}
+
+type Payee @model
+	@auth(
+		rules:[
+		    # # Defaults to use the "owner" field.
+		    { allow: owner },
+		    # # Authorize the update mutation and both queries. Use `queries: null` to disable auth for queries.
+		    # { allow: owner, ownerField: "editors", operations: [update] }
+  		])
+	{
+  		id: ID!
+		name: String!
+		owner: String
+		version: Int
+		transaction: Transaction @connection(name: "TransactionPayee")
+}
+
+
+type Category @model
+	@auth(
+		rules:[
+		    # # Defaults to use the "owner" field.
+		    { allow: owner },
+		    # # Authorize the update mutation and both queries. Use `queries: null` to disable auth for queries.
+		    # { allow: owner, ownerField: "editors", operations: [update] }
+  		])
+	{
+  		id: ID!
+		name: String!
+		color: String
+		type: String!
+		owner: String
+		version: Int
+		transactions: [Transaction] @connection(name: "TransactionCategory")
+}

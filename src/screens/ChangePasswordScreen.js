@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { showMessage, hideMessage } from "react-native-flash-message";
 
+import Dialog from 'react-native-dialog';
+
 import {
   AsyncStorage,
   TouchableOpacity,
@@ -33,6 +35,8 @@ import styles from '../../styles';
 
 import getButtonStyle from '../../src/functions/getButtonStyle';
 
+  
+
 
 
 function ChangePasswordScreen(props) {
@@ -45,6 +49,8 @@ function ChangePasswordScreen(props) {
   const [isSubmitBtnEnabled, setIsSubmitBtnEnabled] = useState(false);
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const [shouldShowSignOutDialog, setShouldShowSignOutDialog] = useState(false);
 
   // input refs
   const newPasswordInputRef = useRef(null);
@@ -127,17 +133,18 @@ function ChangePasswordScreen(props) {
   
   // Confirm sign out
   const signOutAlert = async () => {
-    await Alert.alert(
-      // 'Sign Out',
-      'Sign out?',
-      'If you are not signed in\nALL DATA WILL BE LOST',
-      [
-        { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-        // Calling signOut
-        { text: 'OK', onPress: () => signOut() },
-      ],
-      { cancelable: false },
-    );
+    setShouldShowSignOutDialog(true)
+    // await Alert.alert(
+    //   // 'Sign Out',
+    //   'Sign out?  :(',
+    //   'Are you sure?',
+    //   [
+    //     { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
+    //     // Calling signOut
+    //     { text: 'OK', onPress: () => signOut() },
+    //   ],
+    //   { cancelable: false },
+    // );
   };
 
   const toggleShowPasswords = () => {
@@ -152,8 +159,24 @@ function ChangePasswordScreen(props) {
     }
   }, [newPassword, oldPassword]);
 
+  const dialogBox = (
+    <View>
+      <Dialog.Container visible={true}>
+        <Dialog.Title>Account delete</Dialog.Title>
+        <Dialog.Description>
+          Do you want to delete this account? You cannot undo this action.
+        </Dialog.Description>
+        <Dialog.Button label="Cancel" onPress={() => setShouldShowSignOutDialog(false)} />
+        <Dialog.Button label="Sign Out" onPress={signOut} />
+      </Dialog.Container>
+    </View>
+  );
+
   const view = (
     <SafeAreaView style={styles.container}>
+    {
+      shouldShowSignOutDialog && dialogBox
+    }
       <StatusBar />
       <KeyboardAvoidingView
         style={styles.container}

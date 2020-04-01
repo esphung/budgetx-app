@@ -40,10 +40,10 @@ import {
   Platform,
 } from 'react-native';
 
+import NetInfo from '@react-native-community/netinfo'; // online
+
 // import the Analytics category
 import Analytics from '@aws-amplify/analytics';
-
-// import { NetInfo } from 'react-native';
 
 import Auth from '@aws-amplify/auth';
 
@@ -77,7 +77,7 @@ import Transaction from '../models/Transaction';
 
 import Payee from '../models/Payee';
 
-// import Category from '../models/Category';
+import Category from '../models/Category';
 
 // import { calculateBalance, calculateMonthSpent } from './functions';
 
@@ -89,22 +89,49 @@ import searchByID from '../functions/searchByID';
 
 import uuidv4 from '../functions/uuidv4';
 
+import defaultCategories from '../data/categories';
+
+/* my custom queries */
+import {
+  updateTransaction,
+  removeTransaction,
+  removePayee,
+  removeCategory,
+  savePayee,
+  saveCategory,
+  saveTransaction,
+  fetchStoredTransactions,
+  fetchStoredCategories,
+  getTransactionByID,
+} from '../storage/my_queries';
+
+const getExistingPayee = async (payee) => {
+  const storage = await loadSettingsStorage(global.storageKey);
+  if (storage.payees !== undefined) {
+    payee = searchByID(payee.id, storage.payees)
+  }
+  // console.log('payee: ', payee);
+  return await payee;
+};
+
+// console.log('getExistingPayee({id: "12"}): ', getExistingPayee({id: "12"}));
+
 const initialState = {
   currentTransactions: [],
   categories: [],
   currentDate: new Date(),
   currentAmount: 0.00,
-  currentCategory: null,
+  currentCategory: '',
   slideViewBounceValue: new Animated.Value(300),
   currentBalance: 0.00,
   currentSpent: 0.00,
-  currentPayee: null,
-  currentOwner: null,
+  currentPayeeName: '',
+  currentOwner: '',
   currentVersion: 0,
-  currentTransaction: null,
+  currentTransaction: '',
   currentNote: null,
   isReady: false,
-  currentType: null,
+  currentType: '',
   isSlideViewHidden: true,
   isCurrentTransaction: false,
 };
@@ -115,6 +142,72 @@ const incrementVersion = (transaction) => {
   // alert(`transaction.version: ${transaction.version}`);s
 };
 
+function isUpperCase(str) {
+    return str === str.toUpperCase();
+}
+
+const retrieveAuthenticatedStorageKey = async () => {
+  let key;
+  await Auth.currentAuthenticatedUser()
+    .then((cognito) => {
+      key = cognito.attributes.sub;
+    })
+    .catch(async (err) => {
+      console.log('err: ', err);
+      return
+    });
+  return key
+}
+
+const getOnlineUserKey = async () => {
+  let key;
+  // get authenticated user storage key if online
+  await NetInfo.isConnected.fetch().then(async (isConnected) => {
+    isConnected ?
+    key = await retrieveAuthenticatedStorageKey() : showMessage('Not Online');
+  })
+  .catch((err) => { console.log('err: ', err) });
+
+  // NetInfo.isConnected.addEventListener(
+  //   'connectionChange',
+  //   handleFirstConnectivityChange
+  // );
+  return key;
+}
+
+const updateOnlineTransaction = async (transaction) => {
+  const updated = {
+    id: transaction.id,
+    date: transaction.date,
+    amount: transaction.amount,
+    owner: transaction.owner,
+    category: {
+      id: transaction.category.id,
+      name: transaction.category.name,
+      color: transaction.category.color,
+      owner: transaction.category.owner,
+    },
+    payee: {
+      id: transaction.payee.id,
+      name: transaction.payee.name,
+      owner: transaction.payee.owner,
+    },
+    version: transaction.version,
+    note: transaction.note,
+    type: transaction.type,
+  }
+  updateTransaction(updated);
+};
+
+const isUserCurrentlyOnline = async () => {
+  let bool = false;
+  await NetInfo.fetch().then(state => {
+    bool = state.isConnected;
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+  });
+  return bool;
+};
 
 export default function Home(props) {
   // state hooks
@@ -130,6 +223,14 @@ export default function Home(props) {
 
   const [currentCategory, setCurrentCategory] = useState(initialState.currentCategory);
 
+  const [currentCategoryID, setCurrentCategoryID] = useState('');
+  const [currentCategoryName, setCurrentCategoryName] = useState('');
+  const [currentCategoryColor, setCurrentCategoryColor] = useState('');
+  const [currentCategoryType, setCurrentCategoryType] = useState('');
+  const [currentCategoryOwner, setCurrentCategoryOwner] = useState('');
+  const [currentCategoryVersion, setCurrentCategoryVersion] = useState(0);
+  
+
   const [currentType, setCurrentType] = useState(initialState.currentType);
 
   const [currentAmount, setCurrentAmount] = useState(initialState.currentAmount);
@@ -140,7 +241,11 @@ export default function Home(props) {
 
   const [currentVersion, setCurrentVersion] = useState(initialState.currentVersion);
 
-  const [currentPayee, setCurrentPayee] = useState(initialState.currentPayee);
+  const [currentPayee, setCurrentPayee] = useState('')
+
+  const [currentPayeeID, setCurrentPayeeID] = useState('')
+
+  const [currentPayeeName, setCurrentPayeeName] = useState('');
 
   const [currentNote, setCurrentNote] = useState(initialState.currentNote);
 
@@ -176,6 +281,22 @@ export default function Home(props) {
 
   // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
 
+  const clearInputs = () => {
+    setCurrentPayee('')
+    setCurrentPayeeID('');
+    setCurrentPayeeName('');
+
+    setCurrentNote('');
+    setCurrentAmount(0);
+
+    setCurrentCategory('');
+    setCurrentCategoryID('');
+    setCurrentCategoryName('');
+    setCurrentCategoryColor('');
+
+    setCurrentType('');
+  };
+
   const showSlideView = useCallback(
     () => {
       // console.log('hello');
@@ -208,19 +329,43 @@ export default function Home(props) {
     [slideViewBounceValue],
   );
 
+  const fetchData = async () => {
+    return await fetchStoredTransactions();
+    // // setCurrentTransactions(transactions);
+
+    // const categories = await fetchStoredCategories();
+    // // setCurrentCategories(categories);
+  }
+
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
+    // setIsUpdatingTransaction(true); // to show activity indicator
+
     // console.log('updatedTransaction: ', updatedTransaction);
     saveUndoHistory(); // so user can undo changes later
 
-    setIsUpdatingTransaction(true); // to show activity indicator
-
     incrementVersion(updatedTransaction); // update transaction version
+
+    // console.log('updatedTransaction: ', updatedTransaction);
+
+    /* if online and logged in, update online transaction */
+    if (isUserLoggedIn) {
+      let isConnected = await isUserCurrentlyOnline();
+
+      if (!isConnected) return // console.log('isConnected: ', isConnected);
+
+      updateOnlineTransaction(updatedTransaction);
+
+      let obj = await getTransactionOnlineByID(updatedTransaction.id); // get online transaction
+
+      console.log('updatedTransaction: ', updatedTransaction);
+      console.log('obj: ', obj);
+    }
 
     const pos = transactions.indexOf(updatedTransaction); // get index transaction
 
     transactions[pos] =  updatedTransaction;
 
-    // save current trransaction list to
+    // save current transaction list to
     try {
       const storageObj = await loadSettingsStorage(global.storageKey); // get stored transactions
 
@@ -232,8 +377,6 @@ export default function Home(props) {
     } catch (err) {
       console.log('updateStoredTransaction err: ', err);
     }
-
-    setIsUpdatingTransaction(false);
 
     showMessage({
       message: 'Updated transaction',
@@ -248,87 +391,53 @@ export default function Home(props) {
       textStyle: styles.textStyle,
 
       icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-
-      // onPress: () => {
-      //   // let user undo action
-      //   loadUndoHistory();
-
-      //   setCurrentTransaction(null);
-      // },
       
     });
 
     Analytics.record({ name: 'Updated a stored transaction' });
+
+    // setIsUpdatingTransaction(false);
   };
-
-  // const handlePayeeNameChange = async (name, transaction) => {
-  //   try {
-  //     const storageObj = await loadSettingsStorage(global.storageKey);
-
-  //     const list = storageObj.transactions;
-
-  //     const found = searchByID(transaction.id, list);
-  //     if (found) {
-  //       found.payee = new Payee(
-  //         uuidv4(),
-  //         name
-  //       );
-
-  //       updateStoredTransaction(list, found);
-  //     }
-  //   } catch (e) {
-  //     // statements
-  //     console.log('e: ', e);
-  //   }
-  // };
-
 
   const updateTransactionCategory = async (category) => {
+    if (category !== currentTransaction.category) return
+      else {
+        setIsUpdatingTransaction(true)
+      }
     // load stored user transactions
     const storageObj = await loadSettingsStorage(global.storageKey);
-    // console.log('category.type: ', category.type);
+
+    let list = storageObj.transactions;
+ 
     try {
-      const found = searchByID(currentTransaction.id, storageObj.transactions);
+      const found = searchByID(currentTransaction.id, list);
 
-      if (category.id === found.category.id) return;
+      if (category.id === found.category.id) {
+        setIsUpdatingTransaction(false)
+        return
+      }
+      else {
+        found.category = category;
+        found.type = category.type;
 
-      found.category = category;
-
-      found.type = category.type;
-
-      // console.log('found.type: ', found.type);
-
-      // found.version = found.version + 1;
-
-      // console.log('found.version: ', found.version);
-
-      // const pos = storageObj.transactions.indexOf(found);
-
-      if (found.type.toLowerCase() === 'income' && found.amount < 0) {
-        found.amount = found.amount * -1;
-      } else if (found.type.toLowerCase() === 'expense' && found.amount >= 0) {
-        found.amount = found.amount * -1;
+        // flip dollar amount to negative or positive
+        if (found.type.toLowerCase() === 'income' && found.amount < 0) {
+          found.amount = found.amount * -1;
+        } else if (found.type.toLowerCase() === 'expense' && found.amount >= 0) {
+          found.amount = found.amount * -1;
+        }
       }
 
-      // console.log(storageObj.transactions[pos]);
-
-      // saveSettingsStorage(global.storageKey, storageObj);
-
-      updateStoredTransaction(storageObj.transactions, found);
-
-      setCurrentTransaction(null);
-
       setCurrentTransaction(found);
+
+      updateStoredTransaction(list, found);
+
+      Analytics.record({ name: 'Successfully updated a transaction category' });
     } catch (e) {
-      // statements
-      // Alert.alert('Could not update transaction');
-      // console.log(e);
-      // console.log('e: ', e);
+      console.log('Could not update transaction category');
     }
-
-    Analytics.record({ name: 'Updated a transaction category' });
+    setIsUpdatingTransaction(false);
   };
-
 
   const updateTransactionNote = async (string) => {
     // load stored user transactions
@@ -337,77 +446,25 @@ export default function Home(props) {
       // console.log(transaction);
       const list = storageObj.transactions;
 
-      const found = searchByID(currentTransaction.id, list);
+      const found = await searchByID(currentTransaction.id, list);
 
       found.note = string;
 
+      setCurrentTransaction(found)
+
       updateStoredTransaction(list, found);
 
-      hideSlideView();
-
-      // showMessage('Updated stored transaction');
-
-      // if (found) {
-      //   // UPDATE TRANSACTION
-      //   found.note = string;
-
-      //   // found.version = found.version + 1;
-
-      //   // console.log('found.version: ', found.version);
-
-      //   // console.log('new note:', found.note);
-
-      //   // const pos = list.indexOf(found);
-
-      //   // list[pos] = found;
-
-      //   // storageObj.transactions = list;
-
-      //   updateStoredTransaction(list, found);
-
-      //   // saveSettingsStorage(global.storageKey, storageObj);
-
-      //   // setCurrentTransactions(list);
-
-      //   // // setCurrentPayee(null);
-      //   // // setCurrentNote(null);
-      //   // // setCurrentAmount(initialState.currentAmount);
-      //   // // setCurrentCategory(initialState.currentCategory);
-      //   // setCurrentTransaction(list[pos]);
-
-
-      //   showMessage('Updated stored transaction');
-      // }
     } catch (e) {
-      // statements
-      // showMessage('Could not load settings');
       console.log('e: ', e);
     }
-
     Analytics.record({ name: 'Updated a transaction note' });
   };
-
-  // const updateStorageEmail = async (email) => {
-  //   const storage = await loadSettingsStorage(global.storageKey);
-
-  //   storage.user.email = email;
-
-  //   saveSettingsStorage(global.storageKey, storage);
-
-  //   // showMessage(`Updated stored email: ${storage.user.email}`);
-  // };
-
   async function retrieveUserStoredSettings() {
-    Auth.currentAuthenticatedUser()
+    await Auth.currentAuthenticatedUser()
       .then(async (cognito) => {
         global.storageKey = cognito.attributes.sub;
 
         const storage = await loadSettingsStorage(global.storageKey);
-
-        // update storage settings from online settings
-        // user email
-        // updateStorageEmail(cognito.attributes.email);
-        // console.log('storage.user.email: ', storage.user.email);
 
         setCurrentOwner(storage.user.id);
 
@@ -452,8 +509,8 @@ export default function Home(props) {
     retrieveUserStoredSettings();
   };
 
-  async function storeNewTransaction(transaction) {
-    setIsStoringNewTransaction(true);
+  const storeNewTransaction = async (transaction) => {
+    // setIsStoringNewTransaction(true);
 
     // check for maximum unauthorized user transactions
     if (!isUserLoggedIn && currentTransactions.length >= 5) {
@@ -480,163 +537,236 @@ export default function Home(props) {
       });
       return;
     }
+
+    // user is authorized
+
+    // load local transactions
     const userObject = await loadSettingsStorage(global.storageKey); // load user object
 
-    userObject.transactions.unshift(transaction);
-    // userObject.transactions.push(transaction);
+    // save to online storage, if online
+
+    let list = [...userObject.transactions, transaction]
+
+    // add to local storage
+    userObject.transactions = list;
 
     saveSettingsStorage(global.storageKey, userObject);
 
     setCurrentTransactions(userObject.transactions);
 
-    setCurrentPayee(null);
-    setCurrentNote(null);
-    setCurrentAmount(initialState.currentAmount);
-    setCurrentCategory(initialState.currentCategory);
-    // setCurrentTransaction(initialState.currentTransaction);
-    setCurrentType(initialState.currentType);
+    // clearInputs();
 
     // setCurrentTransaction(transaction); // ???
 
     saveUndoHistory();
 
-    setIsStoringNewTransaction(false);
+    // setIsStoringNewTransaction(false);
 
-    Analytics.record({ name: 'Stored a new transaction' });
-  }
+    Analytics.record({ name: 'Stored a transaction' });
+  };
   async function clearState() {
     // setIsReady(false);
 
-    setIsStoringNewTransaction(false);
+    // setIsStoringNewTransaction(false);
 
-    setIsUpdatingTransaction(false);
+    // setIsUpdatingTransaction(false); ???
 
     // add/remove transactions
     // setCurrentTransactions([]);
     setCurrentBalance(0.00);
     setCurrentSpent(0.00);
+
+    setCurrentTransaction(initialState.currentTransaction);
+
     setCurrentPayee(null);
+    setCurrentPayeeID('');
+    setCurrentPayeeName('');
+
     setCurrentNote(null);
-    setCurrentOwner(initialState.currentOwner);
+    setCurrentType(initialState.currentType);
+    // setCurrentOwner(initialState.currentOwner);
     setCurrentVersion(initialState.currentVersion);
     setCurrentDate(initialState.currentDate);
     setCurrentAmount(initialState.currentAmount);
-    setCurrentCategory(initialState.currentCategory);
-    setCurrentTransaction(initialState.currentTransaction);
-    setCurrentType(initialState.currentType);
+
+    setCurrentCategory(null);
+    setCurrentCategoryID('');
+    setCurrentCategoryName('');
+    setCurrentCategoryColor('');
+    setCurrentCategoryType('');
+    setCurrentCategoryOwner('');
+    setCurrentCategoryVersion('');
+
+    
     setIsNameInputEnabled(true);
 
     setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
     setIsSlideViewHidden(initialState.isSlideViewHidden);
-    // setIsCurrentTransaction(initialState.isCurrentTransaction);
-
-    retrieveUserStoredSettings();
-
-    setIsUserLoggedIn(false);
   }
   async function removeStoredTransaction(transaction) {
     setIsRemovingStoredTransaction(true);
+
     const userObject = await loadSettingsStorage(global.storageKey);
 
     const list = userObject.transactions;
 
     const found = searchByID(transaction.id, list);
 
-    // console.log(found);
-
     if (found) {
       const pos = list.indexOf(found);
-      list.splice(pos, 1);
 
-      setCurrentTransactions(list);
+      list.splice(pos, 1);
 
       userObject.transactions = list;
 
       saveSettingsStorage(global.storageKey, userObject);
 
-      // hide slide view
-      // hideSlideView();
+      /* rremove transaction online in db */
+      if (isUserLoggedIn && isUserCurrentlyOnline()) {
+        await removeTransaction(transaction)
+
+        removePayee(transaction.payee)
+
+        Analytics.record({ name: 'Removed an online transaction' });
+      }
       setCurrentTransaction(null);
     }
 
     setIsRemovingStoredTransaction(false);
 
-    Analytics.record({ name: 'Removed a stored transaction' });
+    retrieveUserStoredSettings();
+
+    Analytics.record({ name: 'Removed a local transaction' });
   }
-
-  function createNewTransaction() {
-    // console.log('\nCreating New Transaction');
-    // Transaction(date, amount, owner, payee, category, type, note, version)
-    // convert amount to money format
-    let amount = (currentAmount / 100);
-
-    if (currentType === 'EXPENSE') {
-      amount = (currentType === 'INCOME') ? amount : amount * -1; // INCOME/EXPENSE
-      // console.log('amount: ', amount);
-    } else {
-      amount = ((Number(currentAmount).toFixed(2)) / (100));
-    }
-
-    /* Create new transaction model from inputs */
-    const transaction = new Transaction(
-      uuidv4(), // id
-      currentDate, // date
-      amount, // amount
-      currentOwner, // owner
-      currentPayee, // payee
-      currentCategory, // category
-      currentType, // type
-      currentNote, // note
-      currentVersion, // version
-    );
-
-    // console.log('transaction: ', transaction);
-    return transaction;
-  }
-
-  // value changes
   function handleChange(value) {
     // check for limit of 11 digits
     if (String(value).length <= global.amountInputMaxLength) {
       setCurrentAmount(value);
     }
   }
-
   function numberBtnPressed(number) {
     // truncate single AND leading zeros; concatenate old + new values
     const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
     handleChange(newValue);
-    // _playClickSound();
-    // setTimeout(_playClickSound, 30);
   }
-
-  function addBtnPressed() {
-    // // console.log('global.storageKey: ', global.storageKey);
-    // console.log('Add Transaction Btn Pressed =>');
-
-    // // Check for input values
-    // console.log('currentDate',  currentDate);
-    // console.log('currentAmount: ', currentAmount);
-    // console.log('currentOwner: ', currentOwner);
-    // console.log('currentPayee', currentPayee);
-    // console.log('currentCategory: ', currentCategory);
-    // console.log('currentType: ', currentType);
-    // console.log('currentNote: ', currentNote);
-    // console.log('currentVersion: ', currentVersion);
-    // // console.log('\n');
-
-    // // console.log('uuidv4(): ', uuidv4());
+  const isUserInputValid = () => {
+    let bool = true;
+    let invalid = '';
+    let message = 'Invalid Input'
 
     if (!currentDate || !currentAmount || !currentOwner || !currentCategory || !currentType) {
-      console.log('\nError: Missing New Transaction Input');
-      return;
-    } else {
-      // create new transaction from input
-      const transaction = createNewTransaction();
-
-      // store new transaction locally
-      storeNewTransaction(transaction);
+      // all inputs are filled
+      bool = false
     }
+    if (!currentDate) {
+      invalid = 'Date'
+    }
+    else if (!currentAmount) {
+      invalid = 'Amount'
+    }
+    else if (!currentOwner) {
+      invalid = 'Owner'
+    }
+    else if (!currentCategory) {
+      invalid = 'Category'
+    }
+
+    let a = 'a';
+    if (invalid === 'Amount') a = 'an'
+
+    if (invalid) showMessage({ message: message, description: `Please Enter ${a} valid ${invalid.toLowerCase()}`, duration: 1350 }) // console.log('invalid: ', invalid);
+    return bool;
+  };
+  const getTransactionOnlineByID = async (id) => {
+    /* Process retrieved server transaction */
+    let stored = await getTransactionByID(id); // retrieve newly created from online trans by id
+
+    const date = stored.date;
+    // console.log('date: ', date);
+
+    const amount = stored.amount
+    // console.log('amount: ', amount);
+
+    const owner = stored.owner;
+    // console.log('owner: ', owner);
+
+    let payee = (stored.payee) ? stored.payee : new Payee(uuidv4(), '', stored.owner, 0);
+    console.log('payee: ', payee);
+
+    let category = (stored.category) ? stored.category : new Category(uuidv4(), 'None', '#fff', owner, type, 0);
+    console.log('category: ', category);
+
+    const type = stored.type;
+
+    const note = stored.note;
+
+    const version = stored.version;
+
+    let obj = new Transaction(
+      id,
+      date,
+      amount,
+      owner,
+      payee,
+      category,
+      type,
+      note,
+      version,
+    );
+
+    return obj;
+  }
+  const addBtnPressed = async () => {
+    // make sure user inputs are not invalid
+    if (!isUserInputValid()) return
+    
+    // /* Create New Category */
+    let category = new Category(
+      currentCategoryID, // id
+      currentCategoryName, // name
+      currentCategoryColor, // color
+      currentCategoryType, // type
+      currentCategoryOwner, // owner
+      currentCategoryVersion, // version
+    );
+
+    saveCategory(category);
+
+    // /* Create New Payee */
+    const payee = new Payee(uuidv4(), '', currentOwner, 0);
+    // // console.log('payee: ', payee);
+
+    savePayee(payee);
+
+    const transaction = new Transaction(
+      uuidv4(), // id
+      currentDate, // date
+      currentAmount/100, // amount
+      currentOwner, // owner
+      payee, // currentPayee, // payee
+      category, // category
+      currentType, // type
+      currentNote, // note
+      currentVersion, // version
+    );
+
+    /* Check internet connection */
+    /* Check authorization */
+    if (!isUserLoggedIn || !isUserCurrentlyOnline()) {
+      storeNewTransaction(transaction); // store new transaction locally
+      return
+    }
+    await saveTransaction(transaction) // store new transaction online
+
+    console.log('transaction: ', transaction);
+
+    let onlineTransaction = await getTransactionOnlineByID(transaction.id);
+
+    // console.log('onlineTransaction: ', onlineTransaction);
+
+    storeNewTransaction(onlineTransaction); // store new transaction locally
+
+    // clearInputs();
   }
 
   const saveUndoHistory = async () => {
@@ -659,15 +789,6 @@ export default function Home(props) {
       console.log('e:', e);
       // console.log(e);
     }
-
-    // alert('saved history');
-
-    // if (success) {
-    //   showMessage({
-    //     message: 'Undo history saved!',
-    //     duration: 3000,
-    //   });
-    // }
   };
 
   const loadUndoHistory = async () => {
@@ -696,6 +817,7 @@ export default function Home(props) {
     const newStr = strValue.substring(0, strValue.length - 1);
     handleChange(newStr);
   }
+
   // current transaction updates
   useEffect(() => {
     if (currentTransactions) {
@@ -710,10 +832,78 @@ export default function Home(props) {
     }
   }, [currentTransactions]);
 
+  const updateStoredCategoryProperties = async (category) => {
+    // console.log('updating category: ', category);
+    const storage = await loadSettingsStorage(global.storageKey);
+    // console.log('storage.categories: ', storage.categories);
+
+    // console.log('category: ', category);
+
+    let list = storage.categories; // stored categories
+
+    let found = searchByID(category.id, list); // find previous item
+
+    if (found) {
+      // console.log('list.indexOf(found): ', list.indexOf(found));
+      const pos = list.indexOf(found);
+      // console.log('list[pos]: ', list[pos]);
+
+      list[pos] = category; // replace old with new
+      // console.log('list[pos]: ', list[pos]);
+
+      storage.categories = list; // .sort();
+
+      // save it locally
+      saveSettingsStorage(global.storageKey, storage);
+
+      // check if authenticated
+      // global.storageKey = await retrieveAuthenticatedStorageKey();
+      // let key = await getOnlineUserKey();
+      // // console.log('key: ', key);
+      // if (key) {
+      //   saveCategory(category); 
+      // }
+    }
+
+    // storage.categories = list.sort();
+
+    // console.log('storage.categories: ', storage.categories);
+    // console.log('category: ', category);
+  }
+
   useEffect(() => {
     if (currentCategory) {
-      // console.log('currentCategory: ', currentCategory);
-      setCurrentType(currentCategory.type.toUpperCase());
+      // check for version and owner properties
+      if (!currentCategory.hasOwnProperty('owner') || !currentCategory.hasOwnProperty('version')) {
+        let category = new Category(currentCategory.id, currentCategory.name, currentCategory.color, currentCategory.type, currentOwner, 0)
+        // console.log('category props updated in side effect: ', category);
+        updateStoredCategoryProperties(category); // re-store category in local db
+      }
+      // check if category type is uppercase
+      if (!isUpperCase(currentCategory.type)) {
+        let category = new Category(currentCategory.id, currentCategory.name, currentCategory.color, currentCategory.type.toUpperCase(), currentOwner, 0)
+        updateStoredCategoryProperties(category); // re-store category in local db
+        // console.log('category.type: ', category.type);
+      }
+
+      setCurrentCategoryID(currentCategory.id)
+      setCurrentCategoryName(currentCategory.name)
+      setCurrentCategoryColor(currentCategory.color)
+      setCurrentCategoryType(currentCategory.type)
+
+      setCurrentCategoryOwner(currentOwner);
+      setCurrentCategoryVersion(currentVersion);
+
+      setCurrentType(currentCategory.type);
+    } else {
+      setCurrentCategoryID('')
+      setCurrentCategoryName('')
+      setCurrentCategoryColor('')
+      setCurrentCategoryType('')
+      setCurrentCategoryOwner('');
+      setCurrentCategoryVersion('');
+
+      setCurrentType('');
     }
   }, [currentCategory]);
 
@@ -729,16 +919,12 @@ export default function Home(props) {
       setShouldShowAmountInput(true);
       setShouldShowKeypad(true);
     }
-
     // Control Name Input Editable
     if (currentTransaction && !isSlideViewHidden) {
       setIsNameInputEnabled(false);
     } else {
       setIsNameInputEnabled(true);
     }
-    // return () => {
-    //   // effect
-    // };
   }, [isSlideViewHidden]);
 
   // useEffect(() => {
@@ -784,10 +970,10 @@ export default function Home(props) {
       {
         // message: 'Removed a stored transaction',
         // description: 'Press here to undo',
-        message: 'Deleted transaction: Undo',
-        type: 'warning',
+        message: 'Deleted transaction',
+        // type: 'warning',
         // position: 'top',
-        icon: { icon: 'auto', position: 'right' },
+        // icon: { icon: 'auto', position: 'right' },
 
         // backgroundColor: colors.dark, // "purple", // background color
 
@@ -795,7 +981,9 @@ export default function Home(props) {
 
         onPress: () => {
           // let user undo action
-          loadUndoHistory();
+          if (!isUserLoggedIn) {
+            loadUndoHistory()
+          }
         },
 
         duration: 2500,
@@ -854,11 +1042,10 @@ export default function Home(props) {
 
   const deleteBtnPressed = (transaction) => {
     removeStoredTransaction(transaction);
-    // clearState();
+    clearState();
   };
 
   const categoryBtnPressed = (category) => {
-    // console.log('category: ', category);
     // toggle current category
     if (currentCategory === category) {
       setCurrentCategory(null); // set off
@@ -893,6 +1080,49 @@ export default function Home(props) {
     showNewTransactionSlide(transaction);
   };
 
+  const updateTransactionPayee = async (transaction, input) => {
+    const storage = await loadSettingsStorage(global.storageKey);
+    // console.log('storage.payees: ', storage.payees);
+
+    // first time storing a any payee ever
+    if (!storage.payees) {
+      storage.payees = [];
+      // console.log('storage.payees: ', storage.payees);
+      await saveSettingsStorage(global.storageKey, storage)
+    }
+
+    let list = storage.payees; // previous saved payee
+
+    const found = list.find(element => element.name === input); // does payee exist
+
+    let payee = new Payee(uuidv4(), input, transaction.owner, 0); // brand new payee
+    // console.log('found: ', found);
+
+    transaction.payee = payee
+
+    if (!found) {
+      //  brand new payee
+      // payee = new Payee(uuidv4(), input, transaction.owner, 0); // brand new payee
+      transaction.payee = payee;
+
+      // list.push(transaction.payee);
+
+      list = [...list,transaction.payee]
+    } else {
+      found.name = input
+
+      const pos = list.indexOf(found); // get index transaction
+
+      list[pos] = payee
+    }
+
+    storage.payees = list;
+
+    saveSettingsStorage(global.storageKey, storage); // save local payees
+
+    updateStoredTransaction(currentTransactions, transaction);
+  };
+
   let stickyTable = (
     <MyStickyTable
       isUpdatingTransaction={isUpdatingTransaction}
@@ -910,11 +1140,16 @@ export default function Home(props) {
 
       swipeEditBtnPressed={swipeEditBtnPressed}
 
+      // isNameInputEnabled={isNameInputEnabled}
       isNameInputEnabled={isNameInputEnabled}
 
-      // handlePayeeNameChange={handlePayeeNameChange}
+      currentPayeeName={currentPayeeName}
+
+      updateTransactionPayee={updateTransactionPayee}
 
       updateStoredTransaction={(item) => updateStoredTransaction(currentTransactions, item)}
+
+
     />
   );
   let scrollingPills = (
@@ -963,13 +1198,13 @@ export default function Home(props) {
 
     // setCurrentOwner(storage.user.id);
 
-    setCategories([]);
+    // setCategories([]);
 
-    setCurrentTransactions([]);
+    // setCurrentTransactions([]);
 
     setCurrentTransaction(null);
 
-    clearState();
+    // clearState();
 
     retrieveUserStoredSettings();
   }
@@ -998,6 +1233,17 @@ export default function Home(props) {
 
 
   );
+
+  // useEffect(() => {
+  //   if (currentPayee) {
+  //     setCurrentPayeeID(currentPayee.id);
+  //     setCurrentPayeeName(currentPayee.name);
+  //   } else {
+  //     setCurrentPayeeID('');
+  //     setCurrentPayeeName('');
+  //   }
+
+  // }, [currentPayee])
   const view = (
     <SafeAreaView
       style={
@@ -1018,10 +1264,10 @@ export default function Home(props) {
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         // onWillFocus={clearState} // {(payload) => clearState()}
-        onWillFocus={clearState}
+        onWillFocus={retrieveUserStoredSettings}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
-        onWillBlur={clearState} // console.log('will blur',payload)}
+        // onWillBlur={clearState} // console.log('will blur',payload)}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
       {/* Balance View */}
@@ -1101,10 +1347,6 @@ Home.navigationOptions = (props) => {
   const boldMessage = 'Get device cross-sync'; // `${global.appName} ${global.appVersion} (Basic)`;
   let normalMessage = `${global.appName} ${global.appVersion}`;
 
-  // const getNormalMessage = () => {
-  //   Home.getNormalMessage();
-  // };
-
   // const normalMessage = 'Enter your email';
   async function onUsernameSubmit(string) {
     // console.log('string: ', string);
@@ -1114,13 +1356,12 @@ Home.navigationOptions = (props) => {
     if (storageObj) {
       // overwrite current user settings
       saveSettingsStorage(global.storageKey, storageObj);
+
       global.storageKey = string;
 
       // Home.retrieveUserStoredSettings();
       Home.reloadTransactions();
     }
-
-    // logCurrentStorage();
   }
   // get user name and email from passed props
   const header = {

@@ -374,6 +374,8 @@ function SignInScreen(props) {
 
           setIsConfirmVisible(true);
 
+          
+
                     // create an event handler
           Analytics.record({
             name: "Sign in attempt failed!",
