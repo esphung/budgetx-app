@@ -22,58 +22,102 @@ import defaultCategories from '../data/categories';
 
 import uuidv4 from '../functions/uuidv4';
 
-// /* my custom queries */
-// import {
-//   updateTransaction,
-//   removeTransaction,
-//   removePayee,
-//   removeCategory,
-//   savePayee,
-//   saveCategory,
-//   saveTransaction,
-//   fetchStoredTransactions,
-//   fetchStoredCategories
-// } from './my_queries';
+/* my custom queries */
+import {
+  updateTransaction,
+  removeTransaction,
+  removePayee,
+  removeCategory,
+  savePayee,
+  saveCategory,
+  saveTransaction,
+  fetchStoredTransactions,
+  fetchStoredCategories,
+  getTransactionByID
+} from './my_queries';
 
-// function handleFirstConnectivityChange(isConnected) {
-//   // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-//   NetInfo.isConnected.removeEventListener(
-//     'connectionChange',
-//     handleFirstConnectivityChange
-//   );
-// }
+import searchByID from '../functions/searchByID';
 
+function handleFirstConnectivityChange(isConnected) {
+  // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+  NetInfo.isConnected.removeEventListener(
+    'connectionChange',
+    handleFirstConnectivityChange
+  );
+}
 
-// const retrieveAuthenticatedStorageKey = async () => {
-//   let key
-//   await Auth.currentAuthenticatedUser()
-//     .then((cognito) => {
-//       key = cognito.attributes.sub;
-//     })
-//     .catch(async (err) => {
-//       // showMessage(err);
-//       return
-//     });
+  const getTransactionOnlineByID = async (id) => {
+    /* Process retrieved server transaction */
+    let stored = await getTransactionByID(id); // retrieve newly created from online trans by id
 
-//   return key
+    console.log('stored: ', stored);
 
-// }
+    // const date = stored.date;
+    // // console.log('date: ', date);
 
-// const getOnlineUserKey = async () => {
-//   let key;
-//   // get authenticated user storage key if online
-//   await NetInfo.isConnected.fetch().then(async (isConnected) => {
-//     isConnected ?
-//     key = await retrieveAuthenticatedStorageKey() : showMessage('Not Online');
-//   })
-//   .catch((err) => { console.log('err: ', err) });
+    // const amount = stored.amount
+    // // console.log('amount: ', amount);
 
-//   // NetInfo.isConnected.addEventListener(
-//   //   'connectionChange',
-//   //   handleFirstConnectivityChange
-//   // );
-//   return key;
-// }
+    // const owner = stored.owner;
+    // // console.log('owner: ', owner);
+
+    // let payee = (stored.payee) ? stored.payee : new Payee(uuidv4(), '', stored.owner, 0);
+    // console.log('payee: ', payee);
+
+    // let category = (stored.category) ? stored.category : new Category(uuidv4(), 'None', '#fff', owner, type, 0);
+    // // console.log('category: ', category);
+
+    // const { type, note, version } = stored
+
+    // // const note = stored.note;
+
+    // // const version = stored.version;
+
+    // let obj = new Transaction(
+    //   id,
+    //   date,
+    //   amount,
+    //   owner,
+    //   payee,
+    //   category,
+    //   type,
+    //   note,
+    //   version,
+    // );
+
+    // return obj;
+  };
+
+const retrieveAuthenticatedStorageKey = async () => {
+  let key
+  await Auth.currentAuthenticatedUser()
+    .then((cognito) => {
+      key = cognito.attributes.sub;
+    })
+    .catch(async (err) => {
+      // showMessage(err);
+      return
+    });
+
+  return key
+
+}
+
+const getOnlineUserKey = async () => {
+  let key;
+  // get authenticated user storage key if online
+  await NetInfo.isConnected.fetch().then(async (isConnected) => {
+    isConnected ?
+    key = await retrieveAuthenticatedStorageKey() : showMessage('Not Online');
+  })
+  .catch((err) => { console.log('err: ', err) });
+
+  // NetInfo.isConnected.addEventListener(
+  //   'connectionChange',
+  //   handleFirstConnectivityChange
+  // );
+  return key;
+}
 
 export const saveSettingsStorage = (key, settings) => {
   AsyncStorage.setItem(key, JSON.stringify(settings));
@@ -91,24 +135,165 @@ export const clearSettingsStorage = async (key) => {
 const DEFAULT_SETTINGS = async () => {
   const settings = {
     user: new User(global.storageKey),
-    // image: global.avatar,
     transactions: [],
     categories: defaultCategories,
+    // payees: [], // ???
     version: 1,
   };
   await AsyncStorage.setItem('userToken', String(global.storageKey + '@session' + uuidv4()));
   return settings;
 };
 
-// const retrieveOnlineTransactions = async () => {
-//   let list = []
-//   let key = await getOnlineUserKey(); // get online logged in user storage key
-//   console.log('key: ', key);
+export const retrieveOnlineTransactions = async () => {
+  let list = []
+  let key = await getOnlineUserKey(); // get online logged in user storage key
+  console.log('key: ', key);
 
-//   return list
-// }
+  list = await fetchStoredTransactions()
 
-export const loadSettingsStorage = async (key) => {  
+  return list
+}
+
+export const retrieveLocalTransactions = async () => {
+  let list = []
+   try {
+     const storageObject = await loadSettingsStorage(global.storageKey);
+    // console.log('storageObject: ', storageObject);
+
+    if (storageObject.transactions) list = storageObject.transactions
+  } catch (error) {
+    console.log('Error loading local transactions:', error);
+  }
+  return list
+}
+
+export const compareListTransactions = async () => {
+  // load online transactions
+  let online_transactions = await retrieveOnlineTransactions();
+  console.log('online_transactions.length: ', online_transactions.length);
+
+
+  // load local transactions
+  let local_transactions = await retrieveLocalTransactions();
+  console.log('local_transactions.length: ', local_transactions.length);
+
+  // for (var i = online_transactions.length - 1; i >= 0; i--) {
+  //   console.log('online_transactions[i]: ', online_transactions[i]);
+  //   console.log('local_transactions[i]: ', local_transactions[i]);
+  // }
+
+  var props = ['id', 'version'];
+
+  var result = local_transactions.filter(function(o1){
+      // filter out (!) items in online_transactions
+      return online_transactions.some(function(o2){
+          return (o1.id === o2.id) && (o1.version !== o2.version);          // assumes unique id
+      });
+  }).map(function(o){
+      // objects with only the required properties
+      // and map to apply this to the filtered array as a whole
+      return props.reduce((newo) => {
+          newo = o;
+          return newo;
+      }, {});
+  });
+
+  // console.log('result: ', result);
+
+  result.forEach(async (element) => {
+    // console.log('element.id: ', element.id);
+    // console.log('element.version: ', element.version);
+
+    // date for the new transaction to store
+    let data = await getTransactionByID(element.id); // retrieve newly created from online trans by id
+
+    // console.log('data: ', data);
+    const transaction = {
+      id: element.id,
+      amount: data.amount,
+      category: {
+        id: data.category.id,
+        name: data.category.name,
+        color: data.category.color,
+        type: data.category.type,
+        owner: element.category.owner,
+        version: data.category.version,
+      },
+      payee: (data.payee && (data.payee.name !== '' && data.payee.name !== null)) ? data.payee : {
+        id: element.payee.id,
+        name: element.payee.name,
+        owner: element.owner,
+        version: element.payee.version
+      },
+      // {
+      //   id: data.payee.id,
+      //   name: data.payee.name + '*',
+      //   owner: data.payee.owner,
+      //   version: data.payee.version,
+      // },
+      owner: data.owner,
+      type: data.type,
+      date: new Date(data.date),
+      note: (data.note && data.note !== 'null') ? data.note : '',
+      version: data.version,
+
+    }
+    // console.log('transaction: ', transaction);
+
+    
+
+
+    /* REPLACE LESSER VERSION OF TRANSACTION LOCALLY */
+    removeStoredTransaction(transaction);
+  });
+
+  return local_transactions;
+
+}
+
+// const storedNewTransaction =  async (transaction) => {
+//     const userObject = await loadSettingsStorage(global.storageKey);
+
+//     let list = userObject.transactions;
+
+//     list = [...list,transaction];
+
+//     userObject.transactions = list;
+
+//     // console.log('list: ', list);
+
+//     saveSettingsStorage(global.storageKey, userObject);
+
+// };
+
+const removeStoredTransaction = async (transaction) => {
+   const userObject = await loadSettingsStorage(global.storageKey);
+
+    const list = userObject.transactions;
+
+    const found = searchByID(transaction.id, list);
+
+    if (found) {
+      const pos = list.indexOf(found);
+
+      list[0] = transaction;
+
+      userObject.transactions = list;
+
+      console.log('userObject.transactions: ', userObject.transactions);
+
+      // saveSettingsStorage(global.storageKey, userObject);
+
+      try {
+        saveSettingsStorage(global.storageKey, userObject);
+      } catch(e) {
+        // statements
+        console.log('e: ', e);
+      }
+    }
+}
+
+export const loadSettingsStorage = async (key) => {
   try {
     const storageObject = await AsyncStorage.getItem(key); // get local storage
 

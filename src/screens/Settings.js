@@ -27,6 +27,15 @@ import NetInfo from "@react-native-community/netinfo";
 
 import Dialog from 'react-native-dialog';
 
+import uuidv4 from '../functions/uuidv4';
+
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+  compareListTransactions,
+  retrieveOnlineTransactions,
+} from '../storage/SettingsStorage';
+
 import {
   // StyleSheet,
   View,
@@ -82,12 +91,6 @@ import {
 //   loadUserObject,
 //   // saveUserObject,
 // } from '../storage/UserStorage';
-
-import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-  clearSettingsStorage,
-} from '../storage/SettingsStorage';
 
 import Auth from '@aws-amplify/auth';
 
@@ -238,7 +241,34 @@ function Settings(props) {
   const [shouldShowCloudSyncDialogBox, setShouldShowCloudSyncDialogBox] = useState(false);
 
 
-  const crossDeviceSync = () => {}
+  const crossDeviceSync = async () => {
+    let list = await retrieveOnlineTransactions();
+
+    try {
+      const storage = await loadSettingsStorage(global.storageKey);
+      storage.transactions = list;
+
+      for (var i = list.length - 1; i >= 0; i--) {
+        if (list[i].payee === null) {
+          list[i].payee = {
+            id: uuidv4(),
+            name: '',
+            owner: '',
+            version: 0,
+          }
+        }
+      }
+
+      console.log('list: ', list);
+
+
+      saveSettingsStorage(storageKey, storage);
+
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
+  }
 
   const crossDeviceSyncDialogBox = (
     <View>

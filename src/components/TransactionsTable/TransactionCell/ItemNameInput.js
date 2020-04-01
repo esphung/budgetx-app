@@ -22,7 +22,7 @@ export default function PizzaTranslator(props) {
     };
   }, [text]);
   return (
-    <View style={{padding: 10,}}>
+    <View style={{  maxWidth: 135, flexGrow: 1, justifyContent: 'center',}}>
       <TextInput
         style={styles.payeeInputText}
         // placeholder="Enter name"
@@ -33,7 +33,7 @@ export default function PizzaTranslator(props) {
 
         keyboardAppearance="dark" // ios
 
-        editable={isNameInputEnabled}
+        // editable={isNameInputEnabled}
 
         returnKeyType="done"
 
@@ -46,6 +46,10 @@ export default function PizzaTranslator(props) {
         autoCapitalize="words" // "words"
 
         maxLength={24}
+
+        clearButtonMode="while-editing"
+
+        clearOnTextFocus
       />
      {/* <Text style={{padding: 10, fontSize: 20}}>
         { text.split(' ').map((word) => word && '🍕').join(' ') }

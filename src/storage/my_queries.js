@@ -270,10 +270,13 @@ export const saveTransaction = async (transaction) => {
   } catch (err) {
     // failed to upload transaction
     console.log('error creating transaction...', err);
+
+    console.log('transaction: ', transaction);
   }
 }
 
 export const updateTransaction = async (updated) => {
+  console.log('updated: ', updated);
   try {
     await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
   } catch (err) {

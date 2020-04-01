@@ -162,9 +162,9 @@ function ChangePasswordScreen(props) {
   const dialogBox = (
     <View>
       <Dialog.Container visible={true}>
-        <Dialog.Title>Account delete</Dialog.Title>
+        <Dialog.Title>Sign Out</Dialog.Title>
         <Dialog.Description>
-          Do you want to delete this account? You cannot undo this action.
+          Do you want to sign out?
         </Dialog.Description>
         <Dialog.Button label="Cancel" onPress={() => setShouldShowSignOutDialog(false)} />
         <Dialog.Button label="Sign Out" onPress={signOut} />
