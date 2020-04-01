@@ -120,7 +120,7 @@ const initialState = {
   currentOwner: '',
   currentVersion: 0,
   currentTransaction: '',
-  currentNote: null,
+  currentNote: 'Add a note',
   isReady: false,
   currentType: '',
   isSlideViewHidden: true,
@@ -164,9 +164,10 @@ const updateOnlineTransaction = async (transaction) => {
       owner: transaction.category.owner,
     },
     payee: {
-      id: transaction.payee.id,
-      name: transaction.payee.name,
-      owner: transaction.payee.owner,
+      // id: transaction.payee.id,
+      // name: transaction.payee.name,
+      // owner: transaction.payee.owner,
+      // version: transaction.payee.version
     },
     version: transaction.version,
     note: transaction.note,
@@ -196,8 +197,8 @@ const isUserCurrentlyOnline = async () => {
         if (list[i].payee === null) {
           list[i].payee = {
             id: uuidv4(),
-            name: '',
-            owner: '',
+            name: 'New',
+            owner: list[i].owner,
             version: 0,
           }
         }
@@ -333,6 +334,7 @@ export default function Home(props) {
     [slideViewBounceValue],
   );
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
+    // console.log('updatedTransaction: ', updatedTransaction);
     setIsUpdatingTransaction(true); // to show activity indicator
 
     // console.log('updatedTransaction: ', updatedTransaction);
@@ -342,19 +344,6 @@ export default function Home(props) {
 
     // console.log('updatedTransaction: ', updatedTransaction);
 
-    /* if online and logged in, update online transaction */
-    if (isUserLoggedIn) {
-      const isConnected = await isUserCurrentlyOnline();
-
-      if (!isConnected) return // console.log('isConnected: ', isConnected);
-
-      updateOnlineTransaction(updatedTransaction);
-
-      // let obj = await getTransactionOnlineByID(updatedTransaction.id); // get online transaction
-
-      // console.log('updatedTransaction: ', updatedTransaction);
-      // console.log('obj: ', obj);
-    }
 
     const pos = transactions.indexOf(updatedTransaction); // get index transaction
 
@@ -368,14 +357,25 @@ export default function Home(props) {
 
       saveSettingsStorage(global.storageKey, storageObj);
 
-      setCurrentTransactions(storageObj.transactions);
+          /* if online and logged in, update online transaction */
+      if (isUserLoggedIn) {
+        const isConnected = await isUserCurrentlyOnline();
+
+        if (!isConnected)
+        {
+          setIsUpdatingTransaction(false);
+          return // console.log('isConnected: ', isConnected);
+        }
+
+        updateOnlineTransaction(updatedTransaction)
+      }
     } catch (err) {
       console.log('updateStoredTransaction err: ', err);
     }
 
     showMessage({
       message: 'Updated transaction',
-      duration: 2550,
+      duration: 550,
       // position: 'top',
 
       // description: "My message description",
@@ -391,14 +391,19 @@ export default function Home(props) {
 
     Analytics.record({ name: 'Updated a stored transaction' });
 
+    setCurrentTransaction(null);
+
     setIsUpdatingTransaction(false);
+
+    retrieveUserStoredSettings()
   };
 
   const updateTransactionCategory = async (category) => {
-    if (category !== currentTransaction.category) return
-      else {
-        setIsUpdatingTransaction(true)
-      }
+    if (category !== currentTransaction.category) {
+      return
+    } else {
+      // setIsUpdatingTransaction(true)
+    }
     // load stored user transactions
     const storageObj = await loadSettingsStorage(global.storageKey);
 
@@ -408,7 +413,7 @@ export default function Home(props) {
       const found = searchByID(currentTransaction.id, list);
 
       if (category.id === found.category.id) {
-        setIsUpdatingTransaction(false)
+        // setIsUpdatingTransaction(false)
         return
       }
       else {
@@ -423,15 +428,15 @@ export default function Home(props) {
         }
       }
 
-      setCurrentTransaction(found);
+      await updateStoredTransaction(list, found);
 
-      updateStoredTransaction(list, found);
+      setCurrentTransaction(found);
 
       Analytics.record({ name: 'Successfully updated a transaction category' });
     } catch (e) {
       console.log('Could not update transaction category');
     }
-    setIsUpdatingTransaction(false);
+    // setIsUpdatingTransaction(false);
   };
 
   const updateTransactionNote = async (string) => {
@@ -449,6 +454,8 @@ export default function Home(props) {
 
       updateStoredTransaction(list, found);
 
+      crossDeviceSync();
+
     } catch (e) {
       console.log('e: ', e);
     }
@@ -459,19 +466,10 @@ export default function Home(props) {
       .then(async (cognito) => {
         global.storageKey = cognito.attributes.sub;
 
-        crossDeviceSync()
-
-        let list = await compareListTransactions();
-
-        // for (var i = list.length - 1; i >= 0; i--) {
-        //   updateStoredTransaction(currentTransactions, list[i])
-        // }
-
-        console.log('list: ', list);
-
-        setCurrentTransactions(list)
+        setIsUserLoggedIn(true);
 
         const storage = await loadSettingsStorage(global.storageKey);
+        // console.log('storage: ', storage);
 
         setCurrentOwner(storage.user.id);
 
@@ -479,18 +477,11 @@ export default function Home(props) {
 
         setCurrentTransactions(storage.transactions);
 
-        setIsUserLoggedIn(true);
-
-
-        for (var i = list.length - 1; i >= 0; i--) {
-          saveTransaction(list[i])
+        if (global.isDeviceCrossSyncOn) {
+          // update duplicates with diff versions
+          let updated = await compareListTransactions();
+          // console.log('updated: ', updated);
         }
-
-        // create an event handler
-        Analytics.record({
-          name: "Authorized user retrieved stored settings!",
-          attributes: { user_id: storage.user.id }
-        });
       })
       .catch(async () => {
         // Alert.alert(err);
@@ -507,11 +498,11 @@ export default function Home(props) {
 
         setIsUserLoggedIn(false);
 
-        // create an event handler
-        Analytics.record({
-          name: "Unauthorized user retrieved stored settings!",
-          attributes: { user_id: userObject.user.id }
-        });
+        // // create an event handler
+        // Analytics.record({
+        //   name: "Unauthorized user retrieved stored settings!",
+        //   attributes: { user_id: userObject.user.id }
+        // });
       });
     saveUndoHistory();
 
@@ -592,14 +583,14 @@ export default function Home(props) {
 
     setCurrentPayee({
       id: uuidv4(),
-      name: '',
-      owner: '',
+      name: 'New',
+      owner: currentOwner,
       version: 0,
     });
     setCurrentPayeeID(uuidv4());
     setCurrentPayeeName('');
 
-    setCurrentNote('');
+    setCurrentNote('Add a note');
     setCurrentType(initialState.currentType);
     // setCurrentOwner(initialState.currentOwner);
     setCurrentVersion(initialState.currentVersion);
@@ -642,7 +633,7 @@ export default function Home(props) {
       if (isUserLoggedIn && isUserCurrentlyOnline()) {
         await removeTransaction(transaction)
 
-        removePayee(transaction.payee)
+        // removePayee(transaction.payee)
 
         Analytics.record({ name: 'Removed an online transaction' });
       }
@@ -749,15 +740,22 @@ export default function Home(props) {
     saveCategory(category);
 
     // /* Create New Payee */
-    const payee = new Payee(uuidv4(), '', currentOwner, 0);
+    const payee = new Payee(uuidv4(), 'New', currentOwner, 0);
     // // console.log('payee: ', payee);
 
     // savePayee(payee);
 
+    let amount = currentAmount
+
+    if (category.type === 'EXPENSE') {
+      amount = -Math.abs(currentAmount / (100))
+    } else {
+      amount = currentAmount / 300
+    }
     const transaction = new Transaction(
       uuidv4(), // id
       currentDate, // date
-      currentAmount / (100), // amount
+      amount, // amount
       currentOwner, // owner
       payee, // currentPayee, // payee
       category, // category
@@ -1291,7 +1289,7 @@ export default function Home(props) {
         onWillFocus={retrieveUserStoredSettings}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
-        // onWillBlur={clearState} // console.log('will blur',payload)}
+        onWillBlur={() => hideSlideView()}
         // onDidBlur={payload => console.log('did blur',payload)}
       />
       {/* Balance View */}

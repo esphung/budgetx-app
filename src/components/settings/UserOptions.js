@@ -83,14 +83,13 @@ function UserOptions(props) {
     let view;
     // console.log('item.leadingItem: ', item.leadingItem);
 
-    if (item.leadingItem.key === 'Contact Support' || item.leadingItem.key === '' || item.leadingItem.key === 'Backup Local Data') return null
+    if (item.leadingItem.key === 'Contact Support' || item.leadingItem.key === '' || item.leadingItem.key === 'Backup Data') return null
     view = <View
           style={{
             flex: 1,
             backgroundColor: colors.dark,
             justifyContent: 'center',
             alignItems: 'center',
-
 
             // borderWidth: 1,
             // borderColor: colors.dark,
@@ -130,10 +129,11 @@ function UserOptions(props) {
       caret = null;
     }
     /* Backup Data */
-    else if (title === ('Backup Local Data')) {
+    else if (title === ('Backup Data')) {
       isDisabled = !isUserLoggedIn
       if (isDisabled) {
-        // title = 'Successfully Backed Up';
+        title = '';
+        rowHeight = 0;
         textColor = colors.offWhite
         // caret = currentSettingsVersion
         caret = null;
@@ -180,35 +180,36 @@ function UserOptions(props) {
         // opacity = 0.5
       }
     }
-    /* Sign In */
-    else if (title === 'Sign In') {
-      isDisabled = false
-      if (isUserLoggedIn) {
-        title = null;
+       /* Sync This Device */
+    else if (title === 'Sync This Device') {
+      isDisabled = !isUserLoggedIn
+      if (isDisabled) {
+        title += 
         textColor = colors.offWhite
-        backgroundColor = 'transparent';
+        // backgroundColor = 'transparent';
         // isDisabled = true
         caret = null;
-        rowHeight = 0;
-        // caret = null;
-        // opacity = 0.5
-      }
-    }
-      /* Cross-Device Sync */
-    else if (title === 'Cross-Device Sync') {
-      isDisabled = false
-      if (false) {
-        title = null;
-        textColor = colors.offWhite
-        backgroundColor = 'transparent';
-        // isDisabled = true
-        caret = null;
-        rowHeight = 0;
+        // rowHeight = 0;
         // caret = null;
         // opacity = 0.5
       }
     }
 
+    /* Sign In */
+    else if (title === 'Sign In') {
+      isDisabled = isUserLoggedIn
+      if (isDisabled) {
+        title = null;
+        textColor = colors.offWhite
+        backgroundColor = 'transparent';
+        // isDisabled = true
+        caret = null;
+        rowHeight = 0;
+        // caret = null;
+        // opacity = 0.5
+      }
+    }
+   
     else {
       isDisabled = false
     }
@@ -324,9 +325,9 @@ function UserOptions(props) {
       // }]}
       data={[
         { key: 'Sign In' },
-        { key: 'Cross-Device Sync' },
+        { key: 'Sync This Device' },
         { key: 'Customize Categories' },
-        { key: 'Backup Local Data' },
+        { key: 'Backup Data' },
         // { key: 'Passcode' },
         
         

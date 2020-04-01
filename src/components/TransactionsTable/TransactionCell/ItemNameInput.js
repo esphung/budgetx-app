@@ -33,7 +33,7 @@ export default function PizzaTranslator(props) {
 
         keyboardAppearance="dark" // ios
 
-        // editable={isNameInputEnabled}
+        editable={false}
 
         returnKeyType="done"
 

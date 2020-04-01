@@ -20,6 +20,7 @@ export const fetchStoredCategories = async () => {
   try {
     const graphqldata = await API.graphql(graphqlOperation(listCategorys));
     list = graphqldata.data.listCategorys.items;
+    console.log('list: ', list);
   } catch (err) {
     console.log('error fetching user categories: ', err);
   }
@@ -157,6 +158,10 @@ mutation updateTransaction {
     version: ${updated.version}
     note: ${'"'+updated.note+'"'}
     type: ${'"'+updated.type+'"'}
+
+    # transactionPayeeId: ${'"'+updated.payee.id+'"'}
+    transactionCategoryId: ${'"'+updated.category.id+'"'}
+
   }) {
     id
     amount
@@ -270,8 +275,6 @@ export const saveTransaction = async (transaction) => {
   } catch (err) {
     // failed to upload transaction
     console.log('error creating transaction...', err);
-
-    console.log('transaction: ', transaction);
   }
 }
 
@@ -297,6 +300,7 @@ export const getTransactionByID = async (id) => {
   try {
     let stored = await API.graphql(graphqlOperation(getTransaction, { id: id }))
     obj = stored.data.getTransaction;
+
   } catch (err) {
     console.log('error getting transaction by id...', err);
   }

@@ -138,7 +138,7 @@ function TransactionItem(props, index) {
           />
         </View>
 
-        <View
+       {/* <View
           style={
             {
               flex: 0.95, // 1
@@ -160,7 +160,7 @@ function TransactionItem(props, index) {
             handlePayeeNameChange={props.handlePayeeNameChange}
             updateTransactionPayee={updateTransactionPayee}
             />
-        </View>
+        </View>*/}
 
         {/* <ItemDate item={item} /> */}
 

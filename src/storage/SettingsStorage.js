@@ -46,47 +46,21 @@ function handleFirstConnectivityChange(isConnected) {
   );
 }
 
-  const getTransactionOnlineByID = async (id) => {
-    /* Process retrieved server transaction */
-    let stored = await getTransactionByID(id); // retrieve newly created from online trans by id
+export const pushAllTransactionsToCloud = async () => {
+  try {
+    const storage = await loadSettingsStorage(global.storageKey);
+    // console.log('local_transactions: ', local_transactions);
 
-    console.log('stored: ', stored);
+   for (var i = 0; i < storage.transactions.length; i++) {
+    saveTransaction(storage.transactions[i])
+      // console.log('storage.transactions[i]: ', storage.transactions[i]);
+   }
 
-    // const date = stored.date;
-    // // console.log('date: ', date);
-
-    // const amount = stored.amount
-    // // console.log('amount: ', amount);
-
-    // const owner = stored.owner;
-    // // console.log('owner: ', owner);
-
-    // let payee = (stored.payee) ? stored.payee : new Payee(uuidv4(), '', stored.owner, 0);
-    // console.log('payee: ', payee);
-
-    // let category = (stored.category) ? stored.category : new Category(uuidv4(), 'None', '#fff', owner, type, 0);
-    // // console.log('category: ', category);
-
-    // const { type, note, version } = stored
-
-    // // const note = stored.note;
-
-    // // const version = stored.version;
-
-    // let obj = new Transaction(
-    //   id,
-    //   date,
-    //   amount,
-    //   owner,
-    //   payee,
-    //   category,
-    //   type,
-    //   note,
-    //   version,
-    // );
-
-    // return obj;
-  };
+  } catch(e) {
+    // statements
+    console.log(e);
+  }
+}
 
 const retrieveAuthenticatedStorageKey = async () => {
   let key
@@ -167,6 +141,34 @@ export const retrieveLocalTransactions = async () => {
   return list
 }
 
+export function removeFromArray(array, element) {
+  const index = array.indexOf(element);
+  array.splice(index, 1);
+  return array;
+}
+
+const removeDuplicates = (array) => {
+  var numbers4 = local_transactions // [5, 2, 3, 4, 2, 6, 7, 1, 2, 3];
+    var firstIndex = "";
+   var isMatch=false;
+    for (var a = 0; a < numbers4.length; a++) {
+        for (var b = a+1; b < numbers4.length; b++) {
+            if (numbers4[a].id === numbers4[b].id){
+                firstIndex = numbers4.indexOf(numbers4[a]);
+                isMatch=true;
+                break;
+          }
+        }
+           if (isMatch) {break;}
+    }
+
+  // console.log('firstIndex: ', firstIndex);
+
+  // console.log('removeFromArray(numbers4, numbers4[firstIndex]): ', removeFromArray(numbers4, numbers4[firstIndex]));
+
+  return removeFromArray(numbers4, numbers4[firstIndex])
+}
+
 export const compareListTransactions = async () => {
   // load online transactions
   let online_transactions = await retrieveOnlineTransactions();
@@ -176,11 +178,6 @@ export const compareListTransactions = async () => {
   // load local transactions
   let local_transactions = await retrieveLocalTransactions();
   console.log('local_transactions.length: ', local_transactions.length);
-
-  // for (var i = online_transactions.length - 1; i >= 0; i--) {
-  //   console.log('online_transactions[i]: ', online_transactions[i]);
-  //   console.log('local_transactions[i]: ', local_transactions[i]);
-  // }
 
   var props = ['id', 'version'];
 
@@ -198,8 +195,7 @@ export const compareListTransactions = async () => {
       }, {});
   });
 
-  // console.log('result: ', result);
-
+  /* Filter Out Updated Trans then replace in local db */
   result.forEach(async (element) => {
     // console.log('element.id: ', element.id);
     // console.log('element.version: ', element.version);
@@ -243,12 +239,10 @@ export const compareListTransactions = async () => {
     
 
 
-    /* REPLACE LESSER VERSION OF TRANSACTION LOCALLY */
+    /* REPLACE LESSER VERSIONS OF TRANSACTION LOCALLY */
     removeStoredTransaction(transaction);
   });
-
   return local_transactions;
-
 }
 
 // const storedNewTransaction =  async (transaction) => {

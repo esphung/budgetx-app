@@ -5,6 +5,8 @@
 
 import app from './app.json';
 
+global.isDeviceCrossSyncOn = true
+
 // global.isStorybookModeOn = true;
 
 global.storageKey = 'CURRENT_USER';

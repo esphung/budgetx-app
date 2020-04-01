@@ -17,6 +17,12 @@ import getCurrencySymbol from '../../../functions/getCurrencySymbol';
 
 function ItemAmount(props) {
   const { item } = props;
+
+  let amount = {item}
+
+  if (item.type !== 'EXPENSE')
+    amount = amount * 1
+
   return (
     <Text  style={
       {

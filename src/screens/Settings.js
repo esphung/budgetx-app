@@ -34,6 +34,7 @@ import {
   saveSettingsStorage,
   compareListTransactions,
   retrieveOnlineTransactions,
+  pushAllTransactionsToCloud,
 } from '../storage/SettingsStorage';
 
 import {
@@ -186,19 +187,15 @@ ${objectRows}
   return html;
 }
 
-
-
-
 const isUserCurrentlyOnline = async () => {
   let bool = false;
-  await NetInfo.fetch().then(state => {
+  await NetInfo.fetch().then((state) => {
     bool = state.isConnected;
-    // console.log("Connection type", state.type);
-    console.log("Is connected?", state.isConnected);
+    // console.log('Connection type', state.type);
+    // console.log('Is connected?', state.isConnected);
   });
   return bool;
 };
-
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
@@ -240,8 +237,11 @@ function Settings(props) {
 
   const [shouldShowCloudSyncDialogBox, setShouldShowCloudSyncDialogBox] = useState(false);
 
+  const [shouldShowUpdateCloudDialogBox, setShouldShowUpdateCloudDialogBox] = useState(false);
+
 
   const crossDeviceSync = async () => {
+    if (global.isDeviceCrossSyncOn === false || !global.isDeviceCrossSyncOn) return
     let list = await retrieveOnlineTransactions();
 
     try {
@@ -259,10 +259,10 @@ function Settings(props) {
         }
       }
 
-      console.log('list: ', list);
+      // console.log('list: ', list);
+      await saveSettingsStorage(storageKey, storage);
 
-
-      saveSettingsStorage(storageKey, storage);
+      navigation.navigate('Home')
 
     } catch(e) {
       // statements
@@ -286,14 +286,15 @@ function Settings(props) {
         }
         visible={true}
         >
-        <Dialog.Title>Cross-Device Sync</Dialog.Title>
+        <Dialog.Title>Sync This Device</Dialog.Title>
         <Dialog.Description>
           With cross-device sync you can access your transactions on any device.
         </Dialog.Description>
         <Dialog.Button label="Cancel" onPress={() => setShouldShowCloudSyncDialogBox(false)} />
-        <Dialog.Button label="Purchase" onPress={() => {
+        <Dialog.Button label="Sync Now" onPress={() => {
           setShouldShowCloudSyncDialogBox(false)
-          crossDeviceSync()
+          global.isDeviceCrossSyncOn = true
+          crossDeviceSync();
         }} />
       </Dialog.Container>
     </View>
@@ -335,6 +336,27 @@ function Settings(props) {
     </Dialog.Container>
   </View>
 );
+
+    const updateCloudDialogBox = (
+  <View>
+    <Dialog.Container visible={true}>
+      <Dialog.Title>Update Cloud</Dialog.Title>
+      <Dialog.Description>
+        Update this data across all devices?
+      </Dialog.Description>
+      <Dialog.Button label="No" onPress={() => {
+        setShouldShowUpdateCloudDialogBox(false)
+        props.navigation.navigate('Home');
+      }} />
+      <Dialog.Button label="Yes" onPress={() => {
+        // update transactions in cloud
+        pushAllTransactionsToCloud();
+        props.navigation.navigate('Home');
+      }} />
+    </Dialog.Container>
+  </View>
+);
+
 
 
   function handleFirstConnectivityChange(isConnected) {
@@ -408,9 +430,12 @@ function Settings(props) {
 
         setIsBackupDisabled(false)
 
-        props.navigation.navigate('Home');
+        let bool = await isUserCurrentlyOnline()
+        if (bool === true) setShouldShowUpdateCloudDialogBox(true);
 
-        showRestoreCompleteAlert();
+        
+
+        // props.navigation.navigate('Home');
       }
     } catch (e) {
       // statements
@@ -418,16 +443,10 @@ function Settings(props) {
       console.log('e: ', e);
       // console.log(e);
     }
-
-    // if (success) {
-    //   // Alert.alert('Backup data restored successfully');
-    //   // console.log('currentSettingsVersion: ', currentSettingsVersion);s
-    //   setOptionOpacity(0.2)
-    // }
   };
 
   const backupStoredSettings = async () => {
-    let success = false;
+    // let success = false;
     // const backup_key = `${storageKey}_BACKUPSETTINGS`
 
     // load stored settings
@@ -437,24 +456,15 @@ function Settings(props) {
       let backup_key = `${storageObj.user.id}_BACKUP_SETTINGS`
       // console.log('backup_key: ', backup_key);
 
-
-      // if (!storageObj.version) {
-      //   storageObj.version = 1;
-      // } else {
-      //   storageObj.version += 1;
-      // }
-      // console.log('storageObj.version: ', storageObj.version);
-
-      // console.log(storage);
-      // console.log(backup_key);
-      // console.log('Backed up to:', backup_key);
-
       // set stored user transactions
       if (storageObj !== null && storageKey !== null) {
         // console.log('stored user settings transactions:', storageObj.transactions);
         saveSettingsStorage(backup_key, storageObj);
         // console.log(key)
-        success = true;
+        // success = true;
+
+        let bool = await isUserCurrentlyOnline()
+        if (bool === true) setShouldShowUpdateCloudDialogBox(true);
 
         // setIsBackupDisabled(true);
 
@@ -470,11 +480,11 @@ function Settings(props) {
     //   Alert.alert('Data backed up successfully');
     // }
 
-    // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
-    if (success) {
-      // restoreBackUpData();
-      showBackupCompleteAlert();
-    }
+    // // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
+    // if (success) {
+    //   // restoreBackUpData();
+    //   showBackupCompleteAlert();
+    // }
   };
 
   const backupDataAlert = async () => {
@@ -899,13 +909,16 @@ function Settings(props) {
 
   const crossDeviceSyncBtnPressed = async () => {
     // check if user online
-    if (await !isUserCurrentlyOnline()) setShouldShowOfflineDialogBox(true)
+    let bool = await isUserCurrentlyOnline()
+    if (bool === false) setShouldShowOfflineDialogBox(true)
 
     // check if user logged in
     if (!isUserLoggedIn) return
 
     // alert => would you like to sync transactions in the cross-device with this device?
     setShouldShowCloudSyncDialogBox(true);
+
+
   }
 
   function onPress(btn) {
@@ -927,7 +940,7 @@ function Settings(props) {
     else if (name === 'Sign In') {
       signInBtnPressed();
     }
-    else if (name === 'Cross-Device Sync') {
+    else if (name === 'Sync This Device') {
       crossDeviceSyncBtnPressed();
     }
     else if (name === 'Reset Data') {
@@ -935,7 +948,7 @@ function Settings(props) {
     } else if (name === 'Customize Categories') {
       customizeCategoriesBtnPressed();
     }
-    else if (name === 'Backup Local Data') {
+    else if (name === 'Backup Data') {
       backupDataBtnPressed();
     }
     else if (name === 'Restore Backup Data') {
@@ -1179,6 +1192,9 @@ function Settings(props) {
         </View>
         {
           shouldShowResetDialog && resetDataDialogBox
+        }
+        {
+          shouldShowUpdateCloudDialogBox && isUserLoggedIn && updateCloudDialogBox
         }
     </View>
   );
