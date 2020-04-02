@@ -284,7 +284,7 @@ function UserNameEmailInput(props) {
 
   let view = (
     <TouchableOpacity
-      disabled={isSignUpDisabled}
+      disabled // ={isSignUpDisabled}
       onPress={
         () => navigation.navigate('SignUp')
         // async () => {

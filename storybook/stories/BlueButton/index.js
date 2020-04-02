@@ -19,9 +19,12 @@ function BlueButton(props) {
     <View
       style={
         {
-          width: '38%', // 133,
+          minWidth: '38%', // 133,
           height: 46,
+          maxHeight: 50,
           // backgroundColor: 'transparent',
+          marginHorizontal: 10,
+          marginBottom:  16,
 
           // borderWidth: 1,
           // borderColor: 'white',

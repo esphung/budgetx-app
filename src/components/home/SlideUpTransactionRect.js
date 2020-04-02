@@ -198,7 +198,8 @@ function SlideUpTransactionRect(props) {
 
     let borderColor = color;
 
-    if (transaction.category.name === item.value.name) {
+    if (transaction.category) {
+      if (transaction.category.name === item.value.name) {
       backgroundColor = color;
       borderColor = 'transparent';
       color = colors.white;
@@ -207,6 +208,9 @@ function SlideUpTransactionRect(props) {
         color = colors.darkTwo;
       }
     }
+    }
+
+    
 
     const view = (
       <TouchableOpacity

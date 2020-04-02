@@ -159,8 +159,8 @@ function UserOptions(props) {
         // rowHeight = 0;
       }
     }
-    /* Reset Data */
-    else if (title === 'Reset Data') {
+    /* Reset Device Data */
+    else if (title === 'Reset Device Data') {
       textColor = colors.pinkRed;
       backgroundColor = 'transparent';
       caret = null;
@@ -184,7 +184,7 @@ function UserOptions(props) {
     else if (title === 'Sync This Device') {
       isDisabled = !isUserLoggedIn
       if (isDisabled) {
-        title += 
+        
         textColor = colors.offWhite
         // backgroundColor = 'transparent';
         // isDisabled = true
@@ -209,6 +209,20 @@ function UserOptions(props) {
         // opacity = 0.5
       }
     }
+      /* Export Transactions */
+    // else if (title === 'Export Transactions') {
+    //   isDisabled = !isUserLoggedIn
+    //   if (isDisabled) {
+    //     // title = null;
+    //     textColor = colors.offWhite
+    //     backgroundColor = 'transparent';
+    //     // isDisabled = true
+    //     caret = null;
+    //     // rowHeight = 0;
+    //     // caret = null;
+    //     // opacity = 0.5
+    //   }
+    // }
    
     else {
       isDisabled = false
@@ -336,12 +350,12 @@ function UserOptions(props) {
 
         { key: '' },
         { key: 'Change Password/Sign Out' },
-        // { key: 'Export Transactions' },
+        { key: 'Export Transactions' },
         { key: 'Restore Backup Data' },
         { key: 'Contact Support' },
         // { key: 'Passcode' },
         
-        { key: 'Reset Data' },
+        { key: 'Reset Device Data' },
         
 
       ]}

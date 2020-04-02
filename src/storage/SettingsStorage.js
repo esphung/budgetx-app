@@ -46,6 +46,48 @@ function handleFirstConnectivityChange(isConnected) {
   );
 }
 
+  // const getTransactionOnlineByID = async (id) => {
+  //   /* Process retrieved server transaction */
+  //   let stored = await getTransactionByID(id); // retrieve newly created from online trans by id
+
+  //   console.log('stored: ', stored);
+
+  //   // const date = stored.date;
+  //   // // console.log('date: ', date);
+
+  //   // const amount = stored.amount
+  //   // // console.log('amount: ', amount);
+
+  //   // const owner = stored.owner;
+  //   // // console.log('owner: ', owner);
+
+  //   // let payee = (stored.payee) ? stored.payee : new Payee(uuidv4(), '', stored.owner, 0);
+  //   // console.log('payee: ', payee);
+
+  //   // let category = (stored.category) ? stored.category : new Category(uuidv4(), 'None', '#fff', owner, type, 0);
+  //   // // console.log('category: ', category);
+
+  //   // const { type, note, version } = stored
+
+  //   // // const note = stored.note;
+
+  //   // // const version = stored.version;
+
+  //   // let obj = new Transaction(
+  //   //   id,
+  //   //   date,
+  //   //   amount,
+  //   //   owner,
+  //   //   payee,
+  //   //   category,
+  //   //   type,
+  //   //   note,
+  //   //   version,
+  //   // );
+
+  //   // return obj;
+  // };
+
 export const pushAllTransactionsToCloud = async () => {
   try {
     const storage = await loadSettingsStorage(global.storageKey);
@@ -203,18 +245,33 @@ export const compareListTransactions = async () => {
     // date for the new transaction to store
     let data = await getTransactionByID(element.id); // retrieve newly created from online trans by id
 
-    // console.log('data: ', data);
+    console.log('data: ', data);
+
+    let category = (data.category.id !== null && data.category) ? {
+      id: data.category.id,
+      name: data.category.name,
+      color: data.category.color,
+      type: data.category.type,
+      owner: element.category.owner,
+      version: data.category.version,
+    } : element.category;
+
+    if (data.category.id === null) return
+
+    if (data.payee  === null) return
+
     const transaction = {
       id: element.id,
       amount: data.amount,
-      category: {
-        id: data.category.id,
-        name: data.category.name,
-        color: data.category.color,
-        type: data.category.type,
-        owner: element.category.owner,
-        version: data.category.version,
-      },
+      category: category,
+      // {
+      //   id: data.category.id,
+      //   name: data.category.name,
+      //   color: data.category.color,
+      //   type: data.category.type,
+      //   owner: element.category.owner,
+      //   version: data.category.version,
+      // },
       payee: (data.payee && (data.payee.name !== '' && data.payee.name !== null)) ? data.payee : {
         id: element.payee.id,
         name: element.payee.name,
@@ -274,7 +331,7 @@ const removeStoredTransaction = async (transaction) => {
 
       userObject.transactions = list;
 
-      console.log('userObject.transactions: ', userObject.transactions);
+      // console.log('userObject.transactions: ', userObject.transactions);
 
       // saveSettingsStorage(global.storageKey, userObject);
 

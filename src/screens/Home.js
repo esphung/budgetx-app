@@ -120,7 +120,7 @@ const initialState = {
   currentOwner: '',
   currentVersion: 0,
   currentTransaction: '',
-  currentNote: 'Add a note',
+  currentNote: '',
   isReady: false,
   currentType: '',
   isSlideViewHidden: true,
@@ -286,6 +286,8 @@ export default function Home(props) {
 
   // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
 
+  const [isReady, setIsReady] = useState(false)
+
   // const clearInputs = () => {
   //   setCurrentPayee('')
   //   setCurrentPayeeID('');
@@ -342,9 +344,6 @@ export default function Home(props) {
 
     incrementVersion(updatedTransaction); // update transaction version
 
-    // console.log('updatedTransaction: ', updatedTransaction);
-
-
     const pos = transactions.indexOf(updatedTransaction); // get index transaction
 
     transactions[pos] = updatedTransaction;
@@ -357,20 +356,15 @@ export default function Home(props) {
 
       saveSettingsStorage(global.storageKey, storageObj);
 
-          /* if online and logged in, update online transaction */
-      if (isUserLoggedIn) {
-        const isConnected = await isUserCurrentlyOnline();
-
-        if (!isConnected)
-        {
-          setIsUpdatingTransaction(false);
-          return // console.log('isConnected: ', isConnected);
-        }
-
-        updateOnlineTransaction(updatedTransaction)
-      }
     } catch (err) {
       console.log('updateStoredTransaction err: ', err);
+    }
+
+     /* if online and logged in, update online transaction */
+    if (isUserLoggedIn) {
+      const isConnected = await isUserCurrentlyOnline();
+      // console.log('transactions[pos]: ', transactions[pos]);
+      if (isConnected) updateOnlineTransaction(transactions[pos])
     }
 
     showMessage({
@@ -399,11 +393,10 @@ export default function Home(props) {
   };
 
   const updateTransactionCategory = async (category) => {
-    if (category !== currentTransaction.category) {
-      return
-    } else {
-      // setIsUpdatingTransaction(true)
-    }
+    if (category !== currentTransaction.category) return
+
+    setIsUpdatingTransaction(true)
+
     // load stored user transactions
     const storageObj = await loadSettingsStorage(global.storageKey);
 
@@ -412,49 +405,48 @@ export default function Home(props) {
     try {
       const found = searchByID(currentTransaction.id, list);
 
-      if (category.id === found.category.id) {
-        // setIsUpdatingTransaction(false)
+      if (category.id === found.category.id || !found) {
+        setIsUpdatingTransaction(false);
         return
       }
-      else {
-        found.category = category;
-        found.type = category.type;
 
-        // flip dollar amount to negative or positive
-        if (found.type.toLowerCase() === 'income' && found.amount < 0) {
-          found.amount = found.amount * -1;
-        } else if (found.type.toLowerCase() === 'expense' && found.amount >= 0) {
-          found.amount = found.amount * -1;
-        }
-      }
+      found.category = category;
 
-      await updateStoredTransaction(list, found);
+      found.type = category.type;
 
-      setCurrentTransaction(found);
+      // flip dollar amount to negative or positive
+      if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;
+      if (found.type.toLowerCase() === 'expense' && found.amount >= 0) found.amount = found.amount * -1;
+    
+      updateStoredTransaction(list, found);
 
       Analytics.record({ name: 'Successfully updated a transaction category' });
     } catch (e) {
-      console.log('Could not update transaction category');
+      console.log('Could not update transaction category', e);
+      // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
+      console.log('category: ', category);
     }
-    // setIsUpdatingTransaction(false);
+    // setCurrentTransaction(null);
+
+    setIsUpdatingTransaction(false);
   };
 
   const updateTransactionNote = async (string) => {
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(global.storageKey);
-      // console.log(transaction);
+
       const list = storageObj.transactions;
 
       const found = await searchByID(currentTransaction.id, list);
 
       found.note = string;
 
-      setCurrentTransaction(found)
+      
 
       updateStoredTransaction(list, found);
 
-      crossDeviceSync();
+      setCurrentTransaction(found)
 
     } catch (e) {
       console.log('e: ', e);
@@ -468,6 +460,8 @@ export default function Home(props) {
 
         setIsUserLoggedIn(true);
 
+        // setCurrentTransactions(list)
+
         const storage = await loadSettingsStorage(global.storageKey);
         // console.log('storage: ', storage);
 
@@ -476,16 +470,8 @@ export default function Home(props) {
         setCategories(storage.categories);
 
         setCurrentTransactions(storage.transactions);
-
-        if (global.isDeviceCrossSyncOn) {
-          // update duplicates with diff versions
-          let updated = await compareListTransactions();
-          // console.log('updated: ', updated);
-        }
       })
       .catch(async () => {
-        // Alert.alert(err);
-
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
         // console.log(userObject);
         // console.log('storageKey: ', storageKey);
@@ -497,12 +483,6 @@ export default function Home(props) {
         setCurrentTransactions(userObject.transactions);
 
         setIsUserLoggedIn(false);
-
-        // // create an event handler
-        // Analytics.record({
-        //   name: "Unauthorized user retrieved stored settings!",
-        //   attributes: { user_id: userObject.user.id }
-        // });
       });
     saveUndoHistory();
 
@@ -614,30 +594,38 @@ export default function Home(props) {
   async function removeStoredTransaction(transaction) {
     setIsRemovingStoredTransaction(true);
 
-    const userObject = await loadSettingsStorage(global.storageKey);
+    let list = [];
 
-    const list = userObject.transactions;
+    try {
+      const userObject = await loadSettingsStorage(global.storageKey);
 
-    const found = searchByID(transaction.id, list);
+      list = userObject.transactions;
 
-    if (found) {
-      const pos = list.indexOf(found);
+      const found = searchByID(transaction.id, list);
 
-      list.splice(pos, 1);
+      if (found) {
+        const pos = list.indexOf(found);
 
-      userObject.transactions = list;
+        list.splice(pos, 1);
 
-      saveSettingsStorage(global.storageKey, userObject);
+        userObject.transactions = list;
 
-      /* rremove transaction online in db */
-      if (isUserLoggedIn && isUserCurrentlyOnline()) {
-        await removeTransaction(transaction)
+        saveSettingsStorage(global.storageKey, userObject);
 
-        // removePayee(transaction.payee)
+        /* rremove transaction online in db */
+        if (isUserLoggedIn && isUserCurrentlyOnline()) {
+          await removeTransaction(transaction)
 
-        Analytics.record({ name: 'Removed an online transaction' });
+          // removePayee(transaction.payee)
+
+          Analytics.record({ name: 'Removed an online transaction' });
+        }
+        setCurrentTransaction(null);
       }
-      setCurrentTransaction(null);
+
+        } catch(e) {
+      // statements
+      console.log(e);
     }
 
     setIsRemovingStoredTransaction(false);
@@ -727,6 +715,9 @@ export default function Home(props) {
   const addBtnPressed = async () => {
     // make sure user inputs are not invalid
     if (!isUserInputValid()) return;
+
+    setIsReady(false)
+
     // /* Create New Category */
     const category = new Category(
       currentCategoryID, // id
@@ -745,13 +736,9 @@ export default function Home(props) {
 
     // savePayee(payee);
 
-    let amount = currentAmount
+    let amount = (category.type === 'EXPENSE') ? -Math.abs(currentAmount / (100)) : Math.abs(currentAmount / (100))
 
-    if (category.type === 'EXPENSE') {
-      amount = -Math.abs(currentAmount / (100))
-    } else {
-      amount = currentAmount / 300
-    }
+ 
     const transaction = new Transaction(
       uuidv4(), // id
       currentDate, // date
@@ -773,20 +760,22 @@ export default function Home(props) {
 
     storeNewTransaction(transaction); // store new transaction locally
 
-    await saveTransaction(transaction); // store new transaction online
+    if (await isUserCurrentlyOnline())
+      if (isUserLoggedIn)
+        saveTransaction(transaction)
 
-    // console.log('transaction: ', transaction);
-
-    // let onlineTransaction = await getTransactionOnlineByID(transaction.id);
-
-    // console.log('onlineTransaction: ', onlineTransaction);
-
-    // storeNewTransaction(onlineTransaction); // store new transaction locally
-
-    // clearInputs();
+    // await saveTransaction(transaction); // store new transaction online
 
     setCurrentAmount(0)
     setCurrentCategory(null)
+    setCurrentCategory(null)
+    setCurrentPayee(null)
+    setCurrentDate(new Date())
+    setCurrentType('')
+    setCurrentNote('')
+    setCurrentVersion(0)
+
+    setIsReady(true)
   }
 
   const saveUndoHistory = async () => {
@@ -1001,9 +990,9 @@ export default function Home(props) {
 
         onPress: () => {
           // let user undo action
-          if (!isUserLoggedIn) {
-            loadUndoHistory()
-          }
+          // if (!isUserLoggedIn) {
+          //   loadUndoHistory()
+          // }
         },
 
         duration: 2500,
@@ -1064,7 +1053,7 @@ export default function Home(props) {
 
   const deleteBtnPressed = (transaction) => {
     removeStoredTransaction(transaction);
-    clearState();
+    // clearState();
   };
 
   const categoryBtnPressed = (category) => {
@@ -1213,10 +1202,11 @@ export default function Home(props) {
     // set new date for transaction
     currentTransaction.date = new Date(date);
 
+
     updateStoredTransaction(currentTransactions, currentTransaction);
 
     // RELOAD TRANSACTIONS AND SHOW UPDATED ONE
-    const storage = await loadSettingsStorage(global.storageKey);
+    // const storage = await loadSettingsStorage(global.storageKey);
 
     // setCurrentOwner(storage.user.id);
 
@@ -1228,10 +1218,32 @@ export default function Home(props) {
 
     // clearState();
 
-    retrieveUserStoredSettings();
+    // retrieveUserStoredSettings();
   }
 
   const updateTransactionIndicator = <ActivityIndicator size="large" color={colors.white} />;
+
+  const spinner = (
+  <View
+    style={
+      {
+        // flex: 1,a
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#F5FCFF',
+        opacity: 0.1,
+      }
+    }
+  >
+    <ActivityIndicator size="large" color="#ff7dsff" />
+  </View>
+);
+
 
 
   const transactionSlide = (
@@ -1357,6 +1369,9 @@ export default function Home(props) {
        </View>
       {
         !isSlideViewHidden && transactionSlide
+      }
+      {
+        isRemovingStoredTransaction && spinner
       }
               
 

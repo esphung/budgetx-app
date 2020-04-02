@@ -15,6 +15,8 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
 
 import React, { useState, useEffect } from 'react';
 
+import { Linking } from 'expo';
+
 import PropTypes from 'prop-types';
 
 import { withNavigation } from 'react-navigation';
@@ -39,6 +41,7 @@ import {
 
 import {
   // StyleSheet,
+  ActivityIndicator,
   View,
   ScrollView,
   Button,
@@ -187,15 +190,20 @@ ${objectRows}
   return html;
 }
 
+
+
+
 const isUserCurrentlyOnline = async () => {
   let bool = false;
-  await NetInfo.fetch().then((state) => {
+  await NetInfo.fetch().then(state => {
     bool = state.isConnected;
-    // console.log('Connection type', state.type);
-    // console.log('Is connected?', state.isConnected);
+    // console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
   });
   return bool;
 };
+
+
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
@@ -239,36 +247,52 @@ function Settings(props) {
 
   const [shouldShowUpdateCloudDialogBox, setShouldShowUpdateCloudDialogBox] = useState(false);
 
+  const [isExportingTransactions, setIsExportingTransactions] = useState(false)
+
 
   const crossDeviceSync = async () => {
-    if (global.isDeviceCrossSyncOn === false || !global.isDeviceCrossSyncOn) return
-    let list = await retrieveOnlineTransactions();
+
+    // developer debugging only let this user sync
+    if (currentOwner !== '056049d7-ad75-4138-84d6-5d54db151d83') return;
+
+    // check if user is online
+    let isDeviceOnline = await isUserCurrentlyOnline()
+    if (!isDeviceOnline) return;
+
+    // check if user has device sync enabled
+    if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
+
+    // compare both transaction lists
+    let online_transactions = []; // online trans
+    let local_transactions = [];
+
+    // // Get user's online transactions
+    // try {
+    //   online_transactions = await retrieveOnlineTransactions();
+    // } catch(e) {
+    //   throw new Error('Error crossDeviceSync => retrieveOnlineTransactions:', e);
+    // }
 
     try {
-      const storage = await loadSettingsStorage(global.storageKey);
-      storage.transactions = list;
+      online_transactions = await retrieveOnlineTransactions();
+      console.log('online_transactions.length: ', online_transactions.length);
 
-      for (var i = list.length - 1; i >= 0; i--) {
-        if (list[i].payee === null) {
-          list[i].payee = {
-            id: uuidv4(),
-            name: '',
-            owner: '',
-            version: 0,
-          }
-        }
-      }
+      let storage = await loadSettingsStorage(global.storageKey);
+      console.log('local_transactions.length: ', local_transactions.length);
 
-      // console.log('list: ', list);
-      await saveSettingsStorage(storageKey, storage);
+      local_transactions = storage.transactions;
+
+      storage.transactions = online_transactions;
+
+      saveSettingsStorage(storageKey, storage);
 
       navigation.navigate('Home')
 
     } catch(e) {
-      // statements
-      console.log(e);
+      throw new Error('Error crossDeviceSync => loadSettingsStorage:', e);
     }
   }
+
 
   const crossDeviceSyncDialogBox = (
     <View>
@@ -376,7 +400,7 @@ function Settings(props) {
 
       // setCategories(storage.categories);
 
-      // setCurrentTransactions(storage.transactions);
+      setCurrentTransactions(storage.transactions);
 
       // setCurrentSettingsVersion(storage.version);
 
@@ -387,7 +411,7 @@ function Settings(props) {
    
         setCurrentOwner(userObject.user.id);
 
-        // setCurrentTransactions(userObject.transactions);
+        setCurrentTransactions(userObject.transactions);
 
         // setCurrentSettingsVersion(userObject.version);
 
@@ -430,10 +454,7 @@ function Settings(props) {
 
         setIsBackupDisabled(false)
 
-        let bool = await isUserCurrentlyOnline()
-        if (bool === true) setShouldShowUpdateCloudDialogBox(true);
-
-        
+        setShouldShowUpdateCloudDialogBox(true);
 
         // props.navigation.navigate('Home');
       }
@@ -446,7 +467,7 @@ function Settings(props) {
   };
 
   const backupStoredSettings = async () => {
-    // let success = false;
+    let success = false;
     // const backup_key = `${storageKey}_BACKUPSETTINGS`
 
     // load stored settings
@@ -461,10 +482,9 @@ function Settings(props) {
         // console.log('stored user settings transactions:', storageObj.transactions);
         saveSettingsStorage(backup_key, storageObj);
         // console.log(key)
-        // success = true;
+        success = true;
 
-        let bool = await isUserCurrentlyOnline()
-        if (bool === true) setShouldShowUpdateCloudDialogBox(true);
+        setShouldShowUpdateCloudDialogBox(true)
 
         // setIsBackupDisabled(true);
 
@@ -480,11 +500,11 @@ function Settings(props) {
     //   Alert.alert('Data backed up successfully');
     // }
 
-    // // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
-    // if (success) {
-    //   // restoreBackUpData();
-    //   showBackupCompleteAlert();
-    // }
+    // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
+    if (success) {
+      // restoreBackUpData();
+      showBackupCompleteAlert();
+    }
   };
 
   const backupDataAlert = async () => {
@@ -784,24 +804,123 @@ function Settings(props) {
     // });
   };
 
-  const onShare = async () => {
-    try {
-      const result = await Share.share({
-        message: 'React Native | A framework for building native apps using React',
-      });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
+  const getKeys = (obj) => {
+    let keys = []
+    Object.keys(obj).forEach((key) => {
+      // parse the nested object's properties
+      if (key) {
+        keys.push(`${key}`);
       }
-    } catch (error) {
-      alert(error.message);
+    });
+    return keys;
+  }
+
+  const directToAppStoreDownload =  () => {
+    Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602')
+    // Share.share({
+    //   message:  '',
+    // url: Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602'), // Expo.Linking.makeUrl() ,
+    //   // url: Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602'), // Expo.Linking.makeUrl(),
+    //   // title: 'Sufiyaan has invited you to join this activity',
+    // })
+    // .then((result) =>{
+    //   console.log(result)
+    //     if(result === 'dismissedAction'){
+    //       return
+    //     }
+    // })
+    // .catch((error) => console.log(error))
+  }
+
+
+  const onClick = () => {
+
+
+    Share.share({
+      ...Platform.select({
+        ios: {
+          // message: 'Have a look on : ',
+          message: `Download ${global.appName} at : \n${'https://apps.apple.com/us/app/financely/id1491309602/'}`,  // this.props.url
+          url: 'https://apps.apple.com/us/app/financely/id1491309602'  // this.props.url,
+        },
+        android: {
+          message: `Download ${global.appName} at : \n` + 'https://apps.apple.com/us/app/financely/id1491309602/'  // this.props.url
+        }
+      }),
+      title: 'Wow, did you see that?'
+    }, {
+      ...Platform.select({
+        ios: {
+          // iOS only:
+          excludedActivityTypes: [
+            // 'com.apple.UIKit.activity.PostToTwitter'
+          ]
+        },
+        android: {
+          // Android only:
+          dialogTitle: `Share : ${global.appName}`
+        }
+      })
+    });
+  }
+
+  const onExport = async () => {
+    if (!currentTransactions || currentTransactions.length <= 0) {
+      showMessage('You have no transactions');
+      return
     }
+      try {
+        const result = await Share.share({
+          title: 'My Transactions',
+          subject: 'My Transactions',
+          // tintColor: 'dark',
+          message: JSON.stringify(currentTransactions, getKeys(currentTransactions[0]), 4),
+        });
+
+        console.log('result: ', result);
+
+        if (result.action === Share.sharedAction) {
+          if (result.activityType) {
+            // shared with activity type of result.activityType
+            // console.log('result.activityType: ', result.activityType);
+          } else {
+            // shared
+          }
+        } else if (result.action === Share.dismissedAction) {
+          // dismissed
+        }
+      } catch (error) {
+        console.log('error.message: ', error.message);
+      }
+  };
+
+  const onShare = async () => {
+
+    onClick()
+    
+    // onExport()
+
+    // return
+    // // if (!currentTransactions || currentTransactions.length <= 0) return
+    // console.log('currentTransactions: ', currentTransactions);
+    
+    // try {
+    //   const result = await Share.share({
+    //     message: 'React Native | A framework for building native apps using React',
+    //   });
+
+    //   if (result.action === Share.sharedAction) {
+    //     if (result.activityType) {
+    //       // shared with activity type of result.activityType
+    //     } else {
+    //       // shared
+    //     }
+    //   } else if (result.action === Share.dismissedAction) {
+    //     // dismissed
+    //   }
+    // } catch (error) {
+    //   alert(error.message);
+    // }
   };
 
   // const storeIsLocallyAuthenticated = async (bool) => {
@@ -859,10 +978,11 @@ function Settings(props) {
     resetDataAlertPrompt();
   }
 
-  function rateUsBtnPressed() {
+  const rateUsBtnPressed = async () => {
     // store review
     StoreReview.requestReview();
-  }
+    // AsyncStorage.setItem('hasRatedUs', String(true));
+  };
 
   function contactSupportBtnPressed() {
     // send contact support email
@@ -873,19 +993,16 @@ function Settings(props) {
   //   props.navigation.navigate('Terms');
   // }
 
-  // function shareBtnPressed() {
-  //   // onShare()
-  //   // console.log('Share button pressed');
-  // }
+  function shareBtnPressed() {
+    onShare((text) => {
+      console.log('text: ', text);
+    })
+    // console.log('Share button pressed');
+  }
 
   function exportBtnPressed() {
-    // console.log('Export btn pressed');
-    if (currentTransactions.length > 0) {
-      sendTransactionsMail(currentTransactions);
-    } else {
-      // Alert.alert('You have no transactions');
-      showMessage('You have no transactions');
-    }
+    
+    onExport();
   }
 
   function changePasswordBtnPressed() {
@@ -907,13 +1024,23 @@ function Settings(props) {
     restoreDataAlert();
   }
 
+  // console.log('currentOwner: ', currentOwner);
   const crossDeviceSyncBtnPressed = async () => {
+    
+
     // check if user online
-    let bool = await isUserCurrentlyOnline()
-    if (bool === false) setShouldShowOfflineDialogBox(true)
+    const online = await isUserCurrentlyOnline()
+    if (online !== true) {
+      setShouldShowOfflineDialogBox(true)
+      return
+    }
 
     // check if user logged in
     if (!isUserLoggedIn) return
+
+
+    
+
 
     // alert => would you like to sync transactions in the cross-device with this device?
     setShouldShowCloudSyncDialogBox(true);
@@ -943,7 +1070,7 @@ function Settings(props) {
     else if (name === 'Sync This Device') {
       crossDeviceSyncBtnPressed();
     }
-    else if (name === 'Reset Data') {
+    else if (name === 'Reset Device Data') {
       resetDataBtnPressed();
     } else if (name === 'Customize Categories') {
       customizeCategoriesBtnPressed();
@@ -955,7 +1082,7 @@ function Settings(props) {
       restoreBackupDataBtnPressed();
     }
   }
-  const clearState = async () => {
+  const checkConnectivity = async () => {
     NetInfo.isConnected.fetch().then(isConnected => {
       // console.log('First, is ' + (isConnected ? 'online' : 'offline'));
       {
@@ -969,10 +1096,10 @@ function Settings(props) {
     );
   }
 
-  useEffect(() => {
-    clearState();
-    retrieveStoredSettings();
-  }, []);
+  // useEffect(() => {
+  //   checkConnectivity();
+  //   retrieveStoredSettings();
+  // }, []);
 
   useEffect(() => {
     if (currentSettingsVersion) {
@@ -1017,7 +1144,7 @@ function Settings(props) {
     }
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
-            onWillFocus={clearState} // {(payload) => clearState()}
+            onWillFocus={retrieveStoredSettings} // {(payload) => checkConnectivity()}
             // other props
             // onDidFocus={payload => console.log('did focus',payload)}
             // onWillBlur={payload => console.log('will blur',payload)}
@@ -1031,10 +1158,6 @@ function Settings(props) {
           style={
             {
               flex: 0.3,
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
             }
           }
         >
@@ -1047,36 +1170,29 @@ function Settings(props) {
             {
               flex: 0.3,
               justifyContent: 'center',
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
             }
           }
         >
-          <SubscriptionRect
+          {
+            <SubscriptionRect
             onPress={() => {
               if (!isUserLoggedIn) {
                 navigation.navigate('SignUp')
+              } else {
+                directToAppStoreDownload()
               }
             }}
             isUserLoggedIn={isUserLoggedIn}
+            isUserOnline={async () => await isUserCurrentlyOnline()}
           />
+          }
         </View>
 
         {/* User Options */}
-
         <View
           style={
             {
               flex: 1,
-              // justifyContent: 'center',
-
-              // top: '55%',
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
             }
           }
         >
@@ -1087,7 +1203,6 @@ function Settings(props) {
             isRestoreDisabled={isRestoreDisabled}
             currentSettingsVersion={currentSettingsVersion}
             isUserLoggedIn={isUserLoggedIn}
-            // isPasscodeEnabled={isPasscodeEnabled}
           />
         </View>
 
@@ -1096,38 +1211,14 @@ function Settings(props) {
             {
               flex: 0.5,
               alignItems: 'center',
-              // justifyContent: 'center',
-
-
-
-              // justifyContent: 'space-around',
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
             }
           }
         >
-{/*        <View style={
-          {
-            width: '90%',
-            // height: 0.1,
-            borderStyle: 'solid',
-            borderWidth: 0.5,
-            borderColor: colors.dark
-          }
-        } />*/}
           <View
             style={
               {
                 flex: 1,
                 alignSelf: 'stretch',
-                // justifyContent: 'space-around',
-                // justifyContent: 'center',
-
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
               }
             }
           >
@@ -1136,15 +1227,7 @@ function Settings(props) {
               style={
                 {
                   flex: 1,
-                  // alignSelf: 'stretch',
-                  // justifyContent: 'space-around',
-                  // justifyContent: 'center',
-
                   padding: 4,
-
-                  // borderWidth: 1,
-                  // borderColor: 'white',
-                  // borderStyle: 'solid',
                 }
               }
             >
@@ -1162,29 +1245,20 @@ function Settings(props) {
             // alignSelf: 'stretch',
             justifyContent: 'center',
             alignItems: 'center',
-
-            // padding: 5,
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
           }}
           >
 
-              <BlueButton title="Rate Us" onPress={() => rateUsBtnPressed()} />
+              
+                <BlueButton title="Rate Us" onPress={() => rateUsBtnPressed()} /><BlueButton title="Share Us" onPress={() => {
+                  shareBtnPressed()
+                }} />
+              
 
-              {/*<BlueButton title="Share Us" onPress={() => shareBtnPressed()} />*/}
 
           </View>
 
           <View style={{
             flex: 1,
-            // justifyContent: 'center',
-
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
           }}
           >
             <VersionCredit />
@@ -1194,7 +1268,10 @@ function Settings(props) {
           shouldShowResetDialog && resetDataDialogBox
         }
         {
-          shouldShowUpdateCloudDialogBox && isUserLoggedIn && updateCloudDialogBox
+          // shouldShowUpdateCloudDialogBox && isUserLoggedIn && updateCloudDialogBox
+        }
+        {
+          isExportingTransactions && <ActivityIndicator color="#ddd" size="large" />
         }
     </View>
   );

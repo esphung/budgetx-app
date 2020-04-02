@@ -3,19 +3,17 @@ import React from 'react';
 import {
   View,
   Text,
-  // SafeAreaView,
   Image,
 } from 'react-native';
 
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, } from 'react-native-gesture-handler';
 
-import { NetworkConsumer } from 'react-native-offline';
+// import { NetworkConsumer } from 'react-native-offline';
 
 // ui colors
 import colors from '../../../colors';
 
-import InfoBox from '../../../storybook/stories/InfoBox';
-
+// import InfoBox from '../../../storybook/stories/InfoBox';
 
 // text style
 const copy3 = {
@@ -32,20 +30,12 @@ const copy3 = {
   textAlign: 'center',
 
   paddingHorizontal: 6,
-
-  // borderWidth: 1,
-  // borderColor: 'white',
-  // borderStyle: 'solid',
 };
 
 // oval bank icon
 const oval2 = {
   width: '100%',
   height: '100%',
-  // width: 84,
-  // height: 74,
-  // borderRadius: 9,
-  // backgroundColor: colors.shamrockGreen,
 };
 
 // view rectangle
@@ -72,59 +62,30 @@ const mask = {
 // const message = `Thank you for using ${global.appName} version ${global.appVersion}!`;
 
 function SubscriptionRect(props) {
-  const { onPress, isUserLoggedIn } = props;
-  let text = `Thank you for using ${global.appName} version ${global.appVersion}!`
+  const { onPress, isUserLoggedIn, isUserOnline } = props;
+  let text = `Download ${global.appName} on any device and sync it to access your account`;
 
   if (!isUserLoggedIn) {
-    text = `Tap here to sign up and access features.`
+    text = `Tap here to sign up and access features.`;
     // return <InfoBox title='Tap here to sign up and access features.' />
-  } else if (isUserLoggedIn) {
-    return <InfoBox title={text} />
+  } else if (!isUserOnline) {
+    text = 'You are currently offline or have unstable connectivity';
   }
-
-  // if (!isUserOnline) {
-  //   text = 'You are currently offline or have unstable connectivity';
-  // }
-
-  const offline = (
-    <InfoBox title="You are currently offline or have unstable connectivity" />
-  );
-
 
   const view = (
     <View
       style={{
         flex: 1,
-
         padding: 14,
-
         alignItems: 'center',
         justifyContent: 'center',
-
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
       }}
     >
 
-      <TouchableOpacity disabled={isUserLoggedIn} onPress={onPress} style={mask}>
-        <View
-          // style={
-          //   {
-          //     flex: 0.25,
-          //     backgroundColor: colors.shamrockGreen,
-
-          //     padding: 10,
-
-          //     // opacity: 0.77,
-
-          //     // borderWidth: 1,
-          //     // borderColor: 'white',
-          //     // borderStyle: 'solid',
-          //   }
-
-          // }
-        >
+      <TouchableOpacity
+      // disabled={isUserLoggedIn}
+      onPress={onPress} style={mask}>
+        <View>
           <View>
             <Image
               resizeMode="contain"
@@ -146,21 +107,13 @@ function SubscriptionRect(props) {
 
         }
         >
-          <Text style={copy3}>
-            {
-              text
-            }
-          </Text>
+          <Text numberOfLines={2} style={copy3}>{ text }</Text>
         </View>
       </TouchableOpacity>
 
     </View>
   );
-  return <NetworkConsumer>
-      {
-        ({ isConnected }) => (isConnected ? view : offline)
-      }
-    </NetworkConsumer>
+  return view;
 }
 
 export default SubscriptionRect;

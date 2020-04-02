@@ -53,6 +53,7 @@ import {
   View,
   Platform,
   StyleSheet,
+  AsyncStorage
  } from "react-native";
 
 // import the Analytics category
@@ -129,7 +130,29 @@ export default function App() {
     } catch (err) {
       console.log('err: ', err);
     }
+
+    // try {
+    //   global.hasRatedUs = await AsyncStorage.getItem('hasRatedUs');
+    //   if (!global.hasRatedUs) {
+
+
+    //     AsyncStorage.setItem('hasRatedUs', String(false))
+    //     console.log('global.hasRatedUs: ', global.hasRatedUs);
+    //   }
+    //   else {
+    //     global.hasRatedUs = false
+    //     AsyncStorage.setItem('hasRatedUs', String(false))
+    //   }
+
+    //   // global.hasRatedUs = false
+    // } catch(e) {
+    //   // statements
+    //   console.log(e);
+    // }
+
   }
+
+  
 
   /* redirect user to storybook view if debugging */
   if (global.isStorybookModeOn && fontsAreLoaded) {
