@@ -25,11 +25,9 @@ import SignIn from './SignInScreen'
 
 import { showMessage, hideMessage } from "react-native-flash-message";
 
-import NetInfo from "@react-native-community/netinfo";
+// import NetInfo from "@react-native-community/netinfo";
 
 import Dialog from 'react-native-dialog';
-
-import uuidv4 from '../functions/uuidv4';
 
 import {
   loadSettingsStorage,
@@ -55,10 +53,22 @@ import {
   Share,
 } from 'react-native';
 
+/* my custom queries */
+import {
+  // updateTransaction,
+  // removeTransaction,
+  // removePayee,
+  // removeCategory,
+  // savePayee,
+  // saveCategory,
+  saveTransaction,
+  // fetchStoredTransactions,
+  // fetchStoredCategories,
+  // getTransactionByID,
+} from '../storage/my_queries';
+
 // // import the Analytics category
 // import Analytics from '@aws-amplify/analytics';
-
-// import { NetInfo } from 'react-native';
 
 // import { Ionicons } from 'expo-vector-icons';
 
@@ -96,43 +106,19 @@ import {
 //   // saveUserObject,
 // } from '../storage/UserStorage';
 
-import Auth from '@aws-amplify/auth';
+import Auth from '@aws-amplify/auth'; // AWS Amplify
 
-// ui colors
-import colors from '../../colors';
+import colors from '../../colors'; // ui colors
 
 import styles from '../../styles';
 
+import uuidv4 from '../functions/uuidv4';
+
+import { isDeviceOnline } from '../../network-functions';
+
+// import { } from 'Utils';
+
 // import { getShortDate } from './functions';
-
-// AWS Amplify
-// import Auth from '@aws-amplify/auth';
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     // top: '5%',
-//     // alignItems: 'stretch',
-//     // justifyContent: 'center',
-//     // backgroundColor: colors.darkTwo,
-
-//     // marginTop: '5%',
-
-//     // borderWidth: 1,
-//     // borderColor: 'white',
-//     // borderStyle: 'solid',
-//   },
-//   backBtnImage: {
-//     width: '100%',
-//     height: '100%',
-//   },
-//   backBtn: {
-//     width: 25,
-//     height: 25,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// });
 
 // header rectangle
 const rectangle5 = {
@@ -146,23 +132,6 @@ const rectangle5 = {
   // borderStyle: 'solid',
 };
 
-// right X header btn
-const combinedShape = {
-  // width: 20.3,
-  // height: 19.9,
-  width: '100%',
-  height: '100%',
-  // backgroundColor: '#ffffff',
-  shadowColor: '#0000002e.68f5c28f5c28',
-  shadowOffset: {
-    width: 0,
-    height: 2,
-  },
-  shadowRadius: 4,
-  shadowOpacity: 1,
-};
-
-
 function getTransactionsHTML(data) {
   // console.log(data);
   let html = '';
@@ -170,7 +139,7 @@ function getTransactionsHTML(data) {
   const keys = `${getObjectKeysHTML(data)}`;
   // console.log('keys: ', keys);
 
-  const objectRows = getHTMLObjectRows(data)
+  const objectRows = getHTMLObjectRows(data);
   // console.log('objectRows: ', objectRows);
 
   const table = `
@@ -190,20 +159,15 @@ ${objectRows}
   return html;
 }
 
-
-
-
-const isUserCurrentlyOnline = async () => {
-  let bool = false;
-  await NetInfo.fetch().then(state => {
-    bool = state.isConnected;
-    // console.log("Connection type", state.type);
-    console.log("Is connected?", state.isConnected);
-  });
-  return bool;
-};
-
-
+// export const isDeviceOnline = async () => {
+//   let bool = false;
+//   await NetInfo.fetch().then(state => {
+//     bool = state.isConnected;
+//     // console.log("Connection type", state.type);
+//     console.log("Is connected?", state.isConnected);
+//   });
+//   return bool;
+// };
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
@@ -247,50 +211,68 @@ function Settings(props) {
 
   const [shouldShowUpdateCloudDialogBox, setShouldShowUpdateCloudDialogBox] = useState(false);
 
-  const [isExportingTransactions, setIsExportingTransactions] = useState(false)
+  const [isExportingTransactions, setIsExportingTransactions] = useState(false);
 
+  const findArrayDifferences = (otherArray) => {
+    return (current) => {
+      return otherArray.filter((other) => {
+        return other.id === current.id // && other.version === current.version
+      }).length === 0;
+    }
+  }
 
   const crossDeviceSync = async () => {
-
     // developer debugging only let this user sync
     if (currentOwner !== '056049d7-ad75-4138-84d6-5d54db151d83') return;
 
     // check if user is online
-    let isDeviceOnline = await isUserCurrentlyOnline()
-    if (!isDeviceOnline) return;
+    let bool = await isDeviceOnline();
+    if (bool !== true) return;
 
     // check if user has device sync enabled
     if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
 
     // compare both transaction lists
     let online_transactions = []; // online trans
-    let local_transactions = [];
-
-    // // Get user's online transactions
-    // try {
-    //   online_transactions = await retrieveOnlineTransactions();
-    // } catch(e) {
-    //   throw new Error('Error crossDeviceSync => retrieveOnlineTransactions:', e);
-    // }
+    let local_transactions = [];  // local trans in device storage
 
     try {
+      // get user's local transactions
+      let storage = await loadSettingsStorage(global.storageKey);
+      local_transactions = storage.transactions;
+      console.log('local_transactions.length: ', local_transactions.length);
+      // console.log('local_transactions: ', local_transactions);
+
+       // get user's online transactions
       online_transactions = await retrieveOnlineTransactions();
       console.log('online_transactions.length: ', online_transactions.length);
+      // console.log('online_transactions: ', online_transactions);
 
-      let storage = await loadSettingsStorage(global.storageKey);
-      console.log('local_transactions.length: ', local_transactions.length);
+      // check for local transactions that dont exist in online transactions yet
+      // ie: offline-mode transactions
+      const onlyInLocal = local_transactions.filter(findArrayDifferences(online_transactions));
+      const onlyInOnline = online_transactions.filter(findArrayDifferences(local_transactions));
 
-      local_transactions = storage.transactions;
+      // only upload new local transactions; not all of them
+      if (onlyInLocal.length > 0) {
+        for (var i = onlyInLocal.length - 1; i >= 0; i--) {
+          // console.log('onlyInLocal[i]: ', onlyInLocal[i]);
+          saveTransaction(onlyInLocal[i]);
+        }
+      }
 
-      storage.transactions = online_transactions;
+      // add new online transactions to local transactions  on to user's device
+      storage.transactions = local_transactions.concat(onlyInOnline);
+      // console.log('storage.transactions.length: ', storage.transactions.length);
 
+      // save storage transactions to device storage
       saveSettingsStorage(storageKey, storage);
-
-      navigation.navigate('Home')
-
-    } catch(e) {
-      throw new Error('Error crossDeviceSync => loadSettingsStorage:', e);
+    } catch(crossDeviceSyncError) {
+      // throw new Error('Error performing crossDeviceSync:', e);
+      console.log('crossDeviceSyncError: ', crossDeviceSyncError);
     }
+    // go back to user home screen
+    navigation.navigate('Home');
   }
 
 
@@ -1026,26 +1008,18 @@ function Settings(props) {
 
   // console.log('currentOwner: ', currentOwner);
   const crossDeviceSyncBtnPressed = async () => {
-    
-
     // check if user online
-    const online = await isUserCurrentlyOnline()
+    const online = await isDeviceOnline();
     if (online !== true) {
-      setShouldShowOfflineDialogBox(true)
-      return
+      setShouldShowOfflineDialogBox(true);
+      return;
     }
 
     // check if user logged in
-    if (!isUserLoggedIn) return
-
-
-    
-
+    if (!isUserLoggedIn) return;
 
     // alert => would you like to sync transactions in the cross-device with this device?
     setShouldShowCloudSyncDialogBox(true);
-
-
   }
 
   function onPress(btn) {
@@ -1183,7 +1157,7 @@ function Settings(props) {
               }
             }}
             isUserLoggedIn={isUserLoggedIn}
-            isUserOnline={async () => await isUserCurrentlyOnline()}
+            isUserOnline={async () => await isDeviceOnline()}
           />
           }
         </View>
