@@ -63,13 +63,13 @@ const mask = {
 
 function SubscriptionRect(props) {
   const { onPress, isUserLoggedIn, isUserOnline } = props;
-  let text = `Download ${global.appName} on any device and sync it to access your account`;
+  let text = `Download ${global.appName} on any device to access your account.`;
 
   if (!isUserLoggedIn) {
     text = `Tap here to sign up and access features.`;
     // return <InfoBox title='Tap here to sign up and access features.' />
   } else if (!isUserOnline) {
-    text = 'You are currently offline or have unstable connectivity';
+    text = 'You are currently offline or have unstable connectivity.';
   }
 
   const view = (

@@ -21,20 +21,30 @@ import PropTypes from 'prop-types';
 
 import { withNavigation } from 'react-navigation';
 
-import SignIn from './SignInScreen'
+import Auth from '@aws-amplify/auth'; // AWS Amplify
 
-import { showMessage, hideMessage } from "react-native-flash-message";
+import Dialog from 'react-native-dialog';
+
+import * as StoreReview from 'expo-store-review';
+
+import * as MailComposer from 'expo-mail-composer';
+
+// import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import { NavigationEvents } from 'react-navigation';
+
+// import SignIn from './SignInScreen';
+
+import { showMessage } from "react-native-flash-message";
 
 // import NetInfo from "@react-native-community/netinfo";
 
-import { spinner  } from './spinner';
-
-import Dialog from 'react-native-dialog';
+import { spinner } from './spinner';
 
 import {
   loadSettingsStorage,
   saveSettingsStorage,
-  compareListTransactions,
+  // compareListTransactions,
   retrieveOnlineTransactions,
   retrieveOnlineCategories,
   pushAllTransactionsToCloud,
@@ -44,13 +54,13 @@ import {
   // StyleSheet,
   ActivityIndicator,
   View,
-  ScrollView,
-  Button,
-  TouchableOpacity,
-  Text,
-  Image,
-  TextInput,
-  SafeAreaView,
+  // ScrollView,
+  // Button,
+  // TouchableOpacity,
+  // Text,
+  // Image,
+  // TextInput,
+  // SafeAreaView,
   AsyncStorage,
   Alert,
   Share,
@@ -75,13 +85,7 @@ import {
 
 // import { Ionicons } from 'expo-vector-icons';
 
-import * as StoreReview from 'expo-store-review';
 
-import * as MailComposer from 'expo-mail-composer';
-
-// import { TouchableOpacity } from 'react-native-gesture-handler';
-
-import { NavigationEvents } from 'react-navigation';
 
 import ProfileRectangle from '../components/settings/ProfileRectangle';
 
@@ -111,8 +115,6 @@ import {
 
 import Category from '../models/Category';
 
-import Auth from '@aws-amplify/auth'; // AWS Amplify
-
 import colors from '../../colors'; // ui colors
 
 import styles from '../../styles';
@@ -122,6 +124,8 @@ import uuidv4 from '../functions/uuidv4';
 import { isDeviceOnline } from '../../network-functions';
 
 import searchByName from '../functions/searchByName';
+
+import { crossDeviceSync } from '../functions/crossDeviceSync';
 
 // import { } from 'Utils';
 
@@ -179,55 +183,40 @@ ${objectRows}
 const findArrayDifferences = (otherArray) => {
   return (current) => {
     return otherArray.filter((other) => {
-      return other.id === current.id // && other.version === current.version
+      return other.id === current.id; // && other.version === current.version
     }).length === 0;
-  }
+  };
 };
 
-const findCategoryArrayDifferences = (otherArray) => {
-  return (current) => {
-    return otherArray.filter((other) => {
-      return other.name === current.name // && other.version === current.version
-    }).length === 0;
-  }
-};
+// const findCategoryArrayDifferences = (otherArray) => {
+//   return (current) => {
+//     return otherArray.filter((other) => {
+//       return other.name === current.name; // && other.version === current.version
+//     }).length === 0;
+//   };
+// };
 
-const storeUserCategories = async (list) => {
-  try {
-    const storage = await loadSettingsStorage(storageKey);
+// const pushCategoriesToCloud = async (categories) => {
+//   try {
+//     const storage = await loadSettingsStorage(global.storageKey);
 
-    storage.categories = list;
-    
-    saveSettingsStorage(storageKey, storage);
-  } catch (error) {
-    // statements
-    console.log('storeUserCategories error:', error);
-  }
-};
-
-const pushCategoriesToCloud = async (categories) => {
-    try {
-      const storage = await loadSettingsStorage(global.storageKey);
-
-      for (var i = 0; i < categories.length; i++) {
-        // /* Create New Category */
-        const category = new Category(
-          categories[i].id, // id
-          categories[i].name, // name
-          categories[i].color, // color
-          categories[i].type, // type
-          categories[i].owner, // owner
-          categories[i].version, // version
-        );
-        saveCategory(category);
-      }
-    } catch(e) {
-      // statements
-      console.log('Error pushing categories to cloud:', e);
-    }
-  }
-
-
+//     for (var i = 0; i < categories.length; i++) {
+//       // /* Create New Category */
+//       const category = new Category(
+//         categories[i].id, // id
+//         categories[i].name, // name
+//         categories[i].color, // color
+//         categories[i].type, // type
+//         categories[i].owner, // owner
+//         categories[i].version, // version
+//       );
+//       saveCategory(category);
+//     }
+//   } catch (e) {
+//     // statements
+//     console.log('Error pushing categories to cloud:', e);
+//   }
+// };
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
@@ -249,11 +238,11 @@ function Settings(props) {
 
   const [currentSettingsVersion, setCurrentSettingsVersion] = useState(0);
 
-  const [optionOpacity, setOptionOpacity] = useState(1.0)
+  const [optionOpacity, setOptionOpacity] = useState(1.0);
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
-  const [isUserOnline, setIsUserOnline] = useState(false);
+  // const [isUserOnline, setIsUserOnline] = useState(false);
 
   const [shouldShowResetDialog, setShowResetDialogBox] = useState(false);
 
@@ -275,256 +264,81 @@ function Settings(props) {
 
   const [isSyncing, setIsSyncing] = useState(false);
 
-  
-
-  const crossDeviceSync = async () => {
-    // developer debugging only let this user sync
-    if (currentOwner !== '056049d7-ad75-4138-84d6-5d54db151d83') return;
-
-    // check if user is online
-    let bool = await isDeviceOnline();
-    if (bool !== true) return;
-
-    // check if user has device sync enabled
-    if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
-
-
-
-
-
-
-
-
-    setIsSyncing(true);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /* Sync Transactions */
-    // compare both transaction lists
-    let online_transactions = []; // online trans
-    let local_transactions = [];  // local trans in device storage
-
-    try {
-      // get user's local transactions
-      let storage = await loadSettingsStorage(global.storageKey);
-      local_transactions = storage.transactions;
-      // console.log('local_transactions.length: ', local_transactions.length);
-      // console.log('local_transactions: ', local_transactions);
-
-       // get user's online transactions
-      online_transactions = await retrieveOnlineTransactions();
-      // console.log('online_transactions.length: ', online_transactions.length);
-      // console.log('online_transactions: ', online_transactions);
-
-      // check for local transactions that dont exist in online transactions yet
-      // ie: offline-mode transactions
-      const onlyInLocal = local_transactions.filter(findArrayDifferences(online_transactions));
-      const onlyInOnline = online_transactions.filter(findArrayDifferences(local_transactions));
-
-      // only upload new local transactions; not all of them
-      if (onlyInLocal.length > 0) {
-        for (var i = onlyInLocal.length - 1; i >= 0; i--) {
-          // console.log('onlyInLocal[i]: ', onlyInLocal[i]);
-          saveTransaction(onlyInLocal[i]);
-        }
-      }
-
-      // add new online transactions to local transactions  on to user's device
-      storage.transactions = await retrieveOnlineTransactions();
-      // storage.transactions = local_transactions.concat(onlyInOnline);
-      // console.log('storage.transactions.length: ', storage.transactions.length);
-
-      // save storage transactions to device storage
-      saveSettingsStorage(storageKey, storage);
-    } catch(crossDeviceSyncError) {
-      // throw new Error('Error performing crossDeviceSync:', e);
-      console.log('crossDeviceSyncError: ', crossDeviceSyncError);
-    }
-
-
-
-
-
-
-
-
-
-    /* Sync Categories */
-    // compare both category lists
-    let online_categories = []; // online trans
-    let local_categories = [];  // local trans in device storage
-
-    try {
-      // get user's local categories
-      let storage = await loadSettingsStorage(global.storageKey);
-      local_categories = storage.categories;
-      console.log('local_categories.length: ', local_categories.length);
-      console.log('local_categories: ', local_categories);
-
-      //  // get user's online categories
-      online_categories = await retrieveOnlineCategories();
-      console.log('online_categories.length: ', online_categories.length);
-      console.log('online_categories: ', online_categories);
-
-
-      for (var i = online_categories.length - 1; i >= 0; i--) {
-        let  found  = searchByName(online_categories[i].name, local_categories)
-        if (found) {
-          const pos  = local_categories.indexOf(found);
-
-          local_categories[pos] = online_categories[i];
-        }
-      }
-
-
-      /* Add ccategories to this device that are onnly online */
-      // const onlyInLocalCategores = local_categories.filter(findCategoryArrayDifferences(online_categories));
-      let onlyInOnlineCategories = online_categories.filter(findCategoryArrayDifferences(local_categories));
-
-      console.log('onlyInOnlineCategories: ', onlyInOnlineCategories);
-
-
-
-
-      // var arr1 = local_categories;
-      // var arr2  = online_categories;
-
-      // let merged = [];
-
-      // for(let i=0; i<arr1.length; i++) {
-      // merged.push({
-      //   ...arr1[i],
-      //   ...(arr2.find((itmInner) => itmInner.name == arr1[i].name))}
-      //   );
-      // }
-
-      // console.log('merged: ', merged);
-      // console.log('merged.length: ', merged.length);
-
-      // storeUserCategories(merged);
-
-      storage.categories = local_categories.concat(onlyInOnlineCategories);
-
-      let sorted = storage.categories.sort((a, b) => a[0] > b[0]);
-
-      storage.categories = sorted
-
-      // console.log('sorted: ', sorted);
-
-      // console.log('storage.categories.length: ', storage.categories.length);
-
-      saveSettingsStorage(storageKey, storage);
-
-      await pushCategoriesToCloud(storage.categories);
-    } catch(categorySync) {
-      // throw new Error('Error performing crossDeviceSync:', e);
-      console.log('categorySync: ', categorySync);
-    }
-
-
-    await setIsSyncing(false);
-
-    // go back to user home screen
-    navigation.navigate('Home');
-  }
   const crossDeviceSyncDialogBox = (
     <View>
-      <Dialog.Container headerStyle={{
-          // backgroundColor: 'pink',
-          // backgroundColor: colors.dark,
-        }}
-        contentStyle={{
-          // backgroundColor: colors.dark,
-        }}
-        footerStyle={
-          {
-            // backgroundColor: colors.dark,
-          }
-        }
-        visible={true}
-        >
+      <Dialog.Container
+        // headerStyle={{
+        //   // backgroundColor: 'pink',
+        //   // backgroundColor: colors.dark,
+        // }}
+        // contentStyle={{
+        //   // backgroundColor: colors.dark,
+        // }}
+        // footerStyle={
+        //   {
+        //     // backgroundColor: colors.dark,
+        //   }
+        // }
+        visible
+      >
         <Dialog.Title>Sync This Device</Dialog.Title>
         <Dialog.Description>
           With cross-device sync you can access your transactions on any device.
         </Dialog.Description>
         <Dialog.Button label="Cancel" onPress={() => setShouldShowCloudSyncDialogBox(false)} />
-        <Dialog.Button label="Sync Now" onPress={() => {
-          setShouldShowCloudSyncDialogBox(false)
-          global.isDeviceCrossSyncOn = true
-          crossDeviceSync();
-        }} />
+        <Dialog.Button
+          label="Sync Now"
+          onPress={
+            async () => {
+              setShouldShowCloudSyncDialogBox(false);
+
+              setIsSyncing(true);
+
+              await crossDeviceSync();
+
+              setIsSyncing(false);
+
+              // go back to user home screen
+              navigation.navigate('Home');
+            }
+          }
+        />
+      </Dialog.Container>
+    </View>
+  );
+  const dialogBox = (
+    <View>
+      <Dialog.Container visible>
+        <Dialog.Title>Offline</Dialog.Title>
+        <Dialog.Description>
+          Cannot sync without internet connection
+        </Dialog.Description>
+        <Dialog.Button label="Cancel" onPress={() => setShouldShowOfflineDialogBox(false)} />
+        <Dialog.Button label="Ok" onPress={() => setShouldShowOfflineDialogBox(false)} />
       </Dialog.Container>
     </View>
   );
 
-  // // create an event handler
-  // const recordBtnPress = () => {
-  //   Analytics.record({
-  //     name: "Button Clicked!",
-  //     attributes: { username: currentOwner }
-  //   });
-  // }
-
-
-  // async function retrieveCognitoUser() {
-  //   // Auth.currentAuthenticatedUser()
-  //   //   .then((cognito) => {
-  //   //     // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //   //     // console.log('username:', cognitoUser.username);
-  //   //     setStorageKey(cognito.username);
-
-  //   //     setEmail(cognito.attributes.email);
-  //   //   })
-  //   //   .catch((err) => {
-  //   //     // console.log(err);
-  //   //     Alert.alert(err);
-  //   //   });
-  // }
-
-  const dialogBox = (
-  <View>
-    <Dialog.Container visible={true}>
-      <Dialog.Title>Offline</Dialog.Title>
-      <Dialog.Description>
-        Cannot sync without internet connection
-      </Dialog.Description>
-      <Dialog.Button label="Cancel" onPress={() => setShouldShowOfflineDialogBox(false)} />
-      <Dialog.Button label="Ok" onPress={() => setShouldShowOfflineDialogBox(false)} />
-    </Dialog.Container>
-  </View>
-);
-
-    const updateCloudDialogBox = (
-  <View>
-    <Dialog.Container visible={true}>
-      <Dialog.Title>Update Cloud</Dialog.Title>
-      <Dialog.Description>
-        Update this data across all devices?
-      </Dialog.Description>
-      <Dialog.Button label="No" onPress={() => {
-        setShouldShowUpdateCloudDialogBox(false)
-        props.navigation.navigate('Home');
-      }} />
-      <Dialog.Button label="Yes" onPress={() => {
-        // update transactions in cloud
-        pushAllTransactionsToCloud();
-        props.navigation.navigate('Home');
-      }} />
-    </Dialog.Container>
-  </View>
-);
+  const updateCloudDialogBox = (
+    <View>
+      <Dialog.Container visible={true}>
+        <Dialog.Title>Update Cloud</Dialog.Title>
+        <Dialog.Description>
+          Update this data across all devices?
+        </Dialog.Description>
+        <Dialog.Button label="No" onPress={() => {
+          setShouldShowUpdateCloudDialogBox(false)
+          props.navigation.navigate('Home');
+        }}
+      />
+        <Dialog.Button label="Yes" onPress={() => {
+          // update transactions in cloud
+          pushAllTransactionsToCloud();
+          props.navigation.navigate('Home');
+        }} />
+      </Dialog.Container>
+    </View>
+  );
 
 
 
@@ -1180,6 +994,18 @@ function Settings(props) {
 
     // check if user logged in
     if (!isUserLoggedIn) return;
+
+    // developer debugging only let this user sync
+    if (currentOwner !== '056049d7-ad75-4138-84d6-5d54db151d83') return;
+
+    // check if user is online
+    let bool = await isDeviceOnline();
+    if (bool !== true) return;
+
+    // check if user has device sync enabled
+    if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
+
+    
 
     // alert => would you like to sync transactions in the cross-device with this device?
     setShouldShowCloudSyncDialogBox(true);

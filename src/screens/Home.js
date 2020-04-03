@@ -28,6 +28,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             03/11/2020 02:59 AM
             03/11/2020 04:11 PM | 3.0.3
             03/29/2020 12:33 PM | Added Detox
+            04/03/2020 02:11 AM | Cross sync
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -90,6 +91,8 @@ import calculateMonthSpent from '../functions/calculateMonthSpent';
 import searchByID from '../functions/searchByID';
 
 import uuidv4 from '../functions/uuidv4';
+
+// import { spinner } from './spinner';
 
 /* my custom queries */
 import {
@@ -488,7 +491,7 @@ export default function Home(props) {
       // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
       // console.log('category: ', category);
     }
-    // setCurrentTransaction(null);
+    setCurrentTransaction(null);
 
     setIsUpdatingTransaction(false);
   };
@@ -555,7 +558,7 @@ export default function Home(props) {
   };
 
   const storeNewTransaction = async (transaction) => {
-    // setIsStoringNewTransaction(true);
+    setIsStoringNewTransaction(true);
 
     // check for maximum unauthorized user transactions
     if (!isUserLoggedIn && currentTransactions.length >= 5) {
@@ -580,6 +583,7 @@ export default function Home(props) {
             props.navigation.navigate('SignUp');
           },
       });
+      setIsStoringNewTransaction(false);
       return;
     }
 
@@ -605,7 +609,7 @@ export default function Home(props) {
 
     saveUndoHistory();
 
-    // setIsStoringNewTransaction(false);
+    setIsStoringNewTransaction(false);
 
     Analytics.record({ name: 'Stored a transaction' });
   };
@@ -672,24 +676,21 @@ export default function Home(props) {
 
         userObject.transactions = list;
 
-        saveSettingsStorage(global.storageKey, userObject);
-
-        /* rremove transaction online in db */
+        /* Remove online transaction */
         if (isUserLoggedIn && isUserCurrentlyOnline()) {
-          await removeTransaction(transaction)
-
-          // removePayee(transaction.payee)
+          removePayee(transaction.payee)
+          await removeTransaction(transaction);
 
           Analytics.record({ name: 'Removed an online transaction' });
         }
-        setCurrentTransaction(null);
-      }
 
-        } catch(e) {
+        saveSettingsStorage(global.storageKey, userObject);
+      }
+    } catch (e) {
       // statements
       console.log(e);
-    }
 
+    }
     setIsRemovingStoredTransaction(false);
 
     retrieveUserStoredSettings();
@@ -778,7 +779,7 @@ export default function Home(props) {
     // make sure user inputs are not invalid
     if (!isUserInputValid()) return;
 
-    setIsReady(false)
+    setIsReady(false);
 
     // /* Create New Category */
     const category = new Category(
@@ -799,7 +800,6 @@ export default function Home(props) {
     savePayee(payee);
 
     let amount = (category.type === 'EXPENSE') ? -Math.abs(currentAmount / (100)) : Math.abs(currentAmount / (100))
-
  
     const transaction = new Transaction(
       uuidv4(), // id
@@ -813,31 +813,21 @@ export default function Home(props) {
       currentVersion, // version
     );
 
-    /* Check internet connection */
-    /* Check authorization */
-    // if (!isUserLoggedIn || !isUserCurrentlyOnline()) {
-    //   storeNewTransaction(transaction); // store new transaction locally
-    //   return;
-    // }
-
     storeNewTransaction(transaction); // store new transaction locally
 
-    if (await isUserCurrentlyOnline())
-      if (isUserLoggedIn)
-        saveTransaction(transaction)
+    if ((await isUserCurrentlyOnline() === true) && (isUserLoggedIn === true))
+      saveTransaction(transaction)
 
-    // await saveTransaction(transaction); // store new transaction online
+    setCurrentAmount(0);
+    setCurrentCategory(null);
+    setCurrentCategory(null);
+    setCurrentPayee(null);
+    setCurrentDate(new Date());
+    setCurrentType('');
+    setCurrentNote('');
+    setCurrentVersion(0);
 
-    setCurrentAmount(0)
-    setCurrentCategory(null)
-    setCurrentCategory(null)
-    setCurrentPayee(null)
-    setCurrentDate(new Date())
-    setCurrentType('')
-    setCurrentNote('')
-    setCurrentVersion(0)
-
-    setIsReady(true)
+    setIsReady(true);
   }
 
   const saveUndoHistory = async () => {
@@ -1249,25 +1239,25 @@ export default function Home(props) {
   const updateTransactionIndicator = <ActivityIndicator size="large" color={colors.white} />;
 
   const spinner = (
-  <View
-    style={
-      {
-        // flex: 1,a
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        position: 'absolute',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#F5FCFF',
-        opacity: 0.1,
+    <View
+      style={
+        {
+          // flex: 1,
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          position: 'absolute',
+          alignItems: 'center',
+          justifyContent: 'center',
+          // backgroundColor: '#F5FCFF',
+          // opacity: 0.1,
+        }
       }
-    }
-  >
-    <ActivityIndicator size="large" color="#ff7dsff" />
-  </View>
-);
+    >
+      <ActivityIndicator size="large" color="#ff7dsff" />
+    </View>
+  );
 
 
 
@@ -1397,6 +1387,12 @@ export default function Home(props) {
       }
       {
         isRemovingStoredTransaction && spinner
+      }
+      {
+        // isUpdatingTransaction && spinner
+      }
+      {
+        isStoringNewTransaction  && spinner
       }
               
 
