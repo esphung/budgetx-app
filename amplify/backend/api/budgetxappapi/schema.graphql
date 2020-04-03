@@ -30,7 +30,7 @@ type Payee @model
   		])
 	{
   		id: ID!
-		name: String!
+		name: String
 		owner: String
 		version: Int
 		transaction: Transaction @connection(name: "TransactionPayee")

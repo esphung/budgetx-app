@@ -246,32 +246,17 @@ export const compareListTransactions = async () => {
     let data = await getTransactionByID(element.id); // retrieve newly created from online trans by id
 
     console.log('data: ', data);
-
-    let category = (data.category.id !== null && data.category) ? {
-      id: data.category.id,
-      name: data.category.name,
-      color: data.category.color,
-      type: data.category.type,
-      owner: element.category.owner,
-      version: data.category.version,
-    } : element.category;
-
-    if (data.category.id === null) return
-
-    if (data.payee  === null) return
-
     const transaction = {
       id: element.id,
       amount: data.amount,
-      category: category,
-      // {
-      //   id: data.category.id,
-      //   name: data.category.name,
-      //   color: data.category.color,
-      //   type: data.category.type,
-      //   owner: element.category.owner,
-      //   version: data.category.version,
-      // },
+      category: {
+        id: data.category.id,
+        name: data.category.name,
+        color: data.category.color,
+        type: data.category.type,
+        owner: element.category.owner,
+        version: data.category.version,
+      },
       payee: (data.payee && (data.payee.name !== '' && data.payee.name !== null)) ? data.payee : {
         id: element.payee.id,
         name: element.payee.name,

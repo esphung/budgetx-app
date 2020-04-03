@@ -169,6 +169,14 @@ ${objectRows}
 //   return bool;
 // };
 
+const findArrayDifferences = (otherArray) => {
+  return (current) => {
+    return otherArray.filter((other) => {
+      return other.id === current.id // && other.version === current.version
+    }).length === 0;
+  }
+}
+
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
   const { navigation } = props;
@@ -213,14 +221,6 @@ function Settings(props) {
 
   const [isExportingTransactions, setIsExportingTransactions] = useState(false);
 
-  const findArrayDifferences = (otherArray) => {
-    return (current) => {
-      return otherArray.filter((other) => {
-        return other.id === current.id // && other.version === current.version
-      }).length === 0;
-    }
-  }
-
   const crossDeviceSync = async () => {
     // developer debugging only let this user sync
     if (currentOwner !== '056049d7-ad75-4138-84d6-5d54db151d83') return;
@@ -262,8 +262,9 @@ function Settings(props) {
       }
 
       // add new online transactions to local transactions  on to user's device
-      storage.transactions = local_transactions.concat(onlyInOnline);
-      // console.log('storage.transactions.length: ', storage.transactions.length);
+      storage.transactions = await retrieveOnlineTransactions();
+      // storage.transactions = local_transactions.concat(onlyInOnline);
+      console.log('storage.transactions.length: ', storage.transactions.length);
 
       // save storage transactions to device storage
       saveSettingsStorage(storageKey, storage);
@@ -274,8 +275,6 @@ function Settings(props) {
     // go back to user home screen
     navigation.navigate('Home');
   }
-
-
   const crossDeviceSyncDialogBox = (
     <View>
       <Dialog.Container headerStyle={{

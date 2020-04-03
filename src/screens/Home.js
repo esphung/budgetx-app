@@ -151,7 +151,6 @@ function isUpperCase(str) {
 // };
 
 const updateOnlineTransaction = async (transaction) => {
-
   const updated = {
     id: transaction.id,
     date: transaction.date,
@@ -186,34 +185,34 @@ const isUserCurrentlyOnline = async () => {
   return bool;
 };
 
-  const crossDeviceSync = async () => {
-    let list = await retrieveOnlineTransactions();
+  // const crossDeviceSync = async () => {
+  //   let list = await retrieveOnlineTransactions();
 
-    try {
-      const storage = await loadSettingsStorage(global.storageKey);
-      storage.transactions = list;
+  //   try {
+  //     const storage = await loadSettingsStorage(global.storageKey);
+  //     storage.transactions = list;
 
-      for (var i = list.length - 1; i >= 0; i--) {
-        if (list[i].payee === null) {
-          list[i].payee = {
-            id: uuidv4(),
-            name: 'New',
-            owner: list[i].owner,
-            version: 0,
-          }
-        }
-      }
+  //     for (var i = list.length - 1; i >= 0; i--) {
+  //       if (list[i].payee === null) {
+  //         list[i].payee = {
+  //           id: uuidv4(),
+  //           name: 'None',
+  //           owner: list[i].owner,
+  //           version: 0,
+  //         }
+  //       }
+  //     }
 
-      console.log('list: ', list);
+  //     console.log('list: ', list);
 
 
-      saveSettingsStorage(storageKey, storage);
+  //     saveSettingsStorage(storageKey, storage);
 
-    } catch(e) {
-      // statements
-      console.log(e);
-    }
-  }
+  //   } catch(e) {
+  //     // statements
+  //     console.log(e);
+  //   }
+  // }
 
 export default function Home(props) {
   // state hooks
@@ -563,7 +562,7 @@ export default function Home(props) {
 
     setCurrentPayee({
       id: uuidv4(),
-      name: 'New',
+      name: 'None',
       owner: currentOwner,
       version: 0,
     });
@@ -731,10 +730,10 @@ export default function Home(props) {
     saveCategory(category);
 
     // /* Create New Payee */
-    const payee = new Payee(uuidv4(), 'New', currentOwner, 0);
+    const payee = new Payee(uuidv4(), 'None', currentOwner, 0);
     // // console.log('payee: ', payee);
 
-    // savePayee(payee);
+    savePayee(payee);
 
     let amount = (category.type === 'EXPENSE') ? -Math.abs(currentAmount / (100)) : Math.abs(currentAmount / (100))
 

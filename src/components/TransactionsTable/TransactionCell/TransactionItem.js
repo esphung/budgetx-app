@@ -42,9 +42,29 @@ function TransactionItem(props, index) {
     updateTransactionPayee
   } = props;
 
+
+
+  // console.log('item.category: ', item.category);
+
+  if (item.category === null) {
+    console.log('item.category: ', item.category);
+    item.category = {
+      id: 0,
+      name: 'None',
+      color: '#ddd',
+      owner: '',
+      type: 'INCOME',
+      version: 0,
+    }
+  }
+
+  
+
   // console.log('item: ', item);
 
   let { category } = item;
+
+
 
   let name = '';
 
@@ -57,6 +77,8 @@ function TransactionItem(props, index) {
   if (currentTransaction === item) {
     textColor = `${category.color}`; // item.category.color + '0f';
   }
+
+  // if (!category.color) return <View />;
 
   return (
     <TouchableOpacity
@@ -138,7 +160,7 @@ function TransactionItem(props, index) {
           />
         </View>
 
-       {/* <View
+        <View
           style={
             {
               flex: 0.95, // 1
@@ -151,7 +173,7 @@ function TransactionItem(props, index) {
             }
           }
         >
-          <ItemNameInput
+{/*         <ItemNameInput
             currentPayeeName={currentPayeeName}
             updateTransactionPayee={updateTransactionPayee}
             updateStoredTransaction={updateStoredTransaction}
@@ -159,8 +181,8 @@ function TransactionItem(props, index) {
             transaction={item}
             handlePayeeNameChange={props.handlePayeeNameChange}
             updateTransactionPayee={updateTransactionPayee}
-            />
-        </View>*/}
+            />*/}
+        </View>
 
         {/* <ItemDate item={item} /> */}
 

@@ -14,6 +14,8 @@ import {
   getCategory,
 } from '../graphql/queries';
 
+import uuidv4 from '../functions/uuidv4';
+
 /* fetch cloud resources functions */
 export const fetchStoredCategories = async () => {
   let list = [];
@@ -96,6 +98,11 @@ mutation createCategory {
     version: ${category.version}
   }) {
     id
+    name
+    color
+    type
+    owner
+    version
   }
 }
 `;
@@ -111,6 +118,7 @@ mutation CreatePayee {
     version: ${payee.version}
   }) {
     id
+    name
   }
 }
 `;
@@ -136,6 +144,10 @@ mutation createTransaction {
     category {
       id
       name
+      color
+      type
+      owner
+      version
     }
     payee {
       id
@@ -266,7 +278,15 @@ export const formatTransactionInput = (item) => {
       obj.key = key
       // checking for nulls
       if ((item[key] === null || !item[key]) && item[key] !== 0) {
-        if (key === 'note') obj[key] = 'Add note'
+        if (key === 'note') obj[key] = 'Add note';
+
+        if (key === 'payee') obj[key] = {
+          id: uuidv4(),
+          name: 'None',
+          owner: item.owner,
+          version: 0,
+        }
+
       }
       else {
         obj[key] = item[key]
@@ -295,7 +315,9 @@ export const updateTransaction = async (updated) => {
     await API.graphql(graphqlOperation(UpdateTransactionGQL(input)));
     console.log('transaction successfully updated:', input.id);
   } catch (err) {
+    // transaction dne yet (most likely)
     console.log('error updating transaction...', err);
+    saveTransaction(input);
   }
 };
 export const updateCategory = async (updated) => {

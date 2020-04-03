@@ -196,6 +196,8 @@ const MyStickyTable = (props) => {
   function renderItem({ item }) {
     const { header, date } = item;
 
+    // console.log('item: ', item);
+
     let cell = (header) ? (
       // cell is a table header item
       <SwipeRow
