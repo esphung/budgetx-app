@@ -94,6 +94,7 @@ import uuidv4 from '../functions/uuidv4';
 /* my custom queries */
 import {
   updateTransaction,
+  updateCategory,
   removeTransaction,
   removePayee,
   removeCategory,
@@ -175,6 +176,18 @@ const updateOnlineTransaction = async (transaction) => {
   updateTransaction(updated);
 };
 
+const updateOnlineCategory = async (category) => {
+  const updated = {
+    id: category.id,
+    name: category.name,
+    color: category.color,
+    type: category.type,
+    owner: category.owner,
+    version: category.version,
+  };
+  updateCategory(updated);
+};
+
 const isUserCurrentlyOnline = async () => {
   let bool = false;
   await NetInfo.fetch().then((state) => {
@@ -213,6 +226,45 @@ const isUserCurrentlyOnline = async () => {
   //     console.log(e);
   //   }
   // }
+
+  const updateStoredCategoryProperties = async (category) => {
+    // console.log('updating category: ', category);
+    const storage = await loadSettingsStorage(global.storageKey);
+    // console.log('storage.categories: ', storage.categories);
+
+    console.log('category: ', category);
+
+    let list = storage.categories; // stored categories
+
+    let found = searchByID(category.id, list); // find previous item
+
+    if (found) {
+      // console.log('list.indexOf(found): ', list.indexOf(found));
+      const pos = list.indexOf(found);
+      // console.log('list[pos]: ', list[pos]);
+
+      list[pos] = category; // replace old with new
+      // console.log('list[pos]: ', list[pos]);
+
+      storage.categories = list; // .sort();
+
+      // save it locally
+      saveSettingsStorage(global.storageKey, storage);
+
+      // check if authenticated
+      // global.storageKey = await retrieveAuthenticatedStorageKey();
+      // let key = await getOnlineUserKey();
+      // // console.log('key: ', key);
+      // if (key) {
+      //   saveCategory(category); 
+      // }
+    }
+
+    // storage.categories = list.sort();
+
+    // console.log('storage.categories: ', storage.categories);
+    // console.log('category: ', category);
+  }
 
 export default function Home(props) {
   // state hooks
@@ -362,8 +414,16 @@ export default function Home(props) {
      /* if online and logged in, update online transaction */
     if (isUserLoggedIn) {
       const isConnected = await isUserCurrentlyOnline();
-      // console.log('transactions[pos]: ', transactions[pos]);
-      if (isConnected) updateOnlineTransaction(transactions[pos])
+      console.log('transactions[pos]: ', transactions[pos]);
+      if (isConnected) {
+        transactions[pos].category.owner = currentOwner;
+        transactions[pos].owner = currentOwner
+
+
+        updateOnlineCategory(transactions[pos].category)
+        updateOnlineTransaction(transactions[pos])
+
+      }
     }
 
     showMessage({
@@ -403,6 +463,8 @@ export default function Home(props) {
  
     try {
       const found = searchByID(currentTransaction.id, list);
+      // console.log('found: ', found);
+
 
       if (category.id === found.category.id || !found) {
         setIsUpdatingTransaction(false);
@@ -421,6 +483,7 @@ export default function Home(props) {
 
       Analytics.record({ name: 'Successfully updated a transaction category' });
     } catch (e) {
+      console.log('found: ', found);
       console.log('Could not update transaction category', e);
       // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
       console.log('category: ', category);
@@ -840,44 +903,7 @@ export default function Home(props) {
     }
   }, [currentTransactions]);
 
-  const updateStoredCategoryProperties = async (category) => {
-    // console.log('updating category: ', category);
-    const storage = await loadSettingsStorage(global.storageKey);
-    // console.log('storage.categories: ', storage.categories);
 
-    // console.log('category: ', category);
-
-    let list = storage.categories; // stored categories
-
-    let found = searchByID(category.id, list); // find previous item
-
-    if (found) {
-      // console.log('list.indexOf(found): ', list.indexOf(found));
-      const pos = list.indexOf(found);
-      // console.log('list[pos]: ', list[pos]);
-
-      list[pos] = category; // replace old with new
-      // console.log('list[pos]: ', list[pos]);
-
-      storage.categories = list; // .sort();
-
-      // save it locally
-      saveSettingsStorage(global.storageKey, storage);
-
-      // check if authenticated
-      // global.storageKey = await retrieveAuthenticatedStorageKey();
-      // let key = await getOnlineUserKey();
-      // // console.log('key: ', key);
-      // if (key) {
-      //   saveCategory(category); 
-      // }
-    }
-
-    // storage.categories = list.sort();
-
-    // console.log('storage.categories: ', storage.categories);
-    // console.log('category: ', category);
-  }
 
   useEffect(() => {
     if (currentCategory) {

@@ -34,6 +34,7 @@ import {
   saveSettingsStorage,
   compareListTransactions,
   retrieveOnlineTransactions,
+  retrieveOnlineCategories,
   pushAllTransactionsToCloud,
 } from '../storage/SettingsStorage';
 
@@ -60,7 +61,7 @@ import {
   // removePayee,
   // removeCategory,
   // savePayee,
-  // saveCategory,
+  saveCategory,
   saveTransaction,
   // fetchStoredTransactions,
   // fetchStoredCategories,
@@ -106,6 +107,8 @@ import {
 //   // saveUserObject,
 // } from '../storage/UserStorage';
 
+import Category from '../models/Category';
+
 import Auth from '@aws-amplify/auth'; // AWS Amplify
 
 import colors from '../../colors'; // ui colors
@@ -115,6 +118,8 @@ import styles from '../../styles';
 import uuidv4 from '../functions/uuidv4';
 
 import { isDeviceOnline } from '../../network-functions';
+
+import searchByName from '../functions/searchByName';
 
 // import { } from 'Utils';
 
@@ -175,7 +180,21 @@ const findArrayDifferences = (otherArray) => {
       return other.id === current.id // && other.version === current.version
     }).length === 0;
   }
-}
+};
+
+const storeUserCategories = async (list) => {
+  try {
+    const storage = await loadSettingsStorage(storageKey);
+
+    storage.categories = list;
+    
+    saveSettingsStorage(storageKey, storage);
+  } catch (error) {
+    // statements
+    console.log('storeUserCategories error:', error);
+  }
+};
+
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
@@ -221,6 +240,36 @@ function Settings(props) {
 
   const [isExportingTransactions, setIsExportingTransactions] = useState(false);
 
+  const pushAllCategoriesToCloud = async () => {
+
+  try {
+    const storage = await loadSettingsStorage(global.storageKey);
+    // console.log('local_transactions: ', local_transactions);
+
+   for (var i = 0; i < storage.categories.length; i++) {
+      // /* Create New Category */
+      const category = new Category(
+        storage.categories[i].id, // id
+        storage.categories[i].name, // name
+        storage.categories[i].color, // color
+        storage.categories[i].type, // type
+        currentOwner, // owner
+        storage.categories[i].version, // version
+      );
+
+      await saveCategory(category);
+
+    // saveCategory(storage.categories[i])
+      // console.log('storage.transactions[i]: ', storage.transactions[i]);
+   }
+
+  } catch(e) {
+    // statements
+    console.log(e);
+  }
+}
+
+
   const crossDeviceSync = async () => {
     // developer debugging only let this user sync
     if (currentOwner !== '056049d7-ad75-4138-84d6-5d54db151d83') return;
@@ -232,6 +281,30 @@ function Settings(props) {
     // check if user has device sync enabled
     if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* Sync Transactions */
     // compare both transaction lists
     let online_transactions = []; // online trans
     let local_transactions = [];  // local trans in device storage
@@ -272,6 +345,79 @@ function Settings(props) {
       // throw new Error('Error performing crossDeviceSync:', e);
       console.log('crossDeviceSyncError: ', crossDeviceSyncError);
     }
+
+
+
+
+
+
+
+
+
+    /* Sync Categories */
+    // compare both category lists
+    let online_categories = []; // online trans
+    let local_categories = [];  // local trans in device storage
+
+    try {
+      // get user's local categories
+      let storage = await loadSettingsStorage(global.storageKey);
+      local_categories = storage.categories;
+      console.log('local_categories.length: ', local_categories.length);
+      console.log('local_categories: ', local_categories);
+
+      //  // get user's online categories
+      online_categories = await retrieveOnlineCategories();
+      console.log('online_categories.length: ', online_categories.length);
+      console.log('online_categories: ', online_categories);
+
+
+      for (var i = online_categories.length - 1; i >= 0; i--) {
+        let  found  = searchByName(online_categories[i].name, local_categories)
+        if (found) {
+          const pos  = local_categories.indexOf(found);
+
+          local_categories[pos] = online_categories[i];
+        }
+      }
+
+
+
+
+      // var arr1 = local_categories;
+      // var arr2  = online_categories;
+
+      // let merged = [];
+
+      // for(let i=0; i<arr1.length; i++) {
+      // merged.push({
+      //   ...arr1[i],
+      //   ...(arr2.find((itmInner) => itmInner.name == arr1[i].name))}
+      //   );
+      // }
+
+      // console.log('merged: ', merged);
+      // console.log('merged.length: ', merged.length);
+
+      // storeUserCategories(merged);
+
+      storage.categories = local_categories
+
+      saveSettingsStorage(storageKey, storage);
+
+
+      pushAllCategoriesToCloud();
+
+    } catch(categorySync) {
+      // throw new Error('Error performing crossDeviceSync:', e);
+      console.log('categorySync: ', categorySync);
+    }
+
+
+
+
+
+
     // go back to user home screen
     navigation.navigate('Home');
   }

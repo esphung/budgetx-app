@@ -184,6 +184,29 @@ mutation updateTransaction {
   return graphql_query
 };
 
+export const UpdateCategoryGQL = (updated) => {
+  const graphql_query = gql`
+mutation updateCategory {
+  updateCategory(input: {
+    id: ${'"'+updated.id+'"'}
+    name: ${'"'+updated.name+'"'}
+    color: ${'"'+updated.color+'"'}
+    type: ${'"'+updated.type+'"'}
+    owner: ${'"'+updated.owner+'"'}
+    # version: ${updated.version}
+  }) {
+    id
+    name
+    color
+    type
+    owner
+    version
+  }
+}`;
+  return graphql_query
+};
+
+
 // export const GetTransactionByIDGQL = (id) => {
 //   const graphql_query = gql`
 // query getTransaction {
@@ -198,24 +221,6 @@ mutation updateTransaction {
 //   return graphql_query
 // };
 
-export const UpdateCategoryGQL = (updated) => {
-  const graphql_query = gql`
-mutation updateCategory {
-  updateCategory(input: {
-    id: ${'"'+updated.id+'"'}
-    name: ${'"'+updated.name+'"'}
-    color: ${'"'+updated.color+'"'}
-    type: ${'"'+updated.type+'"'}
-    owner: ${'"'+updated.owner+'"'}
-    version: ${updated.version}
-  }) {
-    id
-    name
-    version
-  }
-}`;
-  return graphql_query
-};
 
 /* API calls */
 export const removeCategory = async (category) => {
@@ -296,6 +301,33 @@ export const formatTransactionInput = (item) => {
   return obj
 }
 
+export const formatCategoryInput = (item) => {
+  let obj = {};
+  Object.keys(item).forEach((key) => {
+    if (key) {
+      obj.key = key
+      // checking for nulls
+      if ((item[key] === null || !item[key]) && item[key] !== 0) {
+        console.log('item[key]: ', item[key]);
+        // if (key === 'note') obj[key] = 'Add note';
+
+        // if (key === 'payee') obj[key] = {
+        //   id: uuidv4(),
+        //   name: 'None',
+        //   owner: item.owner,
+        //   version: 0,
+        // }
+
+      }
+      else {
+        obj[key] = item[key]
+      }
+    }
+  });
+  return obj
+}
+
+
 export const saveTransaction = async (transaction) => {
   // validate trans properties, check for null/empty and fix it
   let input = formatTransactionInput(transaction)
@@ -310,7 +342,7 @@ export const saveTransaction = async (transaction) => {
 }
 export const updateTransaction = async (updated) => {
   let input = formatTransactionInput(updated)
-  // console.log('input: ', input);
+  console.log('input: ', input);
   try {
     await API.graphql(graphqlOperation(UpdateTransactionGQL(input)));
     console.log('transaction successfully updated:', input.id);
@@ -321,8 +353,10 @@ export const updateTransaction = async (updated) => {
   }
 };
 export const updateCategory = async (updated) => {
+  // console.log('updated category: ', updated);
   try {
     await API.graphql(graphqlOperation(UpdateCategoryGQL(updated)));
+    console.log('category successfully updated...');
   } catch (err) {
     console.log('error updating category...', err);
   }

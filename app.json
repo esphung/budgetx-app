@@ -15,7 +15,7 @@
     },
     "android": {
       "package": "com.ericphung.financely",
-      "versionCode": 18
+      "versionCode": 19
     },
     "name": "Financely",
     "orientation": "portrait",
@@ -36,6 +36,6 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "3.4.0"
+    "version": "3.4.1"
   }
 }

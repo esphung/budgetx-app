@@ -163,9 +163,19 @@ const DEFAULT_SETTINGS = async () => {
 export const retrieveOnlineTransactions = async () => {
   let list = []
   let key = await getOnlineUserKey(); // get online logged in user storage key
-  console.log('key: ', key);
+  // console.log('key: ', key);
 
   list = await fetchStoredTransactions()
+
+  return list
+}
+
+export const retrieveOnlineCategories = async () => {
+  let list = []
+  let key = await getOnlineUserKey(); // get online logged in user storage key
+  // console.log('key: ', key);
+
+  list = await fetchStoredCategories()
 
   return list
 }
