@@ -27,6 +27,8 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 
 // import NetInfo from "@react-native-community/netinfo";
 
+import { spinner  } from './spinner';
+
 import Dialog from 'react-native-dialog';
 
 import {
@@ -182,6 +184,14 @@ const findArrayDifferences = (otherArray) => {
   }
 };
 
+const findCategoryArrayDifferences = (otherArray) => {
+  return (current) => {
+    return otherArray.filter((other) => {
+      return other.name === current.name // && other.version === current.version
+    }).length === 0;
+  }
+};
+
 const storeUserCategories = async (list) => {
   try {
     const storage = await loadSettingsStorage(storageKey);
@@ -194,6 +204,29 @@ const storeUserCategories = async (list) => {
     console.log('storeUserCategories error:', error);
   }
 };
+
+const pushCategoriesToCloud = async (categories) => {
+    try {
+      const storage = await loadSettingsStorage(global.storageKey);
+
+      for (var i = 0; i < categories.length; i++) {
+        // /* Create New Category */
+        const category = new Category(
+          categories[i].id, // id
+          categories[i].name, // name
+          categories[i].color, // color
+          categories[i].type, // type
+          categories[i].owner, // owner
+          categories[i].version, // version
+        );
+        saveCategory(category);
+      }
+    } catch(e) {
+      // statements
+      console.log('Error pushing categories to cloud:', e);
+    }
+  }
+
 
 
 function Settings(props) {
@@ -240,35 +273,9 @@ function Settings(props) {
 
   const [isExportingTransactions, setIsExportingTransactions] = useState(false);
 
-  const pushAllCategoriesToCloud = async () => {
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  try {
-    const storage = await loadSettingsStorage(global.storageKey);
-    // console.log('local_transactions: ', local_transactions);
-
-   for (var i = 0; i < storage.categories.length; i++) {
-      // /* Create New Category */
-      const category = new Category(
-        storage.categories[i].id, // id
-        storage.categories[i].name, // name
-        storage.categories[i].color, // color
-        storage.categories[i].type, // type
-        currentOwner, // owner
-        storage.categories[i].version, // version
-      );
-
-      await saveCategory(category);
-
-    // saveCategory(storage.categories[i])
-      // console.log('storage.transactions[i]: ', storage.transactions[i]);
-   }
-
-  } catch(e) {
-    // statements
-    console.log(e);
-  }
-}
-
+  
 
   const crossDeviceSync = async () => {
     // developer debugging only let this user sync
@@ -288,7 +295,7 @@ function Settings(props) {
 
 
 
-
+    setIsSyncing(true);
 
 
 
@@ -313,12 +320,12 @@ function Settings(props) {
       // get user's local transactions
       let storage = await loadSettingsStorage(global.storageKey);
       local_transactions = storage.transactions;
-      console.log('local_transactions.length: ', local_transactions.length);
+      // console.log('local_transactions.length: ', local_transactions.length);
       // console.log('local_transactions: ', local_transactions);
 
        // get user's online transactions
       online_transactions = await retrieveOnlineTransactions();
-      console.log('online_transactions.length: ', online_transactions.length);
+      // console.log('online_transactions.length: ', online_transactions.length);
       // console.log('online_transactions: ', online_transactions);
 
       // check for local transactions that dont exist in online transactions yet
@@ -337,7 +344,7 @@ function Settings(props) {
       // add new online transactions to local transactions  on to user's device
       storage.transactions = await retrieveOnlineTransactions();
       // storage.transactions = local_transactions.concat(onlyInOnline);
-      console.log('storage.transactions.length: ', storage.transactions.length);
+      // console.log('storage.transactions.length: ', storage.transactions.length);
 
       // save storage transactions to device storage
       saveSettingsStorage(storageKey, storage);
@@ -382,6 +389,13 @@ function Settings(props) {
       }
 
 
+      /* Add ccategories to this device that are onnly online */
+      // const onlyInLocalCategores = local_categories.filter(findCategoryArrayDifferences(online_categories));
+      let onlyInOnlineCategories = online_categories.filter(findCategoryArrayDifferences(local_categories));
+
+      console.log('onlyInOnlineCategories: ', onlyInOnlineCategories);
+
+
 
 
       // var arr1 = local_categories;
@@ -401,22 +415,26 @@ function Settings(props) {
 
       // storeUserCategories(merged);
 
-      storage.categories = local_categories
+      storage.categories = local_categories.concat(onlyInOnlineCategories);
+
+      let sorted = storage.categories.sort((a, b) => a[0] > b[0]);
+
+      storage.categories = sorted
+
+      // console.log('sorted: ', sorted);
+
+      // console.log('storage.categories.length: ', storage.categories.length);
 
       saveSettingsStorage(storageKey, storage);
 
-
-      pushAllCategoriesToCloud();
-
+      await pushCategoriesToCloud(storage.categories);
     } catch(categorySync) {
       // throw new Error('Error performing crossDeviceSync:', e);
       console.log('categorySync: ', categorySync);
     }
 
 
-
-
-
+    await setIsSyncing(false);
 
     // go back to user home screen
     navigation.navigate('Home');
@@ -1255,12 +1273,14 @@ function Settings(props) {
     <View
       style={styles.container}
     >
+    
     {
       shouldShowOfflineDialogBox && dialogBox
     }
     {
       shouldShowCloudSyncDialogBox && crossDeviceSyncDialogBox
     }
+
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={retrieveStoredSettings} // {(payload) => checkConnectivity()}
@@ -1271,6 +1291,9 @@ function Settings(props) {
           />
 
         <View style={rectangle5} />
+        {
+          isSyncing && spinner
+        }
 
    
         <View
@@ -1382,6 +1405,7 @@ function Settings(props) {
           >
             <VersionCredit />
           </View>
+
         </View>
         {
           shouldShowResetDialog && resetDataDialogBox
@@ -1392,6 +1416,7 @@ function Settings(props) {
         {
           isExportingTransactions && <ActivityIndicator color="#ddd" size="large" />
         }
+        
     </View>
   );
 

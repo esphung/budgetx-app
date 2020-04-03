@@ -232,7 +232,7 @@ const isUserCurrentlyOnline = async () => {
     const storage = await loadSettingsStorage(global.storageKey);
     // console.log('storage.categories: ', storage.categories);
 
-    console.log('category: ', category);
+    // console.log('category: ', category);
 
     let list = storage.categories; // stored categories
 
@@ -414,7 +414,7 @@ export default function Home(props) {
      /* if online and logged in, update online transaction */
     if (isUserLoggedIn) {
       const isConnected = await isUserCurrentlyOnline();
-      console.log('transactions[pos]: ', transactions[pos]);
+      // console.log('transactions[pos]: ', transactions[pos]);
       if (isConnected) {
         transactions[pos].category.owner = currentOwner;
         transactions[pos].owner = currentOwner
@@ -483,10 +483,10 @@ export default function Home(props) {
 
       Analytics.record({ name: 'Successfully updated a transaction category' });
     } catch (e) {
-      console.log('found: ', found);
+      // console.log('found: ', found);
       console.log('Could not update transaction category', e);
       // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
-      console.log('category: ', category);
+      // console.log('category: ', category);
     }
     // setCurrentTransaction(null);
 
@@ -749,7 +749,7 @@ export default function Home(props) {
     // console.log('owner: ', owner);
 
     let payee = (stored.payee) ? stored.payee : new Payee(uuidv4(), '', stored.owner, 0);
-    console.log('payee: ', payee);
+    // console.log('payee: ', payee);
 
     let category = (stored.category) ? stored.category : new Category(uuidv4(), 'None', '#fff', owner, type, 0);
     // console.log('category: ', category);
@@ -1029,16 +1029,16 @@ export default function Home(props) {
     };
   }, [isRemovingStoredTransaction]);
 
-  useEffect(() => {
-    console.log('mount');
+  // useEffect(() => {
+  //   console.log('mount');
 
-    // compareListTransactions()
+  //   // compareListTransactions()
 
-    return () => {
-      // effect
-      console.log('clean up');
-    };
-  }, []);
+  //   return () => {
+  //     // effect
+  //     console.log('clean up');
+  //   };
+  // }, []);
 
 
   // useEffect(() => {
