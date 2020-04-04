@@ -243,139 +243,144 @@ function Settings(props) {
 
   const [isExportingTransactions, setIsExportingTransactions] = useState(false);
 
+  const [isSyncing, setIsSyncing] = useState(false);
+
   const spinner = (
     <View
       style={
         {
-          flex: 1,
-          top: 50,
+          // flex: 1,
+          top: 0,
           bottom: 0,
           left: 0,
           right: 0,
           position: 'absolute',
           alignItems: 'center',
           justifyContent: 'center',
-          // backgroundColor: '#ddd',
-          opacity: 0.05,
+          backgroundColor: '#ddd',
+          opacity: 0.1,
+
         }
       }
     >
-      <ActivityIndicator size="large" color="#ddd" />
+      <ActivityIndicator style={{
+        position: 'absolute',
+        top: 70,
+        // borderWidth: 1,
+        // borderColor: 'red',
+        // borderStyle: 'solid',
+      }} size="large" color="gray" />
     </View>
   );
 
-
   const pushAllCategoriesToCloud = async () => {
+    try {
+      const storage = await loadSettingsStorage(global.storageKey);
+      // console.log('local_transactions: ', local_transactions);
 
-  try {
-    const storage = await loadSettingsStorage(global.storageKey);
-    // console.log('local_transactions: ', local_transactions);
+     for (var i = 0; i < storage.categories.length; i++) {
+        // /* Create New Category */
+        const category = new Category(
+          storage.categories[i].id, // id
+          storage.categories[i].name, // name
+          storage.categories[i].color, // color
+          storage.categories[i].type, // type
+          currentOwner, // owner
+          storage.categories[i].version, // version
+        );
 
-   for (var i = 0; i < storage.categories.length; i++) {
-      // /* Create New Category */
-      const category = new Category(
-        storage.categories[i].id, // id
-        storage.categories[i].name, // name
-        storage.categories[i].color, // color
-        storage.categories[i].type, // type
-        currentOwner, // owner
-        storage.categories[i].version, // version
-      );
+        updateCategory(category);
 
-      updateCategory(category);
+      // saveCategory(storage.categories[i])
+        // console.log('storage.transactions[i]: ', storage.transactions[i]);
+     }
 
-    // saveCategory(storage.categories[i])
-      // console.log('storage.transactions[i]: ', storage.transactions[i]);
-   }
-
-  } catch(e) {
-    // statements
-    console.log(e);
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
   }
-}
 
-const compareListTransactions = async () => {
-  // load online transactions
-  let online_transactions = await retrieveOnlineTransactions();
-  console.log('online_transactions.length: ', online_transactions.length);
-
-
-  // load local transactions
-  let local_transactions = [] // = await retrieveLocalTransactions();
-  let storage = await loadSettingsStorage(global.storageKey);
-  local_transactions = storage.transactions;
-  console.log('local_transactions.length: ', local_transactions.length);
-
-  
-
-  var props = ['id', 'version'];
-
-  var result = local_transactions.filter(function(o1){
-      // filter out (!) items in online_transactions
-      return online_transactions.some(function(o2){
-          return (o1.id === o2.id) && (o1.version < o2.version);          // assumes unique id
-      });
-  }).map(function(o){
-      // objects with only the required properties
-      // and map to apply this to the filtered array as a whole
-      return props.reduce((newo) => {
-          newo = o;
-          return newo;
-      }, {});
-  });
-
-  console.log('result: ', result);
-
-  /* Filter Out Updated Trans then replace in local db */
-  // result.forEach(async (element) => {
-  //   // console.log('element.id: ', element.id);
-  //   // console.log('element.version: ', element.version);
-
-  //   // date for the new transaction to store
-  //   let data = await getTransactionByID(element.id); // retrieve newly created from online trans by id
-
-  //   // console.log('data: ', data);
-  //   const transaction = {
-  //     id: element.id,
-  //     amount: element.amount,
-  //     category: {
-  //       id: data.category.id,
-  //       name: data.category.name,
-  //       color: data.category.color,
-  //       type: data.category.type,
-  //       owner: element.category.owner,
-  //       version: data.category.version,
-  //     },
-  //     payee: (data.payee && (data.payee.name !== '' && data.payee.name !== null)) ? data.payee : {
-  //       id: element.payee.id,
-  //       name: element.payee.name,
-  //       owner: element.owner,
-  //       version: element.payee.version
-  //     },
-  //     // {
-  //     //   id: data.payee.id,
-  //     //   name: data.payee.name + '*',
-  //     //   owner: data.payee.owner,
-  //     //   version: data.payee.version,
-  //     // },
-  //     owner: data.owner,
-  //     type: data.type,
-  //     date: new Date(data.date),
-  //     note: (data.note && data.note !== 'null') ? data.note : '',
-  //     version: data.version,
-
-  //   }
-  //   // console.log('transaction: ', transaction);
-
-    
+  const compareListTransactions = async () => {
+    // load online transactions
+    let online_transactions = await retrieveOnlineTransactions();
+    console.log('online_transactions.length: ', online_transactions.length);
 
 
-  //   /* REPLACE LESSER VERSIONS OF TRANSACTION LOCALLY */
-  //   // removeTransaction(transaction);
-  // });
+    // load local transactions
+    let local_transactions = [] // = await retrieveLocalTransactions();
+    let storage = await loadSettingsStorage(global.storageKey);
+    local_transactions = storage.transactions;
+    // console.log('local_transactions.length: ', local_transactions.length);
 
-  return result;
-}
+    var props = ['id', 'version'];
+
+    var result = local_transactions.filter(function(o1){
+        // filter out (!) items in online_transactions
+        return online_transactions.some(function(o2){
+            return (o1.id === o2.id) && (o1.version < o2.version);          // assumes unique id
+        });
+    }).map(function(o){
+        // objects with only the required properties
+        // and map to apply this to the filtered array as a whole
+        return props.reduce((newo) => {
+            newo = o;
+            return newo;
+        }, {});
+    });
+
+    console.log('result: ', result);
+
+    /* Filter Out Updated Trans then replace in local db */
+    // result.forEach(async (element) => {
+    //   // console.log('element.id: ', element.id);
+    //   // console.log('element.version: ', element.version);
+
+    //   // date for the new transaction to store
+    //   let data = await getTransactionByID(element.id); // retrieve newly created from online trans by id
+
+    //   // console.log('data: ', data);
+    //   const transaction = {
+    //     id: element.id,
+    //     amount: element.amount,
+    //     category: {
+    //       id: data.category.id,
+    //       name: data.category.name,
+    //       color: data.category.color,
+    //       type: data.category.type,
+    //       owner: element.category.owner,
+    //       version: data.category.version,
+    //     },
+    //     payee: (data.payee && (data.payee.name !== '' && data.payee.name !== null)) ? data.payee : {
+    //       id: element.payee.id,
+    //       name: element.payee.name,
+    //       owner: element.owner,
+    //       version: element.payee.version
+    //     },
+    //     // {
+    //     //   id: data.payee.id,
+    //     //   name: data.payee.name + '*',
+    //     //   owner: data.payee.owner,
+    //     //   version: data.payee.version,
+    //     // },
+    //     owner: data.owner,
+    //     type: data.type,
+    //     date: new Date(data.date),
+    //     note: (data.note && data.note !== 'null') ? data.note : '',
+    //     version: data.version,
+
+    //   }
+    //   // console.log('transaction: ', transaction);
+
+      
+
+
+    //   /* REPLACE LESSER VERSIONS OF TRANSACTION LOCALLY */
+    //   // removeTransaction(transaction);
+    // });
+
+    return result;
+  }
 
 // const storedNewTransaction =  async (transaction) => {
 //     const userObject = await loadSettingsStorage(global.storageKey);
@@ -399,12 +404,17 @@ const compareListTransactions = async () => {
 
     // check if user is online
     let bool = await isDeviceOnline();
-    if (bool !== true) return;
+    if (bool !== true) {
+      showMessage('Device Currently Offline')
+      return;
+    }
 
     // check if user has device sync enabled
     if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
 
-    setIsReady(false);
+    // setIsReady(false);
+
+    setIsSyncing(true)
 
     /* Sync Transactions */
     // compare both transaction lists
@@ -486,7 +496,6 @@ const compareListTransactions = async () => {
       }
     }
 
-
     /* Sync Categories */
     // compare both category lists
     let online_categories = []; // online trans
@@ -545,7 +554,16 @@ const compareListTransactions = async () => {
       console.log('categorySync: ', categorySync);
     }
 
-    await setIsReady(true);
+    // setIsReady(true);
+
+    setIsSyncing(false);
+
+        showMessage({
+          message: `Synced data successfully`,
+          // description: 
+          type: 'success', // "success", "info", "warning", "danger"
+          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+        });  
 
 
 
@@ -685,7 +703,7 @@ const compareListTransactions = async () => {
         // });  
     });
 
-    setIsReady(true)
+    setIsReady(true);
   }
 
   const restoreBackUpData = async () => {
@@ -719,7 +737,7 @@ const compareListTransactions = async () => {
 
         setShouldShowUpdateCloudDialogBox(true);
 
-        // props.navigation.navigate('Home');
+        props.navigation.navigate('Home');
       }
     } catch (e) {
       // statements
@@ -730,6 +748,7 @@ const compareListTransactions = async () => {
   };
 
   const backupStoredSettings = async () => {
+    setIsSyncing(true)
     let success = false;
     // const backup_key = `${storageKey}_BACKUPSETTINGS`
 
@@ -763,10 +782,14 @@ const compareListTransactions = async () => {
     //   Alert.alert('Data backed up successfully');
     // }
 
+    setIsSyncing(false)
+
     // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
     if (success) {
       // restoreBackUpData();
-      showBackupCompleteAlert();
+      await showBackupCompleteAlert();
+
+      navigation.navigate('Home')
     }
   };
 
@@ -1540,7 +1563,7 @@ const compareListTransactions = async () => {
           isExportingTransactions && <ActivityIndicator color="#ddd" size="large" />
         }
         {
-          !isReady && spinner
+          isSyncing && spinner
         }
     </View>
   );
