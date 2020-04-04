@@ -487,8 +487,10 @@ export default function Home(props) {
       console.log('Could not update transaction category', e);
       // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
       console.log('category: ', category);
+
+      setIsUpdatingTransaction(false);
     }
-    // setCurrentTransaction(null);
+    setCurrentTransaction(null);
 
     setIsUpdatingTransaction(false);
   };
@@ -555,7 +557,7 @@ export default function Home(props) {
   };
 
   const storeNewTransaction = async (transaction) => {
-    // setIsStoringNewTransaction(true);
+    setIsStoringNewTransaction(true);
 
     // check for maximum unauthorized user transactions
     if (!isUserLoggedIn && currentTransactions.length >= 5) {
@@ -605,7 +607,7 @@ export default function Home(props) {
 
     saveUndoHistory();
 
-    // setIsStoringNewTransaction(false);
+    setIsStoringNewTransaction(false);
 
     Analytics.record({ name: 'Stored a transaction' });
   };
@@ -614,7 +616,7 @@ export default function Home(props) {
 
     // setIsStoringNewTransaction(false);
 
-    // setIsUpdatingTransaction(false); ???
+    setIsUpdatingTransaction(false);
 
     // add/remove transactions
     // setCurrentTransactions([]);
@@ -676,19 +678,21 @@ export default function Home(props) {
 
         /* rremove transaction online in db */
         if (isUserLoggedIn && isUserCurrentlyOnline()) {
-          await removeTransaction(transaction)
+          removeTransaction(transaction)
 
-          // removePayee(transaction.payee)
+          removePayee(transaction.payee)
 
           Analytics.record({ name: 'Removed an online transaction' });
         }
-        setCurrentTransaction(null);
+        
       }
 
         } catch(e) {
       // statements
       console.log(e);
     }
+
+    setCurrentTransaction(null);
 
     setIsRemovingStoredTransaction(false);
 
@@ -778,7 +782,8 @@ export default function Home(props) {
     // make sure user inputs are not invalid
     if (!isUserInputValid()) return;
 
-    setIsReady(false)
+    setIsReady(false);
+
 
     // /* Create New Category */
     const category = new Category(
@@ -1030,13 +1035,18 @@ export default function Home(props) {
   }, [isRemovingStoredTransaction]);
 
   useEffect(() => {
-    console.log('mount');
+    // console.log('mount');
+
+    setIsReady(true);
+    setIsUpdatingTransaction(false)
 
     // compareListTransactions()
+    // crossDeviceSync()
 
     return () => {
       // effect
       console.log('clean up');
+
     };
   }, []);
 
@@ -1249,25 +1259,27 @@ export default function Home(props) {
   const updateTransactionIndicator = <ActivityIndicator size="large" color={colors.white} />;
 
   const spinner = (
-  <View
-    style={
-      {
-        // flex: 1,a
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        position: 'absolute',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#F5FCFF',
-        opacity: 0.1,
+    <View
+      style={
+        {
+          flex: 1,
+          top: 50,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          position: 'absolute',
+          alignItems: 'center',
+          justifyContent: 'center',
+          // backgroundColor: '#ddd',
+          opacity: 0.05,
+        }
       }
-    }
-  >
-    <ActivityIndicator size="large" color="#ff7dsff" />
-  </View>
-);
+    >
+      <ActivityIndicator size="large" color="#ddd" />
+    </View>
+  );
+
+
 
 
 
@@ -1312,7 +1324,7 @@ export default function Home(props) {
             flex: 1,
             alignItems: 'center',
 
-            // borderWidth: 1,
+            borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'solid',
           },
@@ -1326,7 +1338,14 @@ export default function Home(props) {
         onWillFocus={retrieveUserStoredSettings}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
-        onWillBlur={() => hideSlideView()}
+        onWillBlur={async () =>
+          {
+            // setIsUpdatingTransaction(false)
+
+            setCurrentTransaction(null);
+            // hideSlideView();
+          }
+        }
         // onDidBlur={payload => console.log('did blur',payload)}
       />
       {/* Balance View */}
@@ -1398,7 +1417,12 @@ export default function Home(props) {
       {
         isRemovingStoredTransaction && spinner
       }
-              
+      {
+        isStoringNewTransaction && spinner
+      }
+      {
+        !isReady && spinner
+      }
 
     </SafeAreaView>
   );

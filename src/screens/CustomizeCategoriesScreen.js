@@ -83,6 +83,21 @@ import defaultCategories from '../data/categories';
 
 import uuidv4 from '../functions/uuidv4';
 
+/* my custom queries */
+import {
+  // updateTransaction,
+  // removeTransaction,
+  // removePayee,
+  removeCategory,
+  // savePayee,
+  saveCategory,
+  // saveTransaction,
+  // updateCategory,
+  // fetchStoredTransactions,
+  // fetchStoredCategories,
+  // getTransactionByID,
+} from '../storage/my_queries';
+
 const MAX_NAME_LENGTH = 15;
 
 // import {
@@ -315,18 +330,18 @@ const CustomizeCategoriesScreen = () => {
 
     storageObj.categories = defaultCategories;
 
+    setData(storageObj.categories);
+
+    setHelpMessage('Reset Categories');
+
     try {
       saveSettingsStorage(storageKey, storageObj);
-      success = true;
     } catch(e) {
       // statements
       console.log(e);
     }
 
-    if (success) {
-      setData(storageObj.categories);
-      setHelpMessage('Reset Categories');
-    }
+  
   };
 
   // // fetch aws method
@@ -349,6 +364,8 @@ const CustomizeCategoriesScreen = () => {
 
     const obj = searchByName(name, storage.categories);
 
+    removeCategory(obj)
+
     let i = 0;
     for (i; i < storage.categories.length; i += 1) {
       if (storage.categories[i] === obj) {
@@ -358,6 +375,8 @@ const CustomizeCategoriesScreen = () => {
     saveSettingsStorage(storageKey, storage);
     setData(storage.categories);
     // setIsLoading(false);
+
+
 
     setHelpMessage('Removed category');
 
@@ -389,7 +408,7 @@ const CustomizeCategoriesScreen = () => {
     // Alert.alert('Category Successfully Deleted!');
   }
 
-  const addCategory = async (name, color, type) => {
+  const addCategory = async (name, color, type, owner, version) => {
     setIsAddingCategory(true);
     // const list = await loadUserCategories();
     const userObject = await loadSettingsStorage(storageKey);
@@ -406,7 +425,7 @@ const CustomizeCategoriesScreen = () => {
         Alert.alert('Category already exists');
       } else {
         // create same name obj of diff type
-        obj = new Category(uuidv4(), name, color, type);
+        obj = new Category(uuidv4(), name, color, type, global.storageKey, 0);
 
         list.unshift(obj);
 
@@ -419,8 +438,12 @@ const CustomizeCategoriesScreen = () => {
 
         setData(list);
 
+
+
         setHelpMessage('Added category');
       }
+
+      saveCategory(obj)
     }
 
     if (!obj) {
@@ -909,7 +932,7 @@ const CustomizeCategoriesScreen = () => {
           style={styles.buttonText}
           onPress={() => {
             if (nameInputValue) {
-              addCategory(nameInputValue, colors.white, 'expense');
+              addCategory(nameInputValue, colors.white, 'EXPENSE', global.storageKey, 0);
             }
             setShowDialogBox(false);
           }}

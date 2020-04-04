@@ -47,12 +47,12 @@ function TransactionItem(props, index) {
   // console.log('item.category: ', item.category);
 
   if (item.category === null) {
-    console.log('item.category: ', item.category);
+    // console.log('item.category: ', item.category);
     item.category = {
       id: 0,
       name: 'None',
       color: '#ddd',
-      owner: '',
+      owner: global.storageKey,
       type: 'INCOME',
       version: 0,
     }
