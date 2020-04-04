@@ -22,7 +22,7 @@ export const fetchStoredCategories = async () => {
   try {
     const graphqldata = await API.graphql(graphqlOperation(listCategorys));
     list = graphqldata.data.listCategorys.items;
-    // console.log('list: ', list);
+    console.log('list: ', list);
   } catch (err) {
     console.log('error fetching user categories: ', err);
   }
@@ -259,7 +259,7 @@ export const savePayee = async (payee) => {
   }
 }
 export const saveCategory = async (category) => {
-  // console.log('category: ', category);
+  console.log('category: ', category);
   // send to server
   try {
     const categoryMutation = await graphqlOperation(CreateCategoryGQL(category)) // push new category
@@ -308,7 +308,7 @@ export const formatCategoryInput = (item) => {
       obj.key = key
       // checking for nulls
       if ((item[key] === null || !item[key]) && item[key] !== 0) {
-        // console.log('item[key]: ', item[key]);
+        console.log('item[key]: ', item[key]);
         // if (key === 'note') obj[key] = 'Add note';
 
         // if (key === 'payee') obj[key] = {
@@ -342,7 +342,7 @@ export const saveTransaction = async (transaction) => {
 }
 export const updateTransaction = async (updated) => {
   let input = formatTransactionInput(updated)
-  // console.log('input: ', input);
+  console.log('input: ', input);
   try {
     await API.graphql(graphqlOperation(UpdateTransactionGQL(input)));
     console.log('transaction successfully updated:', input.id);
