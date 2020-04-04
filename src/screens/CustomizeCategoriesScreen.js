@@ -49,28 +49,6 @@ import Dialog from 'react-native-dialog';
 
 // import Constants from 'expo-constants';
 
-import { isDeviceOnline } from '../../network-functions';
-
-import {
-  crossDeviceSync,
-  // pushCategoriesToCloud,
-} from '../functions/crossDeviceSync';
-
-/* my custom queries */
-import {
-  // updateTransaction,
-  updateCategory,
-  // removeTransaction,
-  // removePayee,
-  removeCategory,
-  // savePayee,
-  saveCategory,
-  saveTransaction,
-  // fetchStoredTransactions,
-  // fetchStoredCategories,
-  // getTransactionByID,
-} from '../storage/my_queries';
-
 // ui colors
 import colors from '../../colors';
 
@@ -105,8 +83,6 @@ import defaultCategories from '../data/categories';
 
 import uuidv4 from '../functions/uuidv4';
 
-import searchByID from '../functions/searchByID';
-
 const MAX_NAME_LENGTH = 15;
 
 // import {
@@ -130,16 +106,16 @@ function searchByName(nameKey, myArray) {
   return obj;
 }
 
-// function searchByID(key, myArray) {
-//   let obj = null;
-//   let i = 0;
-//   for (i; i < myArray.length; i += 1) {
-//     if (myArray[i].id === key) {
-//       obj = myArray[i];
-//     }
-//   }
-//   return obj;
-// }
+function searchByID(key, myArray) {
+  let obj = null;
+  let i = 0;
+  for (i; i < myArray.length; i += 1) {
+    if (myArray[i].id === key) {
+      obj = myArray[i];
+    }
+  }
+  return obj;
+}
 
 
 function CellItem({
@@ -331,166 +307,64 @@ const CustomizeCategoriesScreen = () => {
 
   const [isAddingCategory, setIsAddingCategory] = useState(false);
 
-  const [currentOwner, setCurrentOwner] = useState('');
-
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-
-  const pushCategoriesToCloud = async (categories) => {
-    // console.log('categories: ', categories);
-  try {
-    // const storage = await loadSettingsStorage(global.storageKey);
-
-    for (var i = 0; i < categories.length; i++) {
-      // /* Create New Category */
-      const category = new Category(
-        categories[i].id, // id
-        categories[i].name, // name
-        categories[i].color, // color
-        categories[i].type, // type
-        currentOwner, // owner
-        categories[i].version, // version
-      );
-      console.log('category: ', category);
-      // saveCategory(category);
-      updateCategory(category);
-    }
-  } catch (e) {
-    // statements
-    console.log('Error pushing categories to cloud:', e);
-  }
-};
-
-  function retrieveAuthenication() {
-    Auth.currentAuthenticatedUser()
-    .then(async (cognito) => {
-      const storage = await loadSettingsStorage(global.storageKey);
-      
-      setCurrentOwner(cognito.attributes.sub);
-
-      // setCategories(storage.categories);
-
-      // setCurrentTransactions(storage.transactions);
-
-      // setCurrentSettingsVersion(storage.version);
-
-      setIsUserLoggedIn(true); // cognito (logged in)
-    })
-    .catch(async (auth_error) => {
-        const userObject = await loadSettingsStorage(global.storageKey); // load user object
-   
-        setCurrentOwner(userObject.user.id);
-
-        // setCurrentTransactions(userObject.transactions);
-
-        // // setCurrentSettingsVersion(userObject.version);
-
-        setIsUserLoggedIn(false); //  local (not logged in)
-
-        // showMessage({
-        //   message: `You are ${auth_error}`,
-        //   type: 'danger', // "success", "info", "warning", "danger"
-        //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-        // });  
-    });
-  }
-
   // static methods
   CustomizeCategoriesScreen.resetCategories = async () => {
-    
+    // console.log(key);
+    let success = false;
     const storageObj = await loadSettingsStorage(storageKey);
-
-    setCurrentOwner(global.storageKey)
 
     storageObj.categories = defaultCategories;
 
-
-
-      let isConnected = await isDeviceOnline();
-
-      //   get  owner
-      await retrieveAuthenication();
-
-      if (isConnected && isUserLoggedIn) pushCategoriesToCloud(storageObj.categories);
-
     try {
-      saveSettingsStorage(global.storageKey, storageObj);
-
-      setData(storageObj.categories);
-
-      setHelpMessage('Reset Categories');
-
-
-
-
-
-
-
-
-      
+      saveSettingsStorage(storageKey, storageObj);
+      success = true;
     } catch(e) {
       // statements
       console.log(e);
     }
 
-
+    if (success) {
+      setData(storageObj.categories);
+      setHelpMessage('Reset Categories');
+    }
   };
 
-  //methods
-  // const removeCategoryByName = async (name) => {
-  //   // setIsAddingCategory(true);
-  //   // setIsLoading(true);
-  //   const storage = await loadSettingsStorage(storageKey);
+  // // fetch aws method
+  // async function retrieveCognitoUserKey() {
+  //   Auth.currentAuthenticatedUser()
+  //     .then((cognito) => {
+  //       setStorageKey(cognito.username);
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //       Alert.alert(err);
+  //     });
+  // }
 
-  //   const obj = searchByName(name, storage.categories);
-
-  //   let i = 0;
-  //   for (i; i < storage.categories.length; i += 1) {
-  //     if (storage.categories[i] === obj) {
-  //       storage.categories.splice(i, 1);
-  //     }
-  //   }
-  //   saveSettingsStorage(storageKey, storage);
-  //   setData(storage.categories);
-  //   // setIsLoading(false);
-
-  //   setHelpMessage('Removed category');
-
-  //   setIsAddingCategory(false);
-  // };
-
-  const removeCategoryByID = async (id) => {
-    // setIsAddingCategory(true);
+  // private methods
+  const removeCategoryByName = async (name) => {
+    setIsAddingCategory(true);
     // setIsLoading(true);
     const storage = await loadSettingsStorage(storageKey);
 
-    const obj = searchByID(id, storage.categories);
+    const obj = searchByName(name, storage.categories);
 
-    let categories = storage.categories;
-
-    /* splice original category */
     let i = 0;
-    for (i; i < categories.length; i += 1) {
-      if (categories[i].id === obj.id) {
-        categories.splice(i, 1);
+    for (i; i < storage.categories.length; i += 1) {
+      if (storage.categories[i] === obj) {
+        storage.categories.splice(i, 1);
       }
     }
-    storage.categories = categories;
-
     saveSettingsStorage(storageKey, storage);
-
     setData(storage.categories);
+    // setIsLoading(false);
 
     setHelpMessage('Removed category');
 
-    // setIsAddingCategory(false);
-
-    // navigate back to home
-
-    // setIsLoading(false);
+    setIsAddingCategory(false);
   };
 
   const deleteCategoryByID = async (item) => {
-    console.log('item to remove: ', item);
     const storage = await loadSettingsStorage(storageKey);
 
     const category = searchByID(item.id, storage.categories);
@@ -508,58 +382,12 @@ const CustomizeCategoriesScreen = () => {
 
     console.log('storage.categories.length: ', storage.categories.length);
 
-    let isConnected = await isDeviceOnline();
-    if (isConnected === true) {
-      try {
-      removeCategory(category);
-      } catch(e) {
-        // statements
-        console.log(e);
-      }
-    }
-    
-
     saveSettingsStorage(storageKey, storage);
 
     setData(storage.categories);
 
     // Alert.alert('Category Successfully Deleted!');
   }
-
-  function retrieveAuthenication() {
-    Auth.currentAuthenticatedUser()
-    .then(async (cognito) => {
-      const storage = await loadSettingsStorage(global.storageKey);
-      
-      setCurrentOwner(storage.user.id);
-
-      // setCategories(storage.categories);
-
-      // setCurrentTransactions(storage.transactions);
-
-      // setCurrentSettingsVersion(storage.version);
-
-      setIsUserLoggedIn(true); // cognito (logged in)
-    })
-    .catch(async (auth_error) => {
-        const userObject = await loadSettingsStorage(global.storageKey); // load user object
-   
-        setCurrentOwner(userObject.user.id);
-
-        // setCurrentTransactions(userObject.transactions);
-
-        // setCurrentSettingsVersion(userObject.version);
-
-        // setIsUserLoggedIn(false); //  local (not logged in)
-
-        // showMessage({
-        //   message: `You are ${auth_error}`,
-        //   type: 'danger', // "success", "info", "warning", "danger"
-        //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-        // });  
-    });
-  }
-
 
   const addCategory = async (name, color, type) => {
     setIsAddingCategory(true);
@@ -597,18 +425,14 @@ const CustomizeCategoriesScreen = () => {
 
     if (!obj) {
       // create new category
-      obj = new Category(uuidv4(), name, color, type, currentOwner, 0);
-      if (obj.type === 'INCOME') {
+      obj = new Category(uuidv4(), name, color, type);
+      if (obj.type === 'income') {
         obj.color = colors.shamrockGreen;
       }
-
-      saveCategory(obj);
 
       list.unshift(obj);
 
       userObject.categories = list;
-
-      
 
       // console.log(userObject)
 
@@ -736,9 +560,7 @@ const CustomizeCategoriesScreen = () => {
 
   const deleteBtnPressed = async (item) => {
     try {
-      await deleteCategoryByID(item);
-
-
+      deleteCategoryByID(item);
     } catch(e) {
       // statements
       console.log('e: ', e);
@@ -1189,8 +1011,6 @@ const CustomizeCategoriesScreen = () => {
     for (var i = 0; i < data.length; i++) {
       if (data[i] === currentCategory) {
         data[i].color = color;
-
-        updateCategory(data[i])
         success = true;
       }
     }
@@ -1199,8 +1019,6 @@ const CustomizeCategoriesScreen = () => {
       await storeUserCategories(data);
       updateUserTransactionCategories(data);
       setHelpMessage('Updated transactions');
-
-
     };
 
     // if (success) updateUserTransactionCategories(data);

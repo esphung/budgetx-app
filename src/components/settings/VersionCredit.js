@@ -12,7 +12,6 @@ const VersionCredit = () => {
     <Text
       style={
         {
-          
           opacity: 0.5,
           fontFamily: 'SFProDisplay-Regular',
           fontSize: 15,
