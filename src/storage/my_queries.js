@@ -30,10 +30,13 @@ export const fetchStoredCategories = async () => {
   return list;
 };
 export const fetchStoredTransactions = async () => {
+  console.log('HELLO: ');
   let list = [];
   try {
     const graphqldata = await API.graphql(graphqlOperation(listTransactions));
     list = graphqldata.data.listTransactions.items;
+
+    console.log('list.length: ', list.length);
   } catch (err) {
     console.log('error: ', err);
   }
@@ -43,7 +46,7 @@ export const fetchStoredTransactions = async () => {
 /* static querys */
 export const listTransactions = gql`
 query ListTransactions {
-  listTransactions{
+  listTransactions (limit: 1000000) {
     items {
       id
       date
@@ -194,7 +197,7 @@ mutation updateCategory {
     color: ${'"'+updated.color+'"'}
     type: ${'"'+updated.type+'"'}
     owner: ${'"'+updated.owner+'"'}
-    # version: ${updated.version}
+    version: ${updated.version}
   }) {
     id
     name
@@ -260,6 +263,7 @@ export const savePayee = async (payee) => {
   }
 }
 export const saveCategory = async (category) => {
+
   // send to server
   try {
     const categoryMutation = await graphqlOperation(CreateCategoryGQL(category)) // push new category
@@ -267,11 +271,11 @@ export const saveCategory = async (category) => {
     console.log('category successfully created:', category.id);
   } catch (e) {
     // console.log('error saving category:', e);
-    // console.log('Update category error (duplicate):');
+    console.log('Update category error (duplicate):', category);
 
     // throw new Error('Update category error (duplicate)');
-    category.version = category.version + 1
-
+    
+    category.version++
     updateCategory(category);
 
   }
@@ -355,27 +359,26 @@ export const updateTransaction = async (updated) => {
 export const updateCategory = async (updated) => {
   // console.log('updated category: ', updated);
   try {
-    await API.graphql(graphqlOperation(UpdateCategoryGQL(updated)));
-    console.log('category successfully updated...');
+    let response = await API.graphql(graphqlOperation(UpdateCategoryGQL(updated)));
+    console.log('category successfully updated...', response.data);
+
   } catch (err) {
-    console.log('error updating category...', err);
-    saveCategory(updated)
+    console.log('error updating category...', err.data);
+    saveCategory(updated);
   }
 };
 export const getTransactionByID = async (id) => {
   let obj;
-  console.log('HELLO')
   try {
     let stored = await API.graphql(graphqlOperation(getTransaction, { id: id }))
     obj = stored.data.getTransaction;
-    console.log('obj: ', obj);
+    // console.log('obj: ', obj);
   } catch (err) {
     console.log('error getting transaction by id...', err);
   }
   return obj;
 };
 export const getCategoryByID = async (id) => {
-  // console.log('getting cat by id: ', id);
   let obj;
   try {
     let stored = await API.graphql(graphqlOperation(getCategory, { id: id }))

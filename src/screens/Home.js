@@ -183,7 +183,7 @@ const updateOnlineCategory = async (category) => {
     color: category.color,
     type: category.type,
     owner: category.owner,
-    version: category.version,
+    version: category.version + 1,
   };
   updateCategory(updated);
 };
@@ -474,6 +474,8 @@ export default function Home(props) {
       found.category = category;
 
       found.type = category.type;
+
+      // found.category.version++
 
       // flip dollar amount to negative or positive
       if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;

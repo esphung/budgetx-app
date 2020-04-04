@@ -12,7 +12,7 @@ import uuidv4 from '../../../functions/uuidv4';
 export default function PizzaTranslator(props) {
   let { transaction, updateTransactionPayee, isNameInputEnabled } = props;
 
-  // console.log('transaction: ', transaction);
+  console.log('transaction: ', transaction);
 
   const [text, setText] = useState('');
 
@@ -20,7 +20,7 @@ export default function PizzaTranslator(props) {
     transaction.payee = {
       id: uuidv4(),
       name: '',
-      owner: 'None',
+      owner: global.storageKey,
       version: 0,
     }
   }
@@ -36,11 +36,11 @@ export default function PizzaTranslator(props) {
     <View style={{  maxWidth: 135, flexGrow: 1, justifyContent: 'center',}}>
       <TextInput
         style={styles.payeeInputText}
-        // placeholder="Enter name"
+        placeholder={transaction.note}
         onChangeText={text => setText(text)}
 
         onSubmitEditing={() => updateTransactionPayee(transaction, text)}
-        defaultValue={transaction.payee.name}
+        defaultValue=""
 
         keyboardAppearance="dark" // ios
 

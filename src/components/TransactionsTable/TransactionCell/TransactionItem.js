@@ -173,7 +173,7 @@ function TransactionItem(props, index) {
             }
           }
         >
-{/*         <ItemNameInput
+         <ItemNameInput
             currentPayeeName={currentPayeeName}
             updateTransactionPayee={updateTransactionPayee}
             updateStoredTransaction={updateStoredTransaction}
@@ -181,7 +181,7 @@ function TransactionItem(props, index) {
             transaction={item}
             handlePayeeNameChange={props.handlePayeeNameChange}
             updateTransactionPayee={updateTransactionPayee}
-            />*/}
+            />
         </View>
 
         {/* <ItemDate item={item} /> */}

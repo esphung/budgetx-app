@@ -45,6 +45,7 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             02/04/2020 09:00 PM | Added AWS Analytics
             03/05/2020 09:12 AM | Released version 2.0.8
             03/29/2020 11:24 AM | Added device record analytics
+            04/04/2020 02:15 PM | Cross device sync finished
 */
 
 import React, { useState } from 'react';
@@ -52,9 +53,9 @@ import React, { useState } from 'react';
 import {
   View,
   Platform,
-  StyleSheet,
-  AsyncStorage
- } from "react-native";
+  // StyleSheet,
+  // AsyncStorage
+ } from 'react-native';
 
 // import the Analytics category
 import Analytics from '@aws-amplify/analytics';
@@ -69,29 +70,11 @@ import './globals'; // global values
 
 import colors from './colors';
 
-// Amplify imports and config
-// import Amplify from '@aws-amplify/core';
-// import Amplify from '@aws-amplify/core';
-// Analytics.record({ name: String!, attributes: Object, metrics: Object })
-// import config from './aws-exports';
-
-// Amplify.configure(config);
-
-// import Analytics from '@aws-amplify/analytics';
-
-// Analytics.record({ name: "Sign in attempted!"});
-// console.log('Analytics recorded sign in attempt!');
-
-
 import SwitchNavigator from './SwitchNavigator';
-
-// import AppStackNavigator from './AppStackNavigator';
 
 import Storybook from './storybook';
 
-// import { clearLines } from './src/functions/clearLines';
-
-import FlashMessage from "react-native-flash-message";
+import FlashMessage from 'react-native-flash-message';
 
 // clearLines(15);
 
@@ -112,6 +95,8 @@ const name = `Running application on ${Platform.OS} ${Platform.Version}`;
 Analytics.record({ name: name });
 // console.log(`Analytic Recorded: ${name}`);
 
+// let steps = 0;
+
 export default function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
@@ -119,7 +104,8 @@ export default function App() {
   let view;
 
   async function loadApplicationResources() {
-    // fonts
+    
+    // load stored fonts
     try {
       await Font.loadAsync({
         'SFProDisplay-Regular': global.SFProDisplayRegularFont, // require('./assets/fonts/SF-Pro-Display-Regular.otf');
@@ -128,32 +114,10 @@ export default function App() {
       // stored fonts have been loaded
       setFontsAreLoaded(true);
     } catch (err) {
-      console.log('err: ', err);
+      // console.log('Error loading stored fonts: ', err);
+      throw new Error('Error loading stored fonts: ', err);
     }
-
-    // try {
-    //   global.hasRatedUs = await AsyncStorage.getItem('hasRatedUs');
-    //   if (!global.hasRatedUs) {
-
-
-    //     AsyncStorage.setItem('hasRatedUs', String(false))
-    //     console.log('global.hasRatedUs: ', global.hasRatedUs);
-    //   }
-    //   else {
-    //     global.hasRatedUs = false
-    //     AsyncStorage.setItem('hasRatedUs', String(false))
-    //   }
-
-    //   // global.hasRatedUs = false
-    // } catch(e) {
-    //   // statements
-    //   console.log(e);
-    // }
-
   }
-
-  
-
   /* redirect user to storybook view if debugging */
   if (global.isStorybookModeOn && fontsAreLoaded) {
     // return storybook;
@@ -161,31 +125,36 @@ export default function App() {
   }
 
   if (!fontsAreLoaded) {
+    // steps++
     loadApplicationResources();
     view = <AppLoading />;
   } else {
-    view =
-    <NetworkProvider>
-      <View style={{ flex: 1 }}>
-        <SwitchNavigator />
-        {/* Global Flash Message */}
-        <FlashMessage
-          style={
-            {
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: colors.dark,
-              opacity: 0.9,
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
+    // steps++
+    view = (
+      <NetworkProvider>
+        <View style={{ flex: 1 }}>
+          <SwitchNavigator />
+          {/* Global Flash Message */}
+          <FlashMessage
+            style={
+              {
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.dark,
+                // opacity: 0.9,
+                // borderWidth: 1,
+                // borderColor: 'white',
+                // borderStyle: 'solid',
+              }
             }
-          }
-          position="top"
-        />{/* <--- flash message is here as last component */}
-      </View>
-    </NetworkProvider>; // has login
+            position="top"
+          />
+          {/* <--- flash message is here as last component */}
+        </View>
+      </NetworkProvider>
+    ); // has login
   }
+  // console.log('steps: ', steps);
   return view;
 }

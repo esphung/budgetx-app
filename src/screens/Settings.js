@@ -462,7 +462,7 @@ function Settings(props) {
 
 
     /* Sync identical transactions */
-    console.log('compareListTransactions(): ', await compareListTransactions());
+    // console.log('compareListTransactions(): ', await compareListTransactions());
 
     let outdated_transactions = await compareListTransactions();
 
@@ -534,7 +534,7 @@ function Settings(props) {
       for(let i=0; i<arr1.length; i++) {
       merged.push({
         ...arr1[i],
-        ...(arr2.find((itmInner) => itmInner.name == arr1[i].name))}
+        ...(arr2.find((itmInner) => itmInner.name === arr1[i].name))}
         );
       }
 
@@ -862,6 +862,7 @@ function Settings(props) {
     let transactions = await retrieveOnlineTransactions();
 
     for (var i = transactions.length - 1; i >= 0; i--) {
+      console.log('transactions[i]: ', transactions[i]);
       removeTransaction(transactions[i])
     }
 
