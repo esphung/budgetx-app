@@ -1486,7 +1486,7 @@ Home.navigationOptions = (props) => {
       // overwrite current user settings
       saveSettingsStorage(global.storageKey, storageObj);
 
-      global.storageKey = string;
+      // global.storageKey = string; // ??
 
       // Home.retrieveUserStoredSettings();
       Home.reloadTransactions();

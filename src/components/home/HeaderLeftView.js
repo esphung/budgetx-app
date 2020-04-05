@@ -33,6 +33,12 @@ import {
   Input,
 } from 'native-base';
 
+
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../storage/SettingsStorage';
+
 import { NavigationEvents } from 'react-navigation';
 
 import { withNavigation } from 'react-navigation';
@@ -76,16 +82,21 @@ function HeaderLeftView(props) {
 
   const emailInputRef = useRef(null);
 
-  // useEffect(() => {
-  //   clearState()
-  //   // return () => {
-  //   //   // effect
-  //   // };
-  // }, []);
+  useEffect(() => {
+    clearState()
+    // return () => {
+    //   // effect
+    // };
+  }, []);
 
   const clearState = async () => {
     // setBoldMessage('Get cross-device sync');
     // setNormalMessage('Enter your email');
+
+
+    retrieveStoredSettingsImage(global.storageKey)
+
+    setImage(global.avatar)
 
     global.emailAddressInput = '';
 
@@ -99,6 +110,35 @@ function HeaderLeftView(props) {
       // setNormalMessage('Enter your email');
     });
   };
+
+    async function retrieveStoredSettingsImage(key) {
+    // load stored user transactions
+    try {
+      const storageObj = await loadSettingsStorage(key);
+
+      console.log('storageObj: ', storageObj);
+
+      // set stored user image
+      if (storageObj.image_url) {
+        // console.log('stored user settings image:', storageObj.image);
+        if (storageObj.image_url) {
+          // found stored image
+          setImage(storageObj.image_url);
+        }
+      }
+    } catch (e) {
+      // statements
+      Alert.alert('Could not load settings');
+      // console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    // getPermissionAsync();
+    retrieveStoredSettingsImage(global.storageKey)
+  }, []);
+
+
 
   const imageView = (
     <TouchableOpacity

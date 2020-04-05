@@ -154,7 +154,7 @@ const DEFAULT_SETTINGS = async (key) => {
     transactions: [],
     categories: defaultCategories,
     payees: [], // ???
-    image_url: (global.avatar) ? global.avatar : '',
+    image_url: global.avatar,
     version: 1,
   };
 
@@ -261,7 +261,7 @@ export const loadSettingsStorage = async (key) => {
 
     /* set user profile image if there is */
     if (storageObject.image_url) {
-      let Image_Http_URL ={ uri: data.picture.data.url};
+      let Image_Http_URL ={ uri: storageObject.image_url};
 
       global.avatar = Image_Http_URL;
     }

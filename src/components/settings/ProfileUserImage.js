@@ -141,12 +141,14 @@ function ProfileUserImage() {
     try {
       const storageObj = await loadSettingsStorage(key);
 
+      console.log('storageObj: ', storageObj);
+
       // set stored user image
-      if (storageObj) {
+      if (storageObj.image_url) {
         // console.log('stored user settings image:', storageObj.image);
-        if (storageObj.image) {
+        if (storageObj.image_url) {
           // found stored image
-          setImage(storageObj.image);
+          setImage(storageObj.image_url);
         }
       }
     } catch (e) {
@@ -156,9 +158,13 @@ function ProfileUserImage() {
     }
   }
 
-  // useEffect(() => {
-  //   getPermissionAsync();
-  // }, []);
+  useEffect(() => {
+    setIsReady(false);
+    // getPermissionAsync();
+    retrieveStoredSettingsImage(global.storageKey)
+
+    setIsReady(true);
+  }, []);
 
   useEffect(() => {
     // console.log('Image updated');
@@ -168,11 +174,11 @@ function ProfileUserImage() {
     }
   }, [image]);
 
-  useEffect(() => {
-    if (storageKey) {
-      retrieveStoredSettingsImage(storageKey);
-    }
-  }, [storageKey]);
+  // useEffect(() => {
+  //   // if (storageKey) {
+  //     retrieveStoredSettingsImage(global.storageKey);
+  //   // }
+  // }, []);
 
 
   // async function retrieveCognitoUserKey() {
@@ -253,7 +259,7 @@ function ProfileUserImage() {
     return spinnerView;
   } else {
     // if (isReady) {
-      return (
+      return isReady && (
         <View style={styles.container}>
           <TouchableOpacity disabled onPress={getPermissionAsync} style={styles.userImageMaskView}>
             <Image
