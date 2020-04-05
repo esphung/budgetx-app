@@ -415,7 +415,7 @@ const MyStickyTable = (props) => {
   //   </View>
   // )
 
-  if (transactions.length <= 0) {
+  if (!transactions || transactions.length <= 0) {
     return Render_Empty_Component();
   } else if (Platform.OS === 'ios') {
     return ios_table;

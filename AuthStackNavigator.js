@@ -2,7 +2,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import { createAppContainer } from 'react-navigation';
 
-import WelcomeScreen from './storybook/stories/Welcome';
+import WelcomeScreen from './src/screens/WelcomeScreen';
 
 import SignUpScreen from './src/screens/SignUpScreen';
 
@@ -16,7 +16,7 @@ import colors from './colors';
 
 // Auth stack
 const AuthStackNavigator = createStackNavigator({
-  Welcome: {
+  WelcomeScreen: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
       title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`

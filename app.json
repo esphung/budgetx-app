@@ -15,7 +15,7 @@
     },
     "android": {
       "package": "com.ericphung.financely",
-      "versionCode": 21
+      "versionCode": 22
     },
     "name": "Financely",
     "orientation": "portrait",
@@ -36,6 +36,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "3.4.9"
+    "version": "3.6.0",
+
+    "facebookScheme": "fb582566462305004",
+
+    "facebookAppId": "582566462305004",
+
+    "facebookDisplayName": "Financely App"
   }
 }

@@ -741,6 +741,15 @@ export default function Home(props) {
     if (invalid) showMessage({ message: message, description: `Please Enter ${a} valid ${invalid.toLowerCase()}`, duration: 1350 }) // console.log('invalid: ', invalid);
     return bool;
   };
+  const getAuthentication = async () => {
+  await Auth.currentAuthenticatedUser()
+  .then((cognito) => {
+    console.log('cognito: ', cognito);
+    return cognito;
+  }).catch((err) => {
+    console.log('err: ', err);
+  })
+};
   const getTransactionOnlineByID = async (id) => {
     /* Process retrieved server transaction */
     let stored = await getTransactionByID(id); // retrieve newly created from online trans by id
@@ -797,13 +806,13 @@ export default function Home(props) {
       currentCategoryVersion, // version
     );
 
-    saveCategory(category);
+    
 
     // /* Create New Payee */
     const payee = new Payee(uuidv4(), 'None', currentOwner, 0);
     // // console.log('payee: ', payee);
 
-    savePayee(payee);
+    
 
     let amount = (category.type === 'EXPENSE') ? -Math.abs(currentAmount / (100)) : Math.abs(currentAmount / (100))
 
@@ -829,9 +838,18 @@ export default function Home(props) {
 
     storeNewTransaction(transaction); // store new transaction locally
 
-    if (await isUserCurrentlyOnline())
-      if (isUserLoggedIn)
+    let isConnected = await isUserCurrentlyOnline();
+
+    if (isConnected) {
+      let authenticated = await getAuthentication()
+
+      if (authenticated) {
+        saveCategory(category);
+        savePayee(payee);
         saveTransaction(transaction)
+      }
+    }
+      
 
     // await saveTransaction(transaction); // store new transaction online
 
@@ -1088,8 +1106,10 @@ export default function Home(props) {
     showNewTransactionSlide(transaction);
   };
 
-  const deleteBtnPressed = (transaction) => {
-    removeStoredTransaction(transaction);
+  const deleteBtnPressed = async (transaction) => {
+    setIsRemovingStoredTransaction(true);
+    await removeStoredTransaction(transaction);
+    setIsRemovingStoredTransaction(false);
     // clearState();
   };
 
@@ -1272,7 +1292,7 @@ export default function Home(props) {
           position: 'absolute',
           alignItems: 'center',
           justifyContent: 'center',
-          // backgroundColor: '#ddd',
+          backgroundColor: '#ddd',
           opacity: 0.05,
         }
       }
@@ -1408,9 +1428,11 @@ export default function Home(props) {
          <View style={{ flex: 0.75, }}>{ stickyTable }</View>
          {/* Scrolling pills, amount view and keypad */}
          <View style={{ flex: 1, }}>
-           { isSlideViewHidden && scrollingPills }
-           { isSlideViewHidden && amountInput }
-           <View style={{ flex: 1, }}>{ isSlideViewHidden && keypad }</View>
+           { isReady && isSlideViewHidden && scrollingPills }
+           { isReady && isSlideViewHidden && amountInput }
+           <View style={{ flex: 1, }}>
+            { isReady && isSlideViewHidden && keypad }
+           </View>
          </View>
        </View>
       {
@@ -1420,7 +1442,26 @@ export default function Home(props) {
         isRemovingStoredTransaction && spinner
       }
       {
-        isStoringNewTransaction && spinner
+        isStoringNewTransaction && (
+          <View
+      style={
+        {
+          // flex: 1,
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          position: 'absolute',
+          // alignItems: 'center',
+          justifyContent: 'center',
+          // backgroundColor: '#ddd',
+          opacity: 0.05,
+        }
+      }
+    >
+      <ActivityIndicator size="large" color="#ddd" />
+    </View>
+    )
       }
       {
         !isReady && spinner

@@ -233,7 +233,7 @@ function Settings(props) {
 
   const [isOkBtnDisabled, setIsOkBtnDisabled] = useState(true);
 
-  const [currentOwner, setCurrentOwner] = useState('');
+  const [currentOwner, setCurrentOwner] = useState(global.storageKey);
 
   const [shouldShowOfflineDialogBox, setShouldShowOfflineDialogBox] = useState(false);
 
@@ -399,13 +399,10 @@ function Settings(props) {
 
 
   const crossDeviceSync = async () => {
-    // developer debugging only let this user sync
-    if (currentOwner !== '056049d7-ad75-4138-84d6-5d54db151d83') return;
-
     // check if user is online
     let bool = await isDeviceOnline();
     if (bool !== true) {
-      showMessage('Device Currently Offline')
+      showMessage('Device Currently Offline');
       return;
     }
 
@@ -596,7 +593,7 @@ function Settings(props) {
         <Dialog.Button label="Cancel" onPress={() => setShouldShowCloudSyncDialogBox(false)} />
         <Dialog.Button label="Sync Now" onPress={() => {
           setShouldShowCloudSyncDialogBox(false)
-          global.isDeviceCrossSyncOn = true
+          // global.isDeviceCrossSyncOn = true
           crossDeviceSync();
         }} />
       </Dialog.Container>
@@ -675,32 +672,34 @@ function Settings(props) {
     .then(async (cognito) => {
       const storage = await loadSettingsStorage(global.storageKey);
       
-      setCurrentOwner(storage.user.id);
+      setCurrentOwner(storage.user.id || global.storageKey);
 
       // setCategories(storage.categories);
 
-      setCurrentTransactions(storage.transactions);
+      setCurrentTransactions(storage.transactions || []);
 
       // setCurrentSettingsVersion(storage.version);
 
       setIsUserLoggedIn(true); // cognito (logged in)
+      global.isUserAuthenticated = false
     })
     .catch(async (auth_error) => {
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
    
-        setCurrentOwner(userObject.user.id);
+        setCurrentOwner(userObject.user.id || global.storageKey);
 
-        setCurrentTransactions(userObject.transactions);
+        setCurrentTransactions(userObject.transactions || []);
 
         // setCurrentSettingsVersion(userObject.version);
 
         setIsUserLoggedIn(false); //  local (not logged in)
+        global.isUserAuthenticated = false
 
-        // showMessage({
-        //   message: `You are ${auth_error}`,
-        //   type: 'danger', // "success", "info", "warning", "danger"
-        //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-        // });  
+        showMessage({
+          message: `You are ${auth_error}`,
+          type: 'danger', // "success", "info", "warning", "danger"
+          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+        });  
     });
 
     setIsReady(true);
@@ -1050,7 +1049,13 @@ function Settings(props) {
       'Are you sure you want to restore your most recent backup data?',
       [
         { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-        { text: 'OK', onPress: restoreBackUpData },
+        { text: 'OK', onPress: async () => {
+            setIsSyncing(true)
+            await restoreBackUpData()
+            setIsSyncing(false)
+            
+          }
+        },
       ],
       { cancelable: false },
     );
@@ -1114,10 +1119,14 @@ function Settings(props) {
   }
 
   const directToAppStoreDownload =  () => {
-    Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602')
+    // Expo.Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602')
+    // Expo.Linking.makeUrl()
+
+    Linking.openURL('https://apps.apple.com/app/financely/id1491309602')
+    // , // Expo.Linking.makeUrl() ,
     // Share.share({
     //   message:  '',
-    // url: Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602'), // Expo.Linking.makeUrl() ,
+    //   url: Expo.Linking.makeUrl('https://apps.apple.com/app/financely/id1491309602'), // Expo.Linking.makeUrl() ,
     //   // url: Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602'), // Expo.Linking.makeUrl(),
     //   // title: 'Sufiyaan has invited you to join this activity',
     // })
@@ -1139,13 +1148,14 @@ function Settings(props) {
         ios: {
           // message: 'Have a look on : ',
           message: `Download ${global.appName} at : \n${'https://apps.apple.com/us/app/financely/id1491309602/'}`,  // this.props.url
-          url: 'https://apps.apple.com/us/app/financely/id1491309602'  // this.props.url,
+          
         },
         android: {
-          message: `Download ${global.appName} at : \n` + 'https://apps.apple.com/us/app/financely/id1491309602/'  // this.props.url
+          message: `Download ${global.appName} at : \n` + 'https://apps.apple.com/us/app/financely/id1491309602/',
+          
         }
       }),
-      title: 'Wow, did you see that?'
+      // title: 'Wow, did you see that?'
     }, {
       ...Platform.select({
         ios: {
@@ -1299,7 +1309,6 @@ function Settings(props) {
   }
 
   function exportBtnPressed() {
-    
     onExport();
   }
 
@@ -1310,7 +1319,7 @@ function Settings(props) {
   function signInBtnPressed() {
     // console.log(props.navigation);
     // AsyncStorage.removeItem('userToken')
-    props.navigation.navigate('SignIn')
+    props.navigation.navigate('WelcomeScreen');
     // props.navigation.popToTop();
   }
 
@@ -1333,6 +1342,12 @@ function Settings(props) {
 
     // check if user logged in
     if (!isUserLoggedIn) return;
+
+    // developer debugging only let this user sync
+    if (global.storageKey !== '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey !== '216747749558231') {
+      showMessage('Update to 4.x!');
+      return;
+    }
 
     // alert => would you like to sync transactions in the cross-device with this device?
     setShouldShowCloudSyncDialogBox(true);
@@ -1467,7 +1482,7 @@ function Settings(props) {
             <SubscriptionRect
             onPress={() => {
               if (!isUserLoggedIn) {
-                navigation.navigate('SignUp')
+                navigation.navigate('WelcomeScreen');
               } else {
                 directToAppStoreDownload()
               }
@@ -1573,7 +1588,7 @@ function Settings(props) {
 }
 
 Settings.navigationOptions = ({ navigation }) => {
-  let signOutBtn = null
+  let signOutBtn
   // let signOutBtn = (
   //   <View style={
   //     {
@@ -1631,6 +1646,8 @@ Settings.navigationOptions = ({ navigation }) => {
     await Auth.signOut()
       .then(async () => {
         // console.log('Sign out complete');
+
+        await AsyncStorage.setItem('storageKey', JSON.stringify(global.storageKey))
         navigation.navigate('AuthLoading');
       })
       .catch((err) => console.log('Error while signing out!', err));

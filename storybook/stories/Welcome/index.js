@@ -1,89 +1,95 @@
-import React from 'react';
+// import React from 'react';
 
 // import PropTypes from 'prop-types';
 
-import {
-  View,
-  // Text,
-  // TouchableOpacity,
-  TouchableWithoutFeedback,
-  SafeAreaView,
-  StatusBar,
-  KeyboardAvoidingView,
-  Keyboard,
-} from 'react-native';
+// import {
+//   View,
+//   // Text,
+//   // TouchableOpacity,
+//   TouchableWithoutFeedback,
+//   SafeAreaView,
+//   StatusBar,
+//   KeyboardAvoidingView,
+//   Keyboard,
+// } from 'react-native';
 
-import colors from '../../../colors';
+// import colors from '../../../colors';
 
-import styles from '../../../styles';
+// import styles from '../../../styles';
 
-import Button from '../Button';
+// import Button from '../Button';
 
-import TouchableText from '../TouchableText';
+// import TouchableText from '../TouchableText';
 
-function WelcomeScreen(props) {
-  const handleRoute = async (destination) => {
-    try {
-      // statements
-      await props.navigation.navigate(destination);
-    } catch(e) {
-      // statements
-      console.log(e);
-    }
-  };
+// import FacebookLoginButton from '../../../src/components/FacebookLoginButton';
 
-  const welcome = (
-    <SafeAreaView style={styles.container}>
-      <StatusBar />
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-        <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
-            <View style={styles.infoContainer}>
-              <View style={styles.container}>
+// function WelcomeScreen(props) {
+//   const handleRoute = async (destination) => {
+//     try {
+//       // statements
+//       await props.navigation.navigate(destination);
+//     } catch(e) {
+//       // statements
+//       console.log(e);
+//     }
+//   };
 
-                <Button title="Sign Up" onPress={() => handleRoute('SignUp')} />
+//   const welcome = (
+//     <SafeAreaView style={styles.container}>
+//       <StatusBar />
+//       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+//         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
+//           <View style={styles.container}>
+            
+//             {/* Facebook Login */}
+            
+//               <FacebookLoginButton handleFacebookLogin={() => handleRoute('AuthLoading')} />
+            
+            
+//             <View style={styles.infoContainer}>
+//               <View style={styles.container}>
 
-                <Button title="Sign In" onPress={() => handleRoute('SignIn')} />
+//                 <Button title="Sign Up" onPress={() => handleRoute('SignUp')} />
 
-                <View style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
+//                 <Button title="Sign In" onPress={() => handleRoute('SignIn')} />
 
-                  justifyContent: 'space-around',
+//                 <View style={{
+//                   flexDirection: 'row',
+//                   justifyContent: 'center',
 
-                  padding: 6,
+//                   justifyContent: 'space-around',
 
-                  // borderWidth: 1,
-                  // borderColor: 'white',
-                  // borderStyle: 'solid',
-                }}>
-                <TouchableText title="Forgot Password?" onPress={() => handleRoute('ForgetPassword')} />
+//                   padding: 6,
 
+//                   // borderWidth: 1,
+//                   // borderColor: 'white',
+//                   // borderStyle: 'solid',
+//                 }}>
+//                 <TouchableText title="Forgot Password?" onPress={() => handleRoute('ForgetPassword')} />
 
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
+//                 </View>
+//               </View>
+//             </View>
+//           </View>
+//         </TouchableWithoutFeedback>
+//       </KeyboardAvoidingView>
+//     </SafeAreaView>
+//   );
+//   return welcome;
+// }
 
-  return welcome;
-}
+// WelcomeScreen.navigationOptions = () => {
+//   const navbar = {
+//     headerTransparent: {},
+//     headerTintColor: colors.white,
+//   };
+//   return navbar;
+// };
 
-WelcomeScreen.navigationOptions = () => {
-  const navbar = {
-    headerTransparent: {},
-    headerTintColor: colors.white,
-  };
-  return navbar;
-};
-
-// Welcome.propTypes = {
+// WelcomeScreen.propTypes = {
 //   navigation: PropTypes.shape({
 //     navigate: PropTypes.func.isRequired,
 //   }).isRequired,
 // };
 
-export default WelcomeScreen;
+// export default WelcomeScreen;

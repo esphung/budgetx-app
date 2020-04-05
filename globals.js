@@ -5,6 +5,10 @@
 
 import app from './app.json';
 
+global.facebookAppId = app.expo.facebookAppId;
+
+// console.log('global.facebookAppId: ', global.facebookAppId);
+
 global.isDeviceCrossSyncOn = true
 
 global.hasRatedUs = false
@@ -12,6 +16,7 @@ global.hasRatedUs = false
 // global.isStorybookModeOn = true;
 
 global.storageKey = 'CURRENT_USER';
+
 
 global.isUserAuthenticated = false;
 
@@ -24,8 +29,8 @@ global.emailAddressInput = '';
 global.maxEmailLength = 26;
 
 global.MAX_PILL_WIDTH = 176;
-global.MIN_PILL_WIDTH = 54;
 
+global.MIN_PILL_WIDTH = 54;
 
 // max min lengths
 global.maxAuthCodeLength = 6;

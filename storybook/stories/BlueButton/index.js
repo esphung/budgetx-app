@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // import { Ionicons } from 'expo-vector-icons';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 // ui colors
 import colors from '../../../colors';
@@ -20,6 +20,7 @@ function BlueButton(props) {
       style={
         {
           minWidth: '38%', // 133,
+          width: 133,
           height: 46,
           maxHeight: 50,
           // backgroundColor: 'transparent',
@@ -56,9 +57,9 @@ function BlueButton(props) {
   return view;
 }
 
-BlueButton.propTypes = {
-  title: PropTypes.string.isRequired,
-  onPress: PropTypes.func.isRequired,
-};
+// BlueButton.propTypes = {
+//   title: PropTypes.string.isRequired,
+//   onPress: PropTypes.func.isRequired,
+// };
 
 export default BlueButton;

@@ -148,14 +148,16 @@ export const clearSettingsStorage = async (key) => {
 };
 
 // LOAD VALUE USERDEFAULTCATEGORIES
-const DEFAULT_SETTINGS = async () => {
+const DEFAULT_SETTINGS = async (key) => {
   const settings = {
-    user: new User(global.storageKey),
+    user: new User(key),
     transactions: [],
     categories: defaultCategories,
-    // payees: [], // ???
+    payees: [], // ???
+    image_url: (global.avatar) ? global.avatar : '',
     version: 1,
   };
+
   await AsyncStorage.setItem('userToken', String(global.storageKey + '@session' + uuidv4()));
   return settings;
 };
@@ -251,10 +253,19 @@ const removeStoredTransaction = async (transaction) => {
 }
 
 export const loadSettingsStorage = async (key) => {
+  console.log('key: ', key);
   try {
     const storageObject = await AsyncStorage.getItem(key); // get local storage
 
-    if (storageObject === null) return DEFAULT_SETTINGS() // if storage is empty return new one
+    if (storageObject === null) return DEFAULT_SETTINGS(key) // if storage is empty return new one
+
+    /* set user profile image if there is */
+    if (storageObject.image_url) {
+      let Image_Http_URL ={ uri: data.picture.data.url};
+
+      global.avatar = Image_Http_URL;
+    }
+
 
     return JSON.parse(storageObject);
   } catch (error) {

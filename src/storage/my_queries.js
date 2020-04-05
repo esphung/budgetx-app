@@ -30,13 +30,10 @@ export const fetchStoredCategories = async () => {
   return list;
 };
 export const fetchStoredTransactions = async () => {
-  console.log('HELLO: ');
   let list = [];
   try {
     const graphqldata = await API.graphql(graphqlOperation(listTransactions));
     list = graphqldata.data.listTransactions.items;
-
-    console.log('list.length: ', list.length);
   } catch (err) {
     console.log('error: ', err);
   }
@@ -292,7 +289,7 @@ export const formatTransactionInput = (item) => {
         if (key === 'payee') obj[key] = {
           id: uuidv4(),
           name: 'None',
-          owner: item.owner,
+          owner: global.storageKey,
           version: 0,
         }
 

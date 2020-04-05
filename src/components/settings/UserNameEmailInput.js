@@ -80,9 +80,9 @@ function UserNameEmailInput(props) {
 
   const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
 
-  const [nameLabelText] = useState('User ID');
+  const [nameLabelText, setCurrentNameLabelText] = useState('User');
 
-  const [emailLabelText] = useState('Email');
+  const [emailLabelText, setCurrentEmailLabelText] = useState('Email');
 
   const [currentName, setCurrentName] = useState('');
 
@@ -253,12 +253,24 @@ function UserNameEmailInput(props) {
       setIsSignUpDisabled(true);
     })
     .catch(async (err) => {
-      // console.log('err: ', err);
-      const storage = await loadSettingsStorage(storageKey)
+      // console.log('err: ', eZsrr);
+      const storage = await loadSettingsStorage(global.storageKey);
+
+
+      if (storage.user.name) {
+        setCurrentEmail(storage.user.name);
+        setCurrentEmailLabelText('Name')
+
+       // || storage.user.id);
+      }
       // console.log('storage.user: ', storage.user);
       if (storage.user.email) {
         setCurrentEmail(storage.user.email)
-      } else {
+      } else if (storage.user.name) {
+        setCurrentEmail(storage.user.name)
+        
+      }
+      else {
         setCurrentEmail('No email address')
         // setEmailLabelText('Email Address')
         

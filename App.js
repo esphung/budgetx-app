@@ -46,6 +46,7 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             03/05/2020 09:12 AM | Released version 2.0.8
             03/29/2020 11:24 AM | Added device record analytics
             04/04/2020 02:15 PM | Cross device sync finished
+            04/04/2020 05:48 PM | facebook app developer integration
 */
 
 import React, { useState } from 'react';
@@ -76,6 +77,8 @@ import Storybook from './storybook';
 
 import FlashMessage from 'react-native-flash-message';
 
+// import { MyFacebookLoginScreen } from './src/screens/MyFacebookLoginScreen';
+
 // clearLines(15);
 
 // import API, { graphqlOperation } from '@aws-amplify/api';
@@ -91,11 +94,21 @@ import FlashMessage from 'react-native-flash-message';
 // });
 
 // record running device analytics
-const name = `Running application on ${Platform.OS} ${Platform.Version}`;
-Analytics.record({ name: name });
+// const name = `Running application on ${Platform.OS} ${Platform.Version}`;
+// Analytics.record({ name: name });
 // console.log(`Analytic Recorded: ${name}`);
 
 // let steps = 0;
+
+/* Temporary fix fo Analytics errors! */
+import Amplify from 'aws-amplify';
+import amplify from './aws-exports';
+Amplify.configure({
+  ...amplify,
+  Analytics: {
+    disabled: true
+  }
+});
 
 export default function App() {
   // state hooks
@@ -134,6 +147,7 @@ export default function App() {
       <NetworkProvider>
         <View style={{ flex: 1 }}>
           <SwitchNavigator />
+          {/*<MyFacebookLoginScreen />*/}
           {/* Global Flash Message */}
           <FlashMessage
             style={

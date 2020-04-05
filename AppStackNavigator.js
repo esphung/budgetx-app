@@ -29,6 +29,8 @@ import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen';
 
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 
+import WelcomeScreen from './src/screens/WelcomeScreen';
+
 import SignInScreen from './src/screens/SignInScreen';
 
 import SignUpScreen from './src/screens/SignUpScreen';
@@ -36,6 +38,7 @@ import SignUpScreen from './src/screens/SignUpScreen';
 import colors from './colors';
 
 const StackNavigator = createStackNavigator({
+
   Home: {
     screen: Home, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
@@ -71,6 +74,14 @@ const StackNavigator = createStackNavigator({
     screen: SignInScreen,
     navigationOptions: () => ({
       title: 'Log In to Your Account',
+      headerBackTitle: null,
+    }),
+  },
+
+  WelcomeScreen: {
+    screen: WelcomeScreen,
+    navigationOptions: () => ({
+      title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
       headerBackTitle: null,
     }),
   },

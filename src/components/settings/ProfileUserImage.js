@@ -62,7 +62,7 @@ function ProfileUserImage() {
   // this handles the image upload to S3
   const handleImagePicked = async (pickerResult) => {
     setIsLoading(true);
-    const imageName = `@${storageKey}/picture.jpg`;
+    const imageName = `@${global.storageKey}/picture.jpg`;
     const fileType = mime.lookup(pickerResult.uri);
     const access = { level: 'public', contentType: fileType }; // 'image/jpeg'
     const imageData = await fetch(pickerResult.uri);

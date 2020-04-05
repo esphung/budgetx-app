@@ -40,7 +40,6 @@ import {
   Input,
 } from 'native-base';
 
-
 // import { AppLoading } from 'expo';
 
 // AWS Amplify
@@ -421,6 +420,17 @@ function SignUpScreen(props) {
     </View>
   );
 
+  // const handleFacebookLogin = async (cognito) => {
+  //   // authenticated cognito profile from fb login
+  //   // console.log('cognito: ', cognito);
+
+  //   // redirect user somewhere...ie: welcome page
+  //   // props.navigation.navigate('AuthLoading');
+
+
+
+  // };
+
   /*
   * > User Sign Up Methods
   */
@@ -435,7 +445,7 @@ function SignUpScreen(props) {
     // console.log(phone_number);
     await Auth.signUp({
       username: email,
-      password: password,
+      // password: password,
       // attributes: { email },
     })
       .then(() => {
@@ -680,6 +690,8 @@ function SignUpScreen(props) {
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
                   />
                 </Item>*/}
+
+                
                 
                 {/* email section */}
                 <Item rounded style={styles.itemStyle}>

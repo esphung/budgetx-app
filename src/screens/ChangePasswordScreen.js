@@ -109,6 +109,13 @@ function ChangePasswordScreen(props) {
 
         AsyncStorage.removeItem('isUserAuthenticated');
 
+        global.storageKey = 'CURRENT_USER';
+
+        global.isUserAuthenticated = false;
+
+        global.avatar = require('../../assets/avatar.png');
+
+
         // console.log('Removed AsyncsStorage Variables ..');
 
 
