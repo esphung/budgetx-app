@@ -259,10 +259,37 @@ export const loadSettingsStorage = async (key) => {
 
     if (storageObject === null) return DEFAULT_SETTINGS(key) // if storage is empty return new one
 
+
+    /* update owner of all categories */ // ???
+    if (storageObject.categories) {
+      storageObject.categories.forEach((category) => {
+        category.owner = key
+      })
+    }
+
+    /* update transaction payees */ // ???
+    if (storageObject.payees) {
+      storageObject.payees.forEach((payee) => {
+        if (payee.id || payee.id === '') {
+          payee.id = uuidv4()
+        }
+        
+        if (payee.owner === '' || !payee.owner) {
+          payee.owner = key
+        }
+
+        if (!payee.name || payee.name === '') {
+          payee.name = 'None'
+        }
+
+
+        
+      })
+    }
+
     /* set user profile image if there is */
     if (storageObject.image_url) {
       let Image_Http_URL ={ uri: storageObject.image_url};
-
       global.avatar = Image_Http_URL;
     }
 

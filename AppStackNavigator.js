@@ -66,7 +66,7 @@ const StackNavigator = createStackNavigator({
   SignUp: {
     screen: SignUpScreen,
     navigationOptions: () => ({
-      title: 'Create a New Account',
+      title: 'Sign up with an email',
       headerBackTitle: null,
     }),
   },

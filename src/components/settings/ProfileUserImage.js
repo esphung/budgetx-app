@@ -44,7 +44,7 @@ function ProfileUserImage() {
 
   const [isReady, setIsReady] = useState(false);
 
-  const [storageKey, setStorageKey] = useState(null);
+  // const [storageKey, setStorageKey] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,7 +72,7 @@ function ProfileUserImage() {
       Storage.put(imageName, blobData, access);
       console.log('Successfully uploaded ', imageName, 'to bucket!');
     } catch (err) {
-      // console.log('error: ', err);
+      console.log('error: ', err);
       Alert.alert(err);
     }
 
@@ -85,12 +85,12 @@ function ProfileUserImage() {
 
   async function saveProfileImage(newImage) {
     // setIsReady(false);
-    const userObject = await loadSettingsStorage(storageKey);
+    const userObject = await loadSettingsStorage(global.storageKey);
     userObject.image = newImage;
     // saveUserObject(userObject);
     // console.log(userObject.image);
 
-    saveSettingsStorage(storageKey, userObject);
+    saveSettingsStorage(global.storageKey, userObject);
 
     // setIsReady(true);
   }
@@ -261,7 +261,9 @@ function ProfileUserImage() {
     // if (isReady) {
       return isReady && (
         <View style={styles.container}>
-          <TouchableOpacity disabled onPress={getPermissionAsync} style={styles.userImageMaskView}>
+          <TouchableOpacity
+          disabled
+          onPress={getPermissionAsync} style={styles.userImageMaskView}>
             <Image
 
               style={styles.userImage}

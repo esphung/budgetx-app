@@ -12,6 +12,7 @@ import {
   View,
   Text,
   // TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -24,45 +25,123 @@ import styles from '../../../styles';
 import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
 function BalanceView(props) {
-  const { currentBalanceValue, currentSpentValue } = props;
+  const { currentBalanceValue, currentSpentValue, isCalculatingBalance, isCalculatingSpent } = props;
 
-  return (
+  let spinner = <View style={{
+    flex: 1,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+  }} >
+  <ActivityIndicator size="small" color="white" />
+  </View>
+
+  const view = (
     <View style={styles.balanceView}>
-      <View style={{
-        width: '50%',
-        alignItems: 'center',
-      }}
-      >
-        <Text style={styles.currentBalanceTitle}>
-          Current Balance
-        </Text>
-        <Text style={styles.currentBalanceValue}>
-          <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentBalanceValue)}`}</Text>
-          <Text>{`${Math.abs(currentBalanceValue).toFixed(2)}`}</Text>
-        </Text>
-      </View>
+      
+      { !isCalculatingBalance &&
+        (
+          <View style={{
+            width: '50%',
+            alignItems: 'center',
+          }}
+          >
+            <Text style={styles.currentBalanceTitle}>
+              Current Balance
+            </Text>
+            <Text style={styles.currentBalanceValue}>
+              <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentBalanceValue)}`}</Text>
+              <Text>{`${Math.abs(currentBalanceValue).toFixed(2)}`}</Text>
+            </Text>
+          </View>
+        ) ||
+        (
+          <View style={{
+              width: '50%',
+              alignItems: 'center',
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }}
+            >
+            <Text style={styles.currentBalanceTitle}>
+                Current Balance
+              </Text>
+
+              <Text style={styles.currentBalanceValue}>
+                
+              {/*
+                <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentBalanceValue)}`}</Text>
+                <Text>{`${Math.abs(currentBalanceValue).toFixed(2)}`}</Text>
+              */}
+              </Text>
+              { spinner }
+
+          </View>
+        )
+      }
+      
 
       <View style={styles.separator} />
 
-      <View style={{
-        width: '50%',
-        alignItems: 'center',
-      }}
-      >
-        <Text style={styles.currentSpentTitle}>
-          Spent This Month
-        </Text>
+       
+      { !isCalculatingSpent &&
+        (
+          <View style={{
+          width: '50%',
+          alignItems: 'center',
+        }}
+        >
+          <Text style={styles.currentSpentTitle}>
+            Spent This Month
+          </Text>
+          <Text style={styles.currentSpentValue}>
+            <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentSpentValue)}`}</Text>
+            <Text>{ `${Math.abs(currentSpentValue).toFixed(2)}` }</Text>
+          </Text>
 
-        <Text style={styles.currentSpentValue}>
-          <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentSpentValue)}`}</Text>
-          <Text>{ `${Math.abs(currentSpentValue).toFixed(2)}` }</Text>
-        </Text>
+        </View>
+        ) ||
+        (
+          <View style={{
+              width: '50%',
+              alignItems: 'center',
+
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'solid',
+            }}
+            >
+            <Text style={styles.currentSpentTitle}>
+              Spent This Month
+            </Text>
+
+              <Text style={styles.currentSpentValue}>
+                
+              {/*
+                <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentBalanceValue)}`}</Text>
+                <Text>{`${Math.abs(currentBalanceValue).toFixed(2)}`}</Text>
+              */}
+              </Text>
+              { spinner }
+
+          </View>
+        )
+      }
 
       </View>
 
-    </View>
 
   );
+
+  return view;
 }
 
 // const styles = StyleSheet.create({

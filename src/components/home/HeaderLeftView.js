@@ -116,7 +116,17 @@ function HeaderLeftView(props) {
     try {
       const storageObj = await loadSettingsStorage(key);
 
-      console.log('storageObj: ', storageObj);
+      // console.log('storageObj: ', storageObj);
+      if (storageObj.user.name  && storageObj.user.name !== '' && storageObj.user.email) {
+        setNormalMessage(storageObj.user.name);
+        setIsUserLoggedIn(true);
+      }
+
+      // console.log('storageObj: ', storageObj);
+      if (storageObj.user.email  && storageObj.user.email !== '') {
+        setNormalMessage(storageObj.user.email);
+        setIsUserLoggedIn(true);
+      }
 
       // set stored user image
       if (storageObj.image_url) {
@@ -161,7 +171,7 @@ function HeaderLeftView(props) {
   function showSignInScreen(email) {
     // console.log('navigation: ', navigation);
     // console.log('email: ', email);
-    props.navigation.navigate('SignIn');
+    props.navigation.navigate('SignUp');
   }
 
   return (

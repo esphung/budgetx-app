@@ -71,9 +71,9 @@ import styles from '../../../styles';
 
 function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
-  const { onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn } = props;
+  const { onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled } = props;
 
-  let isDisabled = true;
+  // let isDisabled;
 
   // const [isDisabled, setIsDisabled] = useState(false);
 
@@ -113,110 +113,122 @@ function UserOptions(props) {
     return view;
   }
 
-  function renderItem(item) {
+
+  function renderItem({ key, isDisabled }) {
     let rowHeight = 45;
     let backgroundColor = colors.dark;
     let caret = '>';
     let textColor = colors.white;
-    // let opacity = 1.0;
+    let opacity = 1.0;
 
-    let title = `${item.key}`;
+    let disabled = Boolean(isDisabled)
+    // console.log('disabled: ', disabled);
 
-    if (title === '') {
+
+
+
+
+    // let title = `${key}`;
+
+    if (key === '') {
       rowHeight = 24;
       backgroundColor = 'transparent'; // colors.darkTwo;
-      isDisabled = true;
+      // isDisabled = true;
       caret = null;
     }
-    /* Backup Data */
-    else if (title === ('Backup Data')) {
-      isDisabled = !isUserLoggedIn
-      if (isDisabled) {
-        title = '';
-        rowHeight = 0;
-        textColor = colors.offWhite
-        // caret = currentSettingsVersion
-        caret = null;
-        // backgroundColor = 'transparent';
-      }
-    }
-    /* Restore Backup Data */
-    else if (title === 'Restore Backup Data') {
-      isDisabled = !isUserLoggedIn
-      if (isDisabled) {
-        title = 'Restored Local Backup';
-        textColor = colors.offWhite
-        // caret = currentSettingsVersion
-        caret = null;
-        // backgroundColor = 'transparent';
-      }
-      if (!isUserLoggedIn) {
-        // title = null;
-        textColor = colors.offWhite
-        // backgroundColor = 'transparent';
-        isDisabled = true
-        caret = null;
-        // rowHeight = 0;
-      }
-    }
+    // /* Backup Data */
+    // if (title === ('Backup Data')) {
+    //   // console.log('isBackupDisabled: ', global.getIsBackedUp());
+    //   // console.log('isBackupDisabled: ', isBackupDisabled);
+    //   if (isBackupDisabled) {
+    //     // title = '';
+    //     // rowHeight = 0;
+    //     textColor = colors.offWhite
+    //     // caret = currentSettingsVersion
+    //     caret = null;
+    //     // backgroundColor = 'transparent';
+    //     opacity = opacity;
+
+    //     isDisabled = isBackupDisabled
+    //   }
+    // }
+    // /* Restore Backup Data */
+    // if (title === 'Restore Backup Data') {
+    //   // isDisabled = isRestoreDisabled
+    //   if (!isBackupDisabled) {
+    //     title = 'Restored Local Backup';
+    //     textColor = colors.offWhite
+    //     // caret = currentSettingsVersion
+    //     caret = null;
+    //     // backgroundColor = 'transparent';
+    //     isDisabled = !isBackupDisabled
+    //   }
+    //   if (!isUserLoggedIn) {
+    //     // title = null;
+    //     textColor = colors.offWhite
+    //     // backgroundColor = 'transparent';
+    //     isDisabled = true
+    //     caret = null;
+    //     // rowHeight = 0;
+    //   }
+    // }
+
     /* Reset Device Data */
-    else if (title === 'Reset Device Data') {
+    if (key === 'Reset Device Data') {
       textColor = colors.pinkRed;
       backgroundColor = 'transparent';
       caret = null;
       opacity = 0.5
     }
-    /* Change Password/Sign Out */
-    else if (title === 'Change Password/Sign Out') {
-      isDisabled = !isUserLoggedIn
-      if (isDisabled) {
-        // title = null;
-        textColor = colors.offWhite
-        // backgroundColor = 'transparent';
-        
-        caret = null;
-        // rowHeight = 24;
-        // caret = null;
-        // opacity = 0.5
-      }
-    }
-       /* Sync This Device */
-    else if (title === 'Sync This Device') {
-      isDisabled = !isUserLoggedIn
-      if (isDisabled) {
-        
-        textColor = colors.offWhite
-        // backgroundColor = 'transparent';
-        // isDisabled = true
-        caret = null;
-        // rowHeight = 0;
-        // caret = null;
-        // opacity = 0.5
-      }
-    }
-
-    /* Sign In */
-    else if (title === 'Sign In') {
-      isDisabled = isUserLoggedIn
-      if (isDisabled) {
-        title = null;
-        textColor = colors.offWhite
-        backgroundColor = 'transparent';
-        // isDisabled = true
-        caret = null;
-        rowHeight = 0;
-        // caret = null;
-        // opacity = 0.5
-      }
-    }
-      /* Export Transactions */
-    // else if (title === 'Export Transactions') {
-    //   isDisabled = !isUserLoggedIn
+    // /* Change Password/Sign Out */
+    // if (title === 'Change Password/Sign Out') {
+    //   // isDisabled = !isUserLoggedIn
     //   if (isDisabled) {
     //     // title = null;
     //     textColor = colors.offWhite
+    //     // backgroundColor = 'transparent';
+        
+    //     caret = null;
+    //     // rowHeight = 24;
+    //     // caret = null;
+    //     // opacity = 0.5
+    //   }
+    // }
+    //    /* Sync This Device */
+    // if (title === 'Sync This Device') {
+    //   if (isUserLoggedIn) {
+        
+    //     textColor = colors.offWhite
+    //     // backgroundColor = 'transparent';
+    //     isDisabled = true
+    //     caret = null;
+    //     // rowHeight = 0;
+    //     // caret = null;
+    //     // opacity = 0.5
+    //   }
+    // }
+
+    // /* Sign In */
+    // if (title === 'Sign In') {
+    //   if (!isUserLoggedIn) {
+    //     title = null;
+    //     textColor = colors.offWhite
     //     backgroundColor = 'transparent';
-    //     // isDisabled = true
+    //     isDisabled = true
+    //     caret = null;
+    //     rowHeight = 0;
+    //     // caret = null;
+    //     // opacity = 0.5
+    //   }
+    // }
+    //   /* Export Transactions */
+    // else if (title === 'Export Transactions') {
+    //   // isDisabled = !isUserLoggedIn/
+    //   if (isExportTransactionsDisabled) {
+    //     // title = null;
+    //     textColor = colors.offWhite
+    //     // backgroundColor = 'transparent';
+    //     isDisabled = isExportTransactionsDisabled
     //     caret = null;
     //     // rowHeight = 0;
     //     // caret = null;
@@ -224,9 +236,9 @@ function UserOptions(props) {
     //   }
     // }
    
-    else {
-      isDisabled = false
-    }
+    // else {
+    //   isDisabled = false
+    // }
 
     // if (item.key === 'Passcode') {
     //   if (props.isPasscodeEnabled === true) {
@@ -236,6 +248,19 @@ function UserOptions(props) {
     //   }
 
     // }
+
+    if (isDisabled) {
+      // title = null;
+      textColor = colors.offWhite
+      // backgroundColor = 'transparent';
+      
+      caret = null;
+      // rowHeight = 24;
+      // caret = null;
+      // opacity = 0.5
+    }
+
+    // console.log('isDisabled: ', isDisabled);
 
     // console.log(item);
     const view = (
@@ -249,19 +274,16 @@ function UserOptions(props) {
             height: rowHeight, // 46,
             backgroundColor, // colors.dark,
 
-            opacity: opacity
+            opacity
 
             // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'dotted',
           }
         }
-        disabled={isDisabled}
-        onPress={() => {
-          // setIsDisabled(true),
-          isDisabled = true,
-          onPress(item)
-        }}
+        disabled={disabled}
+        onPress={() => onPress(key)}
+        
 
       >
         <View
@@ -287,8 +309,8 @@ function UserOptions(props) {
           }
           >
             <Text style={[styles.listItemTitleStyle, {
-              color:  textColor
-            }]}>{title}</Text>
+              color: textColor
+            }]}>{ key }</Text>
           </View>
 
         </View>
@@ -302,7 +324,7 @@ function UserOptions(props) {
           // borderStyle: 'solid',
         }}
         >
-          <Text style={styles.arrow}>{caret}</Text>
+          <Text style={styles.arrow}>{ caret }</Text>
         </View>
       </TouchableOpacity>
     );
@@ -338,29 +360,29 @@ function UserOptions(props) {
       //   // borderStyle: 'solid',
       // }]}
       data={[
-        { key: 'Sign In' },
-        { key: 'Sync This Device' },
-        { key: 'Customize Categories' },
-        { key: 'Backup Data' },
-        // { key: 'Passcode' },
+        { key: 'Sign In', isDisabled: isUserLoggedIn },
+        { key: 'Sync This Device', isDisabled: !isUserLoggedIn },
+        { key: 'Customize Categories', isDisabled: false },
+        { key: 'Backup Data', isDisabled: isBackupDisabled },
+        // { key: 'Passcode', isDisabled: false },
         
         
 
         
 
-        { key: '' },
-        { key: 'Change Password/Sign Out' },
-        { key: 'Export Transactions' },
-        { key: 'Restore Backup Data' },
-        { key: 'Contact Support' },
-        // { key: 'Passcode' },
+        { key: '', isDisabled: true },
+        { key: 'Change Password/Sign Out', isDisabled: !isUserLoggedIn },
+        { key: 'Export Transactions', isDisabled: isExportTransactionsDisabled },
+        { key: 'Restore Backup Data', isDisabled: !isBackupDisabled },
+        { key: 'Contact Support', isDisabled: false },
+        // { key: 'Passcode', isDisabled: false },
         
-        { key: 'Reset Device Data' },
+        { key: 'Reset Device Data', isDisabled: false },
         
 
       ]}
 
-      renderItem={({ item }) => renderItem(item)}
+      renderItem={({ item, isDisabled }) => renderItem(item, isDisabled)}
       ItemSeparatorComponent={(item) => renderSeparator(item)}
     />
   );

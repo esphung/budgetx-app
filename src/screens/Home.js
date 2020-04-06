@@ -60,8 +60,9 @@ import styles from '../../styles';
 import {
   loadSettingsStorage,
   saveSettingsStorage,
-  compareListTransactions,
+  // compareListTransactions,
   retrieveOnlineTransactions,
+  retrieveOnlineCategories,
 } from '../storage/SettingsStorage';
 
 // import my custom view components
@@ -89,6 +90,8 @@ import calculateMonthSpent from '../functions/calculateMonthSpent';
 
 import searchByID from '../functions/searchByID';
 
+import searchByName from '../functions/searchByName';
+
 import uuidv4 from '../functions/uuidv4';
 
 /* my custom queries */
@@ -106,7 +109,97 @@ import {
   getTransactionByID,
 } from '../storage/my_queries';
 
+// global.hasSyncedDevice = false;
+
+import {
+  setIsBackedUp,
+  getIsBackedUp,
+} from '../../globals';
+
+import { isDeviceOnline } from '../../network-functions';
+
 // console.log('getExistingPayee({id: "12"}): ', getExistingPayee({id: "12"}));
+
+  const compareListTransactions = async () => {
+    // load online transactions
+    let online_transactions = await retrieveOnlineTransactions();
+    console.log('online_transactions.length: ', online_transactions.length);
+
+
+    // load local transactions
+    let local_transactions = [] // = await retrieveLocalTransactions();
+    let storage = await loadSettingsStorage(global.storageKey);
+    local_transactions = storage.transactions;
+    // console.log('local_transactions.length: ', local_transactions.length);
+
+    var props = ['id', 'version'];
+
+    var result = local_transactions.filter(function(o1){
+        // filter out (!) items in online_transactions
+        return online_transactions.some(function(o2){
+            return (o1.id === o2.id) && (o1.version < o2.version);          // assumes unique id
+        });
+    }).map(function(o){
+        // objects with only the required properties
+        // and map to apply this to the filtered array as a whole
+        return props.reduce((newo) => {
+            newo = o;
+            return newo;
+        }, {});
+    });
+
+    console.log('result: ', result);
+
+    /* Filter Out Updated Trans then replace in local db */
+    // result.forEach(async (element) => {
+    //   // console.log('element.id: ', element.id);
+    //   // console.log('element.version: ', element.version);
+
+    //   // date for the new transaction to store
+    //   let data = await getTransactionByID(element.id); // retrieve newly created from online trans by id
+
+    //   // console.log('data: ', data);
+    //   const transaction = {
+    //     id: element.id,
+    //     amount: element.amount,
+    //     category: {
+    //       id: data.category.id,
+    //       name: data.category.name,
+    //       color: data.category.color,
+    //       type: data.category.type,
+    //       owner: element.category.owner,
+    //       version: data.category.version,
+    //     },
+    //     payee: (data.payee && (data.payee.name !== '' && data.payee.name !== null)) ? data.payee : {
+    //       id: element.payee.id,
+    //       name: element.payee.name,
+    //       owner: element.owner,
+    //       version: element.payee.version
+    //     },
+    //     // {
+    //     //   id: data.payee.id,
+    //     //   name: data.payee.name + '*',
+    //     //   owner: data.payee.owner,
+    //     //   version: data.payee.version,
+    //     // },
+    //     owner: data.owner,
+    //     type: data.type,
+    //     date: new Date(data.date),
+    //     note: (data.note && data.note !== 'null') ? data.note : '',
+    //     version: data.version,
+
+    //   }
+    //   // console.log('transaction: ', transaction);
+
+      
+
+
+    //   /* REPLACE LESSER VERSIONS OF TRANSACTION LOCALLY */
+    //   // removeTransaction(transaction);
+    // });
+
+    return result;
+  }
 
 const initialState = {
   currentTransactions: [],
@@ -118,7 +211,7 @@ const initialState = {
   currentBalance: 0.00,
   currentSpent: 0.00,
   currentPayeeName: '',
-  currentOwner: '',
+  currentOwner: global.storageKey,
   currentVersion: 0,
   currentTransaction: '',
   currentNote: '',
@@ -137,6 +230,27 @@ const incrementVersion = (transaction) => {
 function isUpperCase(str) {
   return str === str.toUpperCase();
 }
+
+const findArrayDifferences = (otherArray) => {
+  return (current) => {
+    return otherArray.filter((other) => {
+      return other.id === current.id // && other.version === current.version
+    }).length === 0;
+  }
+};
+
+const storeUserCategories = async (list) => {
+  try {
+    const storage = await loadSettingsStorage(storageKey);
+
+    storage.categories = list;
+    
+    saveSettingsStorage(storageKey, storage);
+  } catch (error) {
+    // statements
+    console.log('storeUserCategories error:', error);
+  }
+};
 
 // const retrieveAuthenticatedStorageKey = async () => {
 //   let key;
@@ -333,11 +447,15 @@ export default function Home(props) {
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
+  const [isCalculatingBalance, setIsCalculatingBalance] = useState(false);
+
+  const [isCalculatingSpent, setIsCalculatingSpent] = useState(false);
+
   // const [isNoteInputEditable, setIsNoteInputEditable] = useState(true);
 
   // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
 
-  const [isReady, setIsReady] = useState(false)
+  const [isReady, setIsReady] = useState(true)
 
   // const clearInputs = () => {
   //   setCurrentPayee('')
@@ -412,20 +530,18 @@ export default function Home(props) {
     }
 
      /* if online and logged in, update online transaction */
-    if (isUserLoggedIn) {
-      const isConnected = await isUserCurrentlyOnline();
-      console.log('transactions[pos]: ', transactions[pos]);
-      if (isConnected) {
-        transactions[pos].category.owner = currentOwner;
-        transactions[pos].owner = currentOwner
+    
+    const isConnected = await isUserCurrentlyOnline();
+    let authenticated = await getAuthentication();
+    // console.log('transactions[pos]: ', transactions[pos]);
+    if (isConnected && authenticated) {
+      transactions[pos].category.owner = currentOwner;
+      transactions[pos].owner = currentOwner
 
-
-        updateOnlineCategory(transactions[pos].category)
-        updateOnlineTransaction(transactions[pos])
-
-      }
+      updateOnlineCategory(transactions[pos].category)
+      updateOnlineTransaction(transactions[pos])
     }
-
+  
     showMessage({
       message: 'Updated transaction',
       duration: 550,
@@ -436,7 +552,7 @@ export default function Home(props) {
       // backgroundColor: colors.dark, // "purple", // background color
       color: colors.white, // "#606060", // text color
 
-      textStyle: styles.textStyle,
+      // textStyle: styles.textStyle,
 
       icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
       
@@ -519,23 +635,72 @@ export default function Home(props) {
     }
     Analytics.record({ name: 'Updated a transaction note' });
   };
+  const pushAllCategoriesToCloud = async () => {
+    try {
+      const storage = await loadSettingsStorage(global.storageKey);
+      // console.log('local_transactions: ', local_transactions);
+
+     for (var i = 0; i < storage.categories.length; i++) {
+        // /* Create New Category */
+        const category = new Category(
+          storage.categories[i].id, // id
+          storage.categories[i].name, // name
+          storage.categories[i].color, // color
+          storage.categories[i].type, // type
+          global.storageKey, // owner
+          storage.categories[i].version, // version
+        );
+
+        updateCategory(category);
+
+      // saveCategory(storage.categories[i])
+        // console.log('storage.transactions[i]: ', storage.transactions[i]);
+     }
+
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
+  }
   async function retrieveUserStoredSettings() {
     await Auth.currentAuthenticatedUser()
       .then(async (cognito) => {
         global.storageKey = cognito.attributes.sub;
 
-        setIsUserLoggedIn(true);
 
-        // setCurrentTransactions(list)
 
         const storage = await loadSettingsStorage(global.storageKey);
         // console.log('storage: ', storage);
 
-        setCurrentOwner(storage.user.id);
+        let isConnected = await isDeviceOnline();
+
+        if (global.hasSyncedDevice !== true && isConnected === true) {
+          // clearState();
+          
+          // setCurrentTransactions(await retrieveOnlineTransactions())
+          storage.transactions = await retrieveOnlineTransactions();
+
+          let online_categories = await retrieveOnlineCategories();
+          // const onlyInOnlineCategories = online_categories.filter(findArrayDifferences(storage.categories));
+
+          crossDeviceSync();
+
+          saveSettingsStorage(global.storageKey, storage)
+
+          global.hasSyncedDevice = true
+        }
+
+        
+        setIsUserLoggedIn(true);
+
+        setCurrentOwner(global.storageKey);
 
         setCategories(storage.categories);
 
         setCurrentTransactions(storage.transactions);
+
+        
+    
       })
       .catch(async () => {
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
@@ -550,7 +715,23 @@ export default function Home(props) {
 
         setIsUserLoggedIn(false);
       });
-    saveUndoHistory();
+    // saveUndoHistory();
+
+
+
+      // /* Calculate transaction balances */
+      // setIsCalculatingBalance(true);
+      // const balance = (calculateBalance(currentTransactions));
+      // setCurrentBalance(balance);
+      // setIsCalculatingBalance(false);
+
+      // // setIsCalculatingBalance(false);
+
+      // // calculate spent
+      // setIsCalculatingSpent(true);
+      // const spent = (calculateMonthSpent(currentTransactions));
+      // setCurrentSpent(spent);
+      // setIsCalculatingSpent(false);
 
   }
 
@@ -607,14 +788,14 @@ export default function Home(props) {
 
     // setCurrentTransaction(transaction); // ???
 
-    saveUndoHistory();
+    // saveUndoHistory();
 
     setIsStoringNewTransaction(false);
 
     Analytics.record({ name: 'Stored a transaction' });
   };
   async function clearState() {
-    // setIsReady(false);
+    setIsReady(false);
 
     // setIsStoringNewTransaction(false);
 
@@ -624,6 +805,8 @@ export default function Home(props) {
     // setCurrentTransactions([]);
     setCurrentBalance(0.00);
     setCurrentSpent(0.00);
+
+
 
     setCurrentTransaction(initialState.currentTransaction);
 
@@ -656,6 +839,12 @@ export default function Home(props) {
 
     setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
     setIsSlideViewHidden(initialState.isSlideViewHidden);
+
+    setIsCalculatingBalance(false);
+
+    setIsCalculatingSpent(false);
+
+    setIsReady(true)
   }
   async function removeStoredTransaction(transaction) {
     setIsRemovingStoredTransaction(true);
@@ -742,14 +931,16 @@ export default function Home(props) {
     return bool;
   };
   const getAuthentication = async () => {
-  await Auth.currentAuthenticatedUser()
-  .then((cognito) => {
-    console.log('cognito: ', cognito);
-    return cognito;
-  }).catch((err) => {
-    console.log('err: ', err);
-  })
-};
+    let authenticated = false;
+    await Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        console.log('cognito: ', cognito);
+        authenticated = (cognito) ? true : false;
+      }).catch((err) => {
+        console.log('err: ', err);
+      })
+    return authenticated
+  };
   const getTransactionOnlineByID = async (id) => {
     /* Process retrieved server transaction */
     let stored = await getTransactionByID(id); // retrieve newly created from online trans by id
@@ -839,10 +1030,9 @@ export default function Home(props) {
     storeNewTransaction(transaction); // store new transaction locally
 
     let isConnected = await isUserCurrentlyOnline();
-
     if (isConnected) {
-      let authenticated = await getAuthentication()
-
+      let authenticated = await getAuthentication();
+      // alert(authenticated);
       if (authenticated) {
         saveCategory(category);
         savePayee(payee);
@@ -862,24 +1052,30 @@ export default function Home(props) {
     setCurrentNote('')
     setCurrentVersion(0)
 
-    setIsReady(true)
+    setIsReady(true);
+
+
+    setIsBackedUp(false)
   }
 
   const saveUndoHistory = async () => {
     let success = false;
     // const undo_storage_key = `${storageKey}_BACKUPSETTINGS`
 
+    let undo_storage_key = `${global.storageKey}_HISTORY`
+
     // load stored settings
     try {
-      const storageObj = await loadSettingsStorage(global.storageKey);
+      const storageObj = await loadSettingsStorage(undo_storage_key);
 
-      // set stored user transactions
-      if (storageObj !== null && global.storageKey !== null) {
-        // console.log('stored user settings transactions:', storageObj.transactions);
-        saveSettingsStorage(`${storageObj.user.id}_HISTORY`, storageObj);
-        // console.log(key)
-        success = true;
-      }
+      let key = global.storageKey.replace('_HISTORY', '');
+
+      
+
+      saveSettingsStorage(key, storageObj);
+
+      global.storageKey = key
+
     } catch (e) {
       // statements
       console.log('e:', e);
@@ -889,23 +1085,29 @@ export default function Home(props) {
 
   const loadUndoHistory = async () => {
     // let success = false;
-    // const undo_storage_key = `${storageKey}_BACKUPSETTINGS`
-
-    // load stored settings
     try {
-      const storageObj = await loadSettingsStorage(global.storageKey);
-
-      let undo_storage_key = `${storageObj.user.id}_HISTORY`; // history for REDOs
+      let undo_storage_key = `${global.storageKey}_HISTORY`; // history for REDOs
       const undoObj = await loadSettingsStorage(undo_storage_key);
 
-      setCurrentTransactions(undoObj.transactions);
+      let key = global.storageKey.replace('_HISTORY', '');
 
-      saveSettingsStorage(global.storageKey, undoObj);
+      
+
+      saveSettingsStorage(key, undoObj)
+
+      global.storageKey = key
+
+
+
     } catch (e) {
       // statements
       console.log('Could not save undo history:', e);
       // console.log(e);
     }
+
+    ;
+
+    // setCurrentTransactions(undoObj.transactions);
   };
   function backspaceBtnPressed() {
     const strValue = String(currentAmount);
@@ -916,16 +1118,19 @@ export default function Home(props) {
 
   // current transaction updates
   useEffect(() => {
-    if (currentTransactions) {
-      // calculate balance
-      const balance = (calculateBalance(currentTransactions));
-      setCurrentBalance(balance);
+    /* Calculate transaction balances */
+    setIsCalculatingBalance(true);
+    const balance = (calculateBalance(currentTransactions));
+    setCurrentBalance(balance);
+    setIsCalculatingBalance(false);
 
-      // calculate spent
-      const spent = (calculateMonthSpent(currentTransactions));
-      setCurrentSpent(spent);
-      // console.log('currentTransactions:', currentTransactions.length);
-    }
+    // setIsCalculatingBalance(false);
+
+    // calculate spent
+    setIsCalculatingSpent(true);
+    const spent = (calculateMonthSpent(currentTransactions));
+    setCurrentSpent(spent);
+    setIsCalculatingSpent(false);
   }, [currentTransactions]);
 
 
@@ -986,13 +1191,17 @@ export default function Home(props) {
     }
   }, [isSlideViewHidden]);
 
-  // useEffect(() => {
-  //   console.log('Mounted', title);
-  //   return () => {
-  //     // effect
-  //     console.log('Cleaned up', title);
-  //   };
-  // }, []);
+  useEffect(() => {
+    // console.log('Mounted', title);
+    // 
+    
+    retrieveUserStoredSettings();
+    
+    return () => {
+      // effect
+      // console.log('Cleaned up', title);
+    };
+  }, []);
 
   useEffect(() => {
     if (currentTransaction) {
@@ -1024,48 +1233,49 @@ export default function Home(props) {
     };
   }, [isStoringNewTransaction]);
 
-  useEffect(() => {
-    isRemovingStoredTransaction && showMessage(
-      {
-        // message: 'Removed a stored transaction',
-        // description: 'Press here to undo',
-        message: 'Deleted transaction',
-        // type: 'warning',
-        // position: 'top',
-        // icon: { icon: 'auto', position: 'right' },
+  // useEffect(() => {
+  //   isRemovingStoredTransaction &&
+  //   showMessage(
+  //     {
+  //       // message: 'Removed a stored transaction',
+  //       description: 'Press here to undo',
+  //       message: 'Deleted transaction',
+  //       // type: 'warning',
+  //       // position: 'top',
+  //       // icon: { icon: 'auto', position: 'right' },
 
-        // backgroundColor: colors.dark, // "purple", // background color
+  //       // backgroundColor: colors.dark, // "purple", // background color
 
-        textStyle: styles.textStyle,
+  //       textStyle: styles.textStyle,
 
-        onPress: () => {
-          // let user undo action
-          // if (!isUserLoggedIn) {
-          //   loadUndoHistory()
-          // }
-        },
+  //       onPress: () => {
+  //         // let user undo action
+  //         // if (!isUserLoggedIn) {
+  //           // loadUndoHistory()
+  //         // }
+  //       },
 
-        duration: 2500,
-      }
-    )
+  //       duration: 2500,
+  //     }
+  //   )
 
-    return () => {
-      // isRemovingStoredTransaction effect
-    };
-  }, [isRemovingStoredTransaction]);
+  //   return () => {
+  //     // isRemovingStoredTransaction effect
+  //   };
+  // }, [isRemovingStoredTransaction]);
 
   useEffect(() => {
     // console.log('mount');
 
-    setIsReady(true);
-    setIsUpdatingTransaction(false)
+    // setIsReady(true);
+    // setIsUpdatingTransaction(false)
 
     // compareListTransactions()
     // crossDeviceSync()
 
     return () => {
       // effect
-      console.log('clean up');
+      // console.log('clean up');
 
     };
   }, []);
@@ -1301,6 +1511,179 @@ export default function Home(props) {
     </View>
   );
 
+  const crossDeviceSync = async () => {
+    // check if user is online
+    let bool = await isDeviceOnline();
+    if (bool !== true) {
+      showMessage('Device Currently Offline');
+      return;
+    }
+
+    // check if user has device sync enabled
+    // if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
+
+    // setIsReady(false);
+
+    // setIsSyncing(true)
+
+    /* Sync Transactions */
+    // compare both transaction lists
+    let online_transactions = []; // online trans
+    let local_transactions = [];  // local trans in device storage
+
+    try {
+      // get user's local transactions
+      let storage = await loadSettingsStorage(global.storageKey);
+      local_transactions = storage.transactions;
+      // console.log('local_transactions.length: ', local_transactions.length);
+      // console.log('local_transactions: ', local_transactions);
+
+       // get user's online transactions
+      online_transactions = await retrieveOnlineTransactions();
+      // console.log('online_transactions.length: ', online_transactions.length);
+      // console.log('online_transactions: ', online_transactions);
+
+      // check for local transactions that dont exist in online transactions yet
+      // ie: offline-mode transactions
+      const onlyInLocal = local_transactions.filter(findArrayDifferences(online_transactions));
+      const onlyInOnline = online_transactions.filter(findArrayDifferences(local_transactions));
+
+      // only upload new local transactions; not all of them
+      if (onlyInLocal.length > 0) {
+        for (var i = onlyInLocal.length - 1; i >= 0; i--) {
+          // console.log('onlyInLocal[i]: ', onlyInLocal[i]);
+          saveTransaction(onlyInLocal[i]);
+        }
+      }
+
+      // add new online transactions to local transactions  on to user's device
+      // storage.transactions = await retrieveOnlineTransactions();
+      storage.transactions = local_transactions.concat(onlyInOnline);
+      // console.log('storage.transactions.length: ', storage.transactions.length);
+
+      // save storage transactions to device storage
+      saveSettingsStorage(storageKey, storage);
+    } catch(crossDeviceSyncError) {
+      // throw new Error('Error performing crossDeviceSync:', e);
+      console.log('crossDeviceSyncError: ', crossDeviceSyncError);
+    }
+
+
+
+
+    /* Sync identical transactions */
+    // console.log('compareListTransactions(): ', await compareListTransactions());
+
+    let outdated_transactions = await compareListTransactions();
+
+    if (outdated_transactions && outdated_transactions.length > 0) {
+      // pull newer online transaction and replace outdated local with it
+
+      for (var i = outdated_transactions.length - 1; i >= 0; i--) {
+        const existing_local_transaction = searchByID(outdated_transactions[i].id, local_transactions);
+        console.log('existing_local_transaction: ', existing_local_transaction);
+        // console.log('online_transactions[i]: ', online_transactions[i]);
+
+        let online_newer_transaction = await getTransactionByID(existing_local_transaction.id);
+        console.log('online_newer_transaction: ', online_newer_transaction);
+
+        try {
+          let storage = await loadSettingsStorage(global.storageKey);
+
+          let list = storage.transactions;
+
+          let found = searchByID(existing_local_transaction.id, list);
+
+          let pos = list.indexOf(found);
+
+          list[pos] = online_newer_transaction;
+
+          saveSettingsStorage(global.storageKey, storage);
+        } catch(e) {
+          // statements
+          console.log(e);
+        }
+      }
+    }
+
+    /* Sync Categories */
+    // compare both category lists
+    let online_categories = []; // online trans
+    let local_categories = [];  // local trans in device storage
+
+    try {
+      // get user's local categories
+      let storage = await loadSettingsStorage(global.storageKey);
+      local_categories = storage.categories;
+      // console.log('local_categories.length: ', local_categories.length);
+      // console.log('local_categories: ', local_categories);
+
+      //  // get user's online categories
+      online_categories = await retrieveOnlineCategories();
+      // console.log('online_categories.length: ', online_categories.length);
+      // console.log('online_categories: ', online_categories);
+
+      for (var i = online_categories.length - 1; i >= 0; i--) {
+        try {
+          let found = searchByName(online_categories[i].name, local_categories)
+          if (found) {
+            const pos = local_categories.indexOf(found);
+            local_categories[pos] = online_categories[i];
+          }
+        } catch(e) {
+          // statements
+          console.log(e);
+        }
+      }
+
+      var arr1 = local_categories;
+      var arr2  = online_categories;
+
+      let merged = [];
+
+      for(let i=0; i<arr1.length; i++) {
+      merged.push({
+        ...arr1[i],
+        ...(arr2.find((itmInner) => itmInner.name === arr1[i].name))}
+        );
+      }
+
+      // console.log('merged: ', merged);
+      // console.log('merged.length: ', merged.length);
+
+      storeUserCategories(merged);
+
+      // storage.categories = local_categories
+
+      saveSettingsStorage(global.storageKey, storage);
+
+      pushAllCategoriesToCloud();
+
+    } catch(categorySync) {
+      // throw new Error('Error performing crossDeviceSync:', e);
+      console.log('categorySync: ', categorySync);
+    }
+
+    // setIsReady(true);
+
+    // setIsSyncing(false);
+
+    // showMessage({
+    //   message: `Synced data successfully`,
+    //   // description: 
+    //   type: 'success', // "success", "info", "warning", "danger"
+    //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+    // });
+
+
+
+
+
+
+    // go back to user home screen
+    // navigation.navigate('Home');
+  }
+
 
 
 
@@ -1357,7 +1740,16 @@ export default function Home(props) {
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         // onWillFocus={clearState} // {(payload) => clearState()}
-        onWillFocus={retrieveUserStoredSettings}
+        onWillFocus={() => {
+            // clearState()
+
+            // retrieveUserStoredSettings()
+
+            global.hasSyncedDevice = false;
+
+            retrieveUserStoredSettings()
+          }
+        }
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         onWillBlur={async () =>
@@ -1393,6 +1785,8 @@ export default function Home(props) {
         <BalanceView
           currentBalanceValue={currentBalance}
           currentSpentValue={currentSpent}
+          isCalculatingBalance={isCalculatingBalance}
+          isCalculatingSpent={isCalculatingSpent}
         />
       </View>
 
@@ -1440,6 +1834,9 @@ export default function Home(props) {
       }
       {
         isRemovingStoredTransaction && spinner
+      }
+      {
+        isCalculatingBalance && spinner
       }
       {
         isStoringNewTransaction && (

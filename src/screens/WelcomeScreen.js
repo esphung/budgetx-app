@@ -108,6 +108,8 @@ function WelcomeScreen(props) {
 
     storage.user.name = userData.name;
 
+    storage.user.email = userData.email;
+
     saveSettingsStorage(global.storageKey, storage);
 
     // global.isUserAuthenticated = true;

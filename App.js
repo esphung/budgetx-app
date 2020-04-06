@@ -55,7 +55,7 @@ import {
   View,
   Platform,
   // StyleSheet,
-  // AsyncStorage
+  AsyncStorage
  } from 'react-native';
 
 // import the Analytics category
@@ -68,6 +68,10 @@ import { NetworkProvider } from 'react-native-offline';
 import { AppLoading } from 'expo';
 
 import './globals'; // global values
+
+import {
+  getIsBackedUp,
+} from './globals'
 
 import colors from './colors';
 
@@ -110,6 +114,24 @@ Amplify.configure({
   }
 });
 
+// global.getIsBackedUp = async () => {
+//   // Retrieves from storage as boolean
+//   let value = await AsyncStorage.getItem('isBackedUp')
+
+//   global.isBackedUp = value
+//   return value // boolean false
+// };
+
+// global.getHasRatedUs = async () => {
+//   // Retrieves from storage as boolean
+//   let value = await AsyncStorage.getItem('hasRatedUs');
+
+//   global.hasRatedUs = value
+//   return value // boolean false
+// };
+
+
+
 export default function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
@@ -117,6 +139,8 @@ export default function App() {
   let view;
 
   async function loadApplicationResources() {
+
+    global.isBackedUp = await getIsBackedUp();
     
     // load stored fonts
     try {
@@ -137,6 +161,8 @@ export default function App() {
     return <NetworkProvider><Storybook /></NetworkProvider>;
   }
 
+
+
   if (!fontsAreLoaded) {
     // steps++
     loadApplicationResources();
@@ -147,7 +173,6 @@ export default function App() {
       <NetworkProvider>
         <View style={{ flex: 1 }}>
           <SwitchNavigator />
-          {/*<MyFacebookLoginScreen />*/}
           {/* Global Flash Message */}
           <FlashMessage
             style={

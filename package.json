@@ -41,7 +41,7 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "jest-expo": "^36.0.1",
-    "mime-types": "^2.1.25",
+    "mime-types": "^2.1.26",
     "native-base": "^2.13.8",
     "path": "^0.12.7",
     "prop-types": "^15.7.2",

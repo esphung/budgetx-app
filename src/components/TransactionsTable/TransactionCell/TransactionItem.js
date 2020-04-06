@@ -29,6 +29,8 @@ import ItemNameInput from './ItemNameInput';
 // import ItemDate from './ItemDate';
 import ItemAmount from './ItemAmount';
 
+import uuidv4 from '../../../functions/uuidv4';
+
 function TransactionItem(props, index) {
   const {
     item,
@@ -49,7 +51,7 @@ function TransactionItem(props, index) {
   if (item.category === null) {
     // console.log('item.category: ', item.category);
     item.category = {
-      id: 0,
+      id: uuidv4(),
       name: 'None',
       color: '#ddd',
       owner: global.storageKey,

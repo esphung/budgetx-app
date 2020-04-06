@@ -3,19 +3,28 @@
 
 // global.screenWidth = Math.round(Dimensions.get('window').width);
 
+import {
+  // View,
+  // Platform,
+  // StyleSheet,
+  AsyncStorage
+ } from 'react-native';
+
 import app from './app.json';
 
 global.facebookAppId = app.expo.facebookAppId;
 
+global.isBackedUp = false;
+
 // console.log('global.facebookAppId: ', global.facebookAppId);
 
-global.isDeviceCrossSyncOn = true
+global.isDeviceCrossSyncOn = true;
 
-global.hasRatedUs = false
+global.hasRatedUs = false;
 
 // global.isStorybookModeOn = true;
 
-global.storageKey = 'CURRENT_USER';
+global.storageKey = ''; // 'CURRENT_USER'
 
 
 global.isUserAuthenticated = false;
@@ -96,3 +105,59 @@ global.appDesigner = 'Andrey Nasanov';
 // validation
 // var usernameRegex = /^[a-zA-Z0-9]+$/;
 // global.usernameRegex = /^[a-zA-Z0-9]+$/;
+
+
+// const getIsBackedUp = async () => {
+//   // Retrieves from storage as boolean
+//   let value = await AsyncStorage.getItem('isBackedUp')
+
+//   global.isBackedUp = value
+//   return value // boolean false
+// };
+
+// const getHasRatedUs = async () => {
+//   // Retrieves from storage as boolean
+//   let value = await AsyncStorage.getItem('hasRatedUs');
+
+//   global.hasRatedUs = value
+//   return value // boolean false
+// };
+
+const setIsBackedUp = (bool) => {
+  // Saves to storage as a JSON-string
+  AsyncStorage.setItem('isBackedUp', JSON.stringify(bool));
+  global.isBackedUp = bool
+}
+
+const getIsBackedUp = async () => {
+  // Retrieves from storage as boolean
+  let value = await AsyncStorage.getItem('isBackedUp')
+
+  global.isBackedUp = value
+  return value // boolean false
+};
+
+const setHasRatedUs = (bool) => {
+  // Saves to storage as a JSON-string
+  AsyncStorage.setItem('hasRatedUs', JSON.stringify(bool));
+  global.hasRatedUs = bool;
+}
+
+const getHasRatedUs = async () => {
+  // Retrieves from storage as boolean
+  let value = await AsyncStorage.getItem('hasRatedUs');
+
+  global.hasRatedUs = value;
+  return value // boolean false
+};
+
+module.exports = {
+  getIsBackedUp,
+  getHasRatedUs,
+  setIsBackedUp,
+  setHasRatedUs,
+}
+
+
+
+

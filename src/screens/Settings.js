@@ -13,6 +13,10 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
             03/29/2020 10:49 AM | Fixed flash messages to not break app
 */
 
+
+
+
+
 import React, { useState, useEffect } from 'react';
 
 import { Linking } from 'expo';
@@ -59,7 +63,7 @@ import {
   updateTransaction,
   removeTransaction,
   // removePayee,
-  // removeCategory,
+  removeCategory,
   // savePayee,
   saveCategory,
   saveTransaction,
@@ -68,6 +72,8 @@ import {
   // fetchStoredCategories,
   getTransactionByID,
 } from '../storage/my_queries';
+
+import defaultCategories from '../data/categories';
 
 // // import the Analytics category
 // import Analytics from '@aws-amplify/analytics';
@@ -123,6 +129,13 @@ import { isDeviceOnline } from '../../network-functions';
 import searchByName from '../functions/searchByName';
 
 import searchByID from '../functions/searchByID';
+
+import {
+  getHasRatedUs,
+  getIsBackedUp,
+  setHasRatedUs,
+  setIsBackedUp,
+} from '../../globals';
 
 // import { } from 'Utils';
 
@@ -198,6 +211,36 @@ const storeUserCategories = async (list) => {
   }
 };
 
+// const setIsBackedUp = (bool) => {
+//   // Saves to storage as a JSON-string
+//   AsyncStorage.setItem('isBackedUp', JSON.stringify(bool));
+//   global.isBackedUp = bool
+// }
+
+// const getIsBackedUp = async () => {
+//   // Retrieves from storage as boolean
+//   let value = await AsyncStorage.getItem('isBackedUp')
+
+//   global.isBackedUp = value
+//   return value // boolean false
+// };
+
+// const setHasRatedUs = (bool) => {
+//   // Saves to storage as a JSON-string
+//   AsyncStorage.setItem('hasRatedUs', JSON.stringify(bool));
+//   global.hasRatedUs = bool;
+// }
+
+// const getHasRatedUs = async () => {
+//   // Retrieves from storage as boolean
+//   let value = await AsyncStorage.getItem('hasRatedUs');
+
+//   global.hasRatedUs = value;
+//   return value // boolean false
+// };
+
+
+
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
@@ -244,6 +287,12 @@ function Settings(props) {
   const [isExportingTransactions, setIsExportingTransactions] = useState(false);
 
   const [isSyncing, setIsSyncing] = useState(false);
+
+  const [isExportTransactionsDisabled, setIsExportTransactionsDisabled] = useState(false);
+
+
+
+
 
   const spinner = (
     <View
@@ -407,7 +456,9 @@ function Settings(props) {
     }
 
     // check if user has device sync enabled
-    if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
+    // if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
+
+    if (isUserLoggedIn !== true) return
 
     // setIsReady(false);
 
@@ -672,35 +723,52 @@ function Settings(props) {
     .then(async (cognito) => {
       const storage = await loadSettingsStorage(global.storageKey);
       
-      setCurrentOwner(storage.user.id || global.storageKey);
+      setCurrentOwner(storage.user.id);
 
       // setCategories(storage.categories);
 
-      setCurrentTransactions(storage.transactions || []);
+      setCurrentTransactions(storage.transactions);
 
       // setCurrentSettingsVersion(storage.version);
 
       setIsUserLoggedIn(true); // cognito (logged in)
+
+      setIsExportTransactionsDisabled(false);
+
       global.isUserAuthenticated = false
+
+
     })
     .catch(async (auth_error) => {
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
    
-        setCurrentOwner(userObject.user.id || global.storageKey);
+        setCurrentOwner(userObject.user.id);
 
-        setCurrentTransactions(userObject.transactions || []);
+        setCurrentTransactions(userObject.transactions);
+
+        // setCategories(userObject.categories);
 
         // setCurrentSettingsVersion(userObject.version);
 
-        setIsUserLoggedIn(false); //  local (not logged in)
+        setIsUserLoggedIn(false); // local (not logged in)
+
+        setIsExportTransactionsDisabled(true);
+
         global.isUserAuthenticated = false
 
-        showMessage({
-          message: `You are ${auth_error}`,
-          type: 'danger', // "success", "info", "warning", "danger"
-          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-        });  
+        // showMessage({
+        //   message: `You are ${auth_error}`,
+        //   type: 'danger', // "success", "info", "warning", "danger"
+        //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+        // });  
+        
     });
+
+    setIsBackupDisabled(global.isBackedUp);
+
+
+
+
 
     setIsReady(true);
   }
@@ -721,23 +789,19 @@ function Settings(props) {
 
       storage = await loadSettingsStorage(backup_key);
 
-      if (storage !== null && storageKey !== null) {
-        
-        // console.log('stored user settings transactions:', storageObj.transactions);
-        saveSettingsStorage(storageKey, storage);
+      saveSettingsStorage(storageKey, storage);
 
         setCurrentSettingsVersion(storage.version)
 
         success = true;
 
-        setIsRestoreDisabled(true);
+        setIsBackupDisabled(false);
 
-        setIsBackupDisabled(false)
+        await setIsBackedUp(false);
 
         setShouldShowUpdateCloudDialogBox(true);
 
-        props.navigation.navigate('Home');
-      }
+        // props.navigation.navigate('Home');
     } catch (e) {
       // statements
       // Alert.alert('Could not back up settings');
@@ -747,13 +811,22 @@ function Settings(props) {
   };
 
   const backupStoredSettings = async () => {
-    setIsSyncing(true)
+    // setIsSyncing(true);
     let success = false;
     // const backup_key = `${storageKey}_BACKUPSETTINGS`
 
     // load stored settings
     try {
       const storageObj = await loadSettingsStorage(storageKey);
+
+       /* Device Cross Syncing for  User's online  with backup */
+        // if (await isDeviceOnline() && isUserLoggedIn === true && global.isDeviceCrossSyncOn === true) {
+        //   if (global.storageKey === '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey === '216747749558231') {
+        //     for (var i = storageObj.transactions.length - 1; i >= 0; i--) {
+        //       saveTransaction(storageObj.transactions[i])
+        //     }
+        //   }
+        // }
 
       let backup_key = `${storageObj.user.id}_BACKUP_SETTINGS`
       // console.log('backup_key: ', backup_key);
@@ -767,9 +840,9 @@ function Settings(props) {
 
         setShouldShowUpdateCloudDialogBox(true)
 
-        // setIsBackupDisabled(true);
+        setIsBackupDisabled(true);
 
-        // setIsRestoreDisabled(false);
+        await setIsBackedUp(true);
       }
     } catch (e) {
       // statements
@@ -781,14 +854,16 @@ function Settings(props) {
     //   Alert.alert('Data backed up successfully');
     // }
 
-    setIsSyncing(false)
+    // alert(await global.getIsBackedUp())
+
+    // setIsSyncing(false);
 
     // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
     if (success) {
       // restoreBackUpData();
       await showBackupCompleteAlert();
 
-      navigation.navigate('Home')
+      // navigation.navigate('Home');
     }
   };
 
@@ -799,7 +874,7 @@ function Settings(props) {
       [
         { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
         // Calling resetData
-        { text: 'OK', onPress: backupStoredSettings },
+        { text: 'OK', onPress: async () => await backupStoredSettings() },
       ],
       { cancelable: false },
     );
@@ -854,16 +929,49 @@ function Settings(props) {
     };
   }, [input])
 
+  // useEffect(() => {
+  //   if (isBackupDisabled === true) {
+  //     setIsBackedUp(true)
+  //   } else {
+  //     setIsBackedUp(false)
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [isBackupDisabled, isRestoreDisabled])
+
+  useEffect(() => {
+    if (currentTransactions && currentTransactions.length> 0) {
+      setIsExportTransactionsDisabled(false)
+    }
+    return () => {
+      // effect
+      // setIsExportTransactionsDisabled(true)
+    };
+  }, [currentTransactions])
+
   /*
   * > reset data from the app
   */
   const resetData = async () => {
-    let transactions = await retrieveOnlineTransactions();
+    // let storage = await loadSettingsStorage(global.storageKey)
 
-    for (var i = transactions.length - 1; i >= 0; i--) {
-      console.log('transactions[i]: ', transactions[i]);
-      removeTransaction(transactions[i])
-    }
+    // for (var i = storage.transactions.length - 1; i >= 0; i--) {
+    //   // console.log('transactions[i]: ', transactions[i]);
+    //   await removeTransaction(storage.transactions[i])
+    // }
+
+    // let categories = storage.categories;
+
+    // for (var i = categories.length - 1; i >= 0; i--) {
+    //   // console.log('categories[i]: ', categories[i]);
+    //   removeCategory(categories[i])
+    // }
+
+    let storage = await loadSettingsStorage(global.storageKey)
+
+    storage.categories = defaultCategories;
+
 
 
 
@@ -872,14 +980,23 @@ function Settings(props) {
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (error, stores) => {
         stores.map((result, i, store) => {
+
           if (store[i][0] === (global.storageKey)) {
             // remove items with username key
             // console.log({ [store[i][0]]: store[i][1] });
             AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
-          } else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
+          }
+
+          else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
             // remove backups with username key
             AsyncStorage.removeItem(store[i][0]) // Remove Backups
           }
+          else if (store[i][0] === (global.storageKey + '_HISTORY')) {
+            // remove backups with username key
+            AsyncStorage.removeItem(store[i][0]) // Remove Backups
+          }
+
+
           return true;
         });
       });
@@ -1050,9 +1167,9 @@ function Settings(props) {
       [
         { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
         { text: 'OK', onPress: async () => {
-            setIsSyncing(true)
+            // setIsSyncing(true)
             await restoreBackUpData()
-            setIsSyncing(false)
+            // setIsSyncing(false)
             
           }
         },
@@ -1173,7 +1290,7 @@ function Settings(props) {
   }
 
   const onExport = async () => {
-    if (!currentTransactions || currentTransactions.length <= 0) {
+    if (currentTransactions.length <= 0) {
       showMessage('You have no transactions');
       return
     }
@@ -1343,18 +1460,18 @@ function Settings(props) {
     // check if user logged in
     if (!isUserLoggedIn) return;
 
-    // developer debugging only let this user sync
-    if (global.storageKey !== '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey !== '216747749558231') {
-      showMessage('Update to 4.x!');
-      return;
-    }
+    // // developer debugging only let this user sync
+    // if (global.storageKey !== '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey === '216747749558231') {
+    //   showMessage('Update to 4.x!');
+    //   return;
+    // }
 
     // alert => would you like to sync transactions in the cross-device with this device?
     setShouldShowCloudSyncDialogBox(true);
   }
 
-  function onPress(btn) {
-    const name = btn.key;
+  function onPress(name) {
+    // const name = btn.key;
 
     // console.log(btn);
     if (name === 'Contact Support') {
@@ -1401,16 +1518,16 @@ function Settings(props) {
     );
   }
 
-  // useEffect(() => {
-  //   checkConnectivity();
-  //   retrieveStoredSettings();
-  // }, []);
-
   useEffect(() => {
-    if (currentSettingsVersion) {
-      // console.log('currentSettingsVersion: ', currentSettingsVersion);
-    }
-  }, [currentSettingsVersion]);
+    // checkConnectivity();
+    retrieveStoredSettings();
+  }, []);
+
+  // useEffect(() => {
+  //   if (currentSettingsVersion) {
+  //     // console.log('currentSettingsVersion: ', currentSettingsVersion);
+  //   }
+  // }, [currentSettingsVersion]);
 
   // useEffect(() => {
   //   if (transactions) {
@@ -1437,6 +1554,20 @@ function Settings(props) {
   //   };
   // }, [isPasscodeEnabled])
 
+  
+
+  const getAuthentication = async () => {
+    let authenticated = false;
+    await Auth.currentAuthenticatedUser()
+      .then((cognito) => {
+        console.log('cognito: ', cognito);
+        authenticated = (cognito) ? true : false;
+      }).catch((err) => {
+        console.log('err: ', err);
+      })
+    return authenticated
+  };
+
   const view = (
     <View
       style={styles.container}
@@ -1449,10 +1580,25 @@ function Settings(props) {
     }
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
-            onWillFocus={retrieveStoredSettings} // {(payload) => checkConnectivity()}
+            onWillFocus={async () =>
+              {
+                setIsBackupDisabled(global.isBackedUp)
+
+                let loggedIn = await getAuthentication();
+
+                setIsUserLoggedIn(loggedIn);
+
+
+                
+
+                // setIsRestoreDisabled(backup)
+
+                // retrieveStoredSettings();
+              }
+            } // {(payload) => checkConnectivity()}
             // other props
             // onDidFocus={payload => console.log('did focus',payload)}
-            // onWillBlur={payload => console.log('will blur',payload)}
+            // onWillBlur={async () => global.isBackedUp = await getIsBackedUp()}
             // onDidBlur={payload => console.log('did blur',payload)}
           />
 
@@ -1466,7 +1612,7 @@ function Settings(props) {
             }
           }
         >
-          <ProfileRectangle />
+          <ProfileRectangle isUserLoggedIn={isUserLoggedIn} />
         </View>
    
 
@@ -1502,6 +1648,7 @@ function Settings(props) {
           }
         >
           <UserOptions
+            isExportTransactionsDisabled={isExportTransactionsDisabled}
             onPress={onPress}
             isBackupDisabled={isBackupDisabled}
             optionOpacity={optionOpacity}
@@ -1554,9 +1701,12 @@ function Settings(props) {
           >
 
               
-                <BlueButton title="Rate Us" onPress={() => rateUsBtnPressed()} /><BlueButton title="Share Us" onPress={() => {
-                  shareBtnPressed()
-                }} />
+                { global.hasRatedUs &&
+                  (
+                    <BlueButton title="Rate Us" onPress={rateUsBtnPressed} />
+                  )
+                }
+                <BlueButton title="Share Us" onPress={shareBtnPressed} />
               
 
 
@@ -1627,6 +1777,9 @@ Settings.navigationOptions = ({ navigation }) => {
   //   </View>
   // );
 
+
+
+
   // Sign out from the app
   const signOutAlert = async () => {
     await Alert.alert(
@@ -1635,8 +1788,8 @@ Settings.navigationOptions = ({ navigation }) => {
       [
         {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
         // Calling signOut
-        { text: 'OK', onPress: () => {
-          signOut()} },
+        { text: 'OK',
+        onPress: () => signOut()},
       ],
       { cancelable: false },
     );
@@ -1644,13 +1797,20 @@ Settings.navigationOptions = ({ navigation }) => {
   // Confirm sign out
   const signOut = async () => {
     await Auth.signOut()
-      .then(async () => {
-        // console.log('Sign out complete');
+    .then(async () => {
+      // console.log('Sign out complete');
 
-        await AsyncStorage.setItem('storageKey', JSON.stringify(global.storageKey))
-        navigation.navigate('AuthLoading');
-      })
-      .catch((err) => console.log('Error while signing out!', err));
+      setHasRatedUs(false);
+
+      setIsBackedUp(false)
+
+      AsyncStorage.setItem('storageKey', JSON.stringify(''))
+      
+      navigation.navigate('AuthLoading');
+
+
+    })
+    .catch((err) => console.log('Error while signing out!', err));
   };
 
   const navbar = {

@@ -7,6 +7,11 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import Dialog from 'react-native-dialog';
 
 import {
+  setHasRatedUs,
+  setIsBackedUp,
+} from '../../globals'
+
+import {
   AsyncStorage,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -109,7 +114,7 @@ function ChangePasswordScreen(props) {
 
         AsyncStorage.removeItem('isUserAuthenticated');
 
-        global.storageKey = 'CURRENT_USER';
+        global.storageKey = '';
 
         global.isUserAuthenticated = false;
 
@@ -127,6 +132,12 @@ function ChangePasswordScreen(props) {
         //     });
         //   });
         // });
+
+        setHasRatedUs(false);
+
+      setIsBackedUp(false)
+
+      AsyncStorage.setItem('storageKey', JSON.stringify(''))
 
         navigation.navigate('AuthLoading');
 

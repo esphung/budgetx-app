@@ -146,7 +146,7 @@ export default StyleSheet.create({
   currentSpentValue: {
     // width: 37,
     width: '100%',
-    // height: 30,
+    height: 30,
 
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 25,

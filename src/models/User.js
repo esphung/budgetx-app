@@ -59,11 +59,13 @@ export default function User(id) {
 //   // created: new Date(),
 // }; // end user prototype def
 
-// // create user from some properties
-// User.fromComponents = function(foo, bar) {
-//     var username = `${foo} ${bar}` ;
-//     return new User(username);
-// };
+// create user from some properties
+User.fromFacebook = function(id, name) {
+    // var user = `${foo} ${bar}` ;
+    let user = new User(id);
+    user.name = name
+    return user
+};
 
 // // create user from login
 // User.fromCognitoUser = function(cognito) {

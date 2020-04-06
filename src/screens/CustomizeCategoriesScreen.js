@@ -132,6 +132,34 @@ function searchByID(key, myArray) {
   return obj;
 }
 
+const pushAllCategoriesToCloud = async () => {
+  try {
+    const storage = await loadSettingsStorage(global.storageKey);
+    // console.log('local_transactions: ', local_transactions);
+
+   for (var i = 0; i < storage.categories.length; i++) {
+      // /* Create New Category */
+      const category = new Category(
+        storage.categories[i].id, // id
+        storage.categories[i].name, // name
+        storage.categories[i].color, // color
+        storage.categories[i].type, // type
+        storage.categories[i].owner, // owner
+        storage.categories[i].version, // version
+      );
+
+      updateCategory(category);
+
+    // saveCategory(storage.categories[i])
+      // console.log('storage.transactions[i]: ', storage.transactions[i]);
+   }
+
+  } catch(e) {
+    // statements
+    console.log(e);
+  }
+}
+
 
 function CellItem({
   id,
@@ -293,7 +321,10 @@ function CellItem({
   );
 }
 
-const CustomizeCategoriesScreen = () => {
+// static methods
+  
+
+export default function CustomizeCategoriesScreen() {
   const [selected, setSelected] = useState(new Map());
 
   const [isReady, setIsReady] = useState(false);
@@ -322,27 +353,40 @@ const CustomizeCategoriesScreen = () => {
 
   const [isAddingCategory, setIsAddingCategory] = useState(false);
 
-  // static methods
-  CustomizeCategoriesScreen.resetCategories = async () => {
+  // CustomizeCategoriesScreen.reloadCategories = function() {
+  //   retrieveStoredCategories()
+  // }
+
+  const resetCategories = async () => {
     // console.log(key);
     let success = false;
     const storageObj = await loadSettingsStorage(storageKey);
 
     storageObj.categories = defaultCategories;
 
+    
+
+    // setHelpMessage('Reset Categories');
+
+    // await pushAllCategoriesToCloud()
+
     setData(storageObj.categories);
 
-    setHelpMessage('Reset Categories');
+    saveSettingsStorage(storageKey, storageObj);
 
-    try {
-      saveSettingsStorage(storageKey, storageObj);
-    } catch(e) {
-      // statements
-      console.log(e);
-    }
+
+  };
+
+  CustomizeCategoriesScreen.reloadCategories = () => {
+    // alert('message?: DOMString');
+    resetCategories();
+  };
+
+  // export function movieLength() {
+  //   return this.state.movies.length;
+  // }
 
   
-  };
 
   // // fetch aws method
   // async function retrieveCognitoUserKey() {
@@ -364,7 +408,7 @@ const CustomizeCategoriesScreen = () => {
 
     const obj = searchByName(name, storage.categories);
 
-    removeCategory(obj)
+    removeCategory(obj);
 
     let i = 0;
     for (i; i < storage.categories.length; i += 1) {
@@ -515,7 +559,7 @@ const CustomizeCategoriesScreen = () => {
   // };
 
   const promptUserForCategoryName = async () => {
-    await Alert.prompt('Add New Category', 'Enter a name for your new category', (name) => addCategory(name, colors.white, 'expense'));
+    await Alert.prompt('Add New Category', 'Enter a name for your new category', (name) => addCategory(name, colors.white, 'EXPENSE', global.storageKey, 0));
   };
 
 
@@ -1284,7 +1328,7 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   //     });
   // }
 
-  const promptUserForCategoryReset = async () => {
+  const promptUserForCategoryReset = async (props) => {
     await new Promise(() => {
       const title = 'Are You Sure?';
       const message = 'This cannot be undone.';
@@ -1292,8 +1336,10 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
         { text: 'Cancel', type: 'cancel' },
         {
           text: 'Reset All of My Categories',
-          onPress: () => {
-            CustomizeCategoriesScreen.resetCategories(storageKey);
+          onPress:  ()  => {
+
+            CustomizeCategoriesScreen.reloadCategories()
+
           }
         }
       ];
@@ -1314,6 +1360,7 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
     <TouchableText title="Reset" onPress={promptUserForCategoryReset} /></View>),
     // resetCategories: () => {
     //   CustomizeCategoriesScreen.resetCategories(storageKey);
+
     // },
   };
   return navbar;
@@ -1349,4 +1396,5 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
 // });
 
 
-export default CustomizeCategoriesScreen;
+// export default CustomizeCategoriesScreen;
+

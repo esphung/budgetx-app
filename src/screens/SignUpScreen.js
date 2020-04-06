@@ -66,6 +66,17 @@ import styles from '../../styles';
 
 import isValidEmail from '../../src/functions/isValidEmail';
 
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+  // compareListTransactions,
+  retrieveOnlineTransactions,
+  retrieveOnlineCategories,
+} from '../storage/SettingsStorage';
+
+import User from '../models/User';
+
+
 
 // import Offline from '../components/Offline';
 
@@ -87,7 +98,7 @@ function SignUpScreen(props) {
 
   const [password, setPassword] = useState(null);
 
-  const [email, setEmail] = useState(null);
+  const [email, setEmail] = useState(global.emailAddressInput);
 
   // const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -182,8 +193,8 @@ function SignUpScreen(props) {
     //   setHelpMessage('Password invalid');
     // }
 
-    if (!email || !password) {
-      setHelpMessage('Enter email and password');
+    if (!email || !password  || password.length < minPasswordLength) {
+      setHelpMessage('this way you can save you stuff');
     } else if (!isValidEmail(email)) {
       setHelpMessage('Invalid email');
     } else if (password.length < global.minPasswordLength) {
@@ -445,7 +456,7 @@ function SignUpScreen(props) {
     // console.log(phone_number);
     await Auth.signUp({
       username: email,
-      // password: password,
+      password: password,
       // attributes: { email },
     })
       .then(() => {
@@ -507,10 +518,172 @@ function SignUpScreen(props) {
     }
   }
 
+   const checkForFBUserSettings = async () => {
+    let settings = {}
+    let transactions = []
+    Auth.currentAuthenticatedUser({
+        bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+    }).then(async (fb) => {
+
+      let new_user = new User(fb.id)
+
+        new_user.name = (fb.name);
+
+        
+
+        new_user.picture = fb.picture
+
+        // console.log('new_user: ', new_user);s
+
+        /* Create Settings to be stored on sign in confirmation */
+        let storage = await loadSettingsStorage(global.storageKey);
+
+
+        transactions = storage.transactions;
+
+        console.log('storage: ', storage);
+
+
+
+        let Image_Http_URL ={ uri: fb.picture.data.url};
+
+          // global.avatar = Image_Http_URL;
+
+        settings = {
+          user: new_user,
+          transactions: storage.transactions, // what ever currently existing transactions exist
+          categories: storage.categories,
+          payees: storage.payees, // ???
+          image_url: Image_Http_URL,
+          version: 0,
+        };
+
+        global.avatar = settings.image_url
+
+    await Auth.signIn(email, password)
+      .then(async user => {
+        console.log('fb:', fb);
+
+        console.log('user: ', user);
+
+        settings.user.email = user.attributes.email; // global.emailAddressInput
+
+        settings.transactions = transactions;
+
+        global.storageKey = user.attributes.sub;
+
+        saveSettingsStorage(global.storageKey, settings);
+
+        // console.log('Object.keys(fb): ', Object.keys(fb));s
+
+        /* Create financely user from fb credentials */
+
+        // let new_user = new User(user.attributes.sub)
+
+        // new_user.name = (fb.name);
+
+        // new_user.email = user.attributes.email; // global.emailAddressInput
+
+        // new_user.picture = fb.picture
+
+        // console.log('new_user: ', new_user);s
+
+        /* Create Settings to be stored on sign in confirmation */
+        // let storage = await loadSettingsStorage(fb.id);
+
+        // console.log('storage: ', storage);
+
+
+
+        // let Image_Http_URL ={ uri: fb.picture.data.url};
+
+          // global.avatar = Image_Http_URL;
+
+        let settings = {
+          user: new_user,
+          transactions: storage.transactions, // what ever currently existing transactions exist
+          categories: storage.categories,
+          payees: storage.payees, // ???
+          image_url: Image_Http_URL,
+          version: 0,
+        };
+
+        global.avatar = settings.image_url
+
+        global.storageKey = user.attributes.sub;
+
+        await saveSettingsStorage(global.storageKey, settings);
+
+
+        props.navigation.navigate('AuthLoading');
+
+      })
+      .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
+  };
+
+
+   const checkForExisitngSettings = async () => {
+
+    let storage = await loadSettingsStorage(global.storageKey);
+
+    /* Previous settings */
+    settings = {
+        user: {},
+        transactions: storage.transactions, // what ever currently existing transactions exist
+        categories: storage.categories,
+        payees: storage.payees, // ???
+        image_url: global.avatar,
+        version: 0,
+      };
+    // let transactions = []
+   
+
+    await Auth.signIn(email, password)
+      .then(async user => {
+         console.log('user: ', user);
+
+        // console.log('Object.keys(fb): ', Object.keys(fb));s
+
+        /* Create financely user from fb credentials */
+
+        settings.user = new User(user.attributes.sub)
+
+        // new_user.name = (fb.name);
+
+        settings.user.email = user.attributes.email; // global.emailAddressInput
+
+        // new_user.picture = fb.picture
+
+        // console.log('new_user: ', new_user);s
+
+        /* Create Settings to be stored on sign in confirmation */
+        
+
+        // console.log('storage: ', storage);
+        // let Image_Http_URL ={ uri: fb.picture.data.url};
+        // global.avatar = Image_Http_URL;
+
+        
+
+        global.avatar = settings.image_url
+
+        global.storageKey = settings.user.id
+
+        await saveSettingsStorage(global.storageKey, settings);
+
+        props.navigation.navigate('AuthLoading');
+      })
+      .catch(err => console.log(err)
+    )
+  };
+
+
   // Confirm users and redirect them to the SignIn page
   async function confirmSignUp() {
     if (authCode !== null) {
-      // const { username, authCode } = this.state;
+      // const { email, authCode } = this.state;
       // if (!username) {
       //   usernameInputRef.current._root.focus();
       //   Alert.alert('Please provide a username');
@@ -518,9 +691,33 @@ function SignUpScreen(props) {
       // }
       await Auth.confirmSignUp(email, authCode)
         .then(() => {
+
+          /* if new fb user log them in */
+          checkForFBUserSettings()
+
+          checkForExisitngSettings()
+
+
           props.navigation.navigate('SignIn');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           // console.log('Confirm sign up successful');
           // Alert.alert('Confirm sign up successful');
+
+
 
           showMessage({
             message: 'Sign Up Successful!',
@@ -581,7 +778,7 @@ function SignUpScreen(props) {
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder="email"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
                     returnKeyType="next"
@@ -698,7 +895,7 @@ function SignUpScreen(props) {
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder="email"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
                     returnKeyType="next"
@@ -723,7 +920,7 @@ function SignUpScreen(props) {
                   <Ionicons active name="md-lock" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="Password"
+                    placeholder="password"
                     placeholderTextColor={colors.offWhite}
                     returnKeyType="next"
                     autoCapitalize="none"

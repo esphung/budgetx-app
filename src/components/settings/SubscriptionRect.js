@@ -63,14 +63,18 @@ const mask = {
 
 function SubscriptionRect(props) {
   const { onPress, isUserLoggedIn, isUserOnline } = props;
-  let text = `Download ${global.appName} on any device and sync it to access your account`;
 
-  if (!isUserLoggedIn) {
-    text = `Tap here to sign up and access features.`;
+  let text = `Download us on any device and sync it to access your account :D`;
+
+  if (!isUserLoggedIn && isUserOnline) {
+    text = `Tap here to sign up and access more cool features. :D`;
     // return <InfoBox title='Tap here to sign up and access features.' />
   } else if (!isUserOnline) {
-    text = 'You are currently offline or have unstable connectivity';
+    text = 'You are currently offline or have unstable connectivity. :(';
   }
+  // else {
+  //   text = `Thank you for using ${global.appName} version ${global.appVersion}! More stuff coming...`
+  // }
 
   const view = (
     <View
@@ -83,8 +87,8 @@ function SubscriptionRect(props) {
     >
 
       <TouchableOpacity
-      // disabled={isUserLoggedIn}
-      onPress={onPress} style={mask}>
+        disabled={isUserLoggedIn}
+        onPress={onPress} style={mask}>
         <View>
           <View>
             <Image

@@ -29,5 +29,11 @@
 				}
 			}
 		}
+	},
+	"storage": {
+		"budgetxprofilepictures": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
+		}
 	}
 }

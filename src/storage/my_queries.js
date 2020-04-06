@@ -272,8 +272,8 @@ export const saveCategory = async (category) => {
 
     // throw new Error('Update category error (duplicate)');
     
-    category.version++
-    updateCategory(category);
+    // category.version++
+    // updateCategory(category);
 
   }
 };
