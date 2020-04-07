@@ -71,7 +71,7 @@ import styles from '../../../styles';
 
 function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
-  const { onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled } = props;
+  const { isSyncBtnEnabled, onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled } = props;
 
   // let isDisabled;
 
@@ -179,6 +179,10 @@ function UserOptions(props) {
       backgroundColor = 'transparent';
       caret = null;
       opacity = 0.5
+    }
+    if (key.includes('Device Sync is')) {
+      let message = (isSyncBtnEnabled) ? 'On' : 'Off'
+      key += ` ${message}`
     }
     // /* Change Password/Sign Out */
     // if (title === 'Change Password/Sign Out') {
@@ -361,9 +365,9 @@ function UserOptions(props) {
       // }]}
       data={[
         { key: 'Sign In', isDisabled: isUserLoggedIn },
-        { key: 'Sync This Device', isDisabled: !isUserLoggedIn },
+        { key: 'Device Sync is', isDisabled: !isUserLoggedIn },
         { key: 'Customize Categories', isDisabled: false },
-        { key: 'Backup Data', isDisabled: isBackupDisabled },
+        // { key: 'Backup Data', isDisabled: isBackupDisabled },
         // { key: 'Passcode', isDisabled: false },
         
         
@@ -373,7 +377,7 @@ function UserOptions(props) {
         { key: '', isDisabled: true },
         { key: 'Change Password/Sign Out', isDisabled: !isUserLoggedIn },
         { key: 'Export Transactions', isDisabled: isExportTransactionsDisabled },
-        { key: 'Restore Backup Data', isDisabled: !isBackupDisabled },
+        // { key: 'Restore Backup Data', isDisabled: !isBackupDisabled },
         { key: 'Contact Support', isDisabled: false },
         // { key: 'Passcode', isDisabled: false },
         

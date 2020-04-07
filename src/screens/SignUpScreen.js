@@ -194,7 +194,7 @@ function SignUpScreen(props) {
     // }
 
     if (!email || !password  || password.length < minPasswordLength) {
-      setHelpMessage('this way you can save you stuff');
+      setHelpMessage('this way you can save your stuff');
     } else if (!isValidEmail(email)) {
       setHelpMessage('Invalid email');
     } else if (password.length < global.minPasswordLength) {
@@ -519,46 +519,46 @@ function SignUpScreen(props) {
   }
 
    const checkForFBUserSettings = async () => {
-    let settings = {}
+    // let settings = {}
     let transactions = []
     Auth.currentAuthenticatedUser({
         bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
     }).then(async (fb) => {
 
-      let new_user = new User(fb.id)
+      // let new_user = new User(global.storageKey)
 
-        new_user.name = (fb.name);
+      //   new_user.name = (fb.name);
 
         
 
-        new_user.picture = fb.picture
+      //   new_user.picture = fb.picture
 
-        // console.log('new_user: ', new_user);s
+      //   // console.log('new_user: ', new_user);s
 
-        /* Create Settings to be stored on sign in confirmation */
-        let storage = await loadSettingsStorage(global.storageKey);
-
-
-        transactions = storage.transactions;
-
-        console.log('storage: ', storage);
+      //   /* Create Settings to be stored on sign in confirmation */
+      //   let storage = await loadSettingsStorage(fb.id);
 
 
+      //   transactions = storage.transactions;
 
-        let Image_Http_URL ={ uri: fb.picture.data.url};
+      //   console.log('storage: ', storage);
 
-          // global.avatar = Image_Http_URL;
 
-        settings = {
-          user: new_user,
-          transactions: storage.transactions, // what ever currently existing transactions exist
-          categories: storage.categories,
-          payees: storage.payees, // ???
-          image_url: Image_Http_URL,
-          version: 0,
-        };
 
-        global.avatar = settings.image_url
+      //   let Image_Http_URL ={ uri: fb.picture.data.url};
+
+      //     // global.avatar = Image_Http_URL;
+
+      //   let settings = {
+      //     user: new_user,
+      //     transactions: storage.transactions, // what ever currently existing transactions exist
+      //     categories: storage.categories,
+      //     payees: storage.payees, // ???
+      //     image_url: Image_Http_URL,
+      //     version: 0,
+      //   };
+
+        // global.avatar = settings.image_url
 
     await Auth.signIn(email, password)
       .then(async user => {
@@ -566,13 +566,23 @@ function SignUpScreen(props) {
 
         console.log('user: ', user);
 
+        let storage = await loadSettingsStorage(fb.id);
+
+        let settings = storage
+
+        settings.user.id  = user.attributes.sub;
+
         settings.user.email = user.attributes.email; // global.emailAddressInput
 
-        settings.transactions = transactions;
+        settings.user.name  = fb.name
 
-        global.storageKey = user.attributes.sub;
+        // settings.transactions = transactions;
 
-        saveSettingsStorage(global.storageKey, settings);
+        global.storageKey = user.id
+
+        global.avatar = settings.image_url
+
+        await saveSettingsStorage(global.storageKey, settings);
 
         // console.log('Object.keys(fb): ', Object.keys(fb));s
 
@@ -599,20 +609,13 @@ function SignUpScreen(props) {
 
           // global.avatar = Image_Http_URL;
 
-        let settings = {
-          user: new_user,
-          transactions: storage.transactions, // what ever currently existing transactions exist
-          categories: storage.categories,
-          payees: storage.payees, // ???
-          image_url: Image_Http_URL,
-          version: 0,
-        };
 
-        global.avatar = settings.image_url
 
-        global.storageKey = user.attributes.sub;
+        
 
-        await saveSettingsStorage(global.storageKey, settings);
+        
+
+        // await saveSettingsStorage(global.storageKey, settings);
 
 
         props.navigation.navigate('AuthLoading');

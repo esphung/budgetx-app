@@ -18,7 +18,9 @@ global.isBackedUp = false;
 
 // console.log('global.facebookAppId: ', global.facebookAppId);
 
-global.isDeviceCrossSyncOn = true;
+// global.isDeviceCrossSyncOn = true;
+
+global.isDeviceSyncOn = false;
 
 global.hasRatedUs = false;
 
@@ -123,6 +125,20 @@ global.appDesigner = 'Andrey Nasanov';
 //   return value // boolean false
 // };
 
+const setIsDeviceSyncOn = (bool) => {
+  // Saves to storage as a JSON-string
+  AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(bool));
+  global.isDeviceSyncOn = bool
+}
+
+const getIsDeviceSyncOn = async () => {
+  // Retrieves from storage as boolean
+  let value = await AsyncStorage.getItem('isDeviceSyncOn')
+
+  global.isDeviceSyncOn = value
+  return value // boolean false
+};
+
 const setIsBackedUp = (bool) => {
   // Saves to storage as a JSON-string
   AsyncStorage.setItem('isBackedUp', JSON.stringify(bool));
@@ -156,6 +172,8 @@ module.exports = {
   getHasRatedUs,
   setIsBackedUp,
   setHasRatedUs,
+  getIsDeviceSyncOn,
+  setIsDeviceSyncOn,
 }
 
 

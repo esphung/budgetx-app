@@ -24,9 +24,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import mime from 'mime-types';
 
-import Storage from '@aws-amplify/storage'
+import Storage from '@aws-amplify/storage';
 
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 // import SpinnerMask from '../SpinnerMask';
 
@@ -38,11 +38,26 @@ import {
   saveSettingsStorage,
 } from '../../storage/SettingsStorage';
 
+import { isDeviceOnline } from '../../../network-functions';
 
-function ProfileUserImage() {
-  const [image, setImage] = useState(global.avatar);
+const getAuthentication = async () => {
+  let authenticated = false;
+  await Auth.currentAuthenticatedUser()
+    .then((cognito) => {
+      console.log('cognito: ', cognito);
+      authenticated = (cognito) ? true : false;
+    }).catch((err) => {
+      console.log('err: ', err);
+    })
+  return authenticated
+};
 
-  const [isReady, setIsReady] = useState(false);
+
+function ProfileUserImage(props) {
+  const  { isUserLoggedIn } =  props
+  const [image, setImage] = useState(null);
+
+  const [isReady, setIsReady] = useState(true);
 
   // const [storageKey, setStorageKey] = useState(null);
 
@@ -68,31 +83,74 @@ function ProfileUserImage() {
     const imageData = await fetch(pickerResult.uri);
     const blobData = await imageData.blob();
 
+
+
+    if (isUserLoggedIn && await getAuthentication() && await isDeviceOnline()) {
+      try {
+          await Storage.put(imageName, pickerResult.uri, fileType);
+          console.log('Successfully uploaded ', imageName, 'to bucket!');
+        } catch (err) {
+          console.log('error upload s3 image: ', err);
+          // Alert.alert(err);s
+        }
+      }
+    // console.log('pickerResult: ', pickerResult);
+
+    global.avatar = ({ uri: pickerResult.uri });
+
     try {
-      Storage.put(imageName, blobData, access);
-      console.log('Successfully uploaded ', imageName, 'to bucket!');
-    } catch (err) {
-      console.log('error: ', err);
-      Alert.alert(err);
+      saveProfileImage(pickerResult);
+    } catch(e) {
+      // statements
+      console.log(e);
+      setImage(global.avatar);
     }
-
-    setImage(pickerResult);
-
-    saveProfileImage(pickerResult);
 
     setIsLoading(false);
   };
 
+  const getImage = async () => {
+    retrieveStoredSettingsImage(global.storageKey)
+
+    setImage(global.avatar)
+
+    
+    try {
+      setIsReady(false)
+      let imageReturn = await Storage.get(`@${global.storageKey}/picture.jpg`)
+
+      // console.log('imageReturn: ', imageReturn);
+
+      // global.avatar = {uri: imageReturn}
+
+      setImage({uri: imageReturn})
+
+      global.avatar = ({ uri: imageReturn.uri });
+
+      
+    } catch(e) {
+      // statements
+      console.log(e);
+
+      // retrieveStoredSettingsImage(global.storageKey);
+    }
+    // this.setState({ image: imageReturn })
+
+    setIsReady(true);
+  }
+
   async function saveProfileImage(newImage) {
-    // setIsReady(false);
+    setIsReady(false);
     const userObject = await loadSettingsStorage(global.storageKey);
-    userObject.image = newImage;
+    userObject.image_url = ({uri:newImage.uri});
     // saveUserObject(userObject);
     // console.log(userObject.image);
 
     saveSettingsStorage(global.storageKey, userObject);
 
-    // setIsReady(true);
+    setImage(global.avatar)
+
+    setIsReady(true);
   }
 
   // async function retrieveStoredUserImage() {
@@ -140,17 +198,8 @@ function ProfileUserImage() {
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(key);
-
-      console.log('storageObj: ', storageObj);
-
-      // set stored user image
-      if (storageObj.image_url) {
-        // console.log('stored user settings image:', storageObj.image);
-        if (storageObj.image_url) {
-          // found stored image
-          setImage(storageObj.image_url);
-        }
-      }
+      // console.log('storageObj: ', storageObj);
+      setImage(storageObj.image_url);
     } catch (e) {
       // statements
       Alert.alert('Could not load settings');
@@ -159,20 +208,23 @@ function ProfileUserImage() {
   }
 
   useEffect(() => {
-    setIsReady(false);
+    // setIsReady(false);
     // getPermissionAsync();
-    retrieveStoredSettingsImage(global.storageKey)
 
-    setIsReady(true);
+  
+    getImage()
+
+
+    
   }, []);
 
-  useEffect(() => {
-    // console.log('Image updated');
-    if (image) {
-      // console.log(image);
-      setIsReady(true);
-    }
-  }, [image]);
+  // useEffect(() => {
+  //   // console.log('Image updated');
+  //   if (image) {
+  //     // console.log(image);
+  //     // setIsReady(true);
+  //   }
+  // }, [image]);
 
   // useEffect(() => {
   //   // if (storageKey) {
@@ -255,14 +307,12 @@ function ProfileUserImage() {
   //     )}
   //   </NetworkConsumer>
 
-  if (isLoading) {
-    return spinnerView;
-  } else {
-    // if (isReady) {
+
+
       return isReady && (
         <View style={styles.container}>
           <TouchableOpacity
-          disabled
+          // disabled
           onPress={getPermissionAsync} style={styles.userImageMaskView}>
             <Image
 
@@ -271,12 +321,8 @@ function ProfileUserImage() {
             />
           </TouchableOpacity>
         </View>
-      );
-    // } else {
-    //   return appLoading;
-    //   // return <SpinnerMask />;
-    // }
-  }
+      ) ||
+      spinnerView
 }
 
 const styles = StyleSheet.create({

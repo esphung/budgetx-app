@@ -346,7 +346,7 @@ const isUserCurrentlyOnline = async () => {
     const storage = await loadSettingsStorage(global.storageKey);
     // console.log('storage.categories: ', storage.categories);
 
-    console.log('category: ', category);
+    // console.log('category: ', category);
 
     let list = storage.categories; // stored categories
 
@@ -667,40 +667,35 @@ export default function Home(props) {
       .then(async (cognito) => {
         global.storageKey = cognito.attributes.sub;
 
+        if (global.isDeviceSyncOn === true && isConnected === true) {
+          // clearState();
+          
+          // setCurrentTransactions(await retrieveOnlineTransactions())
+          // storage.transactions = await retrieveOnlineTransactions();
+ 
+          // let online_categories = await retrieveOnlineCategories();
+          // const onlyInOnlineCategories = online_categories.filter(findArrayDifferences(storage.categories));
+
+          crossDeviceSync();
+
+        }
+
 
 
         const storage = await loadSettingsStorage(global.storageKey);
         // console.log('storage: ', storage);
 
-        let isConnected = await isDeviceOnline();
-
-        if (global.hasSyncedDevice !== true && isConnected === true) {
-          // clearState();
-          
-          // setCurrentTransactions(await retrieveOnlineTransactions())
-          storage.transactions = await retrieveOnlineTransactions();
-
-          let online_categories = await retrieveOnlineCategories();
-          // const onlyInOnlineCategories = online_categories.filter(findArrayDifferences(storage.categories));
-
-          crossDeviceSync();
-
-          saveSettingsStorage(global.storageKey, storage)
-
-          global.hasSyncedDevice = true
-        }
-
-        
-        setIsUserLoggedIn(true);
-
-        setCurrentOwner(global.storageKey);
+        setCurrentTransactions(storage.transactions);
 
         setCategories(storage.categories);
 
-        setCurrentTransactions(storage.transactions);
+        saveSettingsStorage(global.storageKey, storage)
 
-        
-    
+        let isConnected = await isDeviceOnline();
+
+        setIsUserLoggedIn(true);
+
+        setCurrentOwner(global.storageKey);
       })
       .catch(async () => {
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
@@ -1192,9 +1187,9 @@ export default function Home(props) {
   }, [isSlideViewHidden]);
 
   useEffect(() => {
-    // console.log('Mounted', title);
+    console.log('Mounted');
     // 
-    
+
     retrieveUserStoredSettings();
     
     return () => {
@@ -1270,8 +1265,8 @@ export default function Home(props) {
     // setIsReady(true);
     // setIsUpdatingTransaction(false)
 
-    // compareListTransactions()
-    // crossDeviceSync()
+    compareListTransactions()
+    crossDeviceSync()
 
     return () => {
       // effect
@@ -1745,7 +1740,7 @@ export default function Home(props) {
 
             // retrieveUserStoredSettings()
 
-            global.hasSyncedDevice = false;
+            // global.hasSyncedDevice = false;
 
             retrieveUserStoredSettings()
           }

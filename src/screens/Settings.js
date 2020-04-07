@@ -135,6 +135,8 @@ import {
   getIsBackedUp,
   setHasRatedUs,
   setIsBackedUp,
+  getIsDeviceSyncOn,
+  setIsDeviceSyncOn,
 } from '../../globals';
 
 // import { } from 'Utils';
@@ -289,6 +291,8 @@ function Settings(props) {
   const [isSyncing, setIsSyncing] = useState(false);
 
   const [isExportTransactionsDisabled, setIsExportTransactionsDisabled] = useState(false);
+
+  const [isSyncBtnEnabled, setIsSyncBtnEnabled] = useState(true);
 
 
 
@@ -637,15 +641,40 @@ function Settings(props) {
         }
         visible={true}
         >
-        <Dialog.Title>Sync This Device</Dialog.Title>
+        <Dialog.Title>Cross-device syncing</Dialog.Title>
         <Dialog.Description>
-          With cross-device sync you can access your transactions on any device.
+          Would you like to turn it on?
         </Dialog.Description>
-        <Dialog.Button label="Cancel" onPress={() => setShouldShowCloudSyncDialogBox(false)} />
-        <Dialog.Button label="Sync Now" onPress={() => {
+        <Dialog.Button label="No" onPress={() => {
+
+          let bool = false
+
+          global.isDeviceSyncOn = bool
+
+          // crossDeviceSync();
+
+          setIsSyncBtnEnabled(bool)
+
+          setIsDeviceSyncOn(bool)
+
+          
           setShouldShowCloudSyncDialogBox(false)
+        }
+        }/>
+        <Dialog.Button label="Yes" onPress={() => {
+          
           // global.isDeviceCrossSyncOn = true
-          crossDeviceSync();
+          let bool = true
+
+          // crossDeviceSync();
+
+          global.isDeviceSyncOn = bool
+
+          setIsSyncBtnEnabled(bool)
+
+          setIsDeviceSyncOn(bool)
+
+          setShouldShowCloudSyncDialogBox(false)
         }} />
       </Dialog.Container>
     </View>
@@ -1470,7 +1499,7 @@ function Settings(props) {
     setShouldShowCloudSyncDialogBox(true);
   }
 
-  function onPress(name) {
+  async function onPress(name) {
     // const name = btn.key;
 
     // console.log(btn);
@@ -1489,8 +1518,16 @@ function Settings(props) {
     else if (name === 'Sign In') {
       signInBtnPressed();
     }
-    else if (name === 'Sync This Device') {
+    else if (name.includes('Device Sync is')) {
       crossDeviceSyncBtnPressed();
+      // let bool = global.isDeviceSyncOn
+
+      // if (bool === true) {
+      //   setIsDeviceSyncOn(false)
+      // } else {
+      //   setIsDeviceSyncOn(true)
+      // }
+
     }
     else if (name === 'Reset Device Data') {
       resetDataBtnPressed();
@@ -1648,6 +1685,7 @@ function Settings(props) {
           }
         >
           <UserOptions
+            isSyncBtnEnabled={isSyncBtnEnabled}
             isExportTransactionsDisabled={isExportTransactionsDisabled}
             onPress={onPress}
             isBackupDisabled={isBackupDisabled}
@@ -1655,6 +1693,8 @@ function Settings(props) {
             isRestoreDisabled={isRestoreDisabled}
             currentSettingsVersion={currentSettingsVersion}
             isUserLoggedIn={isUserLoggedIn}
+            // toggleIsDeviceSyncOn={toggleIsDeviceSyncOn}
+            // getIsDeviceSyncOn={getIsDeviceSyncOn}
           />
         </View>
 

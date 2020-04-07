@@ -20,6 +20,11 @@ import {
   saveSettingsStorage,
 } from '../storage/SettingsStorage'
 
+import {
+  setHasRatedUs,
+  setIsBackedUp,
+} from '../../globals'
+
 import colors from '../../colors';
 
 import styles from '../../styles';
@@ -117,10 +122,61 @@ function WelcomeScreen(props) {
     await setIsLoading(false)
 
     handleRoute('AuthLoading');
+}
 
-    
+  const handleFacebookSignOut = async (userData) => {
+    setIsLoading(true);
+    // do stuff with the new user's data
+    await Auth.signOut()
+      .then(() => {
+        AsyncStorage.removeItem('userToken');
+
+        AsyncStorage.removeItem('storageKey');
+
+        AsyncStorage.removeItem('isLoginEnabled');
+
+        AsyncStorage.removeItem('isUserAuthenticated');
+
+        global.storageKey = '';
+
+        global.isUserAuthenticated = false;
+
+        global.avatar = require('../../assets/avatar.png');
+
+
+        // console.log('Removed AsyncsStorage Variables ..');
+
+
+        // AsyncStorage.getAllKeys((err, keys) => {
+        //   AsyncStorage.multiGet(keys, (error, stores) => {
+        //     stores.map((result, i, store) => {
+        //       console.log({ [store[i][0]]: store[i][1] });
+        //       return true;
+        //     });
+        //   });
+        // });
+
+        setHasRatedUs(false);
+
+        setIsBackedUp(false)
+
+        AsyncStorage.setItem('storageKey', JSON.stringify(''))
+
+          navigation.navigate('AuthLoading');
+
+          // console.log('Sign out complete');
+          showMessage('Signed out');
+        })
+        .catch((err) => console.log('Error while signing out!', err));
+
+
+
+        await setIsLoading(false)
+
+        handleRoute('AuthLoading');
   
 }
+
 
   const signUpSignInBtns = (
     <View style={styles.infoContainer}>
@@ -156,7 +212,7 @@ function WelcomeScreen(props) {
           <View style={styles.container}>
             
             {/* Facebook Login */}
-            <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} />
+            <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
             
             { signUpSignInBtns }
 

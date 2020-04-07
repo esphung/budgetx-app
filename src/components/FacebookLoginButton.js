@@ -32,7 +32,7 @@ export default function FacebookLogin(props) {
   const [userData, setUserData] = useState(null);
   const [isImageLoading, setImageLoadStatus] = useState(false);
 
-  const { handleFacebookSignIn } = props;
+  const { handleFacebookSignIn, handleFacebookSignOut } = props;
 
   
   const facebookLogIn = async () => {
@@ -65,18 +65,18 @@ export default function FacebookLogin(props) {
     // `https://graph.facebook.com/me?fields=id,name,email,birthday&access_token=${token}`);
           .then(response => response.json())
           .then(async data => {
-            // console.log('data: ', data);
+            console.log('data: ', data);
             
-            if (!(await getAuthentication())) {
+          //   if (!(await getAuthentication())) {
 
 
-            /*  SIGNS FB USER INTO AWS COGNITO */
-            let a = await Auth.federatedSignIn(
-              'facebook',
-              { token, expires },
-              data,
-            );
-          }
+          //   // /*  SIGNS FB USER INTO AWS COGNITO */
+          //   // let a = await Auth.federatedSignIn(
+          //   //   'facebook',
+          //   //   { token, expires },
+          //   //   data,
+          //   // );
+          // }
 
           // console.log('data.id: ', data.id);
 
@@ -93,7 +93,7 @@ export default function FacebookLogin(props) {
 
 
 
-          handleFacebookSignIn(data);
+          // handleFacebookSignIn(data);
 
 
 
@@ -157,6 +157,7 @@ export default function FacebookLogin(props) {
     setLoggedinStatus(false);
     setUserData(null);
     setImageLoadStatus(false);
+    handleFacebookSignOut(userData);
   };
 
   return (
@@ -188,7 +189,8 @@ export default function FacebookLogin(props) {
             (
               <View>
               <BlueButton title="Login" onPress={login} />
-              <BlueButton title="Logout" onPress={logout} /></View>
+              {/*<BlueButton title="Logout" onPress={logout} />*/}
+              </View>
             )
           }
         </View> :

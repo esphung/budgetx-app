@@ -434,7 +434,7 @@ function SlideUpTransactionRect(props) {
           onWillFocus={
             async (payload) =>
             {
-              await clearState();
+              clearState();
               loadCategories();
             }
           } // {(payload) => clearState()}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 // import PropTypes from 'prop-types';
 
+import { Ionicons } from '@expo/vector-icons';
+
 import { AppLoading } from 'expo';
 
 import {
@@ -10,7 +12,7 @@ import {
   // ScrollView,
   // Button,
   // TouchableOpacity,
-  Text,
+  // Text,
   TextInput,
   // Image,
   // TextInput
@@ -25,6 +27,8 @@ import {
   // BlurViewIOS,
   // BlurView,
 } from 'react-native';
+
+import { Container, Header, Content, Text, ListItem, CheckBox, Body, Right } from 'native-base';
 
 // import { BlurView } from 'expo-blur';
 
@@ -98,7 +102,22 @@ import {
   // getTransactionByID,
 } from '../storage/my_queries';
 
+import { crayola, getCrayolaColors } from '../data/crayola';
+
 const MAX_NAME_LENGTH = 15;
+
+const getAuthentication = async () => {
+  let bool = false;
+  await Auth.currentAuthenticatedUser()
+    .then((cognito) => {
+      console.log('cognito: ', cognito);
+      bool = (cognito) ? true : false;
+    }).catch((err) => {
+      console.log('err: ', err);
+    })
+  return bool
+};
+
 
 // import {
 //   loadUserObject,
@@ -168,6 +187,7 @@ function CellItem({
   onSelect,
   color,
   addCategory,
+  authenticated,
 }) {
   // const [text, setText] = useState(null);
 
@@ -242,12 +262,7 @@ function CellItem({
   //   };
   // }, [])
 
-  // useEffect(() => {
-  //   // console.log(text);
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [text]);
+ 
 
   return (
     <TouchableOpacity
@@ -331,7 +346,7 @@ export default function CustomizeCategoriesScreen() {
 
   // const [storageKey, setStorageKey] = useState(null);
 
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -353,28 +368,29 @@ export default function CustomizeCategoriesScreen() {
 
   const [isAddingCategory, setIsAddingCategory] = useState(false);
 
+  const [authenticated, setAuthenticated] = useState(false);
+
+  const [flatlistData, setFlatlistData] = useState(getFlatListDataFromObject(colors));
+
   // CustomizeCategoriesScreen.reloadCategories = function() {
   //   retrieveStoredCategories()
   // }
 
   const resetCategories = async () => {
     // console.log(key);
-    let success = false;
+    // let success = false;
+    // setIsReady(false)
     const storageObj = await loadSettingsStorage(storageKey);
 
     storageObj.categories = defaultCategories;
 
     
 
-    // setHelpMessage('Reset Categories');
-
-    // await pushAllCategoriesToCloud()
+    await saveSettingsStorage(global.storageKey, storageObj);
 
     setData(storageObj.categories);
 
-    saveSettingsStorage(storageKey, storageObj);
-
-
+    // setIsReady(true)
   };
 
   CustomizeCategoriesScreen.reloadCategories = () => {
@@ -416,7 +432,7 @@ export default function CustomizeCategoriesScreen() {
         storage.categories.splice(i, 1);
       }
     }
-    saveSettingsStorage(storageKey, storage);
+    saveSettingsStorage(global.storageKey, storage);
     setData(storage.categories);
     // setIsLoading(false);
 
@@ -432,9 +448,9 @@ export default function CustomizeCategoriesScreen() {
 
     const category = searchByID(item.id, storage.categories);
 
-    console.log('item: ', item);
+    // console.log('item: ', item);
 
-    console.log('storage.categories.length: ', storage.categories.length);
+    // console.log('storage.categories.length: ', storage.categories.length);
 
     let i = 0;
     for (i; i < storage.categories.length; i += 1) {
@@ -443,7 +459,7 @@ export default function CustomizeCategoriesScreen() {
       }
     }
 
-    console.log('storage.categories.length: ', storage.categories.length);
+    // console.log('storage.categories.length: ', storage.categories.length);
 
     saveSettingsStorage(storageKey, storage);
 
@@ -564,19 +580,13 @@ export default function CustomizeCategoriesScreen() {
 
 
   const storeUserCategories = async (list) => {
-    let success = false;
     const storage = await loadSettingsStorage(storageKey);
 
-    storage.categories = list;
+    console.log('data: ', data);
 
-    try {
-      saveSettingsStorage(storageKey, storage);
-      success = true;
-    } catch (e) {
-      // statements
-      // console.log(e);
-    }
-    return success;
+    storage.categories = list
+
+    saveSettingsStorage(global.storageKey, storage);
   };
 
   const updateUserTransactionCategories = async (list) => {
@@ -615,6 +625,7 @@ export default function CustomizeCategoriesScreen() {
 
 
   const retrieveStoredCategories = async () => {
+    setAuthenticated(await getAuthentication())
     const storage = await loadSettingsStorage(storageKey);
     // console.log(storage)
     try {
@@ -701,6 +712,7 @@ export default function CustomizeCategoriesScreen() {
           }
         }
         // disabled={isDisabled}
+        authenticated={authenticated}
 
         onPress={() => onPress(item)}
 
@@ -725,7 +737,8 @@ export default function CustomizeCategoriesScreen() {
           <SwipeEdit
             keyExtractor={item.id}
             onPress={() => {
-              setCurrentCategory(searchByID(item.id, data));
+              setCurrentCategory(item);
+              // alert(currentCategory)
               setShouldShowColorBox(true);
               // console.log('Edited', item);
             }}
@@ -818,15 +831,16 @@ export default function CustomizeCategoriesScreen() {
   useEffect(() => {
     // console.log('Data changed.. saved data');
     if (data) {
-      const success = storeUserCategories(data.filter((item) => { return item.name }))
-      if (success) {
+      // const success = storeUserCategories(data.filter((item) => { return item.name }))
+      // console.log('success: ', success);
+      if (true) {
         updateUserTransactionCategories(data);
         // console.log('Updated Transaction Categories');
       }
     }
-    else if (data && data.length < 1) {
-      setHelpMessage('No categories available.');
-    }
+    // else if (data && data.length < 1) {
+    //   setHelpMessage('No categories available.');
+    // }
     return () => {
       // effect
       // setHelpMessage('Swipe left or right to edit');
@@ -842,12 +856,26 @@ export default function CustomizeCategoriesScreen() {
 
   useEffect(() => {
     clearState();
+
+    setFlatlistData(getFlatListDataFromObject(colors).concat(getFlatListDataFromObject(getCrayolaColors())))
+
     retrieveStoredCategories();
     return () => {
       // effect
       setIsReady(true);
     };
   }, [])
+
+  //  useEffect(() => {
+  //   // console.log(text);z
+  //   // if (authenticated  === true) {
+      
+  //   // }
+
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [authenticated]);
 
   // useEffect(() => {
   //   if (typeInputValue && !nameInputValue) {
@@ -1041,73 +1069,242 @@ export default function CustomizeCategoriesScreen() {
   // console.log(getFlatListDataFromObject(colors));
 
 
-  function Item({ item, onPress }) {
+  function ColorTableCell({ item, onPress, name, color, opacity }) {
+    // console.log('item: ', item);
+
+    if (
+      name.toLowerCase() === 'darkgreyblue' ||
+      name.toLowerCase() === 'dark' ||
+      name.toLowerCase() === 'offwhite' ||
+      name.toLowerCase() === 'black' ||
+      name.toLowerCase() === 'darktwo' ||
+      name.toLowerCase() === 'white'
+    ) {
+      return null;
+    }
+
+
+    let title = capitalizeFLetter(name);
+    title = title.split(' ')
+
+    let suffix = ''
+    if (title[1]) {
+      // title = title[0] + ' ' + title[1]
+      title[1] = capitalizeFLetter(title[1])
+    }
+
+    title = title[0] + ' ' + title[1]
+
+    title = title.replace(' undefined', '');
+
     return (
-      <TouchableOpacity
+      <ListItem
+      style={{
+        // alignItems: 'center',
+        justifyContent: 'center',
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+
+        borderBottomWidth: 0,
+        opacity: (Object.keys(colors).includes(name) || authenticated) ? 1.0 : 0.4
+      }}>
+        
+        
+           <TouchableOpacity
         onPress={onPress}
+        disabled={(Object.keys(colors).includes(name) !== true && !authenticated)}
         // style={styles.buttonStyle}
-        style={[,
-          styles.buttonStyle,
+        style={[
+          // styles.buttonStyle,
           {
+            flex: 1,
+            minWidth: '100%',
+            // flex: 1,
+          flexDirection: 'row',
           // alignItems: 'center',
           // justifyContent: 'center',
 
-          marginHorizontal: 14,
-          marginVertical: 5,
+          height: 50,
 
-          // borderRadius: 17,
+          paddingHorizontal: 8,
+          // padding: 4,
+
+          // borderRadius: 24,
           borderWidth: 1,
           borderStyle: 'solid',
 
-          borderColor: colors[item.key],
+          borderColor: item.value,
+
+          // backgroundColor: 'transparent'
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
 
         }]}
       >
-        <Text style={[styles.listItemTitleStyle, {
-          color: colors[item.key]
-        }]}>{
-          capitalizeFLetter(item.key)
-        }</Text>
+       <Text style={[
+          styles.listItemTitleStyle,
+            {
+            color: item.value,
+            
+          }
+          ]}
+        >
+        {   
+         title
+        }
+        <Text style={[
+            styles.listItemTitleStyle,
+            {
+            color: colors.offWhite,
+            textAlign: 'right',
+            alignItems: 'flex-end',
+
+          }]}>
+            {
+              ` ${color}`
+            }
+          </Text>
+        </Text>
       </TouchableOpacity>
+            
+      </ListItem>
+     
+
     );
   }
 
-  const updateCategoryColor = async (name, color) => {
-    let success = false;
+  const updateCategoryColor = async (selectedColor) => {
+    // console.log('color: ', color);
 
-    for (var i = 0; i < data.length; i++) {
-      if (data[i] === currentCategory) {
-        data[i].color = color;
-        success = true;
-      }
+    // alert(Object.keys(colors).includes(selectedColor.key.toLowerCase()))
+
+    console.log('currentCategory:',currentCategory)
+
+
+    if (await getAuthentication() !== true && Object.keys(colors).includes(selectedColor.key.toLowerCase()) !== true) {
+      setHelpMessage('Please sign up to access more colors')
     }
 
-    if (success) {
-      await storeUserCategories(data);
-      updateUserTransactionCategories(data);
-      setHelpMessage('Updated transactions');
-    };
+    // console.log('name: ', name);
+
+    if (!currentCategory) return;
+
+    setIsLoading(true)
+
+    try {
+      
+      const storage = await loadSettingsStorage(storageKey);
+
+      const obj = searchByID(currentCategory.id, storage.categories);
+
+      obj.color = selectedColor.value
+
+      saveSettingsStorage(global.storageKey, storage);
+
+      setData(storage.categories);
+
+      storeUserCategories(storage.categories);
+      
+      updateUserTransactionCategories(storage.categories);
+
+      setIsLoading(false)
+    } catch(e) {
+      // statements
+      console.log(e);
+      setIsLoading(false)
+    }
+
+    
+
+    // for (var i = 0; i < data.length; i++) {
+    //   if (data[i].id === currentCategory.id) {
+    //     // data[i].color = color;
+
+       
+
+        
+
+        
+
+
+        
+
+        
+        
+
+    //     return
+    //   }
+    // }
+    
+   
+    // setHelpMessage('Updated transactions');
 
     // if (success) updateUserTransactionCategories(data);
-
-
-
     setShouldShowColorBox(false);
-    // setIsLoading(false);
+  // }
+
+  // console.log('colors.cat(crayola): ', colors.cat(crayola));
+  // console.log('crayola: ', crayola);
+
+ 
   }
 
+
+
+
+
+
+  
+
+  // console.log('getFlatListDataFromObject(getCrayolaColors()): ', getFlatListDataFromObject(getCrayolaColors()));
+
+  // console.log('getFlatListDataFromObject((colors)): ', getFlatListDataFromObject((colors)));
+  console.log('colors: ', colors);
+
+  // console.log('getCrayolaColors(): ', getCrayolaColors());
+
+  // let crayolaData = getCrayolaColors();
+
+  // let flatlistData = getFlatListDataFromObject(crayolaData);
+
+  
+
   const colorBox = (
-    <View style={[styles.container, {
-      paddingTop: 12,
-      // backgroundColor: 'pink',
-    }]}
+    <SafeAreaView style={[
+      styles.container,
+      {
+        paddingTop: 12,
+      }
+    ]}
     >
       
       <FlatList
-        data={getFlatListDataFromObject(colors)}
-        renderItem={({ item }) => <Item item={item} onPress={() => updateCategoryColor(item.key, colors[item.key])} />}
+        // data={getFlatListDataFromObject(colors)}
+        // renderItem={({ item }) => <Item item={item} onPress={() => updateCategoryColor(item.key, colors[item.key])} />}
+        // keyExtractor={(item) => item.key}
+
+        // data={authenticated && getFlatListDataFromObject(crayolaData)  || getFlatListDataFromObject(colors)}
+        data={flatlistData}
+        renderItem={({ item }) => <ColorTableCell item={item} opacity={0.5} name={item.key} color={item.value} onPress={() => {
+          updateCategoryColor(item)
+        }} />}
         keyExtractor={(item) => item.key}
       />
+      {
+        isLoading && <View style={
+          {
+            flex: 1,
+            position: 'absolute',
+            left: 0,
+            right:  0,
+            // bottom: 50,
+          }
+        }>
+        <ActivityIndicator size="large" />
+        </View>
+      }
 
 
 {/*        <Dialog.Button label="Cancel" onPress={() => {
@@ -1118,14 +1315,14 @@ export default function CustomizeCategoriesScreen() {
           setShouldShowColorBox(false);
         }} />
       </Dialog.Container>*/}
-    </View>
+    </SafeAreaView>
   );
 
   let view = (
     <SafeAreaView style={styles.container}>
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={clearState} // {(payload) => clearState()}
+        onWillFocus={retrieveStoredCategories} // {(payload) => clearState()}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         // onWillBlur={payload => console.log('will blur',payload)}
@@ -1233,6 +1430,23 @@ export default function CustomizeCategoriesScreen() {
           // borderStyle: 'solid',
         }} />
       </View>
+      {
+        !isReady && <View style={
+      {
+        // flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        top: 500,
+        bottom: 0,
+        left: 0,
+        right:  0,
+
+        // backgroundColor: colors.dark,
+
+      }
+    }><ActivityIndicator /></View>
+      }
       </View>
       {
         isAddingCategory &&
@@ -1250,18 +1464,7 @@ export default function CustomizeCategoriesScreen() {
     return colorBox;
   }
 
-  if (!isReady) {
-    view = <View style={
-      {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
 
-        backgroundColor: colors.dark,
-
-      }
-    }><ActivityIndicator /></View>
-  }
 
   // const appLoading = (
   //   <View
@@ -1336,11 +1539,9 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
         { text: 'Cancel', type: 'cancel' },
         {
           text: 'Reset All of My Categories',
-          onPress:  ()  => {
+          onPress:  () => CustomizeCategoriesScreen.reloadCategories()
 
-            CustomizeCategoriesScreen.reloadCategories()
-
-          }
+    
         }
       ];
       Alert.alert(title, message, buttons);
@@ -1357,7 +1558,13 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
     headerRight: (<View style={{
       marginRight: 10,
     }}>
-    <TouchableText title="Reset" onPress={promptUserForCategoryReset} /></View>),
+    <TouchableOpacity onPress={() => CustomizeCategoriesScreen.reloadCategories()}>
+    <Text style={[
+      styles.btnText,
+          {
+          color: 'red',
+          // opacity: 0.6,
+        }]}>Reset</Text></TouchableOpacity></View>),
     // resetCategories: () => {
     //   CustomizeCategoriesScreen.resetCategories(storageKey);
 

@@ -60,6 +60,8 @@ import styles from '../../../styles';
 
 import isValidEmail from '../../functions/isValidEmail';
 
+import { Ionicons } from '@expo/vector-icons';
+
 function HeaderLeftView(props) {
   const { onUsernameSubmit, getNormalMessage } = props;
 
@@ -100,9 +102,14 @@ function HeaderLeftView(props) {
 
     global.emailAddressInput = '';
 
-    Auth.currentAuthenticatedUser().then((cognito) => {
+    Auth.currentAuthenticatedUser().then(async (cognito) => {
       setBoldMessage('Get cross-device sync');
       setNormalMessage(cognito.attributes.email);
+
+      const storage = await loadSettingsStorage(cognito.attributes.sub);
+      if (storage.user.name) {
+        setBoldMessage(storage.user.name);
+      }
       setIsUserLoggedIn(true);
     }).catch((err) => {
       // console.log('err: ', err);
