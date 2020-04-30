@@ -50,26 +50,6 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             04/28/2020 08:11 PM | starting version 4.1.x
 */
 
-import React, { useState } from 'react';
-
-import {
-  View,
-  Platform,
-  // StyleSheet,
-  AsyncStorage
- } from 'react-native';
-
-// import the Analytics category
-import Analytics from '@aws-amplify/analytics';
-
-import Auth from '@aws-amplify/auth';
-
-import * as Font from 'expo-font';
-
-import { NetworkProvider } from 'react-native-offline';
-
-import { AppLoading } from 'expo';
-
 import './globals'; // global values
 
 import {
@@ -80,63 +60,45 @@ import {
   setIsDeviceSynced,
 } from './globals'
 
+import React, { useState } from 'react';
+
+import {
+  View,
+  // Platform,
+  // StyleSheet,
+  // AsyncStorage
+} from 'react-native';
+
+// import the Analytics category
+// import Analytics from '@aws-amplify/analytics';
+
+import Auth from '@aws-amplify/auth';
+
+import * as Font from 'expo-font';
+
+import { NetworkProvider } from 'react-native-offline';
+
+import { AppLoading } from 'expo';
+
+/* Temporary fix fo Analytics errors! */
+import Amplify from 'aws-amplify';
+
+import FlashMessage from 'react-native-flash-message';
+
 import colors from './colors';
 
 import SwitchNavigator from './SwitchNavigator';
 
 import Storybook from './storybook';
 
-import FlashMessage from 'react-native-flash-message';
-
-// import { MyFacebookLoginScreen } from './src/screens/MyFacebookLoginScreen';
-
-// clearLines(15);
-
-// import API, { graphqlOperation } from '@aws-amplify/api';
-
-// const hh = new Date().getHours();
-// const mm = new Date().getMinutes();
-// const ss = new Date().getSeconds();
-
-// console.log(`${hh}:${mm}:${ss}`, `${global.appName} App ${global.appVersion}`);
-
-// const styles = StyleSheet.create({
-//   height: Platform.OS === 'ios' ? 200 : 100,
-// });
-
-// record running device analytics
-// const name = `Running application on ${Platform.OS} ${Platform.Version}`;
-// Analytics.record({ name: name });
-// console.log(`Analytic Recorded: ${name}`);
-
-// let steps = 0;
-
-/* Temporary fix fo Analytics errors! */
-import Amplify from 'aws-amplify';
 import amplify from './aws-exports';
+
 Amplify.configure({
   ...amplify,
   Analytics: {
-    disabled: true
-  }
+    disabled: true,
+  },
 });
-
-// global.getIsBackedUp = async () => {
-//   // Retrieves from storage as boolean
-//   let value = await AsyncStorage.getItem('isBackedUp')
-
-//   global.isBackedUp = value
-//   return value // boolean false
-// };
-
-// global.getHasRatedUs = async () => {
-//   // Retrieves from storage as boolean
-//   let value = await AsyncStorage.getItem('hasRatedUs');
-
-//   global.hasRatedUs = value
-//   return value // boolean false
-// };
-
 
 const getAuthentication = async () => {
   global.authenticated = false;
@@ -145,9 +107,9 @@ const getAuthentication = async () => {
       // console.log('cognito: ', cognito);
       global.authenticated = (cognito) ? true : false;
     }).catch((err) => {
-      // console.log('err: ', err);
-    })
-  return global.authenticated
+      console.log('err: ', err);
+    });
+  return global.authenticated;
 };
 
 export default function App() {
@@ -157,9 +119,8 @@ export default function App() {
   let view;
 
   async function loadApplicationResources() {
-
     global.isBackedUp = await getIsBackedUp();
-    
+
     // load stored fonts
     try {
       await Font.loadAsync({
@@ -173,36 +134,25 @@ export default function App() {
       throw new Error('Error loading stored fonts: ', err);
     }
 
-    // global.isDeviceSynced = await getIsDeviceSynced();
-
-    await setIsDeviceSynced(false);
-
-    // alert('App ' + String(global.isDeviceSynced))
-
-    // alert(global.isDeviceSynced);
+    global.isDeviceSynced = await getIsDeviceSynced();
 
     global.authenticated = await getAuthentication();
 
-    // alert(await getHasRatedUs())
+    global.hasRatedUs = await getHasRatedUs();
 
-    global.hasRatedUs = (await getHasRatedUs())
-
-    global.isDeviceSyncOn = await getIsDeviceSyncOn()
-
-    // alert(await getIsDeviceSynced())
+    global.isDeviceSyncOn = await getIsDeviceSyncOn();
   }
-  /* redirect user to storybook view if debugging */
-  if (global.isStorybookModeOn && fontsAreLoaded) {
-    // return storybook;
-    return <NetworkProvider><Storybook /></NetworkProvider>;
-  }
+
+  // /* redirect user to storybook view if debugging */
+  // if (global.isStorybookModeOn && fontsAreLoaded) {
+  //   // return storybook;
+  //   return <NetworkProvider><Storybook /></NetworkProvider>;
+  // }
 
   if (!fontsAreLoaded) {
-    // steps++
     loadApplicationResources();
     view = <AppLoading />;
   } else {
-    // steps++
     view = (
       <NetworkProvider>
         <View style={{ flex: 1 }}>
@@ -215,7 +165,7 @@ export default function App() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: colors.dark,
-                // opacity: 0.9,
+                opacity: 0.9,
                 // borderWidth: 1,
                 // borderColor: 'white',
                 // borderStyle: 'solid',

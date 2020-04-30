@@ -466,17 +466,15 @@ function UserNameEmailInput(props) {
   }
 
   const signOut = async () => {
-    let storage =  await loadSettingsStorage(global.storageKey)
-      // console.log('storage: ', storage);
+    // let storage =  await loadSettingsStorage(global.storageKey)
+    //   // console.log('storage: ', storage);
 
-    storage.image_url = global.avatar
+    // // storage.image_url = global.avatar.uri
 
-    saveSettingsStorage(global.storageKey, storage)
+    // saveSettingsStorage(global.storageKey, storage)
 
 
     global.email = currentEmail;
-
-    global.avatar = 
 
     global.showGlobalValues()
 
@@ -494,7 +492,7 @@ function UserNameEmailInput(props) {
 
         global.isUserAuthenticated = false;
 
-        // global.avatar = require('../../../assets/avatar.png');
+        global.avatar = require('../../../assets/avatar.png');
 
 
         // console.log('Removed AsyncsStorage Variables ..');

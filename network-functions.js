@@ -8,7 +8,7 @@ UPDATED:   04/02/2020 03:40 PM
 
 import NetInfo from '@react-native-community/netinfo';
 
-async function isDeviceOnline() {
+export async function isDeviceOnline() {
   let bool = false;
   await NetInfo.fetch().then((state) => {
     bool = state.isConnected;
@@ -17,23 +17,23 @@ async function isDeviceOnline() {
   });
   // console.log('bool: ', bool);
   return bool;
-};
-
-
-/* Utils.js */
-/* This file contains functions you can use anywhere in your application */
-
-function formatName(label) {
-   // your logic
 }
 
-function formatDate(date) {
-   // your logic
-}
+
+// /* Utils.js */
+// /* This file contains functions you can use anywhere in your application */
+
+// function formatName(label) {
+//    // your logic
+// }
+
+// function formatDate(date) {
+//    // your logic
+// }
 
 // Now you have to export each function you want
-export {
-  isDeviceOnline,
-   // formatName,
-   // formatDate,
-};
+// export {
+//   isDeviceOnline,
+//    // formatName,
+//    // formatDate,
+// };

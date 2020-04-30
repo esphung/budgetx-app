@@ -591,7 +591,7 @@ export default function Home(props) {
     // }
   }
   async function retrieveUserStoredSettings() {
-    setIsReady(false)
+    // setIsReady(false)
 
     // await setIsDeviceSynced(false)
 
@@ -1189,6 +1189,8 @@ export default function Home(props) {
 
     // setIsReady(false);
 
+    setIsReady(false);
+
     retrieveUserStoredSettings();
 
     // setIsReady(true)
@@ -1520,7 +1522,7 @@ export default function Home(props) {
     }
 
     // check if device is synced
-    if (await getIsDeviceSynced() === true) return
+    // if (await getIsDeviceSynced() === true) return
 
 
     // alert(await getIsDeviceSynced());
@@ -1916,7 +1918,7 @@ export default function Home(props) {
 
     </SafeAreaView>
   );
-  return view;
+  return isReady && view;
 }
 
 
