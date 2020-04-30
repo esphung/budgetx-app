@@ -189,7 +189,7 @@ export default function FacebookLogin(props) {
             (
               <View>
               <BlueButton title="Login" onPress={login} />
-              {/*<BlueButton title="Logout" onPress={logout} />*/}
+              <BlueButton title="Logout" onPress={logout} />
               </View>
             )
           }

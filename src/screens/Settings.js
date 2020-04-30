@@ -266,7 +266,7 @@ function Settings(props) {
 
   const [optionOpacity, setOptionOpacity] = useState(1.0)
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(global.isAuthenticated);
 
   const [isUserOnline, setIsUserOnline] = useState(false);
 
@@ -293,6 +293,9 @@ function Settings(props) {
   const [isExportTransactionsDisabled, setIsExportTransactionsDisabled] = useState(false);
 
   const [isSyncBtnEnabled, setIsSyncBtnEnabled] = useState(true);
+
+  const [isDeviceSyncOnText, setIsDeviceSyncOnText] = useState('')
+
 
 
 
@@ -649,11 +652,11 @@ function Settings(props) {
 
           let bool = false
 
-          global.isDeviceSyncOn = bool
+          // global.isDeviceSyncOn = bool
 
-          // crossDeviceSync();
+          // // crossDeviceSync();
 
-          setIsSyncBtnEnabled(bool)
+          // setIsSyncBtnEnabled(bool)
 
           setIsDeviceSyncOn(bool)
 
@@ -668,9 +671,9 @@ function Settings(props) {
 
           // crossDeviceSync();
 
-          global.isDeviceSyncOn = bool
+          // global.isDeviceSyncOn = bool
 
-          setIsSyncBtnEnabled(bool)
+          // setIsSyncBtnEnabled(bool)
 
           setIsDeviceSyncOn(bool)
 
@@ -705,17 +708,17 @@ function Settings(props) {
   // }
 
   const dialogBox = (
-  <View>
-    <Dialog.Container visible={true}>
-      <Dialog.Title>Offline</Dialog.Title>
-      <Dialog.Description>
-        Cannot sync without internet connection
-      </Dialog.Description>
-      <Dialog.Button label="Cancel" onPress={() => setShouldShowOfflineDialogBox(false)} />
-      <Dialog.Button label="Ok" onPress={() => setShouldShowOfflineDialogBox(false)} />
-    </Dialog.Container>
-  </View>
-);
+    <View>
+      <Dialog.Container visible={true}>
+        <Dialog.Title>Offline</Dialog.Title>
+        <Dialog.Description>
+          Cannot sync without internet connection
+        </Dialog.Description>
+        <Dialog.Button label="Cancel" onPress={() => setShouldShowOfflineDialogBox(false)} />
+        <Dialog.Button label="Ok" onPress={() => setShouldShowOfflineDialogBox(false)} />
+      </Dialog.Container>
+    </View>
+  );
 
     const updateCloudDialogBox = (
   <View>
@@ -747,8 +750,27 @@ function Settings(props) {
     );
   }
 
-  function retrieveStoredSettings() {
-    Auth.currentAuthenticatedUser()
+  useEffect(() => {
+    // alert(global.isDeviceSyncOn)
+    setIsDeviceSyncOnText((String(global.isDeviceSyncOn) === 'true') ? 'On' : 'Off');
+    return () => {
+      // effect
+    };
+  }, [isDeviceSyncOn]);
+
+  async function retrieveStoredSettings() {
+    global.isDeviceSyncOn = await getIsDeviceSyncOn()
+
+
+
+    // alert(global.isDeviceSyncOn);
+
+    // alert(global.isDeviceSyncOn)
+    setIsDeviceSyncOnText(String(global.isDeviceSyncOn) === 'true' ? 'On' : 'Off');
+
+    // setIsDeviceSyncOnText((global.isDeviceSyncOn === true) ? 'On' : 'Off');
+
+    await Auth.currentAuthenticatedUser()
     .then(async (cognito) => {
       const storage = await loadSettingsStorage(global.storageKey);
       
@@ -764,7 +786,8 @@ function Settings(props) {
 
       setIsExportTransactionsDisabled(false);
 
-      global.isUserAuthenticated = false
+      // global.isUserAuthenticated = false
+
 
 
     })
@@ -783,7 +806,7 @@ function Settings(props) {
 
         setIsExportTransactionsDisabled(true);
 
-        global.isUserAuthenticated = false
+        // global.isUserAuthenticated = false
 
         // showMessage({
         //   message: `You are ${auth_error}`,
@@ -983,30 +1006,38 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
-    // let storage = await loadSettingsStorage(global.storageKey)
-
-    // for (var i = storage.transactions.length - 1; i >= 0; i--) {
-    //   // console.log('transactions[i]: ', transactions[i]);
-    //   await removeTransaction(storage.transactions[i])
-    // }
-
-    // let categories = storage.categories;
-
-    // for (var i = categories.length - 1; i >= 0; i--) {
-    //   // console.log('categories[i]: ', categories[i]);
-    //   removeCategory(categories[i])
-    // }
-
     let storage = await loadSettingsStorage(global.storageKey)
+
+    for (var i = storage.transactions.length - 1; i >= 0; i--) {
+      // console.log('transactions[i]: ', transactions[i]);
+      removeTransaction(storage.transactions[i])
+    }
+
+    let categories = storage.categories;
+
+    for (var i = categories.length - 1; i >= 0; i--) {
+      // console.log('categories[i]: ', categories[i]);
+      removeCategory(categories[i])
+    }
+
+    // let storage = await loadSettingsStorage(global.storageKey)
 
     storage.categories = defaultCategories;
 
 
+    AsyncStorage.removeItem('hasRatedUs');
+    // console.log('await AsyncStorage.getItem("hasRatedU"): ', await AsyncStorage.getItem('hasRatedUs'));
+
+    AsyncStorage.removeItem('isBackedUp');
+
+    // AsyncStorage.removeItem('storageKey');
+
+    AsyncStorage.removeItem('isDeviceSynced');
+
+    AsyncStorage.removeItem('isDeviceSyncOn');
 
 
-
-
-    AsyncStorage.getAllKeys((err, keys) => {
+    await AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (error, stores) => {
         stores.map((result, i, store) => {
 
@@ -1014,7 +1045,19 @@ function Settings(props) {
             // remove items with username key
             // console.log({ [store[i][0]]: store[i][1] });
             AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
+
+
+        
+
+            // if (store[i].includes('hasRatedUs')) {
+            //   // remove items with username key
+            //   alert({ [store[i][0]]: store[i][1] });
+            //   // AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
+            // }
           }
+
+
+
 
           else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
             // remove backups with username key
@@ -1024,7 +1067,6 @@ function Settings(props) {
             // remove backups with username key
             AsyncStorage.removeItem(store[i][0]) // Remove Backups
           }
-
 
           return true;
         });
@@ -1165,7 +1207,7 @@ function Settings(props) {
     if (Platform.OS === 'ios') {
       // user on ios
       Alert.prompt(
-        'Remove all data from this device?',
+        'Remove all data?',
         'Please type DELETE',
         [
           { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
@@ -1229,7 +1271,7 @@ function Settings(props) {
 
   const sendTransactionsMail = async (transactions) => {
       const html = getTransactionsHTML(transactions);
-      console.log('html: ', html);
+      // console.log('html: ', html);
       try {
         await MailComposer.composeAsync({
             recipients: [email],
@@ -1331,7 +1373,7 @@ function Settings(props) {
           message: JSON.stringify(currentTransactions, getKeys(currentTransactions[0]), 4),
         });
 
-        console.log('result: ', result);
+        // console.log('result: ', result);
 
         if (result.action === Share.sharedAction) {
           if (result.activityType) {
@@ -1449,7 +1491,7 @@ function Settings(props) {
 
   function shareBtnPressed() {
     onShare((text) => {
-      console.log('text: ', text);
+      // console.log('text: ', text);
     })
     // console.log('Share button pressed');
   }
@@ -1515,10 +1557,10 @@ function Settings(props) {
     else if (name === 'Change Password/Sign Out') {
       changePasswordBtnPressed();
     }
-    else if (name === 'Sign In') {
+    else if (name === 'Sign In/Sign Up') {
       signInBtnPressed();
     }
-    else if (name.includes('Device Sync is')) {
+    else if (name.includes('Device Sync')) {
       crossDeviceSyncBtnPressed();
       // let bool = global.isDeviceSyncOn
 
@@ -1529,7 +1571,7 @@ function Settings(props) {
       // }
 
     }
-    else if (name === 'Reset Device Data') {
+    else if (name === 'Reset Data') {
       resetDataBtnPressed();
     } else if (name === 'Customize Categories') {
       customizeCategoriesBtnPressed();
@@ -1557,6 +1599,7 @@ function Settings(props) {
 
   useEffect(() => {
     // checkConnectivity();
+
     retrieveStoredSettings();
   }, []);
 
@@ -1591,13 +1634,20 @@ function Settings(props) {
   //   };
   // }, [isPasscodeEnabled])
 
+  const rateUsBtn = <BlueButton title="Rate Us" onPress={
+                    async () => {
+                      await rateUsBtnPressed();
+                      setHasRatedUs(true);
+                    }
+                  } />
+
   
 
   const getAuthentication = async () => {
     let authenticated = false;
     await Auth.currentAuthenticatedUser()
       .then((cognito) => {
-        console.log('cognito: ', cognito);
+        // console.log('cognito: ', cognito);
         authenticated = (cognito) ? true : false;
       }).catch((err) => {
         console.log('err: ', err);
@@ -1619,6 +1669,10 @@ function Settings(props) {
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={async () =>
               {
+                // alert(await getHasRatedUs())
+
+                global.hasRatedUs = (await getHasRatedUs())
+
                 setIsBackupDisabled(global.isBackedUp)
 
                 let loggedIn = await getAuthentication();
@@ -1630,7 +1684,7 @@ function Settings(props) {
 
                 // setIsRestoreDisabled(backup)
 
-                // retrieveStoredSettings();
+                retrieveStoredSettings();
               }
             } // {(payload) => checkConnectivity()}
             // other props
@@ -1693,6 +1747,7 @@ function Settings(props) {
             isRestoreDisabled={isRestoreDisabled}
             currentSettingsVersion={currentSettingsVersion}
             isUserLoggedIn={isUserLoggedIn}
+            isDeviceSyncOnText={isDeviceSyncOnText}
             // toggleIsDeviceSyncOn={toggleIsDeviceSyncOn}
             // getIsDeviceSyncOn={getIsDeviceSyncOn}
           />
@@ -1741,10 +1796,9 @@ function Settings(props) {
           >
 
               
-                { global.hasRatedUs &&
-                  (
-                    <BlueButton title="Rate Us" onPress={rateUsBtnPressed} />
-                  )
+                {
+                  (!global.hasRatedUs) && rateUsBtn
+                    
                 }
                 <BlueButton title="Share Us" onPress={shareBtnPressed} />
               

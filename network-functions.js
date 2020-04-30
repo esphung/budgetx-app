@@ -15,6 +15,7 @@ async function isDeviceOnline() {
     // console.log("Connection type", state.type);
     // console.log('Is connected?', state.isConnected);
   });
+  // console.log('bool: ', bool);
   return bool;
 };
 

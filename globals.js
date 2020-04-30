@@ -7,18 +7,34 @@ import {
   // View,
   // Platform,
   // StyleSheet,
-  AsyncStorage
- } from 'react-native';
+  AsyncStorage,
+} from 'react-native';
 
 import app from './app.json';
+
+global.showGlobalValues = () => {
+  console.log(
+    [
+    `global.isBackedUp: ${global.isBackedUp}`,
+    `global.isDeviceSyncOn: ${global.isDeviceSyncOn}`,
+    `global.hasRatedUs: ${global.hasRatedUs}`,
+    `global.storageKey: ${global.storageKey}`,
+    `global.isUserAuthenticated: ${global.isUserAuthenticated}`,
+    `global.isLoginEnabled: ${global.isLoginEnabled}`,
+    `global.emailAddressInput: ${global.emailAddressInput}`,
+    `global.email: ${global.email}`,
+    `global.avatar: ${global.avatar}`,
+    `global.displayName: ${global.displayName}`,
+
+    ]
+  );
+};
+
+global.displayName = 'Get cross-device sync'
 
 global.facebookAppId = app.expo.facebookAppId;
 
 global.isBackedUp = false;
-
-// console.log('global.facebookAppId: ', global.facebookAppId);
-
-// global.isDeviceCrossSyncOn = true;
 
 global.isDeviceSyncOn = false;
 
@@ -27,7 +43,6 @@ global.hasRatedUs = false;
 // global.isStorybookModeOn = true;
 
 global.storageKey = ''; // 'CURRENT_USER'
-
 
 global.isUserAuthenticated = false;
 
@@ -125,13 +140,13 @@ global.appDesigner = 'Andrey Nasanov';
 //   return value // boolean false
 // };
 
-const setIsDeviceSyncOn = (bool) => {
+export const setIsDeviceSyncOn = (bool) => {
   // Saves to storage as a JSON-string
   AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(bool));
   global.isDeviceSyncOn = bool
 }
 
-const getIsDeviceSyncOn = async () => {
+export const getIsDeviceSyncOn = async () => {
   // Retrieves from storage as boolean
   let value = await AsyncStorage.getItem('isDeviceSyncOn')
 
@@ -139,13 +154,13 @@ const getIsDeviceSyncOn = async () => {
   return value // boolean false
 };
 
-const setIsBackedUp = (bool) => {
+export const setIsBackedUp = (bool) => {
   // Saves to storage as a JSON-string
   AsyncStorage.setItem('isBackedUp', JSON.stringify(bool));
   global.isBackedUp = bool
 }
 
-const getIsBackedUp = async () => {
+export const getIsBackedUp = async () => {
   // Retrieves from storage as boolean
   let value = await AsyncStorage.getItem('isBackedUp')
 
@@ -153,13 +168,13 @@ const getIsBackedUp = async () => {
   return value // boolean false
 };
 
-const setHasRatedUs = (bool) => {
+export const setHasRatedUs = (bool) => {
   // Saves to storage as a JSON-string
   AsyncStorage.setItem('hasRatedUs', JSON.stringify(bool));
   global.hasRatedUs = bool;
 }
 
-const getHasRatedUs = async () => {
+export const getHasRatedUs = async () => {
   // Retrieves from storage as boolean
   let value = await AsyncStorage.getItem('hasRatedUs');
 
@@ -167,14 +182,37 @@ const getHasRatedUs = async () => {
   return value // boolean false
 };
 
-module.exports = {
-  getIsBackedUp,
-  getHasRatedUs,
-  setIsBackedUp,
-  setHasRatedUs,
-  getIsDeviceSyncOn,
-  setIsDeviceSyncOn,
+global.isDeviceSynced = false;
+
+export const setIsDeviceSynced = (bool) => {
+  // Saves to storage as a JSON-string
+  AsyncStorage.setItem('isDeviceSynced', JSON.stringify(bool));
+  global.isDeviceSynced = bool
 }
+
+export const getIsDeviceSynced = async () => {
+  // Retrieves from storage as boolean
+  let value = await AsyncStorage.getItem('isDeviceSynced')
+
+  global.isDeviceSynced = value
+  return value // boolean false
+};
+
+
+
+// global.showGlobalValues()
+
+
+// module.exports = {
+//   getIsDeviceSynced,
+//   setIsDeviceSynced,
+//   getIsBackedUp,
+//   getHasRatedUs,
+//   setIsBackedUp,
+//   setHasRatedUs,
+//   getIsDeviceSyncOn,
+//   setIsDeviceSyncOn,
+// }
 
 
 

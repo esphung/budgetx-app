@@ -53,10 +53,10 @@ function SlideUpView(props) {
       // enabled
       style={{
         width: '100%',
-        top: -50,
+        top: -140,
         // borderWidth: 1,
         // borderColor: 'white',
-        // borderStyle: 'dashed',
+        // // borderStyle: 'dashed',
 
         // zIndex: 1,
       }}

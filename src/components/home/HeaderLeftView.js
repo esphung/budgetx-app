@@ -68,8 +68,8 @@ function HeaderLeftView(props) {
   const { navigation } = props;
 
   // console.log('props: ', props);
-  // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
   const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+  // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
   const [normalMessage, setNormalMessage] = useState('Enter your email');
   // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
   // const [normalMessage, setNormalMessage] = useState(`${global.appName} ${global.appVersion}`);
@@ -103,14 +103,36 @@ function HeaderLeftView(props) {
     global.emailAddressInput = '';
 
     Auth.currentAuthenticatedUser().then(async (cognito) => {
-      setBoldMessage('Get cross-device sync');
-      setNormalMessage(cognito.attributes.email);
+
+      global.storageKey = cognito.attributes.sub
+
+      global.email = cognito.attributes.email
+      
+      // setNormalMessage(cognito.attributes.email);
 
       const storage = await loadSettingsStorage(cognito.attributes.sub);
-      if (storage.user.name) {
-        setBoldMessage(storage.user.name);
+
+      try {
+        storage.user.email = cognito.attributes.email
+      
+        storage.user.id = cognito.attributes.sub
+
+        await saveSettingsStorage(global.storageKey, storage)
+      } catch(e) {
+        // statements
+        console.log(e);
       }
+
+
+      if (storage) {
+        // console.log('storage: ', storage);
+        setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName);
+        setNormalMessage(storage.user.email)
+
+      }
+
       setIsUserLoggedIn(true);
+
     }).catch((err) => {
       // console.log('err: ', err);
       // setNormalMessage(`${global.appName} ${global.appVersion}`);

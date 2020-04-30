@@ -71,7 +71,7 @@ import styles from '../../../styles';
 
 function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
-  const { isSyncBtnEnabled, onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled } = props;
+  const { isSyncBtnEnabled, onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled,  isDeviceSyncOnText } = props;
 
   // let isDisabled;
 
@@ -173,15 +173,15 @@ function UserOptions(props) {
     //   }
     // }
 
-    /* Reset Device Data */
-    if (key === 'Reset Device Data') {
+    /* Reset Data */
+    if (key === 'Reset Data') {
       textColor = colors.pinkRed;
       backgroundColor = 'transparent';
       caret = null;
       opacity = 0.5
     }
-    if (key.includes('Device Sync is')) {
-      let message = (isSyncBtnEnabled) ? 'On' : 'Off'
+    if (key === ('Device Sync')) {
+      let message = isDeviceSyncOnText
       key += ` ${message}`
     }
     // /* Change Password/Sign Out */
@@ -212,18 +212,17 @@ function UserOptions(props) {
     //   }
     // }
 
-    // /* Sign In */
-    // if (title === 'Sign In') {
-    //   if (!isUserLoggedIn) {
-    //     title = null;
-    //     textColor = colors.offWhite
-    //     backgroundColor = 'transparent';
-    //     isDisabled = true
-    //     caret = null;
-    //     rowHeight = 0;
+    // /* Sign In/Sign Up */
+    // if (key === 'Sign In/Sign Up' && isUserLoggedIn) {
+    //     // title = null;
+    //     // textColor = colors.offWhite
+    //     // backgroundColor = 'transparent';
+    //     // isDisabled = true
+    //     // caret = null;
+    //     // rowHeight = 0;
     //     // caret = null;
     //     // opacity = 0.5
-    //   }
+      
     // }
     //   /* Export Transactions */
     // else if (title === 'Export Transactions') {
@@ -364,8 +363,8 @@ function UserOptions(props) {
       //   // borderStyle: 'solid',
       // }]}
       data={[
-        { key: 'Sign In', isDisabled: isUserLoggedIn },
-        { key: 'Device Sync is', isDisabled: !isUserLoggedIn },
+        { key: 'Sign In/Sign Up', isDisabled: isUserLoggedIn },
+        { key: 'Device Sync', isDisabled: !isUserLoggedIn },
         { key: 'Customize Categories', isDisabled: false },
         // { key: 'Backup Data', isDisabled: isBackupDisabled },
         // { key: 'Passcode', isDisabled: false },
@@ -381,7 +380,7 @@ function UserOptions(props) {
         { key: 'Contact Support', isDisabled: false },
         // { key: 'Passcode', isDisabled: false },
         
-        { key: 'Reset Device Data', isDisabled: false },
+        { key: 'Reset Data', isDisabled: false },
         
 
       ]}

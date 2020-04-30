@@ -47,6 +47,7 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             03/29/2020 11:24 AM | Added device record analytics
             04/04/2020 02:15 PM | Cross device sync finished
             04/04/2020 05:48 PM | facebook app developer integration
+            04/28/2020 08:11 PM | starting version 4.1.x
 */
 
 import React, { useState } from 'react';
@@ -61,6 +62,8 @@ import {
 // import the Analytics category
 import Analytics from '@aws-amplify/analytics';
 
+import Auth from '@aws-amplify/auth';
+
 import * as Font from 'expo-font';
 
 import { NetworkProvider } from 'react-native-offline';
@@ -71,6 +74,10 @@ import './globals'; // global values
 
 import {
   getIsBackedUp,
+  getIsDeviceSynced,
+  getHasRatedUs,
+  getIsDeviceSyncOn,
+  setIsDeviceSynced,
 } from './globals'
 
 import colors from './colors';
@@ -131,6 +138,17 @@ Amplify.configure({
 // };
 
 
+const getAuthentication = async () => {
+  global.authenticated = false;
+  await Auth.currentAuthenticatedUser()
+    .then((cognito) => {
+      // console.log('cognito: ', cognito);
+      global.authenticated = (cognito) ? true : false;
+    }).catch((err) => {
+      // console.log('err: ', err);
+    })
+  return global.authenticated
+};
 
 export default function App() {
   // state hooks
@@ -154,14 +172,30 @@ export default function App() {
       // console.log('Error loading stored fonts: ', err);
       throw new Error('Error loading stored fonts: ', err);
     }
+
+    // global.isDeviceSynced = await getIsDeviceSynced();
+
+    await setIsDeviceSynced(false);
+
+    // alert('App ' + String(global.isDeviceSynced))
+
+    // alert(global.isDeviceSynced);
+
+    global.authenticated = await getAuthentication();
+
+    // alert(await getHasRatedUs())
+
+    global.hasRatedUs = (await getHasRatedUs())
+
+    global.isDeviceSyncOn = await getIsDeviceSyncOn()
+
+    // alert(await getIsDeviceSynced())
   }
   /* redirect user to storybook view if debugging */
   if (global.isStorybookModeOn && fontsAreLoaded) {
     // return storybook;
     return <NetworkProvider><Storybook /></NetworkProvider>;
   }
-
-
 
   if (!fontsAreLoaded) {
     // steps++
@@ -194,6 +228,5 @@ export default function App() {
       </NetworkProvider>
     ); // has login
   }
-  // console.log('steps: ', steps);
   return view;
 }

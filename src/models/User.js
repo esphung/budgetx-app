@@ -30,9 +30,11 @@ export default function User(id) {
   // this.id = `${Date.now(currentDate)}`;
   return {
     // id: `${Date.now(currentDate)}`,
-    id:  id,
+    id: id,
     username: '', // username, // User's Storage Key
-    email: '' // '' // email;
+    email: '', // '' // email;
+    full_name: '',
+    image_url: '',
   }
   // this.phoneNumber = '';
   // this.password = '';

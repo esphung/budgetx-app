@@ -61,6 +61,15 @@ export default StyleSheet.create({
     fontWeight: '600',
   },
   /* Balance View */
+  balanceViewRectangle: {
+    width: '100%',
+    // alignItems: 'center',
+    // top: 70, // 70
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'dotted',
+  },
   balanceView: {
     position: Platform.OS === 'ios' ? 'relative' : 'absolute',
     width: '90%', // 346,

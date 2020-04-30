@@ -24,7 +24,7 @@ const userProfileRectangle = {
   // borderStyle: 'dashed',
 };
 
-function ProfileRectangle() {
+function ProfileRectangle(props) {
   let view = <View />;
   view = (
     <View style={userProfileRectangle}>
@@ -48,11 +48,11 @@ function ProfileRectangle() {
             // borderStyle: 'solid',
           }
         }>
-          <ProfileUserImage />
+          <ProfileUserImage isUserLoggedIn={props.isUserLoggedIn} />
         </View>
       </View>
 
-      <UserNameEmailInput />
+      <UserNameEmailInput isUserLoggedIn={props.isUserLoggedIn} />
     </View>
   );
   return view;

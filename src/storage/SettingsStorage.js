@@ -188,7 +188,9 @@ export const retrieveLocalTransactions = async () => {
      const storageObject = await loadSettingsStorage(global.storageKey);
     // console.log('storageObject: ', storageObject);
 
-    if (storageObject.transactions) list = storageObject.transactions
+    if (storageObject.transactions) {
+      list = storageObject.transactions
+    }
   } catch (error) {
     console.log('Error loading local transactions:', error);
   }
@@ -253,7 +255,7 @@ const removeStoredTransaction = async (transaction) => {
 }
 
 export const loadSettingsStorage = async (key) => {
-  console.log('key: ', key);
+  // console.log('key: ', key);
   try {
     const storageObject = await AsyncStorage.getItem(key); // get local storage
 
@@ -281,19 +283,15 @@ export const loadSettingsStorage = async (key) => {
         if (!payee.name || payee.name === '') {
           payee.name = 'None'
         }
-
-
         
       })
     }
 
     /* set user profile image if there is */
-    if (storageObject.image_url) {
-      let Image_Http_URL ={ uri: storageObject.image_url};
-      global.avatar = Image_Http_URL;
-    }
-
-
+    // if (storageObject.image_url) {
+    //   let Image_Http_URL ={ uri: storageObject.image_url};
+    //   global.avatar = Image_Http_URL;
+    // }
     return JSON.parse(storageObject);
   } catch (error) {
     console.log('Error loading storageObject:', error);

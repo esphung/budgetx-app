@@ -261,21 +261,32 @@ export const savePayee = async (payee) => {
 }
 export const saveCategory = async (category) => {
 
-  // send to server
-  try {
-    const categoryMutation = await graphqlOperation(CreateCategoryGQL(category)) // push new category
-    await API.graphql(categoryMutation);
-    console.log('category successfully created:', category.id);
-  } catch (e) {
-    // console.log('error saving category:', e);
-    console.log('Update category error (duplicate):', category);
+  // try {
+  //   // try to update existing onine cat first
+  //   // updateCategory(category);
+  // } catch(e) {
+  //   // statements
+  //   console.log('error updating category from savveCategory():', e.errors);
 
-    // throw new Error('Update category error (duplicate)');
-    
-    // category.version++
-    // updateCategory(category);
+    try {
+      const categoryMutation = await graphqlOperation(CreateCategoryGQL(category)) // push new category
+      await API.graphql(categoryMutation);
+      console.log('category successfully created:', category.id);
+    } catch (e) {
+      console.log('error saving category:', e);
+      console.log('save category error:', category);
 
-  }
+      updateCategory(category);
+
+      // throw new Error('Update category error (duplicate)');
+      
+      // category.version = category.version + 1
+      
+
+    }
+  // }
+
+  
 };
 export const formatTransactionInput = (item) => {
   let obj = {};
@@ -339,6 +350,8 @@ export const saveTransaction = async (transaction) => {
     console.log('transaction successfully created:', input.id);
   } catch (err) {
     console.log('error creating transaction...', err);
+    updateTransaction(input)
+    // console.log('transaction: ', transaction);
   }
 }
 export const updateTransaction = async (updated) => {
@@ -355,13 +368,23 @@ export const updateTransaction = async (updated) => {
 };
 export const updateCategory = async (updated) => {
   // console.log('updated category: ', updated);
+  if (!updated.version) {
+    updated.version = 0;
+  }
   try {
+    // console.log('updated: ', updated);
     let response = await API.graphql(graphqlOperation(UpdateCategoryGQL(updated)));
-    console.log('category successfully updated...', response.data);
+    console.log('category successfully updated...', response.data.updateCategory.id);
 
   } catch (err) {
-    console.log('error updating category...', err.data);
-    saveCategory(updated);
+    // console.log('error updating category...', err); // err
+    // err.data.updateCategory
+    // saveCategory(updated);
+    await removeCategory(updated)
+    if (!err.data.updateCategory) {
+      // category doesnt exist yet
+      saveCategory(updated)
+    }
   }
 };
 export const getTransactionByID = async (id) => {

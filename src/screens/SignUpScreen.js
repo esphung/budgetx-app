@@ -562,9 +562,9 @@ function SignUpScreen(props) {
 
     await Auth.signIn(email, password)
       .then(async user => {
-        console.log('fb:', fb);
+        // console.log('fb:', fb);
 
-        console.log('user: ', user);
+        // console.log('user: ', user);
 
         let storage = await loadSettingsStorage(fb.id);
 
@@ -645,7 +645,7 @@ function SignUpScreen(props) {
 
     await Auth.signIn(email, password)
       .then(async user => {
-         console.log('user: ', user);
+         // console.log('user: ', user);
 
         // console.log('Object.keys(fb): ', Object.keys(fb));s
 

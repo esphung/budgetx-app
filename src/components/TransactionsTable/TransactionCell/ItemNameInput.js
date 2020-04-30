@@ -12,7 +12,7 @@ import uuidv4 from '../../../functions/uuidv4';
 export default function PizzaTranslator(props) {
   let { transaction, updateTransactionPayee, isNameInputEnabled } = props;
 
-  console.log('transaction: ', transaction);
+  // console.log('transaction: ', transaction);
 
   const [text, setText] = useState('');
 

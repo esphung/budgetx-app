@@ -26,7 +26,9 @@ import mime from 'mime-types';
 
 import Storage from '@aws-amplify/storage';
 
-// import Auth from '@aws-amplify/auth';
+import Dialog from 'react-native-dialog';
+
+import Auth from '@aws-amplify/auth';
 
 // import SpinnerMask from '../SpinnerMask';
 
@@ -53,8 +55,11 @@ const getAuthentication = async () => {
 };
 
 
+
+
 function ProfileUserImage(props) {
-  const  { isUserLoggedIn } =  props
+  const  { isUserLoggedIn } =  props;
+
   const [image, setImage] = useState(null);
 
   const [isReady, setIsReady] = useState(true);
@@ -62,6 +67,22 @@ function ProfileUserImage(props) {
   // const [storageKey, setStorageKey] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [shouldShowPleaseLoginBox, setShouldShowPleaseLoginBox] = useState(false);
+
+  const dialogBox = (
+    <View>
+      <Dialog.Container visible={true}>
+        <Dialog.Title>Please Login</Dialog.Title>
+        <Dialog.Description>
+          Cannot use feature without a profile
+        </Dialog.Description>
+        {/* <Dialog.Button label="Cancel" onPress={() => setShouldShowPleaseLoginBox(false)} /> */}
+        <Dialog.Button label="Ok" onPress={() => setShouldShowPleaseLoginBox(false)} />
+      </Dialog.Container>
+    </View>
+  );
+
 
   async function clearState() {
     // setIsReady(false);
@@ -127,7 +148,6 @@ function ProfileUserImage(props) {
 
       global.avatar = ({ uri: imageReturn.uri });
 
-      
     } catch(e) {
       // statements
       console.log(e);
@@ -311,9 +331,23 @@ function ProfileUserImage(props) {
 
       return isReady && (
         <View style={styles.container}>
+
+            {
+      shouldShowPleaseLoginBox && dialogBox
+    }
           <TouchableOpacity
           // disabled
-          onPress={getPermissionAsync} style={styles.userImageMaskView}>
+          onPress={
+            async () => {
+              if (!isUserLoggedIn || isUserLoggedIn === false) {
+
+                await setShouldShowPleaseLoginBox(true)
+                return
+              }
+              await getPermissionAsync();
+            }
+          }
+          style={styles.userImageMaskView}>
             <Image
 
               style={styles.userImage}

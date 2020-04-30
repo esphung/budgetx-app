@@ -200,6 +200,8 @@ const ScrollingPillCategoriesView = (props) => {
           // borderColor: 'white',
           // borderStyle: 'solid',
 
+          backgroundColor: colors.darkTwo,
+
           shadowColor: '#0a101b',
             shadowOffset: {
               width: 1,
@@ -223,7 +225,7 @@ const ScrollingPillCategoriesView = (props) => {
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'solid',
-          backgroundColor: colors.darkTwo,
+          // backgroundColor: colors.darkTwo,
 
           // borderWidth: 1,
           // borderColor: 'white',

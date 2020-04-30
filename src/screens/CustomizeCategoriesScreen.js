@@ -96,7 +96,7 @@ import {
   // savePayee,
   saveCategory,
   // saveTransaction,
-  // updateCategory,
+  updateCategory,
   // fetchStoredTransactions,
   // fetchStoredCategories,
   // getTransactionByID,
@@ -110,7 +110,7 @@ const getAuthentication = async () => {
   let bool = false;
   await Auth.currentAuthenticatedUser()
     .then((cognito) => {
-      console.log('cognito: ', cognito);
+      // console.log('cognito: ', cognito);
       bool = (cognito) ? true : false;
     }).catch((err) => {
       console.log('err: ', err);
@@ -152,11 +152,15 @@ function searchByID(key, myArray) {
 }
 
 const pushAllCategoriesToCloud = async () => {
+  if (!global.authenticated) return
   try {
     const storage = await loadSettingsStorage(global.storageKey);
     // console.log('local_transactions: ', local_transactions);
 
    for (var i = 0; i < storage.categories.length; i++) {
+
+    await removeCategory(storage.categories[i])
+
       // /* Create New Category */
       const category = new Category(
         storage.categories[i].id, // id
@@ -164,13 +168,13 @@ const pushAllCategoriesToCloud = async () => {
         storage.categories[i].color, // color
         storage.categories[i].type, // type
         storage.categories[i].owner, // owner
-        storage.categories[i].version, // version
+        storage.categories[i].version + 1, // version
       );
 
       updateCategory(category);
 
     // saveCategory(storage.categories[i])
-      // console.log('storage.transactions[i]: ', storage.transactions[i]);
+      console.log('storage.categories[i]: ', storage.categories[i]);
    }
 
   } catch(e) {
@@ -376,21 +380,153 @@ export default function CustomizeCategoriesScreen() {
   //   retrieveStoredCategories()
   // }
 
+  const compareLists = async (a, b) => {
+  // load online transactions
+  // let online_transactions = await retrieveOnlineTransactions();
+  // console.log('online_transactions.length: ', online_transactions.length);
+
+  // load local transactions
+  // let local_transactions = await retrieveLocalTransactions();
+  // console.log('local_transactions.length: ', local_transactions.length);
+
+  // let storage = await loadSettingsStorage(global.storageKey);
+  // local_transactions = storage.transactions;
+  // console.log('local_transactions.length: ', local_transactions.length);
+
+  const props = ['name', 'version'];
+
+  const result = a.filter((o1) => {
+      // filter out (!) items in online_transactions
+      return b.some((o2) => {
+        return (o1.name === o2.name);
+      });
+  }).map(function(o){
+      // objects with only the required properties
+      // and map to apply this to the filtered array as a whole
+      return props.reduce((newo) => {
+          newo = o;
+          return newo;
+      }, {});
+  });
+  
+  // console.log('compareListTransactions(local, online) => result: ', result);
+  console.log('result: ', result);
+  return result;
+}
+
   const resetCategories = async () => {
+    // console.log('data: ', data);
     // console.log(key);
     // let success = false;
     // setIsReady(false)
     const storageObj = await loadSettingsStorage(storageKey);
 
-    storageObj.categories = defaultCategories;
+    // for (var i = storageObj.categories.length - 1; i >= 0; i--) {
+    //   await deleteCategoryByID(storageObj.categories[i])
+    // }
+
+    storageObj.categories = defaultCategories
+
+    // storageObj.categories.forEach( function(element, index) {
+    //   // statements
+
+    // //   let og = searchByName(element.name, defaultCategories)
+
+    // //   if (og) {
+    // //     element = og
+    // //     element.owner = global.storageKey
+    // //     updateCategory(element)
+    // //   } else {
+    // //     deleteCategoryByID
+    // //   }
+    // //   // if (og) {
+    // //   //   console.log('og: ', og);
+    // //   //   element = og
+    // //   //   element.owner = global.storageKey
+    // //   // } else {
+    // //   //   deleteCategoryByID(element)
+    // //   // }
+    // });
 
     
 
+    // compareLists(data, storageObj.categories)
+
+    // for (var i = storageObj.categories.length - 1; i >= 0; i--) {
+
+      
+      
+
+    //   // if (storageObj.categories[i]) {
+    //   //   // new custom category found
+    //   //   removeCategoryByName(storageObj.categories[i].name)
+    //   //   console.log('storageObj.categories[i]: ', storageObj.categories[i]);
+    //   // }
+
+    //   let existing = searchByName(storageObj.categories[i].name, defaultCategories)
+
+    //   if (existing) {
+    //     storageObj.categories[i].type = existing.type
+    //     storageObj.categories[i].color = existing.color
+    //     storageObj.categories[i].owner = global.storageKey
+    //     storageObj.categories[i].version = existing.version
+
+    //     alert(storageObj.categories[i].name)
+    //     console.log('storageObj.categories[i]: ', storageObj.categories[i]);
+    //     console.log('existing: ', existing);
+
+    //     return
+        
+    //     // storageObj.categories[i].type = existing.type
+    //     // storageObj.categories[i].color = existing.color
+    //     // storageObj.categories[i].owner = global.storageKey
+    //     // storageObj.categories[i].version = existing.version
+
+        
+    //   }
+
+    //   // if (existing) {
+    //   //   // category is updated from orginal default categories
+    //   //   // keep id, owner, version
+    //   //   // set name, color, type, to default values
+
+    //   //   let updated = {
+    //   //     id: existing.id,
+    //   //     name: existing.name,
+    //   //     color: searchByName(existing.name, defaultCategories).color,
+    //   //     type: searchByName(existing.name, defaultCategories).type,
+    //   //     owner: global.storageKey,
+    //   //     version: existing.version + 1
+    //   //   }
+
+    //   //   // console.log('updated: ', updated);
+
+    //   //   // updateCategory(updated)
+
+    //   //   storageObj.categories[i] = updated
+    //   // }
+
+      
+
+
+        
+
+    // }
+
+    
+  if (global.storageKey) {
+    for (var i = defaultCategories.length - 1; i >= 0; i--) {
+      defaultCategories[i].owner = global.storageKey
+    }
+  }
+
     await saveSettingsStorage(global.storageKey, storageObj);
 
-    setData(storageObj.categories);
+    setData(defaultCategories);
 
-    // setIsReady(true)
+    pushAllCategoriesToCloud()
+
+    setIsReady(true)
   };
 
   CustomizeCategoriesScreen.reloadCategories = () => {
@@ -454,16 +590,20 @@ export default function CustomizeCategoriesScreen() {
 
     let i = 0;
     for (i; i < storage.categories.length; i += 1) {
-      if (storage.categories[i] === category) {
+      if (storage.categories[i].id === category.id) {
         storage.categories.splice(i, 1);
       }
     }
 
     // console.log('storage.categories.length: ', storage.categories.length);
 
-    saveSettingsStorage(storageKey, storage);
+    await removeCategory(category)
+
+    saveSettingsStorage(global.storageKey, storage);
 
     setData(storage.categories);
+
+    pushAllCategoriesToCloud()
 
     // Alert.alert('Category Successfully Deleted!');
   }
@@ -480,6 +620,17 @@ export default function CustomizeCategoriesScreen() {
 
     let obj = searchByName(name, list);
 
+    // console.log('category: ', {
+    //   name: name,
+    //   color: color,
+    //   type: type,
+    //   owner: global.storageKeym
+    //   version: obj.version
+    // });
+
+
+
+
     if (obj) {
       if (obj.type === type) {
         Alert.alert('Category already exists');
@@ -494,7 +645,7 @@ export default function CustomizeCategoriesScreen() {
         // console.log(userObject)
 
         // await saveUserObject(userObject);
-        saveSettingsStorage(storageKey, userObject);
+        await saveSettingsStorage(storageKey, userObject);
 
         setData(list);
 
@@ -503,13 +654,15 @@ export default function CustomizeCategoriesScreen() {
         setHelpMessage('Added category');
       }
 
-      saveCategory(obj)
+      // saveCategory(obj)
     }
+
+
 
     if (!obj) {
       // create new category
-      obj = new Category(uuidv4(), name, color, type);
-      if (obj.type === 'income') {
+      obj = new Category(uuidv4(), name, color, type, global.storageKey, 0);
+      if ((obj.type).toLowerCase() === 'income') {
         obj.color = colors.shamrockGreen;
       }
 
@@ -520,10 +673,19 @@ export default function CustomizeCategoriesScreen() {
       // console.log(userObject)
 
       // await saveUserObject(userObject);
-      saveSettingsStorage(storageKey, userObject);
+      await saveSettingsStorage(storageKey, userObject);
 
       setData(list);
+
+      
     }
+
+    pushAllCategoriesToCloud()
+
+
+    
+
+
     setIsAddingCategory(false);
  
     return obj;
@@ -582,7 +744,7 @@ export default function CustomizeCategoriesScreen() {
   const storeUserCategories = async (list) => {
     const storage = await loadSettingsStorage(storageKey);
 
-    console.log('data: ', data);
+    // console.log('data: ', data);
 
     storage.categories = list
 
@@ -1180,7 +1342,7 @@ export default function CustomizeCategoriesScreen() {
 
     // alert(Object.keys(colors).includes(selectedColor.key.toLowerCase()))
 
-    console.log('currentCategory:',currentCategory)
+    // console.log('currentCategory:',currentCategory)
 
 
     if (await getAuthentication() !== true && Object.keys(colors).includes(selectedColor.key.toLowerCase()) !== true) {
@@ -1208,6 +1370,8 @@ export default function CustomizeCategoriesScreen() {
       storeUserCategories(storage.categories);
       
       updateUserTransactionCategories(storage.categories);
+
+      pushAllCategoriesToCloud()
 
       setIsLoading(false)
     } catch(e) {
@@ -1261,7 +1425,7 @@ export default function CustomizeCategoriesScreen() {
   // console.log('getFlatListDataFromObject(getCrayolaColors()): ', getFlatListDataFromObject(getCrayolaColors()));
 
   // console.log('getFlatListDataFromObject((colors)): ', getFlatListDataFromObject((colors)));
-  console.log('colors: ', colors);
+  // console.log('colors: ', colors);
 
   // console.log('getCrayolaColors(): ', getCrayolaColors());
 
