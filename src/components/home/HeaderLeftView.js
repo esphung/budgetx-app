@@ -109,6 +109,7 @@ function HeaderLeftView(props) {
       global.email = cognito.attributes.email
       
       // setNormalMessage(cognito.attributes.email);
+      // setBoldMessage(global.displayName)
 
       const storage = await loadSettingsStorage(cognito.attributes.sub);
 
@@ -126,7 +127,8 @@ function HeaderLeftView(props) {
 
       if (storage) {
         // console.log('storage: ', storage);
-        setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName);
+        setBoldMessage((storage.user.full_name) ? storage.user.full_name : (cognito.attributes.name) ? cognito.attributes.name : global.displayName) // : global.displayName);
+        
         setNormalMessage(storage.user.email)
 
       }

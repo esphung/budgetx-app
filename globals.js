@@ -13,6 +13,8 @@ import app from './app.json';
 
 /* Variables */
 
+global.isConfirmSent = false;
+
 global.debugMode = true;
 
 global.isUserLoggedIn = false;
@@ -108,6 +110,7 @@ global.showGlobalValues = () => {
       `global.authenticated: ${global.authenticated}`,
       `global.isConnected: ${global.isConnected}`,
       `global.isUserLoggedIn: ${global.isUserLoggedIn}`,
+      `global.isConfirmSent: ${global.isConfirmSent}`,
 
     ],
   );

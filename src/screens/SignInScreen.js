@@ -86,6 +86,8 @@ function SignInScreen(props) {
 
   const [email, setEmail] = useState(global.emailAddressInput);
 
+  const [username, setUsername] = useState(global.emailAddressInput);
+
   const [password, setPassword] = useState(null);
 
   const [authCode, setAuthCode] = useState(null);
@@ -102,7 +104,7 @@ function SignInScreen(props) {
 
   const [isAuthCodeInputEnabled, setIsAuthCodeInputEnabled] = useState(true);
 
-  // const authCodeInputRef = useRef(null);
+  const authCodeInputRef = useRef(null);
 
   const [isConfirmSignUpBtnEnabled, setIsConfirmSignUpBtnEnabled] = useState(false);
 
@@ -288,7 +290,7 @@ function SignInScreen(props) {
                     autoCapitalize="none"
                     autoCorrect={false}
                     secureTextEntry={false}
-                    // ref={authCodeInputRef}
+                    ref={authCodeInputRef}
                     onSubmitEditing={handleAuthCodeInputSubmit}
                     onChangeText={(value) => onChangeText('authCode', value)}
 
@@ -406,9 +408,21 @@ function SignInScreen(props) {
   //   }
   // }
 
+  function handleEmailInputSubmit () {
+    if (global.emailAddressInput) {
+      try {
+        passwordInputRef.current._root.focus();
+      } catch(e) {
+        // statements
+        authCodeInputRef.current._root.focus();
+        console.log(e);
+      }
+    }
+  }
+
   // user input handlers
   function handleUsernameInputSubmit() {
-    // passwordInputRef.current._root.focus();
+    passwordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
@@ -463,10 +477,15 @@ function SignInScreen(props) {
     };
   }, [authCode]);
 
+  // global.emailAddressInput = 'hello'
+
   useEffect(() => {
-    if (email) {
-      passwordInputRef.current._root.focus();
+    if (global.emailAddressInput) {
+      setEmail(global.emailAddressInput);
     }
+    // if (email) {
+    //   passwordInputRef.current._root.focus();
+    // }
     // return () => {
     //   // effect
     // };
@@ -493,7 +512,7 @@ function SignInScreen(props) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     ref={emailInputRef}
-                    // onSubmitEditing={() => handleEmailInputSubmit()}
+                    onSubmitEditing={() => passwordInputRef.current._root.focus()}
                     onChangeText={(value) => onChangeText('email', value)}
 
                     value={email}
@@ -577,7 +596,7 @@ function SignInScreen(props) {
   const view = (
     <NetworkConsumer>
       {
-        ({ isConnected }) => (isConnected ? signin : offline)
+        ({ isConnected }) => ((isConnected && !global.isConfirmSent) ? signin : confirm)
       }
     </NetworkConsumer>
   );

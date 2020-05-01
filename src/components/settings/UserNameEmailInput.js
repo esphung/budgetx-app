@@ -249,10 +249,13 @@ function UserNameEmailInput(props) {
 
     setIsConfirming(true);
 
+    global.emailAddressInput = currentEmail
+
+    props.navigation.navigate('SignIn');
 
 
     try {
-      await Auth.verifyCurrentUserAttributeSubmit("email", authCode)
+      // await Auth.verifyCurrentUserAttributeSubmit("email", authCode)
 
       // history.push("/settings");
 
@@ -262,7 +265,16 @@ function UserNameEmailInput(props) {
 
       // global.showGlobalValues()
 
+      // global.emailAddressInput = currentEmail
+
+
+
       signOut()
+
+
+
+
+
       
     } catch (error) {
       // onError(error);
@@ -474,12 +486,14 @@ function UserNameEmailInput(props) {
     // saveSettingsStorage(global.storageKey, storage)
 
 
+
+
     global.email = currentEmail;
 
     global.showGlobalValues()
 
     await Auth.signOut()
-      .then(async () => {
+      .then(() => {
         AsyncStorage.removeItem('userToken');
 
         AsyncStorage.removeItem('storageKey');
@@ -507,54 +521,32 @@ function UserNameEmailInput(props) {
         //   });
         // });
 
-        // setHasRatedUs(false);
+        setHasRatedUs(false);
 
-        // setIsBackedUp(false)
+        setIsBackedUp(false)
 
-        // AsyncStorage.setItem('storageKey', JSON.stringify(''))
-
-        showMessage({message:'Signed out', description: `Please sign in as ${global.email}`});
-
-        // props.navigation.navigate('AuthLoading')
-        global.emailAddressInput = global.email
-
-        navigation.navigate('AuthLoading');
+        AsyncStorage.setItem('storageKey', JSON.stringify(''))
 
 
 
-  
+        setIsConfirming(true);
 
-      //   // console.log('Removed AsyncsStorage Variables ..');
+      global.emailAddressInput = currentEmail
 
-
-      //   // AsyncStorage.getAllKeys((err, keys) => {
-      //   //   AsyncStorage.multiGet(keys, (error, stores) => {
-      //   //     stores.map((result, i, store) => {
-      //   //       console.log({ [store[i][0]]: store[i][1] });
-      //   //       return true;
-      //   //     });
-      //   //   });
-      //   // });
-
-      // // AsyncStorage.setItem('storageKey', JSON.stringify(''))
-
-      
+      props.navigation.navigate('SignIn');
 
         
 
-      //   // console.log('Sign out complete');
-      //   showMessage({message:'Signed out', description: `Please sign into ${global.email}`});
-
-      //   // props.navigation.navigate('AuthLoading')
-      //   global.emailAddressInput = global.email
-      //   props.navigation.navigate('SignIn')
-        // alert('Signed Out!')
       })
       .catch((err) => console.log('Error while signing out!', err));
 
+      
 
+        // console.log('Sign out complete');
+        showMessage('Signed out');
 
-
+        setIsConfirming(false)
+   
 
   };
 
