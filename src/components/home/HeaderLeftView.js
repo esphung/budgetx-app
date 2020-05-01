@@ -62,6 +62,8 @@ import isValidEmail from '../../functions/isValidEmail';
 
 import { Ionicons } from '@expo/vector-icons';
 
+import ProfileUserImage from '../settings/ProfileUserImage';
+
 function HeaderLeftView(props) {
   const { onUsernameSubmit, getNormalMessage } = props;
 
@@ -108,9 +110,7 @@ function HeaderLeftView(props) {
 
       global.email = cognito.attributes.email
       
-      // setNormalMessage(cognito.attributes.email);
-      // setBoldMessage(global.displayName)
-
+      
       const storage = await loadSettingsStorage(cognito.attributes.sub);
 
       try {
@@ -125,11 +125,15 @@ function HeaderLeftView(props) {
       }
 
 
-      if (storage) {
+      if (storage.user.full_name) {
         // console.log('storage: ', storage);
-        setBoldMessage((storage.user.full_name) ? storage.user.full_name : (cognito.attributes.name) ? cognito.attributes.name : global.displayName) // : global.displayName);
+        setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName) // : global.displayName);
         
-        setNormalMessage(storage.user.email)
+        setNormalMessage(storage.user.email);
+
+      } else {
+        setNormalMessage(cognito.attributes.email);
+        // setBoldMessage(global.displayName)
 
       }
 
@@ -160,13 +164,14 @@ function HeaderLeftView(props) {
       }
 
       // set stored user image
-      if (storageObj.image_url) {
-        // console.log('stored user settings image:', storageObj.image);
-        if (storageObj.image_url) {
-          // found stored image
-          setImage(storageObj.image_url);
-        }
-      }
+      // if (storageObj.image_url) {
+      //   // console.log('stored user settings image:', storageObj.image);
+      //   if (storageObj.image_url) {
+      //     // found stored image
+      //     setImage(storageObj.image_url);
+      //   }
+      // }
+      if (storageObj.avatar) global.avatar = storageObj.avatar
     } catch (e) {
       // statements
       Alert.alert('Could not load settings');
@@ -181,18 +186,20 @@ function HeaderLeftView(props) {
 
 
 
-  const imageView = (
-    <TouchableOpacity
-    disabled
-    style={styles.userImageMaskView}
-  >
-    <Image
-      resizeMode="contain"
-      style={styles.userImage}
-      source={global.avatar} // {global.placeholder500x500}
-    />
-  </TouchableOpacity>
-  );
+  // const imageVie = (
+  //   <TouchableOpacity
+  //   disabled
+  //   style={styles.userImageMaskView}
+  // >
+  //   <Image
+  //     // resizeMode="contain"
+  //     style={styles.userImage}
+  //     source={global.avatar} // {global.placeholder500x500}
+  //   />
+  // </TouchableOpacity>
+  // );
+
+  const imageView = <ProfileUserImage isUserLoggedIn={isUserLoggedIn} />
 
   function clearEmailInput() {
     // console.log('emailInputRef.current._root.focus(): ', emailInputRef.current._root.focus());

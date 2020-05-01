@@ -1815,11 +1815,11 @@ export default function Home(props) {
         style={
             {
             flex: 0.4,
-            // alignItems: 'center',
-            // justifyContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
             
 
-            marginTop: Constants.statusBarHeight,
+            
             
 
             // borderWidth: 1,
@@ -1851,7 +1851,7 @@ export default function Home(props) {
           // }
           style={[{
             flex: 1,
-            // marginTop: Constants.statusBarHeight,
+            marginTop: 50,
             
             justifyContent: 'center',
             alignItems: 'center',

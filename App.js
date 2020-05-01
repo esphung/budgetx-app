@@ -148,6 +148,8 @@ export default function App() {
     global.hasRatedUs = await getHasRatedUs();
 
     global.isDeviceSyncOn = await getIsDeviceSyncOn();
+
+
   }
 
   // /* redirect user to storybook view if debugging */

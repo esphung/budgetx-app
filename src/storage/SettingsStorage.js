@@ -159,7 +159,7 @@ export const Settings = (key) => {
       categories: defaultCategories,
       payees: [],
       image_url: '',
-      avatar: global.avatar,
+      avatar: global.defaultAvatar,
       owner: key,
       created: new Date(),
       version: 0,

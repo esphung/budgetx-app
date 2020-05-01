@@ -72,7 +72,7 @@ const getAuthentication = async () => {
 function ProfileUserImage(props) {
   const  { isUserLoggedIn } =  props;
 
-  const [image, setImage] = useState(global.avatar);
+  const [image, setImage] = useState(global.defaultAvatar);
 
   const [isReady, setIsReady] = useState(true);
 
@@ -84,14 +84,19 @@ function ProfileUserImage(props) {
 
   const [isPermissionDialogVisible, setIsPermissionDialogVisible] = useState(false);
 
+
+
   useEffect(() => {
     setIsReady(false);
-    clearState()
+    // setIsLoading(true);
+    // clearState()
 
     getImage()
-    // return () => {
-    //   // effect
-    // };
+    return () => {
+      // effect
+      setIsReady(true);
+      // setIsLoading(false);
+    };
   }, []);
 
 
@@ -124,7 +129,7 @@ function ProfileUserImage(props) {
 
 
   async function clearState() {
-    setImage(null)
+    setImage(global.defaultAvatar)
     retrieveStoredSettingsImage()
 
     // setImage(global.avatar)
@@ -178,6 +183,7 @@ function ProfileUserImage(props) {
     const access = { level: "public", contentType: fileType, };
     console.log('access: ', access);
     fetch(imageResult.uri).then(response => {
+      setIsLoading(true)
       response.blob()
         .then(blob => {
           Storage.put(`@${global.storageKey}/${imageName}`, blob, access)
@@ -195,16 +201,35 @@ function ProfileUserImage(props) {
               // settings.image_url = 'https://s3.amazonaws.com/' + global.bucketName + global.currentBucketImage
 
               // settings.avatar = { uri: 'https://s3.amazonaws.com/' + global.bucketName + global.currentBucketImage}
-
+              setIsLoading(false);
               try {
+                setIsLoading(true);
                 let stored = await Storage.get(global.currentBucketImage);
 
-                global.avatar = { uri: stored };
+
+                if (stored) {
+                  settings.avatar = { uri: stored };
+
+                  saveSettingsStorage(global.storageKey, settings);
+
+                  global.avatar = settings.avatar
+
+                  await setImage(global.avatar);
+
+                  setIsLoading(false)
+                }
+
+                global.avatar = settings.avatar
+
+                
+
+              
+
 
                 // console.log('stored: ', stored);
               } catch(e) {
                 // statements
-                console.log(e);
+                console.log('Error on succ:', e, succ);
               }
 
               // try {
@@ -217,17 +242,30 @@ function ProfileUserImage(props) {
               // console.log('settings.image_url: ', settings.image_url);
 
 
-              setImage(global.avatar);
 
-              settings.avatar = global.avatar;
+              // setImage(global.avatar);
 
-              saveSettingsStorage(global.storageKey, settings);
+              // settings.avatar = global.avatar;
+
+              // saveSettingsStorage(global.storageKey, settings);
+
+              // setIsLoading(false);
 
 
               // https://s3.amazonaws.com/bucketname/foldername/imagename.jpg
             })
-            .catch(err => console.log('err', err));
+            .catch(err => {
+              // throw new Error(err);
+              console.log('successful stored image url err: ', err);
+            }
+              // console.log('Error err:', err)
+              );
+            
+
+            // setIsLoading(false);s
         });
+
+        // setImage(global.avatar);
     });
 
     setIsLoading(false);
@@ -245,14 +283,16 @@ function ProfileUserImage(props) {
   };
 
   const getImage = async () => {
-    retrieveStoredSettingsImage(global.storageKey);
+    // retrieveStoredSettingsImage(global.storageKey);
 
     try {
       let storage = await loadSettingsStorage(global.storageKey)
 
-      if (storage.avatar) {
+      if (storage.image_url) {
         // stored user image exists
-        setImage(avatar);
+        global.avatar = { uri: storage.image_url }
+        // setIsReady(true);
+        // setIsLoading(false);
       } else {
         // stored image dne
         setImage(global.avatar);
@@ -264,6 +304,8 @@ function ProfileUserImage(props) {
       console.log('error in getImage:', e);
 
       setIsReady(true);
+
+
     }
 
     // setIsLoading(false);
@@ -359,12 +401,14 @@ function ProfileUserImage(props) {
   }
 
   async function retrieveStoredSettingsImage() {
-    setImage(null)
+    // setImage(null)
     // load stored user transactions
     try {
       const storageObj = await loadSettingsStorage(global.storageKey);
       // console.log('storageObj: ', storageObj);
-      setImage(storageObj.user.image_url);
+      if (storageObj.avatar) global.avatar = storageObj.avatar
+
+      setImage(global.avatar)
     } catch (e) {
       // statements
       Alert.alert('Could not load settings');
@@ -423,13 +467,13 @@ function ProfileUserImage(props) {
   //  setIsReady(true);
   // }
 
-  const appLoading = (
-    <AppLoading
-      startAsync={clearState}
-      onFinish={() => {}}
-      onError={console.warn}
-    />
-  );
+  // const appLoading = (
+  //   <AppLoading
+  //     startAsync={clearState}
+  //     onFinish={() => {}}
+  //     onError={console.warn}
+  //   />
+  // );
 
   // const imageView = (
   //   <TouchableOpacity
@@ -452,27 +496,24 @@ function ProfileUserImage(props) {
   //   </TouchableOpacity>
   // );
 
-  useEffect(() => {
-    if (!image) {
-      setIsLoading(true)
-    } else {
-      setIsLoading(false)
-    }
-    return () => {
-      // effect
-    };
-  }, [image])
+  // useEffect(() => {
+  //   if (!image) {
+  //     setIsLoading(true)
+  //   } else {
+  //     setIsLoading(false)
+  //   }
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [image])
 
-
-  const imageView = (
-    
-
-    
- 
-          
-        <TouchableOpacity
-        // disabled
-        onPress={
+    const imageView = (
+    <TouchableOpacity
+    // disabled
+    style={styles.userImageMaskView}
+    style={[styles.userImageMaskView, props.style]}
+    // {...rest}
+    onPress={
           async () => {
             // if (global.authenticated) {
               await getPermissionAsync();
@@ -480,34 +521,65 @@ function ProfileUserImage(props) {
             // }
           }
         }
-        >
-        {
-          <View style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-        {
+  >
+    <Image
+      // resizeMode="contain"
+      style={styles.userImage}
+      source={global.avatar} // {global.placeholder500x500}
+    />
+    {
           permissionDialogBox
         }
 
 
-         {
-          isReady &&
-          (
-            <View style={styles.userImageMaskView}><Image
-                     // source={{ uri: image.uri }}
-                     // style={{ width: 300, height: 300 }}
-                     style={styles.userImage}
-                     source={global.avatar} // {global.placeholder500x500}
-                   /></View>)
+  </TouchableOpacity>
+  );
+
+
+  // const imageVie = (
+    
+
+    
+ 
+          
+  //       <TouchableOpacity
+  //       // disabled
+  //       onPress={
+  //         async () => {
+  //           // if (global.authenticated) {
+  //             await getPermissionAsync();
+  //           //   setShouldShowPleaseLoginBox(true)
+  //           // }
+  //         }
+  //       }
+  //       >
+  //       {
+  //         <View style={{
+  //           flex: 1,
+  //           alignItems: 'center',
+  //           justifyContent: 'center',
+  //         }}>
+  //       {
+  //         permissionDialogBox
+  //       }
+
+
+  //        {
+  //         isReady &&
+  //         (
+  //           <View style={styles.userImageMaskView}><Image
+  //                    // source={{ uri: image.uri }}
+  //                    // style={{ width: 300, height: 300 }}
+  //                    style={styles.userImage}
+  //                    source={global.avatar} // {global.placeholder500x500}
+  //                  /></View>) || <View />
          
-     }
-     </View>
-   }
+  //    }
+  //    </View>
+  //  }
    
     
-        </TouchableOpacity>
+  //       </TouchableOpacity>
       
         
       
@@ -516,27 +588,23 @@ function ProfileUserImage(props) {
 
       
       
-  );
+  // );
 
-  return isLoading && <View style={{
-
-                 width: '80%',
-                 height: '80%',
-
-                 position: 'absolute',
-
-                 alignItems: 'center',
-                 justifyContent: 'center',
-
-                 // borderWidth: 1,
-                 // borderColor: 'white',
-                 // borderStyle: 'solid',
-     
-  }}><ActivityIndicator style={{
-         
-       
-         
-               }} size="large" color={colors.offWhite} /></View> || imageView
+  
+  return <View>{imageView}{
+          isReady && isLoading &&
+    <View style={{
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }}>
+      <ActivityIndicator size='large' />
+    </View>
+}</View>
 
   // const view =
   //   <NetworkConsumer>
@@ -595,26 +663,28 @@ function ProfileUserImage(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // marginTop: 20,
-    // marginLeft: 15,
-    width: '100%',
-    height: '100%',
+  // container: {
+  //   flex: 1,
+  //   // flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   // marginTop: 20,
+  //   // marginLeft: 15,
+  //   // width: '100%',
+  //   // height: '100%',
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'dashed',
+  // },
 
   userImageMaskView: {
     // flex: 0.8,
-    width: 60,
-    height: 60,
-    backgroundColor: colors.darkGreyBlue,
+    // width: 60,
+    // height: 60,
+    width: 33,
+    height: 33,
+    // backgroundColor: colors.darkGreyBlue,
     borderRadius: 50,
 
     // borderWidth: 2,

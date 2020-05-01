@@ -48,7 +48,12 @@ function ProfileRectangle(props) {
             // borderStyle: 'solid',
           }
         }>
-          <ProfileUserImage isUserLoggedIn={props.isUserLoggedIn} />
+          <ProfileUserImage style={
+            {
+              width: 58,
+              height: 58,
+              
+            }} isUserLoggedIn={props.isUserLoggedIn} />
         </View>
       </View>
 

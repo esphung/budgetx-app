@@ -12,11 +12,12 @@ import {
 import app from './app.json';
 
 /* testing and debug variables */
-global.testOfflineMode;
+global.testOfflineMode = null;
 
 /* s3 storage variables (aws amplify storage) */
 global.bucketName = 'profilepicturesbucketbudgetxbudgetxenv-budgetxenv/';
 
+global.currentBucketImage = '';
 
 /* Variables */
 
@@ -28,7 +29,11 @@ global.isUserLoggedIn = false;
 
 global.screenWidth = Math.round(Dimensions.get('window').width);
 
+global.screenHeight = Math.round(Dimensions.get('window').height);
+
 global.displayName = 'Get cross-device sync';
+
+global.defaultDisplayName = 'Get cross-device sync';
 
 global.facebookAppId = app.expo.facebookAppId;
 
@@ -81,6 +86,8 @@ global.walletIcon = require('./assets/wallet-filled-money-tool.png');
 
 global.avatar = require('./assets/avatar.png');
 
+global.defaultAvatar = require('./assets/avatar.png');
+
 global.appIcon = require('./assets/icon.png');
 
 global.backspaceKeyIcon = require('./assets/backspace-clear-delete-key-remove-text-icon-_512-512.png');
@@ -111,6 +118,7 @@ global.showGlobalValues = () => {
       `global.email: ${global.email}`,
       `global.avatar: ${global.avatar}`,
       `global.displayName: ${global.displayName}`,
+      `global.defaultDisplayName: ${global.defaultDisplayName}`,
       `global.isStorybookModeOn: ${global.isStorybookModeOn}`,
       `global.screenWidth: ${global.screenWidth}`,
       `global.debugMode: ${global.debugMode}`,
@@ -118,6 +126,9 @@ global.showGlobalValues = () => {
       `global.isConnected: ${global.isConnected}`,
       `global.isUserLoggedIn: ${global.isUserLoggedIn}`,
       `global.isConfirmSent: ${global.isConfirmSent}`,
+      `global.bucketName: ${global.bucketName}`,
+      `global.defaultAvatar: ${global.defaultAvatar}`,
+      `global.currentBucketImage: ${global.currentBucketImage}`,
 
     ],
   );
