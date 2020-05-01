@@ -679,21 +679,27 @@ export default function Home(props) {
 
     })
     .catch(async () => {
-      const userObject = await loadSettingsStorage(global.storageKey); // load user object
-      console.log(userObject);
-      // console.log('storageKey: ', storageKey);
+      try {
+        
+        const userObject = await loadSettingsStorage(global.storageKey); // load user object
+        console.log(userObject);
+        // console.log('storageKey: ', storageKey);
 
-      setCurrentOwner(userObject.user.id);
+        setCurrentOwner(userObject.user.id);
 
-      for (var i = userObject.categories.length - 1; i >= 0; i--) {
-        userObject.categories[i].owner = global.storageKey
+        for (var i = userObject.categories.length - 1; i >= 0; i--) {
+          userObject.categories[i].owner = global.storageKey
+        }
+
+        await setCategories(userObject.categories);
+
+        setCurrentTransactions(userObject.transactions);
+
+        setIsUserLoggedIn(false);
+      } catch(e) {
+        // statements
+        console.log(e);
       }
-
-      await setCategories(userObject.categories);
-
-      setCurrentTransactions(userObject.transactions);
-
-      setIsUserLoggedIn(false);
     });
     // saveUndoHistory();
 
@@ -727,7 +733,7 @@ export default function Home(props) {
   };
 
   const storeNewTransaction = async (transaction) => {
-    setIsStoringNewTransaction(true);
+    // setIsStoringNewTransaction(true);
 
     // check for maximum unauthorized user transactions
     if (!isUserLoggedIn && currentTransactions.length >= 5) {
@@ -777,7 +783,7 @@ export default function Home(props) {
 
     // saveUndoHistory();
 
-    setIsStoringNewTransaction(false);
+    // setIsStoringNewTransaction(false);
 
     Analytics.record({ name: 'Stored a transaction' });
   };
@@ -975,7 +981,7 @@ export default function Home(props) {
     // make sure user inputs are not invalid
     if (!isUserInputValid()) return;
 
-    setIsReady(false);
+    // setIsReady(false);
 
 
     // /* Create New Category */
@@ -1039,10 +1045,10 @@ export default function Home(props) {
     setCurrentNote('')
     setCurrentVersion(0)
 
-    setIsReady(true);
+    // setIsReady(true);
 
 
-    setIsBackedUp(false)
+    // setIsBackedUp(false)
   }
 
   const saveUndoHistory = async () => {
@@ -1211,25 +1217,25 @@ export default function Home(props) {
     }
   }, [currentTransaction]);
 
-  useEffect(() => {
-    isStoringNewTransaction && showMessage(
-      {
-        message: 'Stored new transaction',
-        // description: '...',
-        type: 'success',
-        // position: 'top',
-        icon: { icon: 'auto', position: 'right' },
+  // useEffect(() => {
+  //   isStoringNewTransaction && showMessage(
+  //     {
+  //       message: 'Stored new transaction',
+  //       // description: '...',
+  //       type: 'success',
+  //       // position: 'top',
+  //       icon: { icon: 'auto', position: 'right' },
 
-        textStyle: styles.textStyle,
+  //       textStyle: styles.textStyle,
 
-        // backgroundColor: colors.dark, // "purple", // background color
+  //       // backgroundColor: colors.dark, // "purple", // background color
 
-        duration:  2505,
-      })
-    return () => {
-      // isStoringNewTransaction effect
-    };
-  }, [isStoringNewTransaction]);
+  //       duration:  2505,
+  //     })
+  //   return () => {
+  //     // isStoringNewTransaction effect
+  //   };
+  // }, [isStoringNewTransaction]);
 
   // useEffect(() => {
   //   isRemovingStoredTransaction &&
@@ -1404,7 +1410,23 @@ export default function Home(props) {
   };
 
   let stickyTable = (
-    <MyStickyTable
+    <View
+    style={
+      {
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      // height: 500,
+      position: 'absolute',
+
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
+
+      zIndex: -1,
+      }
+    }><MyStickyTable
       isUpdatingTransaction={isUpdatingTransaction}
       transactions={currentTransactions}
       currentTransaction={currentTransaction}
@@ -1430,7 +1452,7 @@ export default function Home(props) {
       updateStoredTransaction={(item) => updateStoredTransaction(currentTransactions, item)}
 
 
-    />
+    /></View>
   );
   let scrollingPills = (
     <ScrollingPillCategoriesView
@@ -1490,7 +1512,7 @@ export default function Home(props) {
     // retrieveUserStoredSettings();
   }
 
-  const updateTransactionIndicator = <ActivityIndicator size="large" color={colors.white} />;
+  // const updateTransactionIndicator = <ActivityIndicator size="large" color={colors.white} />;
 
   const spinner = (
     <View
@@ -1885,28 +1907,6 @@ export default function Home(props) {
       }
       {
         isReady && isCalculatingBalance && spinner
-      }
-      {
-        isReady && isStoringNewTransaction && (
-          <View
-      style={
-        {
-          // flex: 1,
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          position: 'absolute',
-          // alignItems: 'center',
-          justifyContent: 'center',
-          // backgroundColor: '#ddd',
-          opacity: 0.05,
-        }
-      }
-    >
-      <ActivityIndicator size="large" color="#ddd" />
-    </View>
-    )
       }
       {
         // !isReady && spinner

@@ -318,6 +318,7 @@ const MyStickyTable = (props) => {
   /* Working  ios vversion of table */
   const ios_table = (
     <FlatList
+  
       data={tableData}
       // extraData={setTableData}
       renderItem={renderItem}

@@ -189,7 +189,7 @@ function HeaderLeftView(props) {
     <Image
       resizeMode="contain"
       style={styles.userImage}
-      source={image} // {global.placeholder500x500}
+      source={global.avatar} // {global.placeholder500x500}
     />
   </TouchableOpacity>
   );

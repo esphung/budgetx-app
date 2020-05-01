@@ -11,6 +11,13 @@ import {
 
 import app from './app.json';
 
+/* testing and debug variables */
+global.testOfflineMode;
+
+/* s3 storage variables (aws amplify storage) */
+global.bucketName = 'profilepicturesbucketbudgetxbudgetxenv-budgetxenv/';
+
+
 /* Variables */
 
 global.isConfirmSent = false;

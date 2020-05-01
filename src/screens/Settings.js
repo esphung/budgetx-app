@@ -1006,48 +1006,80 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
+    let backupKey = global.storageKey;
     let storage = await loadSettingsStorage(global.storageKey)
 
     for (var i = storage.transactions.length - 1; i >= 0; i--) {
       // console.log('transactions[i]: ', transactions[i]);
-      removeTransaction(storage.transactions[i])
+      await removeTransaction(storage.transactions[i])
     }
 
     let categories = storage.categories;
 
     for (var i = categories.length - 1; i >= 0; i--) {
       // console.log('categories[i]: ', categories[i]);
-      removeCategory(categories[i])
+      await removeCategory(categories[i])
     }
 
     // let storage = await loadSettingsStorage(global.storageKey)
 
-    storage.categories = defaultCategories;
+    // storage.categories = defaultCategories;
+
+    // let  storage = await loadSettingsStorage(global.storageKey)
+    Object.keys(storage).forEach( function(element, index) {
+      console.log('element: ', element);
+      if (element  !== 'user' && element !== 'image_url') {
+        storage[element] = '';
+      }
+    });
+
+    // storage = null;
+
+    await saveSettingsStorage(global.storageKey, storage);
+
+    global.isBackedUp = false;
+    // global.isDeviceSyncOn = null
+    global.isDeviceSynced = false;
+    // global.hasRatedUs = null
+    
+    // global.isUserAuthenticated = null;
+    // global.isLoginEnabled = null
+    // global.emailAddressInput =  null
+    // global.email = null
+    // global.avatar =  null
+    // global.displayName =  null
+    // global.isStorybookModeOn =  null
+    // global.screenWidth =  null
+    // global.debugMode =  null;
+    // global.authenticated =  null;
+    // global.isConnected =  null;
+    // global.isUserLoggedIn = null
+    // global.isConfirmSent = null
 
 
-    AsyncStorage.removeItem('hasRatedUs');
-    // console.log('await AsyncStorage.getItem("hasRatedU"): ', await AsyncStorage.getItem('hasRatedUs'));
+    global.showGlobalValues()
 
-    AsyncStorage.removeItem('isBackedUp');
 
-    // AsyncStorage.removeItem('storageKey');
+    // AsyncStorage.removeItem('hasRatedUs');
+    // // console.log('await AsyncStorage.getItem("hasRatedU"): ', await AsyncStorage.getItem('hasRatedUs'));
 
-    AsyncStorage.removeItem('isDeviceSynced');
+    // AsyncStorage.removeItem('isBackedUp');
 
-    AsyncStorage.removeItem('isDeviceSyncOn');
+    // // AsyncStorage.removeItem('storageKey');
+
+    // AsyncStorage.removeItem('isDeviceSynced');
+
+    // AsyncStorage.removeItem('isDeviceSyncOn');
 
 
     await AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (error, stores) => {
-        stores.map((result, i, store) => {
+        stores.map(async (result, i, store) => {
 
           if (store[i][0] === (global.storageKey)) {
             // remove items with username key
             // console.log({ [store[i][0]]: store[i][1] });
-            AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
-
-
-        
+            await AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
 
             // if (store[i].includes('hasRatedUs')) {
             //   // remove items with username key
@@ -1056,22 +1088,27 @@ function Settings(props) {
             // }
           }
 
-
-
-
           else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
             // remove backups with username key
-            AsyncStorage.removeItem(store[i][0]) // Remove Backups
+            await AsyncStorage.removeItem(store[i][0]) // Remove Backups
           }
           else if (store[i][0] === (global.storageKey + '_HISTORY')) {
             // remove backups with username key
-            AsyncStorage.removeItem(store[i][0]) // Remove Backups
+            await AsyncStorage.removeItem(store[i][0]) // Remove Backups
           }
-
-          return true;
         });
       });
     });
+
+    let settings = await loadSettingsStorage(backupKey);
+
+    global.storageKey = settings.user.id;
+
+    global.email = settings.user.email;
+
+    global.displayName = settings.user.full_name;
+
+    global.username = settings.user.username;
 
     navigation.navigate('AuthLoading');
   };
@@ -1981,7 +2018,7 @@ Settings.navigationOptions = ({ navigation }) => {
       </View>
     ),*/
 
-    // headerLeft: null,
+    // headerLeft  = null
 
   };
   return navbar;

@@ -48,6 +48,7 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             04/04/2020 02:15 PM | Cross device sync finished
             04/04/2020 05:48 PM | facebook app developer integration
             04/28/2020 08:11 PM | starting version 4.1.x
+            04/30/2020 07:42 PM | Added working email change with AWS
 */
 
 import './globals'; // global values
@@ -99,6 +100,12 @@ Amplify.configure({
     disabled: true,
   },
 });
+
+AWS.config.region = 'us-east-1'; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+});
+
 
 const getAuthentication = async () => {
   global.authenticated = false;

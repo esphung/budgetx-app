@@ -147,16 +147,42 @@ export const clearSettingsStorage = async (key) => {
   }
 };
 
+// export function Settings(key) {
+
+// }
+
+export const Settings = (key) => {
+    return {
+      settings_id: uuidv4(),
+      user: new User(key),
+      transactions: [],
+      categories: defaultCategories,
+      payees: [],
+      image_url: '',
+      avatar: global.avatar,
+      owner: key,
+      created: new Date(),
+      version: 0,
+      json : () => {
+        return JSON.stringify(this, null, 2);
+      },
+    }
+  };
+
 // LOAD VALUE USERDEFAULTCATEGORIES
 const DEFAULT_SETTINGS = async (key) => {
-  const settings = {
-    user: new User(key),
-    transactions: [],
-    categories: defaultCategories,
-    payees: [], // ???
-    image_url: global.avatar,
-    version: 1,
-  };
+  
+  let settings = new Settings(key);
+
+  // var person = {
+  //   firstName: "John",
+  //   lastName : "Doe",
+  //   id       : 5566,
+  //   log : function() {
+  //     return this.firstName + " " + this.lastName;
+  //   }
+  // };
+  // console.log('settings.json(): ', settings.json());
 
   await AsyncStorage.setItem('userToken', String(global.storageKey + '@session' + uuidv4()));
   return settings;
