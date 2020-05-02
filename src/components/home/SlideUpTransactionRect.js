@@ -494,7 +494,7 @@ function SlideUpTransactionRect(props) {
               }
 
               {
-                <TouchableText
+/*                <TouchableText
                   style={
                     dateLabel
                     // {
@@ -504,7 +504,7 @@ function SlideUpTransactionRect(props) {
                   title="Go Back"
                   onPress={pickerBtnPressed}
 
-                />
+                />*/
               }
               </View>
               )

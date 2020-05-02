@@ -2,9 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { withNavigation } from 'react-navigation';
 
-// import SwitchNavigator from '../../../SwitchNavigator'; // ????
-
-// import { NetworkProvider } from 'react-native-offline'; // ????
 import { Ionicons } from '@expo/vector-icons';
 
 import {
@@ -27,7 +24,6 @@ import { showMessage } from 'react-native-flash-message';
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-
 import {
   Container,
   Item,
@@ -39,13 +35,7 @@ import colors from '../../../colors';
 
 import styles from '../../../styles';
 
-// import isValidEmail from '../../../src/functions/isValidEmail';
-
 // import SpinnerMask from '../SpinnerMask';
-
-// function isValidEmail(currentEmail) {
-//   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(currentEmail);
-// }
 
 import {
   loadSettingsStorage,
@@ -54,58 +44,32 @@ import {
 
 import isValidEmail from '../../functions/isValidEmail';
 
-// function isValidName(text) {
-//   // var nameRegex = /^[a-zA-Z\-]+$/;
-//   const usernameRegex = /^[a-zA-Z0-9]+$/;
-//   let bool = false;
-//   const regExp = usernameRegex;
-//   if (regExp.test(text)) {
-//     bool = true;
-//   }
-//   return bool;
-// }
-
-// const login = <NetworkProvider><SwitchNavigator /></NetworkProvider>;
-
-const EMAIL_INPUT_LIMIT = 22;
-
 const spinnerView = (
-    <View
-      style={
-        {
-          // flex: 1,
-          justifyContent: 'center',
-          // alignItems: 'center',
-          // backgroundColor: colors.dark,
-          position: 'absolute',
-          top:  0,
-          bottom: 0,
-          left: 0,
-          right: 0
-        }
+  <View
+    style={
+      {
+        // flex: 1,
+        justifyContent: 'center',
+        // alignItems: 'center',
+        // backgroundColor: colors.dark,
+        position: 'absolute',
+        top:  0,
+        bottom: 0,
+        left: 0,
+        right: 0
       }
-    >
-      <ActivityIndicator size="large" color={colors.offWhite} />
-    </View>
-  );
-
-
+    }
+  >
+    <ActivityIndicator size="large" color={colors.offWhite} />
+  </View>
+);
 
 function UserNameEmailInput(props) {
   const { navigation } = props;
 
-  // navigation.navigate('Home');
-  // navigation.navigate('Home');
-
-  // const [text, setText] = useState(null);
-
-  // const [isUserLoaded, setIsUserLoaded] = useState(false);
-
-  // const [isInputEnabled, setIsInputEnabled] = useState(false);
-
   const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
 
-  const [nameLabelText, setCurrentNameLabelText] = useState('Account');
+  const [nameLabelText, setCurrentNameLabelText] = useState('ID');
 
   const [emailLabelText, setCurrentEmailLabelText] = useState('Email');
 
@@ -113,23 +77,16 @@ function UserNameEmailInput(props) {
 
   const [currentEmail, setCurrentEmail] = useState(global.email);
 
-  const [currentFullName, setCurrentFullName] = useState('')
-
-  // const [emailPlaceholder, setCurrentEmailPlaceholder] = useState('examplemail@budget.com');
-
-  // const [shouldNameAutofocus, setShouldNameAutoFocus] = useState(false);
+  const [currentFullName, setCurrentFullName] = useState('');
 
   const [shouldAuthCodeAutoFocus, setShouldAuthCodeAutoFocus] = useState(false);
-
-  // const [isEmailInputEnabled, setIsEmailInputEnabled] = useState(false);
-
-  // const [isNameInputEnabled, setIsNameInputEnabled] = useState(true);
 
   const [shouldClearNameInput] = useState(false);
 
   const [codeSent, setCodeSent] = useState(false);
 
   const [isConfirming, setIsConfirming] = useState(false);
+
   const [isSendingCode, setIsSendingCode] = useState(false);
 
   const [authCode, setAuthCode] = useState('')
@@ -139,72 +96,9 @@ function UserNameEmailInput(props) {
 
   const [isError, setIsError] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('');
 
   const authCodeInputRef = useRef(null);
-
-
-  // const [isLoginEnabled, setIsLoginEnabled] = useState(false)
-
-  // const [user, setUser] = useState(null);
-
-  // async function saveName(string) {
-  //   const userObject = await loadUserObject(); // load storage object
-  //   // console.log('user:', userObject.user.username);
-
-  //   userObject.user.username = string;
-  //   // console.log('user:', userObject.user.username);
-
-  //   if (isValidName(string)) {
-  //     saveUserObject(userObject);
-  //   }
-  // }
-
-  // async function saveEmail(string) {
-  //   const userObject = await loadUserObject(); // load storage object
-
-  //   userObject.user.currentEmail = string;
-  //   // console.log('user:', userObject.user.username);
-
-  //   if (isValidEmail(string)) {
-  //     saveUserObject(userObject);
-  //     // setIsEmailInputEnabled(false);
-  //   }
-  // }
-
-  // async function retrieveStoredUserData() {
-  //   const userObject = await loadUserObject(); // load storage object
-  //   // console.log(userObject.user);
-
-  //   // //  Testing
-  //   // userObject.user.username = ''
-  //   // userObject.user.currentEmail = ''
-  //   // saveUserObject(userObject)
-
-  //   if (userObject.user.username) {
-  //     setCurrentName(userObject.user.username);
-  //     // setCurrentNamePlaceholder(userObject.user.username);
-  //   } else {
-  //     setShouldClearNameInput(true);
-  //   }
-
-  //   if (userObject.user.currentEmail) {
-  //     setCurrentEmail(userObject.user.currentEmail);
-  //     // setCurrentEmailPlaceholder(userObject.user.currentEmail);
-  //     // setIsEmailInputEnabled(false);
-  //   }
-
-  //   setIsUserLoaded(true);
-  // }
-
-  // function submitNamePressed(text) {
-  //   // setCurrentName(text);
-  //   console.log('Submit:', text)
-  //   // saveName(text);
-  //   if (isValidName(currentName) && isValidEmail(currentEmail)) {
-  //     setIsLoginEnabled(true);
-  //   }
-  // }
 
   async function verifyNewEmailAddress (email) {
     setIsSendingCode(true);
@@ -246,91 +140,27 @@ function UserNameEmailInput(props) {
       return
     }
 
-
     setIsConfirming(true);
 
     global.emailAddressInput = currentEmail
 
     props.navigation.navigate('SignIn');
 
+    // try {
 
-    try {
-      // await Auth.verifyCurrentUserAttributeSubmit("email", authCode)
+    //   signOutToSignInPage();
 
-      // history.push("/settings");
+    // } catch (error) {
+    //   // onError(error);
+    //   console.log('error: ', error);
+    //   setIsConfirming(false);
+    //   setCodeSent(false);
 
-      // PUSH USER SETTINGS HERE!!!
-      // global.storageKey = ...
+    //   setIsDialogVisible(false)
 
-
-      // global.showGlobalValues()
-
-      // global.emailAddressInput = currentEmail
-
-
-
-      signOut();
-
-    } catch (error) {
-      // onError(error);
-      console.log('error: ', error);
-      setIsConfirming(false);
-      setCodeSent(false);
-
-      setIsDialogVisible(false)
-
-      setAuthCode('');
-
-
-    }
-
-    
+    //   setAuthCode('');
+    // } 
   }
-
-
-  // const handleAuthCodeInputSubmit = async () => {
-  //   if (!authCode) return
-
-  //   // console.log('You entered ' + authCode)
-  //   await Auth.verifyCurrentUserAttributeSubmit('email', authCode)
-  //   .then(
-  //     async (user) => {
-  //       // console.log('user: ', user);
-
-        
-
-  //       // navigation.navigate('AuthLoading');
-
-  //       setIsConfirming(false);
-
-  //       setIsSendingCode(false)
-
-  //       setCodeSent(false);
-
-  //       signOut()
-
-  //       global.email = user.attributes.email
-
-  //       navigation.navigate(SignIn)
-        
-  //   })
-  //     .catch(err => {
-  //     alert(err.message)
-  //     // errorDialog(err.message)
-  //     // setIsError(true)
-  //     // await setErrorMessage(err.message)
-
-
-  //   })
-
-  //           setIsConfirming(false);
-
-  //     setIsSendingCode(false)
-
-  //     setCodeSent(false);
-
-
-  // };
   const confirmationInput = (
      <View style={{ flex: 1, flexDirection: 'column', top: 10, alignSelf: 'center', marginRight: 10 }}>
 
@@ -425,7 +255,8 @@ function UserNameEmailInput(props) {
   const confirmationDialog = <Dialog.Container visible={isDialogVisible}>
         <Dialog.Title>Verify new email?</Dialog.Title>
         <Dialog.Description>
-        A confirmation code will be sent to this email address
+        A confirmation code will be sent to this email address.
+        If it is an invalid email this account will unverified and you will
         </Dialog.Description>
         <Dialog.Button label="Cancel" onPress={() => setIsDialogVisible(false)} />
         <Dialog.Button label="Ok" 
@@ -473,43 +304,21 @@ function UserNameEmailInput(props) {
     // }
   }
 
-  const signOut = async () => {
-    // let storage =  await loadSettingsStorage(global.storageKey)
-    //   // console.log('storage: ', storage);
-
-    // // storage.image_url = global.avatar.uri
-
-    // saveSettingsStorage(global.storageKey, storage)
-
-
-
-
-    // global.email = currentEmail;
-
-    global.showGlobalValues()
+  const signOutToSignInPage = async () => {
+    // global.showGlobalValues();
+    showMessage('Please sign in with your new email');
 
     await Auth.signOut()
       .then(() => {
         AsyncStorage.removeItem('userToken');
 
-        setIsConfirming(true);
-
         props.navigation.navigate('SignIn');
 
       })
       .catch((err) => console.log('Error while signing out!', err));
-
-      
-
-        // console.log('Sign out complete');
-        showMessage('Signed out');
-
-        setIsConfirming(false)
-   
-
   };
 
-    async function handleEmailSubmit(event) {
+  async function handleEmailSubmit(event) {
     // event.preventDefault();
 
     setIsSendingCode(true);
@@ -636,7 +445,7 @@ function UserNameEmailInput(props) {
 
 
       
-      showMessage('Updated name:', currentFullName);
+      showMessage('Updated name');
     } catch (error) {
       // onError(error);
       console.log('error updating full name: ', error);
@@ -810,165 +619,141 @@ function UserNameEmailInput(props) {
       
     }
   }
-
-
-
   let view = (
     <TouchableOpacity
       disabled // ={isSignUpDisabled}
       onPress={
         () => navigation.navigate('SignUp')
-        // async () => {
-        //   // New User Sign Up Alert
-        //   console.log('global.isLoginEnabled: ', global.isLoginEnabled);
-        //   if (global.isLoginEnabled !== 'false') {
-        //     // console.log('isLoginEnabled: ', isLoginEnabled);
-        //     Alert.alert(
-        //       'Would you like to sign up?',
-        //       'Access more features: change your name, multiple users, save data and more',
-        //       // null,
-        //       // 'Signing up will allow more features like multiple users per device.',
-        //       [
-        //         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        //         { text: 'OK', onPress: () => navigation.navigate('SignUp')
-        //         },
-        //       ],
-        //     )
-        //   }
-        // }
       }
-    style={{ flex: 1, flexDirection: 'column' }}>
+      style={{ flex: 1, flexDirection: 'column' }}
+    >
+    <View style={
+      {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
 
-    
-
-      <View style={
-        {
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }
+    }
+    >
+      {/* User currentName input */}
+      <Text style={
+       [
+         styles.textStyle,
+         {
+          marginLeft: 10,
+         }
+       ]
       }
       >
-        {/* User currentName input */}
-        <Text style={
-         [
-           styles.textStyle,
-           {
-            marginLeft: 10,
-           }
-         ]
-        }
-        >
-        {
-          nameLabelText
-        }
-        </Text>
-        <Text
-
-          style={[
-            styles.textStyle,
-            {
-              flex: 1,
-
-              textAlign: 'right',
-              color: colors.offWhite, // '#ffffff7f.8',
-
-              marginRight: 10,
-              // marginBottom: 4,
-
-              // borderWidth: 1,
-              // borderColor: 'white',
-              // borderStyle: 'solid',
-            }
-            ]
-          }
-          placeholder={'Enter username'}
-
-          clearButtonMode="while-editing"
-
-          placeholderTextColor={colors.offWhite}
-
-          keyboardAppearance="dark" // ios
-
-          textContentType="username" // ios
-
-          // keyboardType="currentName-phone-pad"
-
-          returnKeyType="done"
-
-          // autoCorrect={true}
-
-          autoCapitalize="none" // "words"
-
-          maxLength={14}
-
-          onSubmitEditing={() => submit('name', currentName)}
-
-          onChangeText={handleTextChange}
-
-          value={currentName}
-
-          // autoFocus={shouldNameAutofocus}
-
-          autoCompleteType="username" // android
-
-          // enablesReturnKeyAutomatically={true}
-
-          // editable={isNameInputEnabled}
-          editable={false}
-
-          // clearButtonMode="always"
-
-          clearTextOnFocus={shouldClearNameInput}
-
-        >
-        {
-          currentName.substring(0, (global.maxUsernameLength - 1))
-        }
-        </Text>
-
-      </View>
-
-
-
       {
+        nameLabelText
+      }
+      </Text>
+      <Text
+
+        style={[
+          styles.textStyle,
+          {
+            flex: 1,
+
+            textAlign: 'right',
+            color: colors.offWhite, // '#ffffff7f.8',
+
+            marginRight: 10,
+            // marginBottom: 4,
+
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
+          ]
+        }
+        placeholder={'Enter username'}
+
+        clearButtonMode="while-editing"
+
+        placeholderTextColor={colors.offWhite}
+
+        keyboardAppearance="dark" // ios
+
+        textContentType="username" // ios
+
+        // keyboardType="currentName-phone-pad"
+
+        returnKeyType="done"
+
+        // autoCorrect={true}
+
+        autoCapitalize="none" // "words"
+
+        maxLength={14}
+
+        onSubmitEditing={() => submit('name', currentName)}
+
+        onChangeText={handleTextChange}
+
+        value={currentName}
+
+        // autoFocus={shouldNameAutofocus}
+
+        autoCompleteType="username" // android
+
+        // enablesReturnKeyAutomatically={true}
+
+        // editable={isNameInputEnabled}
+        editable={false}
+
+        // clearButtonMode="always"
+
+        clearTextOnFocus={shouldClearNameInput}
+
+      >
+      {
+        currentName.substring(0, (global.maxUsernameLength - 1))
+      }
+      </Text>
+
+    </View>
+
+
+
+    {
       isConfirming && spinnerView
     }
-
-       <View style={{
-        flex: 1,
-        // flexDirection: 'row',
-        flexDirection: 'column',
-        justifyContent: 'center',
-          // alignItems: 'center',
-       }}>
-       <View style={line2} />
+    <View style={{
+      flex: 1,
+      // flexDirection: 'row',
+      flexDirection: 'column',
+      justifyContent: 'center',
+        // alignItems: 'center',
+     }}
+     >
+      <View style={line2} />
     
 
      
-            <View style={
+      <View style={
         {
           flex: 1,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
 
-
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'solid',
         }
       }
       >
-        {/* User First Name input */}
-        <Text style={[styles.textStyle, {marginLeft: 10,}]}
-        >
-        Name
-        </Text>
+      {/* User First Name input */}
+      <Text style={[styles.textStyle, {marginLeft: 10,}]}
+      >
+      Full Name
+      </Text>
       <TextInput
 
         style={[
@@ -1028,8 +813,6 @@ function UserNameEmailInput(props) {
           // clearTextOnFocus={shouldClearNameInput}
 
         />
-
-
       </View>
       </View>
     
@@ -1105,7 +888,8 @@ function UserNameEmailInput(props) {
 
           onChangeText={handleEmailChange}
 
-          editable={global.authenticated}
+          // editable={global.authenticated}
+          editable={false}
 
           value={currentEmail}
 
@@ -1114,9 +898,6 @@ function UserNameEmailInput(props) {
           autoCompleteType="email" // android
 
         >
-        {
-          // currentEmail
-        }
         </TextInput>
 
       </View>
@@ -1125,13 +906,6 @@ function UserNameEmailInput(props) {
       }
     </TouchableOpacity>
     );
-  // }
-
-
-  // return view;
-
-  // return errorDialog('Hello', 'world')
-
   return codeSent && confirmationInput || view
 }
 
@@ -1144,6 +918,5 @@ const line2 = {
   borderWidth: 0.5,
   borderColor: colors.darkTwo
 };
-
 
 export default withNavigation(UserNameEmailInput);

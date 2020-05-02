@@ -16,6 +16,8 @@ import SpinnerMask from '../../src/components/SpinnerMask';
 
 import HelpMessage from '../../storybook/stories/HelpMessage';
 
+import { showMessage } from 'react-native-flash-message';
+
 import {
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -172,16 +174,32 @@ function ForgotPasswordScreen(props) {
         console.log('New code sent', data);
         Alert.alert('Code was emailed')
       })
-      .catch((err) => {
-        if (!err.message) {
-          console.log('Error while setting up the new password: ', err);
-          Alert.alert('Error while setting up the new password: ', err);
-        } else {
-          console.log('Error while setting up the new password: ', err.message);
-          Alert.alert('Error while setting up the new password: ', err.message);
-        }
-      });
+      .catch( err => {
+        showMessage(err)
+        
+        // switch ( err.code ) {
+        //     case 'LimitExceededExeption':
+        //         // return true;
+        //         // make customer help available,  for account recovvery
+        //         //  LIMIT IS 10 ATTEMPTS
+        //     case 'NotAuthorizedException':
+        //         return false;
+        //     case 'AliasExistsException':
+        //         // Email alias already exists
+        //         return false;
+        //     case 'CodeMismatchException':
+        //         return false;
+        //     case 'ExpiredCodeException':
+        //         return false;
+        //     default:
+        //         return false;
 
+        // }
+
+    } )
+      // .catch((err) => {
+      //   showMessage(err);
+      // });
     setIsLoading(false);
   }
 
@@ -377,22 +395,24 @@ function ForgotPasswordScreen(props) {
     </NetworkConsumer>
   );
 
-  if (!isLoading) {
-    return view;
-  }
-  else if (isLoading === true) {
-    return (
-      <SpinnerMask>
-        <AppLoading
-          autoHideSplash
-          // startAsync={_cacheResourcesAsync}
-          onFinish={() => setIsLoading(false)}
-          onError={console.warn}
-        />
-      </SpinnerMask>
+  // if (!isLoading) {
+  //   return view;
+  // }
+  // else if (isLoading === true) {
+  //   return (
+  //     <SpinnerMask>
+  //       <AppLoading
+  //         autoHideSplash
+  //         // startAsync={_cacheResourcesAsync}
+  //         onFinish={() => setIsLoading(false)}
+  //         onError={console.warn}
+  //       />
+  //     </SpinnerMask>
 
-    );
-  }
+  //   );
+  // }
+
+  return view
 }
 
 

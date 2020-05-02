@@ -449,7 +449,7 @@ function SignUpScreen(props) {
   async function signUp() {
     let isSuccessful = false;
     setIsLoading(true);
-      // Alert.alert('Phone valid');
+      // Alert.alert('Phonef valid');
 
     // rename variable to conform with Amplify Auth field phone attribute
     // const phone_number = phoneNumber; // +01234567890 format

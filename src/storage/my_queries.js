@@ -40,6 +40,19 @@ export const fetchStoredTransactions = async () => {
   return list;
 };
 
+export const listAllOnlineCategories = async () => {
+ let list = [];
+  try {
+    const graphqldata = await API.graphql(graphqlOperation(listCategorys));
+    console.log('graphqldata: ', graphqldata);
+    list = graphqldata.data.listCategorys.items;
+    console.log('list: ', list);
+  } catch (err) {
+    console.log('error fetching user categories: ', err);
+  }
+  return list;
+};
+
 /* static querys */
 export const listTransactions = gql`
 query ListTransactions {

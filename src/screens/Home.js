@@ -65,7 +65,7 @@ import {
   saveSettingsStorage,
   // compareListTransactions,
   retrieveOnlineTransactions,
-  retrieveOnlineCategories,
+  // retrieveOnlineCategories,
   retrieveLocalTransactions,
 } from '../storage/SettingsStorage';
 
@@ -113,6 +113,7 @@ import {
   // fetchStoredTransactions,
   // fetchStoredCategories,
   getTransactionByID,
+  listAllOnlineCategories,
 } from '../storage/my_queries';
 
 // global.hasSyncedDevice = false;
@@ -129,6 +130,8 @@ import { isDeviceOnline } from '../../network-functions';
 // global.showGlobalValues()
 
 // console.log('getExistingPayee({id: "12"}): ', getExistingPayee({id: "12"}));
+
+
 
 const compareListTransactions = async (local_transactions, online_transactions) => {
   // load online transactions
@@ -510,10 +513,10 @@ export default function Home(props) {
  
     try {
       const found = searchByID(currentTransaction.id, list);
-      // console.log('found: ', found);
+      console.log('found: ', found);
 
 
-      if (category.id === found.category.id || !found) {
+      if (category.id === found.category.id || !found || !found.category.id ) {
         setIsUpdatingTransaction(false);
         return
       }
@@ -566,6 +569,11 @@ export default function Home(props) {
     Analytics.record({ name: 'Updated a transaction note' });
   };
   const pushAllCategoriesToCloud = async () => {
+
+    let online_categories = await listAllOnlineCategories();
+
+    console.log('online_categories.length: ', online_categories.length);
+
     // try {
     //   const storage = await loadSettingsStorage(global.storageKey);
     //   // console.log('local_transactions: ', local_transactions);
@@ -1650,17 +1658,20 @@ export default function Home(props) {
     let online_categories = []; // online trans
     let local_categories = [];  // local trans in device storage
 
+    // pushAllCategoriesToCloud();
+
     try {
       // get user's local categories
       let storage = await loadSettingsStorage(global.storageKey);
       local_categories = storage.categories;
       // console.log('local_categories.length: ', local_categories.length);
-      // console.log('local_categories: ', local_categories);
+      console.log('local_categories: ', local_categories);
 
       //  // get user's online categories
-      online_categories = await retrieveOnlineCategories();
+      // online_categories = await retrieveOnlineCategories();
+      // online_categories = []
       // console.log('online_categories.length: ', online_categories.length);
-      // console.log('online_categories: ', online_categories);
+      console.log('online_categories: ', online_categories);
 
       for (var i = online_categories.length - 1; i >= 0; i--) {
         try {
@@ -1700,7 +1711,7 @@ export default function Home(props) {
 
       await saveSettingsStorage(global.storageKey, storage);
 
-      pushAllCategoriesToCloud();
+      
 
     } catch(categorySync) {
       // throw new Error('Error performing crossDeviceSync:', e);
