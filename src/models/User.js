@@ -34,7 +34,7 @@ export default function User(id) {
     username: '', // username, // User's Storage Key
     email: '', // '' // email;
     full_name: '',
-    image_url: '',
+    image_url: 'https://reactnative.dev/img/tiny_logo.png',
   }
   // this.phoneNumber = '';
   // this.password = '';

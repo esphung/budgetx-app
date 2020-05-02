@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -44,6 +45,8 @@ import config from '../../../aws-exports';
 
 import SpinnerMask from '../SpinnerMask';
 
+import DisplayImageExample from '../../../DisplayImageExample';
+
 // ui colors
 import colors from '../../../colors';
 
@@ -72,30 +75,38 @@ const getAuthentication = async () => {
 function ProfileUserImage(props) {
   const  { isUserLoggedIn } =  props;
 
-  const [image, setImage] = useState(global.defaultAvatar);
+  const [image, setImage] = useState(global.avatar);
 
-  const [isReady, setIsReady] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   // const [storageKey, setStorageKey] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [shouldShowPleaseLoginBox, setShouldShowPleaseLoginBox] = useState(false);
+  // const [shouldShowPleaseLoginBox, setShouldShowPleaseLoginBox] = useState(false);
 
   const [isPermissionDialogVisible, setIsPermissionDialogVisible] = useState(false);
 
+  // const [uri, setUri] = useState(null);
 
+  // const [shouldShowDisplayExample, setShouldShowDisplayExample] = useState(false)
+
+  // const [bgImage, setBgImage] = useState({uri: global.image_url})
 
   useEffect(() => {
-    setIsReady(false);
+    // setShouldShowDisplayExample(true)
+    // setIsReady(false);
     // setIsLoading(true);
-    // clearState()
+    // clearState();
 
-    getImage()
+    getImage();
+
+
     return () => {
       // effect
-      setIsReady(true);
-      // setIsLoading(false);
+      // setIsReady(false);
+      // setIsLoading(true);
+
     };
   }, []);
 
@@ -129,8 +140,8 @@ function ProfileUserImage(props) {
 
 
   async function clearState() {
-    setImage(global.defaultAvatar)
-    retrieveStoredSettingsImage()
+    // setImage(global.defaultAvatar);
+    // retrieveStoredSettingsImage()
 
     // setImage(global.avatar)
   }
@@ -139,10 +150,10 @@ function ProfileUserImage(props) {
   const handleImagePicked = async (imageResult) => {
     // console.log('imageResult: ', imageResult);
 
-    setImage(null)
+    // setImage(null);
 
     // setIsLoading(true);
-    // const imageName = `@${global.storageKey}/picture.jpg`;
+    // const imageName = `@${global.storageKey}/picture.jpg.jpg`;
     // const fileType = mime.lookup(pickerResult.uri);
     // const access = { level: 'public', contentType: fileType }; // 'image/jpeg'
     // const imageData = await fetch(pickerResult.uri);
@@ -180,18 +191,20 @@ function ProfileUserImage(props) {
     console.log('imageName: ', imageName);
     const fileType = mime.lookup(imageResult.uri);
     console.log('fileType: ', fileType);
-    const access = { level: "public", contentType: fileType, };
+    const access = { level: "protected", contentType: fileType, };
     console.log('access: ', access);
     fetch(imageResult.uri).then(response => {
       setIsLoading(true)
       response.blob()
         .then(blob => {
-          Storage.put(`@${global.storageKey}/${imageName}`, blob, access)
+          // Storage.put(`@${global.storageKey}/${imageName}`, blob, access)
+          Storage.put(`picture.jpg`, blob, access)
             .then(async succ => {
               // SUCCESSFUL UPLOAD TO S3
               console.log('succ', succ);
 
-              global.currentBucketImage = `@${global.storageKey}/${imageName}`;
+              // global.currentBucketImage = `@${global.storageKey}/${imageName}`;
+              global.currentBucketImage = `picture.jpg`;
 
               let settings = await loadSettingsStorage(global.storageKey);
 
@@ -201,25 +214,43 @@ function ProfileUserImage(props) {
               // settings.image_url = 'https://s3.amazonaws.com/' + global.bucketName + global.currentBucketImage
 
               // settings.avatar = { uri: 'https://s3.amazonaws.com/' + global.bucketName + global.currentBucketImage}
-              setIsLoading(false);
+              // setIsLoading(false);
               try {
                 setIsLoading(true);
-                let stored = await Storage.get(global.currentBucketImage);
+                let stored = await Storage.get('picture.jpg', {level:  'protected'});
+                console.log('stored: ', stored);
+
+                global.avatar = {uri: stored}
 
 
                 if (stored) {
-                  settings.avatar = { uri: stored };
+                  // console.log('stored: ', stored);
+                  settings.user.image_url = stored
+                  // settings.avatar = { uri: stored };
 
                   saveSettingsStorage(global.storageKey, settings);
 
-                  global.avatar = settings.avatar
+                  // global.avatar = (settings.avatar) ? settings.avatar : global.avatar
 
-                  await setImage(global.avatar);
+                  // await setImage(global.avatar);
 
-                  setIsLoading(false)
+                  setIsLoading(false);
+
+                  setImage({ uri: settings.user.image_url })
+
+
                 }
 
-                global.avatar = settings.avatar
+                // global.avatar = settings.avatar
+
+                // setImage(global.avatar)
+
+                // setShouldShowDisplayExample(false)
+                setBgImage(null);
+
+
+
+
 
                 
 
@@ -270,6 +301,10 @@ function ProfileUserImage(props) {
 
     setIsLoading(false);
 
+
+
+
+
     // try {
     //   await Storage.put(imageName, imageResult.uri, fileType);
     //   console.log('Successfully uploaded ', imageName, 'to bucket!');
@@ -284,35 +319,61 @@ function ProfileUserImage(props) {
 
   const getImage = async () => {
     // retrieveStoredSettingsImage(global.storageKey);
+    // console.log('isUserLoggedIn: ', isUserLoggedIn);
+
+    // await getAuthentication()
+
+    if (!global.authenticated) {
+      setImage(global.defaultAvatar);
+      setIsReady(true);
+      setIsLoading(false);
+      return
+    }
 
     try {
-      let storage = await loadSettingsStorage(global.storageKey)
-
-      if (storage.image_url) {
-        // stored user image exists
-        global.avatar = { uri: storage.image_url }
-        // setIsReady(true);
-        // setIsLoading(false);
-      } else {
-        // stored image dne
-        setImage(global.avatar);
-      }
-
-      setIsReady(true);
+      setIsLoading(true)
+      let stored = await Storage.get('picture.jpg', {level:  'protected'});
+      console.log('stored: ', stored);
+      global.avatar = ({uri: stored})
+      // return
     } catch(e) {
       // statements
-      console.log('error in getImage:', e);
-
-      setIsReady(true);
-
-
+      console.log(e);
+      global.avatar = (global.defaultAvatar)
     }
+
+    setImage(global.avatar);
+
+    setIsLoading(false);
+    setIsReady(true);
+
+    // try {
+    //   let storage = await loadSettingsStorage(global.storageKey)
+
+    //   if (storage.image_url) {
+    //     // stored user image exists
+    //     global.avatar = { uri: storage.image_url }
+    //     // setIsReady(true);
+    //     // setIsLoading(false);
+    //   } else {
+    //     // stored image dne
+        
+    //   }
+
+    //   setIsReady(true);
+    // } catch(e) {
+    //   // statements
+    //   console.log('error in getImage:', e);
+
+    //   setIsReady(true);
+
+    // }
 
     // setIsLoading(false);
     
     // try {
     //   setIsReady(false)
-    //   let imageReturn = await Storage.get(`@${global.storageKey}/picture.jpg`)
+    //   let imageReturn = await Storage.get(`@${global.storageKey}/picture.jpg.jpg`)
 
     //   // console.log('imageReturn: ', imageReturn);
 
@@ -400,117 +461,46 @@ function ProfileUserImage(props) {
     }
   }
 
-  async function retrieveStoredSettingsImage() {
-    // setImage(null)
-    // load stored user transactions
-    try {
-      const storageObj = await loadSettingsStorage(global.storageKey);
-      // console.log('storageObj: ', storageObj);
-      if (storageObj.avatar) global.avatar = storageObj.avatar
-
-      setImage(global.avatar)
-    } catch (e) {
-      // statements
-      Alert.alert('Could not load settings');
-      // console.log(e);
-      setImage(global.avatar)
-    }
-  }
-
-  // useEffect(() => {
-  //   // setIsReady(false);
-  //   // getPermissionAsync();
+  // async function retrieveStoredSettingsImage() {
+  //   // setImage(null)
+  //   // // load stored user transactions
+  //   // try {
+  //   //   const storageObj = await loadSettingsStorage(global.storageKey);
+  //   //   // console.log('storageObj: ', storageObj);
+  //   //   if (storageObj.avatar) global.avatar = storageObj.avatar
 
 
-
-  
-  //   // getImage()
-
-
-    
-  // }, []);
-
-  // useEffect(() => {
-  //   // console.log('Image updated');
-  //   if (image) {
-  //     // console.log(image);
-  //     // setIsReady(true);
-  //   }
-  // }, [image]);
-
-  // useEffect(() => {
-  //   // if (storageKey) {
-  //     retrieveStoredSettingsImage(global.storageKey);
+  //   //   setImage(global.avatar)
+  //   // } catch (e) {
+  //   //   // statements
+  //   //   Alert.alert('Could not load settings');
+  //   //   // console.log(e);
+  //   //   setImage(global.avatar)
   //   // }
-  // }, []);
-
-
-  // async function retrieveCognitoUserKey() {
-  //   Auth.currentAuthenticatedUser()
-  //     .then((cognito) => {
-  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //       // console.log('username:', cognitoUser.username);
-  //       setStorageKey(cognito.username);
-  //     })
-  //     .catch((err) => {
-  //       // console.log(err);
-  //       Alert.alert(err);
-  //     });
-  // }
-  // async function retrieveImages() {
-  //   await Asset.loadAsync([
-  //     avatarPicture,
-  //     // video2,
-  //     // ...
-  //   ]);
-  //  // this.setState({ ready: true });
-  //  setIsReady(true);
   // }
 
-  // const appLoading = (
-  //   <AppLoading
-  //     startAsync={clearState}
-  //     onFinish={() => {}}
-  //     onError={console.warn}
-  //   />
-  // );
+//   const viewA = (
+//      <View
+//       // disabled
+//     style={[styles.userImageMaskView, props.style]}
+//     // style={[styles.userImageMaskView, props.style]}
+//     // {...rest}
+  
+//       >
+//       <DisplayImageExample style={styles.userImage} uri={bgImage} />
 
-  // const imageView = (
-  //   <TouchableOpacity
-  //     onPress={pickImage}
-  //     style={
-  //      styles.userImageMaskView
-  //     }
-  //   >
-  //     <Image
-  //       // source={global.placeholderUserImage}
-  //       source={image}
-  //       style={
-  //         {
-  //           width: '100%',
-  //           height: '100%',
-  //           borderRadius: 26,
-  //         }
-  //       }
-  //     />
-  //   </TouchableOpacity>
-  // );
+// {/*            <Image
+//       style={styles.userImage}
+//       // style={{ width: 200, height: 200, borderRadius: 200 / 2 }}
+//       source={bgImage}/>*/}
 
-  // useEffect(() => {
-  //   if (!image) {
-  //     setIsLoading(true)
-  //   } else {
-  //     setIsLoading(false)
-  //   }
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [image])
+//   </View>
+//   )
 
     const imageView = (
-    <TouchableOpacity
-    // disabled
-    style={styles.userImageMaskView}
+      <TouchableOpacity
+      disabled={!global.authenticated}
+    // style={styles.userImageMaskView}
     style={[styles.userImageMaskView, props.style]}
     // {...rest}
     onPress={
@@ -521,16 +511,24 @@ function ProfileUserImage(props) {
             // }
           }
         }
-  >
-    <Image
-      // resizeMode="contain"
-      style={styles.userImage}
-      source={global.avatar} // {global.placeholder500x500}
-    />
-    {
-          permissionDialogBox
-        }
+      >
 
+    <View
+    style={[styles.userImageMaskView, props.style]}
+  >
+  
+    <Image
+      // resizeMode="contasin"
+      style={styles.userImage}
+      source={image} // {global.placeholder500x500}
+    />
+    
+    {
+      permissionDialogBox
+    }
+
+
+  </View>
 
   </TouchableOpacity>
   );
@@ -589,10 +587,33 @@ function ProfileUserImage(props) {
       
       
   // );
-
+// return <TouchableOpacity
+//       // disabled
+//     // style={styles.userImageMaskView}
+//     // style={[styles.userImageMaskView, props.style]}
+//     // {...rest}
+//     style={{
+//       justifyContent: 'center',
+//       alignItems: 'center'
+//     }}
+//     onPress={
+//           async () => {
+//             // if (global.authenticated) {
+//               await getPermissionAsync();
+//             //   setShouldShowPleaseLoginBox(true)
+//             // }
+//           }
+//         }
+//       ><DisplayImageExample uri={'https://reactnative.dev/img/tiny_logo.png'
+// } /></TouchableOpacity>
   
-  return <View>{imageView}{
-          isReady && isLoading &&
+  return <View>
+  {
+    imageView
+    
+    
+  }{
+         (!isReady || isLoading) &&
     <View style={{
     position: 'absolute',
     left: 0,

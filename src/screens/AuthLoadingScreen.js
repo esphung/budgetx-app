@@ -98,7 +98,7 @@ export default function AuthLoadingScreen(props) {
     if (!userToken) {
       userToken = global.storageKey + '@session_' + (Date.now());
 
-      console.log('userToken: ', userToken);
+      // console.log('userToken: ', userToken);
       await AsyncStorage.setItem('userToken', userToken); // save user token
       
       await AsyncStorage.setItem('isUserAuthenticated', 'false');

@@ -608,7 +608,9 @@ export default function Home(props) {
       .then(async (cognito) => {
         global.storageKey = cognito.attributes.sub;
 
-        global.email = cognito.attributes.email
+        global.email = cognito.attributes.email;
+
+
 
 
 
@@ -676,6 +678,8 @@ export default function Home(props) {
       global.isUserAuthenticated = true
 
       global.email = storage.user.email
+
+      global.avatar = (storage.avatar) ? storage.avatar : global.avatar;
 
     })
     .catch(async () => {

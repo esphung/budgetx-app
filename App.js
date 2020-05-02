@@ -51,6 +51,9 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             04/30/2020 07:42 PM | Added working email change with AWS
 */
 
+
+import DisplayImageExample from './DisplayImageExample';
+
 import './globals'; // global values
 
 import {
@@ -69,6 +72,16 @@ import {
   // StyleSheet,
   // AsyncStorage
 } from 'react-native';
+
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+  // compareListTransactions,
+  // retrieveOnlineTransactions,
+  // retrieveOnlineCategories,
+  // retrieveLocalTransactions,
+} from './src/storage/SettingsStorage';
+
 
 // import the Analytics category
 // import Analytics from '@aws-amplify/analytics';
@@ -125,8 +138,61 @@ export default function App() {
 
   let view;
 
+  const getAuthenticatedSettings = async () => {
+    // global.authenticated = false;
+    global.showGlobalValues();
+    await Auth.currentAuthenticatedUser()
+      .then(async (cognito) => {
+        // console.log('cognito: ', cognito);
+        global.storageKey = cognito.attributes.sub;
+
+        global.authenticated = await getAuthentication()
+
+        global.email = cognito.attributes.email;
+
+        // global.displayName = cognito.attributes['custom:full_name'];
+
+        // let settings = await loadSettingsStorage(global.storageKey);
+
+        // // settings.owner = cognito.attributes.sub;
+
+        // // settings.user.id = cognito.attributes.sub;
+
+        // // settings.user.email = cognito.attributes.email;
+
+        // // // // settings.user.full_name = cognito.attributes['custom:full_name'];
+
+        // if (settings.user.image_url) {
+        //   global.image_url = settings.user.image_url
+        //   // global.defaultAvatar = {uri: settings.user.image_url}
+        //   // alert(global.avatar.uri)
+        // }
+        
+
+        
+
+        
+        // saveSettingsStorage(global.storageKey, settings);
+
+        // console.log('settings: ', settings);
+
+        // console.log('cognito.attributes: ', cognito.attributes);
+
+
+        
+
+        // global.displayName = (settings.user.full_name) ? settings.user.full_name : cognito.attributes['custom:full_name']
+
+      }).catch((err) => {
+        // console.log('err: ', err);
+      })
+    return global.authenticated
+  };
+
   async function loadApplicationResources() {
     global.isBackedUp = await getIsBackedUp();
+
+    getAuthenticatedSettings()
 
     // load stored fonts
     try {
@@ -141,13 +207,13 @@ export default function App() {
       throw new Error('Error loading stored fonts: ', err);
     }
 
-    global.isDeviceSynced = await getIsDeviceSynced();
+    // global.isDeviceSynced = await getIsDeviceSynced();
 
-    global.authenticated = await getAuthentication();
+    // global.authenticated = await getAuthentication();
 
-    global.hasRatedUs = await getHasRatedUs();
+    // global.hasRatedUs = await getHasRatedUs();
 
-    global.isDeviceSyncOn = await getIsDeviceSyncOn();
+    // global.isDeviceSyncOn = await getIsDeviceSyncOn();
 
 
   }
@@ -165,6 +231,7 @@ export default function App() {
     view = (
       <NetworkProvider>
         <View style={{ flex: 1 }}>
+        {/*<DisplayImageExample uri={global.image_url} />*/}
           <SwitchNavigator />
           {/* Global Flash Message */}
           <FlashMessage

@@ -153,16 +153,16 @@ export const clearSettingsStorage = async (key) => {
 
 export const Settings = (key) => {
     return {
-      settings_id: uuidv4(),
+      // settings_id: uuidv4(),
       user: new User(key),
       transactions: [],
       categories: defaultCategories,
       payees: [],
-      image_url: '',
+      // image_url: '',
       avatar: global.defaultAvatar,
       owner: key,
-      created: new Date(),
-      version: 0,
+      // created: new Date(),
+      // version: 0,
       json : () => {
         return JSON.stringify(this, null, 2);
       },

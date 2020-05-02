@@ -663,9 +663,11 @@ function UserNameEmailInput(props) {
   }
 
   const submitFullName = async ()  => {
-    let storage = await loadSettingsStorage(global.storageKey)
+    let storage = await loadSettingsStorage(global.storageKey);
+
     storage.user.full_name = currentFullName;
-    saveSettingsStorage(global.storageKey, storage)
+
+    saveSettingsStorage(global.storageKey, storage);
 
     try {
       const user = await Auth.currentAuthenticatedUser();
