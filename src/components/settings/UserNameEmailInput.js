@@ -52,6 +52,8 @@ import {
   saveSettingsStorage,
 } from '../../storage/SettingsStorage';
 
+import isValidEmail from '../../functions/isValidEmail';
+
 // function isValidName(text) {
 //   // var nameRegex = /^[a-zA-Z\-]+$/;
 //   const usernameRegex = /^[a-zA-Z0-9]+$/;
@@ -204,25 +206,23 @@ function UserNameEmailInput(props) {
   //   }
   // }
 
-  async function handleUpdateClick () {
-    // event.preventDefault();
-
-    // alert(currentEmail)
-
+  async function verifyNewEmailAddress (email) {
     setIsSendingCode(true);
 
     try {
       const user = await Auth.currentAuthenticatedUser();
-      await Auth.updateUserAttributes(user, { email: currentEmail });
+      await Auth.updateUserAttributes(user, { email: email });
       setCodeSent(true);
-      showMessage('Code sent to email:', currentEmail)
+      showMessage({ message:'Code sent to this email address:', description: email, duration: 3550})
 
       authCodeInputRef.current._root.focus(); // set cursor to field
     } catch (error) {
       // onError(error);
-      console.log('error: ', error);
+      console.warn('error: ', error);
       setIsSendingCode(false);
     }
+
+    setIsSendingCode(false);
 
     // setIsConfirming(true);
 
@@ -269,26 +269,22 @@ function UserNameEmailInput(props) {
 
 
 
-      signOut()
+      signOut();
 
-
-
-
-
-      
     } catch (error) {
       // onError(error);
       console.log('error: ', error);
       setIsConfirming(false);
+      setCodeSent(false);
+
+      setIsDialogVisible(false)
+
+      setAuthCode('');
 
 
     }
 
-    await setCodeSent(false);
-
-    setIsDialogVisible(false)
-
-    setAuthCode('');
+    
   }
 
 
@@ -427,13 +423,13 @@ function UserNameEmailInput(props) {
   );
 
   const confirmationDialog = <Dialog.Container visible={isDialogVisible}>
-        <Dialog.Title>Verify email?</Dialog.Title>
+        <Dialog.Title>Verify new email?</Dialog.Title>
         <Dialog.Description>
-        A confirmation code will be sent
+        A confirmation code will be sent to this email address
         </Dialog.Description>
         <Dialog.Button label="Cancel" onPress={() => setIsDialogVisible(false)} />
         <Dialog.Button label="Ok" 
-        onPress={handleUpdateClick}
+        onPress={() => verifyNewEmailAddress(currentEmail)}
         />
       </Dialog.Container>
 
@@ -488,7 +484,7 @@ function UserNameEmailInput(props) {
 
 
 
-    global.email = currentEmail;
+    // global.email = currentEmail;
 
     global.showGlobalValues()
 
@@ -496,46 +492,9 @@ function UserNameEmailInput(props) {
       .then(() => {
         AsyncStorage.removeItem('userToken');
 
-        AsyncStorage.removeItem('storageKey');
-
-        AsyncStorage.removeItem('isLoginEnabled');
-
-        AsyncStorage.removeItem('isUserAuthenticated');
-
-        global.storageKey = '';
-
-        global.isUserAuthenticated = false;
-
-        global.avatar = require('../../../assets/avatar.png');
-
-
-        // console.log('Removed AsyncsStorage Variables ..');
-
-
-        // AsyncStorage.getAllKeys((err, keys) => {
-        //   AsyncStorage.multiGet(keys, (error, stores) => {
-        //     stores.map((result, i, store) => {
-        //       console.log({ [store[i][0]]: store[i][1] });
-        //       return true;
-        //     });
-        //   });
-        // });
-
-        setHasRatedUs(false);
-
-        setIsBackedUp(false)
-
-        AsyncStorage.setItem('storageKey', JSON.stringify(''))
-
-
-
         setIsConfirming(true);
 
-      global.emailAddressInput = currentEmail
-
-      props.navigation.navigate('SignIn');
-
-        
+        props.navigation.navigate('SignIn');
 
       })
       .catch((err) => console.log('Error while signing out!', err));
@@ -782,8 +741,8 @@ function UserNameEmailInput(props) {
         setCurrentName(storage.user.id)
       }
 
-      AsyncStorage.setItem('isLoginEnabled', 'false');
-      global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled');
+      // AsyncStorage.setItem('isLoginEnabled', 'false');
+      // global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled');
       // console.log('isLoginEnabled: ', isLoginEnabled);
 
       setIsSignUpDisabled(true);
@@ -818,8 +777,8 @@ function UserNameEmailInput(props) {
       }
 
       // setIsLoginEnabled(true)
-      AsyncStorage.setItem('isLoginEnabled', 'true')
-      global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled')
+      // AsyncStorage.setItem('isLoginEnabled', 'true')
+      // global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled')
       // console.log('isLoginEnabled: ', isLoginEnabled);
 
       setIsSignUpDisabled(false);
@@ -828,7 +787,29 @@ function UserNameEmailInput(props) {
     return () => {
       // effect
     };
-  }, [])
+  }, []);
+
+  async function onSubmitEditingEmailInput() {
+    let str = currentEmail.trim();
+    // body... 
+    if (str) {
+      // must be valid email
+      if (isValidEmail(str) !== true) {
+        console.warn('Must be valid');
+        // setCurrentEmail('');
+      }
+      //  cannot match verified user email;
+      else if ((str === global.email) || (global.email === (str))) {
+        console.warn('Cannot match!');
+        // setCurrentEmail('');
+      }
+      else {
+        setCurrentEmail(str);
+        setIsDialogVisible(true)
+      }
+      
+    }
+  }
 
 
 
@@ -1120,10 +1101,7 @@ function UserNameEmailInput(props) {
           maxLength={global.maxEmailLength}
 
           // onSubmitEditing={() => submit('email', currentEmail)}
-          onSubmitEditing={() => {
-            if (currentEmail) setIsDialogVisible(true)
-            
-          }}
+          onSubmitEditing={onSubmitEditingEmailInput}
 
           onChangeText={handleEmailChange}
 
@@ -1143,7 +1121,7 @@ function UserNameEmailInput(props) {
 
       </View>
       {
-        confirmationDialog
+        (currentEmail !== global.email) && confirmationDialog
       }
     </TouchableOpacity>
     );

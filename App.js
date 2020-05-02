@@ -52,17 +52,18 @@ UPDATED:    Fri Nov  1 13:20:51 2019
 */
 
 
-import DisplayImageExample from './DisplayImageExample';
+// import DisplayImageExample from './DisplayImageExample';
 
 import './globals'; // global values
 
-import {
-  getIsBackedUp,
-  getIsDeviceSynced,
-  getHasRatedUs,
-  getIsDeviceSyncOn,
-  setIsDeviceSynced,
-} from './globals'
+// import {
+//   getIsBackedUp,
+//   getIsDeviceSynced,
+//   getHasRatedUs,
+//   getIsDeviceSyncOn,
+//   setIsDeviceSynced,
+//   getAuthenticated,
+// } from './globals';
 
 import React, { useState } from 'react';
 
@@ -73,20 +74,10 @@ import {
   // AsyncStorage
 } from 'react-native';
 
-import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-  // compareListTransactions,
-  // retrieveOnlineTransactions,
-  // retrieveOnlineCategories,
-  // retrieveLocalTransactions,
-} from './src/storage/SettingsStorage';
-
-
 // import the Analytics category
 // import Analytics from '@aws-amplify/analytics';
 
-import Auth from '@aws-amplify/auth';
+// import Auth from '@aws-amplify/auth';
 
 import * as Font from 'expo-font';
 
@@ -103,34 +94,34 @@ import colors from './colors';
 
 import SwitchNavigator from './SwitchNavigator';
 
-import Storybook from './storybook';
+// import Storybook from './storybook';
 
 import amplify from './aws-exports';
 
 Amplify.configure({
   ...amplify,
-  Analytics: {
-    disabled: true,
-  },
+  // Analytics: {
+  //   disabled: true,
+  // },
 });
 
 AWS.config.region = 'us-east-1'; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+  IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
 });
 
 
-const getAuthentication = async () => {
-  global.authenticated = false;
-  await Auth.currentAuthenticatedUser()
-    .then((cognito) => {
-      // console.log('cognito: ', cognito);
-      global.authenticated = (cognito) ? true : false;
-    }).catch((err) => {
-      console.log('err: ', err);
-    });
-  return global.authenticated;
-};
+// const getAuthentication = async () => {
+//   global.authenticated = false;
+//   await Auth.currentAuthenticatedUser()
+//     .then((cognito) => {
+//       // console.log('cognito: ', cognito);
+//       global.authenticated = (cognito) ? true : false;
+//     }).catch((err) => {
+//       console.log('err: ', err);
+//     });
+//   return global.authenticated;
+// };
 
 export default function App() {
   // state hooks
@@ -138,61 +129,10 @@ export default function App() {
 
   let view;
 
-  const getAuthenticatedSettings = async () => {
-    // global.authenticated = false;
-    global.showGlobalValues();
-    await Auth.currentAuthenticatedUser()
-      .then(async (cognito) => {
-        // console.log('cognito: ', cognito);
-        global.storageKey = cognito.attributes.sub;
-
-        global.authenticated = await getAuthentication()
-
-        global.email = cognito.attributes.email;
-
-        // global.displayName = cognito.attributes['custom:full_name'];
-
-        // let settings = await loadSettingsStorage(global.storageKey);
-
-        // // settings.owner = cognito.attributes.sub;
-
-        // // settings.user.id = cognito.attributes.sub;
-
-        // // settings.user.email = cognito.attributes.email;
-
-        // // // // settings.user.full_name = cognito.attributes['custom:full_name'];
-
-        // if (settings.user.image_url) {
-        //   global.image_url = settings.user.image_url
-        //   // global.defaultAvatar = {uri: settings.user.image_url}
-        //   // alert(global.avatar.uri)
-        // }
-        
-
-        
-
-        
-        // saveSettingsStorage(global.storageKey, settings);
-
-        // console.log('settings: ', settings);
-
-        // console.log('cognito.attributes: ', cognito.attributes);
-
-
-        
-
-        // global.displayName = (settings.user.full_name) ? settings.user.full_name : cognito.attributes['custom:full_name']
-
-      }).catch((err) => {
-        // console.log('err: ', err);
-      })
-    return global.authenticated
-  };
-
   async function loadApplicationResources() {
-    global.isBackedUp = await getIsBackedUp();
+    // global.isBackedUp = await getIsBackedUp();
 
-    getAuthenticatedSettings()
+    // getAuthenticatedSettings()
 
     // load stored fonts
     try {

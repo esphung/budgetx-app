@@ -11,6 +11,10 @@ import {
   // Button,
 } from 'react-native';
 
+import {
+  getAuthentication,
+} from '../../globals'
+
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
@@ -35,7 +39,8 @@ import SpinnerMask from '../../src/components/SpinnerMask';
 
 // console.warn("Warning message");
 
-import uuidv4 from '../functions/uuidv4'
+import uuidv4 from '../functions/uuidv4';
+
 
 export default function AuthLoadingScreen(props) {
   /*
@@ -63,10 +68,16 @@ export default function AuthLoadingScreen(props) {
       // console.log('Local Storage userToken: ', userToken);
       global.storageKey = await AsyncStorage.getItem('storageKey');
       // console.log('Local Storage userToken: ', userToken.substring(0, 25), '...');
+
     } else {
       // get current authenticated user
       await Auth.currentAuthenticatedUser()
         .then(async (cognito) => {
+          await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
+          alert(global.storageKey)
+          global.showGlobalValues()
+
+
           // console.log('cognito: ', cognito);
           // console.log('\nAuthenticated User =>')
           // console.log('cognito.attributes: ', cognito.attributes);
@@ -81,7 +92,7 @@ export default function AuthLoadingScreen(props) {
 
         })
         .catch((err) => {
-          // console.log('err: ', err);
+          console.log('err: ', err);
           
         });
 
@@ -95,17 +106,19 @@ export default function AuthLoadingScreen(props) {
     // try offline stored useruserToken first
     let userToken = await retrieveCognitoUserToken();
 
+
     if (!userToken) {
-      userToken = global.storageKey + '@session_' + (Date.now());
+      global.showGlobalValues()
+      userToken = global.storageKey + '@session' + uuidv4();
 
       // console.log('userToken: ', userToken);
       await AsyncStorage.setItem('userToken', userToken); // save user token
       
-      await AsyncStorage.setItem('isUserAuthenticated', 'false');
-      global.isUserAuthenticated = await AsyncStorage.getItem('isUserAuthenticated');
+      await AsyncStorage.setItem('authenticated', 'false');
+      global.authenticated = await AsyncStorage.getItem('authenticated');
 
-      if (global.isUserAuthenticated === true) {
-        console.log('isUserAuthenticated: ', isUserAuthenticated);
+      if (global.authenticated === true) {
+        console.log('authenticated: ', authenticated);
         console.log('User Locally Authenticated');
         global.storageKey = await AsyncStorage.getItem('storageKey');
       }
@@ -117,7 +130,17 @@ export default function AuthLoadingScreen(props) {
     }
 
     // props.navigation.navigate('App');
+    
+    // console.log('userToken: ', userToken);
+    
 
+    global.authenticated = await getAuthentication();
+    // console.log('global.authenticated: ', global.authenticated);
+
+    // await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
+    // alert(global.storageKey);
+
+    // global.showGlobalValues()
     props.navigation.navigate(userToken ? 'App' : 'Auth');
   }
 

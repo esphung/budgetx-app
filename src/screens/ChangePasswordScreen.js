@@ -9,6 +9,9 @@ import Dialog from 'react-native-dialog';
 import {
   setHasRatedUs,
   setIsBackedUp,
+  setUserToken,
+  setStorageKey,
+  setAuthenticated,
 } from '../../globals'
 
 import {
@@ -104,44 +107,61 @@ function ChangePasswordScreen(props) {
 
   // Sign out from the app
   const signOut = async () => {
-    await Auth.signOut()
-      .then(() => {
+    global.showGlobalValues()
+    await Auth.signOut().then((succ) => {
+      // setUserToken('');
+
+      // setStorageKey('');
+
+      // // setAuthenticated(false);
+
+      // setHasRatedUs(false);
+      
+
+
+        AsyncStorage.removeItem('hasRatedUs');
+        
         AsyncStorage.removeItem('userToken');
 
-        AsyncStorage.removeItem('storageKey');
+        // AsyncStorage.removeItem('storageKey');
 
-        AsyncStorage.removeItem('isLoginEnabled');
+        // global.clearGlobalValues()
 
-        AsyncStorage.removeItem('isUserAuthenticated');
+        // AsyncStorage.removeItem('isLoginEnabled');
 
-        global.storageKey = '';
-
-        global.isUserAuthenticated = false;
-
-        global.avatar = require('../../assets/avatar.png');
+        // // AsyncStorage.removeItem('isUserAuthenticated');
+        // AsyncStorage.removeItem('authenticated');
 
 
-        // console.log('Removed AsyncsStorage Variables ..');
+        // global.storageKey = '';
+
+        // // global.isUserAuthenticated = false;
+        // global.authenticated = false;
+
+        // global.avatar = require('../../assets/avatar.png');
 
 
-        // AsyncStorage.getAllKeys((err, keys) => {
-        //   AsyncStorage.multiGet(keys, (error, stores) => {
-        //     stores.map((result, i, store) => {
-        //       console.log({ [store[i][0]]: store[i][1] });
-        //       return true;
-        //     });
-        //   });
-        // });
+        // // console.log('Removed AsyncsStorage Variables ..');
 
-        setHasRatedUs(false);
 
-      setIsBackedUp(false)
+        // // AsyncStorage.getAllKeys((err, keys) => {
+        // //   AsyncStorage.multiGet(keys, (error, stores) => {
+        // //     stores.map((result, i, store) => {
+        // //       console.log({ [store[i][0]]: store[i][1] });
+        // //       return true;
+        // //     });
+        // //   });
+        // // });
 
-      AsyncStorage.setItem('storageKey', JSON.stringify(''))
+        // setHasRatedUs(false);
+
+        // setIsBackedUp(false)
+
+        AsyncStorage.setItem('storageKey', JSON.stringify(''))
 
         navigation.navigate('AuthLoading');
 
-        // console.log('Sign out complete');
+        // // console.log('Sign out complete');
         showMessage('Signed out');
       })
       .catch((err) => console.log('Error while signing out!', err));

@@ -71,7 +71,7 @@ import styles from '../../../styles';
 
 function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
-  const { isSyncBtnEnabled, onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled,  isDeviceSyncOnText } = props;
+  const { isSyncBtnEnabled, onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled } = props;
 
   // let isDisabled;
 
@@ -123,6 +123,11 @@ function UserOptions(props) {
 
     let disabled = Boolean(isDisabled)
     // console.log('disabled: ', disabled);
+
+    if (key.includes('Device Sync')) {
+      caret = null;
+      disabled = true
+    }
 
 
 
@@ -180,10 +185,7 @@ function UserOptions(props) {
       caret = null;
       opacity = 0.5
     }
-    if (key === ('Device Sync')) {
-      let message = isDeviceSyncOnText
-      key += ` ${message}`
-    }
+    
     // /* Change Password/Sign Out */
     // if (title === 'Change Password/Sign Out') {
     //   // isDisabled = !isUserLoggedIn
@@ -364,7 +366,7 @@ function UserOptions(props) {
       // }]}
       data={[
         { key: 'Sign In/Sign Up', isDisabled: isUserLoggedIn },
-        { key: 'Device Sync', isDisabled: !isUserLoggedIn },
+        { key: 'Device Sync' + ' ' + ((global.authenticated) ? 'Enabled' : 'Disabled'), isDisabled: !global.authenticated },
         { key: 'Customize Categories', isDisabled: false },
         // { key: 'Backup Data', isDisabled: isBackupDisabled },
         // { key: 'Passcode', isDisabled: false },

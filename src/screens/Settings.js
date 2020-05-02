@@ -642,32 +642,17 @@ function Settings(props) {
             // backgroundColor: colors.dark,
           }
         }
-        visible={true}
+        // visible={true}
         >
-        <Dialog.Title>Cross-device syncing</Dialog.Title>
+        <Dialog.Title>Cross-Device Syncing</Dialog.Title>
         <Dialog.Description>
-          Would you like to turn it on?
+          Device syncing is automatically performed when the Home page is refreshed
         </Dialog.Description>
-        <Dialog.Button label="No" onPress={() => {
 
-          let bool = false
-
-          // global.isDeviceSyncOn = bool
-
-          // // crossDeviceSync();
-
-          // setIsSyncBtnEnabled(bool)
-
-          setIsDeviceSyncOn(bool)
-
-          
-          setShouldShowCloudSyncDialogBox(false)
-        }
-        }/>
-        <Dialog.Button label="Yes" onPress={() => {
+        <Dialog.Button label="Ok" onPress={() => {
           
           // global.isDeviceCrossSyncOn = true
-          let bool = true
+          // let bool = true
 
           // crossDeviceSync();
 
@@ -675,7 +660,7 @@ function Settings(props) {
 
           // setIsSyncBtnEnabled(bool)
 
-          setIsDeviceSyncOn(bool)
+          // setIsDeviceSyncOn(bool)
 
           setShouldShowCloudSyncDialogBox(false)
         }} />
@@ -750,23 +735,23 @@ function Settings(props) {
     );
   }
 
-  useEffect(() => {
-    // alert(global.isDeviceSyncOn)
-    setIsDeviceSyncOnText((String(global.isDeviceSyncOn) === 'true') ? 'On' : 'Off');
-    return () => {
-      // effect
-    };
-  }, [isDeviceSyncOn]);
+  // useEffect(() => {
+  //   // alert(global.isDeviceSyncOn)
+  //   setIsDeviceSyncOnText((String(global.isDeviceSyncOn) === 'true') ? 'On' : 'Off');
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [isDeviceSyncOn]);
 
   async function retrieveStoredSettings() {
-    global.isDeviceSyncOn = await getIsDeviceSyncOn()
+    // global.isDeviceSyncOn = await getIsDeviceSyncOn()
 
 
 
     // alert(global.isDeviceSyncOn);
 
     // alert(global.isDeviceSyncOn)
-    setIsDeviceSyncOnText(String(global.isDeviceSyncOn) === 'true' ? 'On' : 'Off');
+    // setIsDeviceSyncOnText(String(global.isDeviceSyncOn) === 'true' ? 'On' : 'Off');
 
     // setIsDeviceSyncOnText((global.isDeviceSyncOn === true) ? 'On' : 'Off');
 
@@ -1037,9 +1022,9 @@ function Settings(props) {
 
     await saveSettingsStorage(global.storageKey, storage);
 
-    global.isBackedUp = false;
+    // global.isBackedUp = false;
     // global.isDeviceSyncOn = null
-    global.isDeviceSynced = false;
+    // global.isDeviceSynced = false;
     // global.hasRatedUs = null
     
     // global.isUserAuthenticated = null;
@@ -1057,7 +1042,7 @@ function Settings(props) {
     // global.isConfirmSent = null
 
 
-    global.showGlobalValues()
+    // global.showGlobalValues()
 
 
     // AsyncStorage.removeItem('hasRatedUs');
@@ -1700,7 +1685,7 @@ function Settings(props) {
       shouldShowOfflineDialogBox && dialogBox
     }
     {
-      shouldShowCloudSyncDialogBox && crossDeviceSyncDialogBox
+      // shouldShowCloudSyncDialogBox && crossDeviceSyncDialogBox
     }
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
@@ -1784,7 +1769,7 @@ function Settings(props) {
             isRestoreDisabled={isRestoreDisabled}
             currentSettingsVersion={currentSettingsVersion}
             isUserLoggedIn={isUserLoggedIn}
-            isDeviceSyncOnText={isDeviceSyncOnText}
+            // isDeviceSyncOnText={isDeviceSyncOnText}
             // toggleIsDeviceSyncOn={toggleIsDeviceSyncOn}
             // getIsDeviceSyncOn={getIsDeviceSyncOn}
           />

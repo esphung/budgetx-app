@@ -119,6 +119,8 @@ function WelcomeScreen(props) {
 
     // global.isUserAuthenticated = true;
 
+    global.authenticated = true;
+
     await setIsLoading(false)
 
     handleRoute('AuthLoading');
@@ -135,11 +137,14 @@ function WelcomeScreen(props) {
 
         AsyncStorage.removeItem('isLoginEnabled');
 
-        AsyncStorage.removeItem('isUserAuthenticated');
+        // AsyncStorage.removeItem('isUserAuthenticated');
+        AsyncStorage.removeItem('authenticated');
+
 
         global.storageKey = '';
 
-        global.isUserAuthenticated = false;
+        // global.isUserAuthenticated = false;
+        global.authenticated = false;
 
         global.avatar = require('../../assets/avatar.png');
 
@@ -212,7 +217,7 @@ function WelcomeScreen(props) {
           <View style={styles.container}>
             
             {/* Facebook Login */}
-            <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
+            {/*<FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />*/}
             
             { signUpSignInBtns }
 

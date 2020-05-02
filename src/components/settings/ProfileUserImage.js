@@ -61,7 +61,7 @@ const getAuthentication = async () => {
   let authenticated = false;
   await Auth.currentAuthenticatedUser()
     .then((cognito) => {
-      console.log('cognito: ', cognito);
+      // console.log('cognito: ', cognito);
       authenticated = (cognito) ? true : false;
     }).catch((err) => {
       console.log('err: ', err);
@@ -218,7 +218,7 @@ function ProfileUserImage(props) {
               try {
                 setIsLoading(true);
                 let stored = await Storage.get('picture.jpg', {level:  'protected'});
-                console.log('stored: ', stored);
+                // console.log('stored: ', stored);
 
                 global.avatar = {uri: stored}
 
@@ -333,7 +333,7 @@ function ProfileUserImage(props) {
     try {
       setIsLoading(true)
       let stored = await Storage.get('picture.jpg', {level:  'protected'});
-      console.log('stored: ', stored);
+      // console.log('stored: ', stored);
       global.avatar = ({uri: stored})
       // return
     } catch(e) {

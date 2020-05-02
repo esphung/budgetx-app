@@ -64,6 +64,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import ProfileUserImage from '../settings/ProfileUserImage';
 
+global.showGlobalValues()
+
 function HeaderLeftView(props) {
   const { onUsernameSubmit, getNormalMessage } = props;
 
@@ -72,22 +74,20 @@ function HeaderLeftView(props) {
   // console.log('props: ', props);
   const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
   // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
-  const [normalMessage, setNormalMessage] = useState('Enter your email');
+  const [normalMessage, setNormalMessage] = useState('');
   // const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
   // const [normalMessage, setNormalMessage] = useState(`${global.appName} ${global.appVersion}`);
 
-  const [image, setImage] = useState(global.avatar);
+  // const [image, setImage] = useState(global.avatar);
 
-  const [isReady, setIsReady] = useState(false);
+  // const [isReady, setIsReady] = useState(false);
 
-  // const [text, onChangeText] = React.useState(normalMessage);
-
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [emailInputText, setEmailInputText] = React.useState(((!global.authenticated) ? 'Enter your email' : ''));
 
   const emailInputRef = useRef(null);
 
   useEffect(() => {
-    clearState()
+    clearState();
     // return () => {
     //   // effect
     // };
@@ -98,19 +98,16 @@ function HeaderLeftView(props) {
     // setNormalMessage('Enter your email');
 
 
-    retrieveStoredSettingsImage(global.storageKey)
+    retrieveStoredSettingsImage(global.storageKey);
 
-    setImage(global.avatar)
+    // setImage(global.avatar);
 
     global.emailAddressInput = '';
 
     Auth.currentAuthenticatedUser().then(async (cognito) => {
+      global.storageKey = cognito.attributes.sub;
 
-      global.storageKey = cognito.attributes.sub
-
-      global.email = cognito.attributes.email
-      
-      
+      global.email = cognito.attributes.email;
       const storage = await loadSettingsStorage(cognito.attributes.sub);
 
       try {
@@ -118,26 +115,32 @@ function HeaderLeftView(props) {
       
         storage.user.id = cognito.attributes.sub
 
-        await saveSettingsStorage(global.storageKey, storage)
+        saveSettingsStorage(global.storageKey, storage)
       } catch(e) {
         // statements
         console.log(e);
       }
 
-
-      if (storage.user.full_name) {
-        // console.log('storage: ', storage);
+      try {
         setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName) // : global.displayName);
         
         setNormalMessage(storage.user.email);
-
-      } else {
+      } catch(e) {
+        // statements
+        throw new Error(e);
         setNormalMessage(cognito.attributes.email);
-        // setBoldMessage(global.displayName)
-
       }
 
-      setIsUserLoggedIn(true);
+      // if (storage.user.full_name) {
+      //   setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName) // : global.displayName);
+        
+      //   setNormalMessage(storage.user.email);
+      // } else {
+      //   setNormalMessage(cognito.attributes.email);
+      //   // setBoldMessage(global.displayName)
+
+      // }
+
 
     }).catch((err) => {
       // console.log('err: ', err);
@@ -154,13 +157,11 @@ function HeaderLeftView(props) {
       // console.log('storageObj: ', storageObj);
       if (storageObj.user.name  && storageObj.user.name !== '' && storageObj.user.email) {
         setNormalMessage(storageObj.user.name);
-        setIsUserLoggedIn(true);
       }
 
       // console.log('storageObj: ', storageObj);
       if (storageObj.user.email  && storageObj.user.email !== '') {
         setNormalMessage(storageObj.user.email);
-        setIsUserLoggedIn(true);
       }
 
       // set stored user image
@@ -199,7 +200,7 @@ function HeaderLeftView(props) {
   // </TouchableOpacity>
   // );
 
-  const imageView = <ProfileUserImage isUserLoggedIn={isUserLoggedIn} />
+  const imageView = <ProfileUserImage isUserLoggedIn={global.authenticated} />
 
   function clearEmailInput() {
     // console.log('emailInputRef.current._root.focus(): ', emailInputRef.current._root.focus());
@@ -210,6 +211,12 @@ function HeaderLeftView(props) {
     // console.log('navigation: ', navigation);
     // console.log('email: ', email);
     props.navigation.navigate('SignUp');
+  }
+
+  function handleEmailInputTextChange (text) {
+    let str = text.trim()
+    // console.log('text: ', str);
+    setEmailInputText(str)
   }
 
   return (
@@ -247,19 +254,22 @@ function HeaderLeftView(props) {
               boldMessage
             }
           </Input>
-
-          {/*<TouchableOpacity disabled={isUserLoggedIn}>*/}
         
           <Input
 
             testID="emailTextID"
 
-            editable={!isUserLoggedIn}
+            editable={!global.authenticated}
 
             placeholder={normalMessage}
             style={styles.normalMessage}
             // editable={false}
-            // onChangeText={(text) => onChangeText(text)}
+            onChangeText={(text) => {
+              // var str = text
+              // alert(str.trim());
+              // setEmailInputText(str);
+              handleEmailInputTextChange(text);
+            }}
 
             ref={emailInputRef}
 
@@ -267,6 +277,7 @@ function HeaderLeftView(props) {
                 {
                   // console.log('input.nativeEvent.text: ', input.nativeEvent.text);
                   // if (isValidEmail(input.nativeEvent.text)) {
+
                   if (isValidEmail(input.nativeEvent.text)) {
                     // valid email input format
                     global.emailAddressInput = input.nativeEvent.text;
@@ -306,7 +317,7 @@ function HeaderLeftView(props) {
 
 
 
-            // // value={text}
+            value={emailInputText}
             clearButtonMode="while-editing"
             // clearTextOnFocus
             autoCorrect={false}

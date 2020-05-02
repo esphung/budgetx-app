@@ -345,6 +345,8 @@ function SignInScreen(props) {
 
         
 
+        
+
         if (cognito) {
           // set username key here!
           showMessage(`Signed in as ${cognito.attributes.email}`);

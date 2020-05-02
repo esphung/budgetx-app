@@ -126,6 +126,8 @@ import {
 
 import { isDeviceOnline } from '../../network-functions';
 
+// global.showGlobalValues()
+
 // console.log('getExistingPayee({id: "12"}): ', getExistingPayee({id: "12"}));
 
 const compareListTransactions = async (local_transactions, online_transactions) => {
@@ -157,7 +159,7 @@ const compareListTransactions = async (local_transactions, online_transactions) 
       }, {});
   });
   
-  console.log('compareListTransactions(local, online) => result: ', result);
+  // console.log('compareListTransactions(local, online) => result: ', result);
   // console.log('result: ', result);
   return result;
 }
@@ -209,7 +211,7 @@ const storeUserCategories = async (list) => {
     saveSettingsStorage(storageKey, storage);
   } catch (error) {
     // statements
-    console.log('storeUserCategories error:', error);
+    throw new Error(error)
   }
 };
 
@@ -451,7 +453,8 @@ export default function Home(props) {
       saveSettingsStorage(global.storageKey, storageObj);
 
     } catch (err) {
-      console.log('updateStoredTransaction err: ', err);
+      throw new Error(err)
+
     }
 
      /* if online and logged in, update online transaction */
@@ -529,8 +532,7 @@ export default function Home(props) {
 
       Analytics.record({ name: 'Successfully updated a transaction category' });
     } catch (e) {
-      // console.log('found: ', found);
-      console.log('Could not update transaction category', e);
+      throw new Error(e)
       // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
       // console.log('category: ', category);
 
@@ -675,7 +677,8 @@ export default function Home(props) {
 
       global.isUserLoggedIn = true
 
-      global.isUserAuthenticated = true
+      // global.isUserAuthenticated = true
+      global.authenticated = true;
 
       global.email = storage.user.email
 
@@ -686,7 +689,7 @@ export default function Home(props) {
       try {
         
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
-        console.log(userObject);
+        // console.log(userObject);
         // console.log('storageKey: ', storageKey);
 
         setCurrentOwner(userObject.user.id);

@@ -1,6 +1,8 @@
 // // dimensions
 // import { Dimensions } from 'react-native';
 
+import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+
 import {
   // View,
   // Platform,
@@ -18,6 +20,8 @@ global.testOfflineMode = null;
 global.bucketName = 'profilepicturesbucketbudgetxbudgetxenv-budgetxenv/';
 
 global.currentBucketImage = '';
+
+global.storageKey = ''; // 'CURRENT_USER'
 
 /* Variables */
 
@@ -37,21 +41,19 @@ global.defaultDisplayName = 'Get cross-device sync';
 
 global.facebookAppId = app.expo.facebookAppId;
 
-global.isBackedUp = false;
+// global.isBackedUp = false;
 
-global.isDeviceSyncOn = false;
+// global.isDeviceSyncOn = false;
 
-global.isDeviceSynced = false;
+// global.isDeviceSynced = false;
 
 global.hasRatedUs = false;
 
 global.isStorybookModeOn = false;
 
-global.storageKey = ''; // 'CURRENT_USER'
+// global.isUserAuthenticated = false;
 
-global.isUserAuthenticated = false;
-
-global.isLoginEnabled = false;
+// global.isLoginEnabled = false;
 
 global.amountInputMaxLength = 7;
 
@@ -104,34 +106,40 @@ global.appDeveloper = 'Eric Phung';
 
 global.appDesigner = 'Andrey Nasanov';
 
-global.showGlobalValues = () => {
+global.showGlobalValues = async () => {
   console.log(
     [
-      `global.isBackedUp: ${global.isBackedUp}`,
-      `global.isDeviceSyncOn: ${global.isDeviceSyncOn}`,
-      `global.isDeviceSynced: ${global.isDeviceSynced}`,
-      `global.hasRatedUs: ${global.hasRatedUs}`,
       `global.storageKey: ${global.storageKey}`,
-      `global.isUserAuthenticated: ${global.isUserAuthenticated}`,
+      `global.authenticated: ${global.authenticated}`,
+      `global.displayName: ${global.displayName}`,
+      // `global.isBackedUp: ${global.isBackedUp}`,
+      // `global.isDeviceSyncOn: ${global.isDeviceSyncOn}`,
+      // `global.isDeviceSynced: ${global.isDeviceSynced}`,
+      // `global.hasRatedUs: ${global.hasRatedUs}`,
+      // `global.isUserAuthenticated: ${global.isUserAuthenticated}`,
       `global.isLoginEnabled: ${global.isLoginEnabled}`,
       `global.emailAddressInput: ${global.emailAddressInput}`,
       `global.email: ${global.email}`,
       `global.avatar: ${global.avatar}`,
-      `global.displayName: ${global.displayName}`,
+      
       `global.defaultDisplayName: ${global.defaultDisplayName}`,
       `global.isStorybookModeOn: ${global.isStorybookModeOn}`,
       `global.screenWidth: ${global.screenWidth}`,
       `global.debugMode: ${global.debugMode}`,
-      `global.authenticated: ${global.authenticated}`,
       `global.isConnected: ${global.isConnected}`,
       `global.isUserLoggedIn: ${global.isUserLoggedIn}`,
       `global.isConfirmSent: ${global.isConfirmSent}`,
       `global.bucketName: ${global.bucketName}`,
       `global.defaultAvatar: ${global.defaultAvatar}`,
       `global.currentBucketImage: ${global.currentBucketImage}`,
-
+      
+      // console.log('Cognito  Session userToken: ', userToken.substring(0, 13), '...');
     ],
   );
+};
+
+global.clearGlobalValues = async () => {
+  await (await setUserToken('')(await setStorageKey('')))
 };
 
 /* Methods */
@@ -193,6 +201,7 @@ export const getIsDeviceSynced = async () => {
 
 export const setAuthenticated = (bool) => {
   // Saves to storage as a JSON-string
+  console.log('AUTHENICATED SET TO: ', bool);
   AsyncStorage.setItem('authenticated', JSON.stringify(bool));
   global.authenticated = bool;
 };
@@ -205,8 +214,54 @@ export const getAuthenticated = async () => {
   return JSON.parse(value); // boolean false
 };
 
+export const getAuthentication = async () => {
+  // global.authenticated = false;
+  let bool = false;
+  await Auth.currentAuthenticatedUser()
+    .then(async (cognito) => {
+      bool = true
+      
+      // console.log('cognito: ', cognito);
+      // global.authenticated = (cognito) ? true : false;
+    }).catch((err) => {
+      // console.log('err: ', err);
+    })
 
-global.showGlobalValues();
+    global.authenticated = bool
+  return bool
+};
+
+
+// export const setUserToken = (str) => {
+//   // Saves to storage as string
+//   // global.showGlobalValues();
+//   console.log('str: ', str);
+//   AsyncStorage.setItem('userToken', str);
+//   global.userToken = str;
+// };
+
+// export const getUserToken = async () => {
+//   // Retrieves from storage as string
+//   const value = await AsyncStorage.getItem('userToken');
+//   global.userToken = value;
+//   // console.log('token: ', value);
+//   return value; // boolean false
+// };
+
+// export const setStorageKey = (str) => {
+//   // Saves to storage as string
+//   AsyncStorage.setItem('storageKey', str);
+//   global.storageKey = str;
+// };
+
+// export const getStorageKey = async () => {
+//   // Retrieves from storage as string
+//   const value = await AsyncStorage.getItem('storageKey');
+//   global.storageKey = value;
+//   return value; // boolean false
+// };
+
+// global.showGlobalValues();
 
 // module.exports = {
 //   getIsDeviceSynced,
