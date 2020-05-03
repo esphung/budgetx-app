@@ -74,8 +74,8 @@ export default function AuthLoadingScreen(props) {
       await Auth.currentAuthenticatedUser()
         .then(async (cognito) => {
           await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
-          alert(global.storageKey)
-          global.showGlobalValues()
+          // alert(global.storageKey)
+          // global.showGlobalValues()
 
 
           // console.log('cognito: ', cognito);
@@ -108,7 +108,7 @@ export default function AuthLoadingScreen(props) {
 
 
     if (!userToken) {
-      global.showGlobalValues()
+      // global.showGlobalValues()
       userToken = global.storageKey + '@session' + uuidv4();
 
       // console.log('userToken: ', userToken);
@@ -118,8 +118,8 @@ export default function AuthLoadingScreen(props) {
       global.authenticated = await AsyncStorage.getItem('authenticated');
 
       if (global.authenticated === true) {
-        console.log('authenticated: ', authenticated);
-        console.log('User Locally Authenticated');
+        // console.log('authenticated: ', authenticated);
+        // console.log('User Locally Authenticated');
         global.storageKey = await AsyncStorage.getItem('storageKey');
       }
       else {

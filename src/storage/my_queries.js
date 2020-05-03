@@ -45,7 +45,7 @@ export const listAllOnlineCategories = async () => {
   try {
     const graphqldata = await API.graphql(graphqlOperation(listCategorys));
     console.log('graphqldata: ', graphqldata);
-    list = graphqldata.data.listCategorys.items;
+    list = graphqldata.data
     console.log('list: ', list);
   } catch (err) {
     console.log('error fetching user categories: ', err);
@@ -286,10 +286,10 @@ export const saveCategory = async (category) => {
       await API.graphql(categoryMutation);
       console.log('category successfully created:', category.id);
     } catch (e) {
-      console.log('error saving category:', e);
+      // console.log('error saving category:', e);
       console.log('save category error:', category);
 
-      updateCategory(category);
+      // updateCategory(category);
 
       // throw new Error('Update category error (duplicate)');
       

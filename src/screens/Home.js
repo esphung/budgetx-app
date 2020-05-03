@@ -28,6 +28,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             03/11/2020 02:59 AM
             03/11/2020 04:11 PM | 3.0.3
             03/29/2020 12:33 PM | Added Detox
+            05/02/2020 05:58 PM
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -38,12 +39,12 @@ import {
   SafeAreaView,
   ActivityIndicator,
   // Platform,
-  Text,
+  // Text,
 } from 'react-native';
 
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 
-import NetInfo from '@react-native-community/netinfo'; // online
+// import NetInfo from '@react-native-community/netinfo'; // online
 
 // import the Analytics category
 import Analytics from '@aws-amplify/analytics';
@@ -66,7 +67,7 @@ import {
   // compareListTransactions,
   retrieveOnlineTransactions,
   // retrieveOnlineCategories,
-  retrieveLocalTransactions,
+  // retrieveLocalTransactions,
 } from '../storage/SettingsStorage';
 
 // import my custom view components
@@ -98,7 +99,10 @@ import searchByName from '../functions/searchByName';
 
 import uuidv4 from '../functions/uuidv4';
 
-import defaultCategories from '../data/categories';
+// import defaultCategories from '../data/categories';
+
+
+import getUniqueId from '../functions/getUniqueId';
 
 /* my custom queries */
 import {
@@ -106,7 +110,7 @@ import {
   updateCategory,
   removeTransaction,
   removePayee,
-  removeCategory,
+  // removeCategory,
   savePayee,
   saveCategory,
   saveTransaction,
@@ -119,10 +123,11 @@ import {
 // global.hasSyncedDevice = false;
 
 import {
-  setIsBackedUp,
-  getIsBackedUp,
+  // setIsBackedUp,
+  // getIsBackedUp,
   setIsDeviceSynced,
   getIsDeviceSynced,
+  getAuthentication,
 } from '../../globals';
 
 import { isDeviceOnline } from '../../network-functions';
@@ -161,11 +166,10 @@ const compareListTransactions = async (local_transactions, online_transactions) 
           return newo;
       }, {});
   });
-  
   // console.log('compareListTransactions(local, online) => result: ', result);
   // console.log('result: ', result);
   return result;
-}
+};
 
 const initialState = {
   currentTransactions: [],
@@ -200,21 +204,21 @@ function isUpperCase(str) {
 const findArrayDifferences = (otherArray) => {
   return (current) => {
     return otherArray.filter((other) => {
-      return other.id === current.id // && other.version === current.version
+      return other.id === current.id; // && other.version === current.version
     }).length === 0;
-  }
+  };
 };
 
 const storeUserCategories = async (list) => {
   try {
-    const storage = await loadSettingsStorage(storageKey);
+    const storage = await loadSettingsStorage(global.storageKey);
 
     storage.categories = list;
-    
-    saveSettingsStorage(storageKey, storage);
+
+    saveSettingsStorage(global.storageKey, storage);
   } catch (error) {
     // statements
-    throw new Error(error)
+    throw new Error(error);
   }
 };
 
@@ -300,7 +304,7 @@ const updateStoredCategoryProperties = async (category) => {
     // let key = await getOnlineUserKey();
     // // console.log('key: ', key);
     // if (key) {
-    //   saveCategory(category); 
+    //   saveCategory(category);
     // }
   }
 
@@ -308,7 +312,7 @@ const updateStoredCategoryProperties = async (category) => {
 
   // console.log('storage.categories: ', storage.categories);
   // console.log('category: ', category);
-}
+};
 
 export default function Home(props) {
   // state hooks
@@ -360,11 +364,11 @@ export default function Home(props) {
 
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
 
-  const [shouldShowScrollingPills, setShouldShowScrollingPills] = useState(false);
+  // const [shouldShowScrollingPills, setShouldShowScrollingPills] = useState(false);
 
-  const [shouldShowAmountInput, setShouldShowAmountInput] = useState(false);
+  // const [shouldShowAmountInput, setShouldShowAmountInput] = useState(false);
 
-  const [shouldShowKeypad, setShouldShowKeypad] = useState(false);
+  // const [shouldShowKeypad, setShouldShowKeypad] = useState(false);
 
   const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
 
@@ -375,7 +379,7 @@ export default function Home(props) {
 
   const [top, setTop] = useState(0);
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   const [isCalculatingBalance, setIsCalculatingBalance] = useState(false);
 
@@ -385,7 +389,7 @@ export default function Home(props) {
 
   // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
 
-  const [isReady, setIsReady] = useState(true)
+  const [isReady, setIsReady] = useState(false);
 
   // const clearInputs = () => {
   //   setCurrentPayee('')
@@ -456,24 +460,26 @@ export default function Home(props) {
       saveSettingsStorage(global.storageKey, storageObj);
 
     } catch (err) {
-      throw new Error(err)
+      throw new Error(err);
 
     }
 
      /* if online and logged in, update online transaction */
-    
+
     global.isConnected = await isDeviceOnline();
+    console.log('global.isConnected: ', global.isConnected);
+
     global.authenticated = await getAuthentication();
     // console.log('transactions[pos]: ', transactions[pos]);
-    if (isConnected && global.authenticated) {
-      transactions[pos].category.owner = global.storageKey
+    if (global.isConnected && global.authenticated) {
+      transactions[pos].category.owner = global.storageKey;
       transactions[pos].owner = global.storageKey
       // transactions[pos].payee.owner = global.storageKey
 
-      updateOnlineCategory(transactions[pos].category)
-      updateOnlineTransaction(transactions[pos])
+      updateOnlineCategory(transactions[pos].category);
+      updateOnlineTransaction(transactions[pos]);
     }
-  
+
     showMessage({
       message: 'Updated transaction',
       duration: 550,
@@ -487,38 +493,35 @@ export default function Home(props) {
       // textStyle: styles.textStyle,
 
       icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-      
     });
 
     Analytics.record({ name: 'Updated a stored transaction' });
 
-    retrieveUserStoredSettings()
+    retrieveUserStoredSettings();
 
     setCurrentTransaction(null);
 
     setIsUpdatingTransaction(false);
-
-    
   };
 
   const updateTransactionCategory = async (category) => {
-    if (category !== currentTransaction.category) return
+    if (category !== currentTransaction.category) return;
 
-    setIsUpdatingTransaction(true)
+    setIsUpdatingTransaction(true);
 
     // load stored user transactions
     const storageObj = await loadSettingsStorage(global.storageKey);
 
     let list = storageObj.transactions;
- 
+
     try {
       const found = searchByID(currentTransaction.id, list);
-      console.log('found: ', found);
+      // console.log('found: ', found);
 
 
-      if (category.id === found.category.id || !found || !found.category.id ) {
+      if (category.id === found.category.id || !found || !found.category.id) {
         setIsUpdatingTransaction(false);
-        return
+        return;
       }
 
       found.category = category;
@@ -530,12 +533,12 @@ export default function Home(props) {
       // flip dollar amount to negative or positive
       if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;
       if (found.type.toLowerCase() === 'expense' && found.amount >= 0) found.amount = found.amount * -1;
-    
+
       updateStoredTransaction(list, found);
 
       Analytics.record({ name: 'Successfully updated a transaction category' });
     } catch (e) {
-      throw new Error(e)
+      // throw new Error(e);
       // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
       // console.log('category: ', category);
 
@@ -556,12 +559,9 @@ export default function Home(props) {
       const found = await searchByID(currentTransaction.id, list);
 
       found.note = string;
-
-      
-
       updateStoredTransaction(list, found);
 
-      setCurrentTransaction(found)
+      setCurrentTransaction(found);
 
     } catch (e) {
       console.log('e: ', e);
@@ -574,45 +574,38 @@ export default function Home(props) {
 
     console.log('online_categories.length: ', online_categories.length);
 
-    // try {
-    //   const storage = await loadSettingsStorage(global.storageKey);
-    //   // console.log('local_transactions: ', local_transactions);
+    try {
+      const storage = await loadSettingsStorage(global.storageKey);
+      // console.log('local_transactions: ', local_transactions);
 
-    //  for (var i = 0; i < storage.categories.length; i++) {
-    //     // /* Create New Category */
-    //     const category = new Category(
-    //       storage.categories[i].id, // id
-    //       storage.categories[i].name, // name
-    //       storage.categories[i].color, // color
-    //       storage.categories[i].type, // type
-    //       global.storageKey, // owner
-    //       storage.categories[i].version, // version
-    //     );
+     for (var i = 0; i < storage.categories.length; i++) {
+        // /* Create New Category */
+        const category = new Category(
+          storage.categories[i].id, // id
+          storage.categories[i].name, // name
+          storage.categories[i].color, // color
+          storage.categories[i].type, // type
+          global.storageKey, // owner
+          storage.categories[i].version, // version
+        );
 
-    //     updateCategory(category);
+        updateCategory(category);
 
-    //   // saveCategory(storage.categories[i])
-    //     // console.log('storage.transactions[i]: ', storage.transactions[i]);
-    //  }
+      // saveCategory(storage.categories[i])
+        // console.log('storage.transactions[i]: ', storage.transactions[i]);
+     }
 
-    // } catch(e) {
-    //   // statements
-    //   console.log(e);
-    // }
-  }
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
+  };
   async function retrieveUserStoredSettings() {
-    // setIsReady(false)
-
-    // await setIsDeviceSynced(false)
-
     global.isConnected = await isDeviceOnline();
     // console.log('global.isConnected: ', global.isConnected);
     
-    global.authenticated = await getAuthentication()
+    global.authenticated = await getAuthentication();
     // console.log('global.authenticated: ', global.authenticated);
-
-    global.isDeviceSynced = await getIsDeviceSynced()
-    // console.log('isDeviceSynced: ', isDeviceSynced);
 
     await Auth.currentAuthenticatedUser()
       .then(async (cognito) => {
@@ -620,78 +613,41 @@ export default function Home(props) {
 
         global.email = cognito.attributes.email;
 
+        crossDeviceSync();
 
 
+        const storage = await loadSettingsStorage(global.storageKey);
+        // console.log('storage: ', storage);
 
+        storage.user.id = cognito.attributes.sub;
 
+        storage.user.email = cognito.attributes.email
 
-
-        // console.log('global.isConnected: ', global.isConnected);
-        // console.log('await isDeviceOnline(): ', await isDeviceOnline());
-
-        // console.log('global.isDeviceSynced: ', global.isDeviceSynced);
-
-        // if (global.isConnected === true) {
-        if (global.isDeviceSynced !== true) {
-          // clearState();
-          
-          // setCurrentTransactions(await retrieveOnlineTransactions())
-          // storage.transactions = await retrieveOnlineTransactions();
- 
-          // let online_categories = await retrieveOnlineCategories();
-          // const onlyInOnlineCategories = online_categories.filter(findArrayDifferences(storage.categories));
-
-          // check if device is synced
-          // alert(await getIsDeviceSynced());
-
-          // if not synced => sync
-          if (await getIsDeviceSynced() !== true) {
-
-
-          crossDeviceSync();
-
-          // alert('message?: DOMString')
-
-          setIsDeviceSynced(true);
-
-          
+        for (var i = storage.categories.length - 1; i >= 0; i--) {
+          storage.categories[i].owner = cognito.attributes.sub;
         }
 
-          
-      }
+        /* Replace duplicates???? */
+        for (var i = storage.transactions.length - 1; i >= 0; i--) {
+          storage.transactions[i].owner = cognito.attributes.sub;
 
+          if (searchByID(storage.transactions[i].category.id, storage.categories) === null) {
+            storage.transactions[i].category = searchByName(storage.transactions[i].category.name, storage.categories)
 
+            storage.transactions[i].owner = cognito.attributes.sub
+            storage.transactions[i].category.owner = cognito.attributes.sub
 
-      const storage = await loadSettingsStorage(global.storageKey);
-      // console.log('storage: ', storage);
+            console.log('storage.transactions[i].category: ', storage.transactions[i].category);
+          }
+        }
 
-      storage.user.id = global.storageKey
+        setCategories(storage.categories);
 
-      storage.user.email = global.email
+        setCurrentTransactions(storage.transactions);
 
-      for (var i = storage.categories.length - 1; i >= 0; i--) {
-        storage.categories[i].owner = global.storageKey
-      }
+        saveSettingsStorage(global.storageKey, storage)
 
-      await setCategories(storage.categories);
-
-      setCurrentTransactions(storage.transactions);
-
-      saveSettingsStorage(global.storageKey, storage)
-
-      let isConnected = await isDeviceOnline();
-
-      setIsUserLoggedIn(true);
-
-      global.isUserLoggedIn = true
-
-      // global.isUserAuthenticated = true
-      global.authenticated = true;
-
-      global.email = storage.user.email
-
-      global.avatar = (storage.avatar) ? storage.avatar : global.avatar;
-
+        global.authenticated = true;
     })
     .catch(async () => {
       try {
@@ -706,15 +662,17 @@ export default function Home(props) {
           userObject.categories[i].owner = global.storageKey
         }
 
-        await setCategories(userObject.categories);
+        setCategories(userObject.categories);
 
         setCurrentTransactions(userObject.transactions);
 
-        setIsUserLoggedIn(false);
+        // setIsUserLoggedIn(false);
       } catch(e) {
         // statements
         console.log(e);
       }
+
+      setIsReady(true)
     });
     // saveUndoHistory();
 
@@ -725,22 +683,26 @@ export default function Home(props) {
 
 
 
-      // /* Calculate transaction balances */
-      // setIsCalculatingBalance(true);
-      // const balance = (calculateBalance(currentTransactions));
-      // setCurrentBalance(balance);
-      // setIsCalculatingBalance(false);
+    // /* Calculate transaction balances */
+    // setIsCalculatingBalance(true);
+    // const balance = (calculateBalance(currentTransactions));
+    // setCurrentBalance(balance);
+    // setIsCalculatingBalance(false);
 
-      // // setIsCalculatingBalance(false);
+    // // setIsCalculatingBalance(false);
 
-      // // calculate spent
-      // setIsCalculatingSpent(true);
-      // const spent = (calculateMonthSpent(currentTransactions));
-      // setCurrentSpent(spent);
-      // setIsCalculatingSpent(false);
+    // // calculate spent
+    // setIsCalculatingSpent(true);
+    // const spent = (calculateMonthSpent(currentTransactions));
+    // setCurrentSpent(spent);
+    // setIsCalculatingSpent(false);
 
-      setIsReady(true);
+    // setIsReady(true);
 
+
+    global.showGlobalValues();
+
+    setIsReady(true)
   }
 
   Home.reloadTransactions = () => {
@@ -751,7 +713,7 @@ export default function Home(props) {
     // setIsStoringNewTransaction(true);
 
     // check for maximum unauthorized user transactions
-    if (!isUserLoggedIn && currentTransactions.length >= 5) {
+    if (!global.authenticated && currentTransactions.length >= 5) {
       showMessage({
         description: 'Sign up for more',
 
@@ -803,7 +765,7 @@ export default function Home(props) {
     Analytics.record({ name: 'Stored a transaction' });
   };
   async function clearState() {
-    await setIsReady(false);
+    // setIsReady(false);
 
     // setIsStoringNewTransaction(false);
 
@@ -876,7 +838,7 @@ export default function Home(props) {
         saveSettingsStorage(global.storageKey, userObject);
 
         /* rremove transaction online in db */
-        if (isUserLoggedIn && isDeviceOnline()) {
+        if (global.authenticated && global.isConnected) {
           removeTransaction(transaction)
 
           removePayee(transaction.payee)
@@ -1042,8 +1004,8 @@ export default function Home(props) {
       global.authenticated = await getAuthentication();
       // alert(authenticated);
       if (global.authenticated) {
-        saveCategory(category);
-        savePayee(payee);
+        updateCategory(category);
+        // savePayee(payee);
         saveTransaction(transaction)
       }
     }
@@ -1199,6 +1161,14 @@ export default function Home(props) {
   //   }
   // }, [isSlideViewHidden]);
 
+  async function loadResources() {
+    retrieveUserStoredSettings();
+
+    global.isConnected = await isDeviceOnline();
+    
+    global.authenticated = await getAuthentication();
+  }
+
   useEffect(() => {
     // console.log('Mounted');
     // Set Defaults
@@ -1210,9 +1180,11 @@ export default function Home(props) {
 
     // setIsReady(false);
 
-    setIsReady(false);
+    loadResources();
 
-    retrieveUserStoredSettings();
+    // setIsReady(false);
+
+    // retrieveUserStoredSettings();
 
     // setIsReady(true)
 
@@ -1578,6 +1550,10 @@ export default function Home(props) {
     let online_transactions = []; // online trans
     let local_transactions = [];  // local trans in device storage
 
+
+    
+
+
     try {
       // get user's local transactions
       let storage = await loadSettingsStorage(global.storageKey);
@@ -1589,6 +1565,23 @@ export default function Home(props) {
       online_transactions = await retrieveOnlineTransactions();
       // console.log('online_transactions.length: ', online_transactions.length);
       // console.log('online_transactions: ', online_transactions);
+
+      // /* 1st save any new categories from online transactions */
+      online_transactions.forEach(async (element, index) => {
+        if (!element.category) return
+        try {
+          let found = await searchByName(element.category.name, storage.categories);
+
+          if (!found) {
+            storage.categories.unshift(element.category)
+            saveSettingsStorage(global.storageKey, storage)
+          }
+        } catch(e) {
+          // statements
+          throw new Error('Category Not on This Devvice Yet!')
+          console.log('Not Found!', element.category)
+        }
+      });
 
       // check for local transactions that dont exist in online transactions yet
       // ie: offline-mode transactions
@@ -1610,6 +1603,8 @@ export default function Home(props) {
 
       // save storage transactions to device storage
       saveSettingsStorage(storageKey, storage);
+
+      setIsReady(true)
     } catch(crossDeviceSyncError) {
       // throw new Error('Error performing crossDeviceSync:', e);
       console.log('crossDeviceSyncError: ', crossDeviceSyncError);
@@ -1658,20 +1653,21 @@ export default function Home(props) {
     let online_categories = []; // online trans
     let local_categories = [];  // local trans in device storage
 
-    // pushAllCategoriesToCloud();
+    pushAllCategoriesToCloud();
 
     try {
       // get user's local categories
       let storage = await loadSettingsStorage(global.storageKey);
       local_categories = storage.categories;
       // console.log('local_categories.length: ', local_categories.length);
-      console.log('local_categories: ', local_categories);
+      // console.log('local_categories: ', local_categories);
+
 
       //  // get user's online categories
       // online_categories = await retrieveOnlineCategories();
       // online_categories = []
       // console.log('online_categories.length: ', online_categories.length);
-      console.log('online_categories: ', online_categories);
+      // console.log('online_categories: ', online_categories);
 
       for (var i = online_categories.length - 1; i >= 0; i--) {
         try {
@@ -1698,18 +1694,34 @@ export default function Home(props) {
         );
       }
 
-      for (var i = merged.length - 1; i >= 0; i--) {
-        merged[i].owner = currentOwner
-      }
+       /* get only unique id categories */
+      merged = getUniqueId(merged);
+      // console.log('uniqueIds: ', uniqueIds);
+
+      /* update owner if category owner dne */
+      // for (var i = merged.length - 1; i >= 0; i--) {
+      //   merged[i].owner = currentOwner
+      // }
+
+      merged.forEach((element) => {
+        if (!element.owner || element.owner === '') element.owner = global.storageKey;
+      });
 
       // console.log('merged: ', merged);
       // console.log('merged.length: ', merged.length);
 
       storeUserCategories(merged);
 
-      storage.categories = merged
+      storage.categories = merged;
 
-      await saveSettingsStorage(global.storageKey, storage);
+      console.log('merged: ', merged);
+
+      setCategories(merged)
+
+     
+
+
+      saveSettingsStorage(global.storageKey, storage);
 
       
 
@@ -1802,14 +1814,9 @@ export default function Home(props) {
 
             retrieveUserStoredSettings();
 
-            setIsDeviceSynced(await getIsDeviceSynced());
-
             global.isConnected = await isDeviceOnline();
             
             global.authenticated = await getAuthentication();
-
-            
-
 
           }
         }
@@ -1939,9 +1946,6 @@ export default function Home(props) {
   return isReady && view;
 }
 
-
-
-
 Home.navigationOptions = (props) => {
   // console.log('props: ', props);
   let boldMessage = 'Get device cross-sync';
@@ -1949,27 +1953,6 @@ Home.navigationOptions = (props) => {
   if (global.fullName) {
     boldMessage = global.fullName
   }
-
-  // if (global.authenticated !==  true) {
-  //   boldMessage  = 'Get device cross-sync'
-  // }
-
-  // if (global.isDeviceSynced === false || !global.isDeviceSynced) {
-  //   boldMessage = 'Device not synced';
-  // }
-
-  //  {
-  //   boldMessage = 'Welcome'
-  // }
-
-   // `${global.appName} ${global.appVersion} (Basic)`;
-  
-
-  
-    
-  
-
-
 
   let normalMessage = `${global.appName} ${global.appVersion}`;
 

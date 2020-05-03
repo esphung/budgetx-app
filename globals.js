@@ -23,6 +23,8 @@ global.currentBucketImage = '';
 
 global.storageKey = ''; // 'CURRENT_USER'
 
+global.isConnected = null;
+
 /* Variables */
 
 global.isConfirmSent = false;
@@ -112,6 +114,7 @@ global.showGlobalValues = async () => {
       `global.storageKey: ${global.storageKey}`,
       `global.authenticated: ${global.authenticated}`,
       `global.displayName: ${global.displayName}`,
+      `global.isConnected: ${global.isConnected}`,
       // `global.isBackedUp: ${global.isBackedUp}`,
       // `global.isDeviceSyncOn: ${global.isDeviceSyncOn}`,
       // `global.isDeviceSynced: ${global.isDeviceSynced}`,
