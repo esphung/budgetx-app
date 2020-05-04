@@ -462,7 +462,7 @@ function UserNameEmailInput(props) {
 
     storage.user.name = name
 
-    saveSettingsStorage(global.storageKey, storage);
+    // saveSettingsStorage(global.storageKey, storage);
 
     try {
       const user = await Auth.currentAuthenticatedUser();
@@ -547,15 +547,21 @@ function UserNameEmailInput(props) {
 
     setUniqueId(storage.user.id)
 
-    setName(storage.user.name)
+    if (!storage.user.full_name) {
+      setName(storage.user.name)
+    } else {
+      setName(storage.user.full_name)
+    }
 
     setEmail(storage.user.email)
 
     Auth.currentAuthenticatedUser().then(async (cognito) => {
       // console.log(cognito.attributes);
       // alert(cognito.attributes.email)
-      // setEmail(cognito.attributes.email);
-      // setCurrentID(cognito.attributes.sub);
+      setEmail(cognito.attributes.email);
+      setCurrentID(cognito.attributes.sub);
+
+      
 
       // global.storageKey = cognito.attributes.sub
 
@@ -569,7 +575,7 @@ function UserNameEmailInput(props) {
       // if (storage.user.full_name) {
       //   // setEmail(storage.user.name);
       //   // setCurrentID(storage.user.id);
-      //   // setName(storage.user.full_name)
+        
       //   // setEmailLabelText('Name')
 
       //  // || storage.user.id);

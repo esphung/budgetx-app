@@ -80,6 +80,35 @@ import Dialog from "react-native-dialog";
 
 import uuidv4 from '../functions/uuidv4';
 
+import AppleSignInButton from '../components/AppleSignInButton';
+
+{/**
+<AppleAuthentication.AppleAuthenticationButton
+  onPress={onSignIn}
+  buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+  buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+  style={{ width: 200, height: 64 }} // You must choose default size
+/>
+
+
+
+
+function appleSignInCallback(authResult) {
+     // Add the apple's id token to the Cognito credentials login map.
+     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'IDENTITY_POOL_ID',
+        Logins: {
+           'appleid.apple.com': authResult['id_token']
+        }
+     });
+
+     // Obtain AWS credentials
+     AWS.config.credentials.get(function(){
+        // Access AWS resources here.
+     });
+}
+*/}
+
 function SignInScreen(props) {
   // state hooks
   // const usernameInputRef = useRef(null);
@@ -587,6 +616,8 @@ function SignInScreen(props) {
 
         global.avatar = require('../../assets/avatar.png');
 
+        AsyncStorage.setItem('isAppleSignedIn', JSON.stringify(false))
+
 
         // console.log('Removed AsyncsStorage Variables ..');
 
@@ -635,6 +666,9 @@ function SignInScreen(props) {
               {/* Facebook Login */}
             {
               (!global.isFederated && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
+            }
+            {
+              (!global.authenticated && !global.isAppleSignedIn) && <AppleSignInButton appleSignInCallback={appleSignInCallback} />
             }
                 {/* email section */}
                 <Item rounded style={styles.itemStyle}>
@@ -731,6 +765,64 @@ function SignInScreen(props) {
 
   const offline = <OfflineScreen />;
 
+  async function appleSignInCallback(authResult) {
+    console.log('authResult: ', authResult);
+
+    // let userId = authResult.authorizationCode
+
+    // global.storageKey = userId
+    AsyncStorage.setItem('storageKey', global.storageKey)
+
+    let token = authResult.identityToken
+    AsyncStorage.setItem('userToken', JSON.stringify(token))
+
+    let userEmail =  authResult.email
+
+    let userFullName = authResult.fullName.givenName + ' ' + authResult.fullName.familyName
+
+    let settings = await loadSettingsStorage(global.storageKey);
+
+    if (userEmail) settings.user.email = userEmail
+
+    if (userFullName) settings.user.full_name = userFullName
+    // settings.user.name = userFullName;
+
+    saveSettingsStorage(global.storageKey, settings);
+
+    // global.isFederated = true;
+    
+    // AsyncStorage.setItem('isFederated', JSON.stringify(global.isFederated))
+
+    global.isAppleSignedIn = true
+
+    AsyncStorage.setItem('isAppleSignedIn', JSON.stringify(global.isAppleSignedIn))
+
+    
+
+
+     // Add the apple's id token to the Cognito credentials login map.
+     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+        Logins: {
+           'appleid.apple.com': authResult['identityToken']
+        }
+     });
+
+     // Obtain AWS credentials
+     AWS.config.credentials.get((result) => {
+        // Access AWS resources here.
+
+        // console.log('Success!')
+        console.log('result: ', result);
+        // alert('Coming Soon!')
+
+
+
+        props.navigation.navigate('AuthLoading');
+
+     });
+}
+
   const view = (
     <NetworkConsumer>
       {
@@ -750,6 +842,7 @@ function SignInScreen(props) {
   if (isLoading === true) {
     return <SpinnerMask />;
   }
+    // return <AppleSignInButton appleSignInCallback={appleSignInCallback} />
     return view;
 }
 

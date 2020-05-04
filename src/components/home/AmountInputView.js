@@ -21,7 +21,7 @@ export default function AmountInputView(props) {
   const { handleChange, value, isEditable } = props;
 
   function handleValueChange(value) {
-    
+
     handleChange(value);
   }
 
@@ -35,7 +35,9 @@ export default function AmountInputView(props) {
           }
         }
       >
-        <Text style={styles.amountInputLabel}>Amount Spent:</Text>
+        <Text style={[styles.amountInputLabel, {
+          marginTop: 11
+        }]}>Amount Spent:</Text>
       </View>
 
       <View

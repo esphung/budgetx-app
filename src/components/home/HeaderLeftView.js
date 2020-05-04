@@ -122,7 +122,7 @@ function HeaderLeftView(props) {
       }
 
       try {
-        setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName) // : global.displayName);
+        // setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName) // : global.displayName);
         
         setNormalMessage(storage.user.email);
       } catch(e) {

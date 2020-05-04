@@ -143,6 +143,8 @@ export default function AuthLoadingScreen(props) {
 
     global.isFederated = await AsyncStorage.getItem('isFederated');
 
+    global.isAppleSignedIn = await AsyncStorage.getItem('isAppleSignedIn')
+
     // await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
     // alert(global.storageKey);
 

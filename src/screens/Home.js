@@ -389,7 +389,7 @@ export default function Home(props) {
 
   // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
 
-  const [isReady, setIsReady] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   // const clearInputs = () => {
   //   setCurrentPayee('')
@@ -639,17 +639,16 @@ export default function Home(props) {
     global.authenticated = await getAuthentication();
     // console.log('global.authenticated: ', global.authenticated);
 
-    Auth.currentAuthenticatedUser()
+    await Auth.currentAuthenticatedUser()
       .then(async (cognito) => {
         global.storageKey = cognito.attributes.sub;
 
-        // global.email = cognito.attributes.email;
+        global.email = cognito.attributes.email;
 
         crossDeviceSync();
 
-
         const storage = await loadSettingsStorage(global.storageKey);
-        // console.log('storage: ', storage);
+        console.log('storage: ', storage);
 
         storage.user.id = cognito.attributes.sub;
 
@@ -1222,35 +1221,58 @@ export default function Home(props) {
   async function loadResources() {
     retrieveUserStoredSettings();
 
-    // global.isConnected = await isDeviceOnline();
+    global.isConnected = await isDeviceOnline();
     
-    // global.authenticated = await getAuthentication();
+    global.authenticated = await getAuthentication();
   }
 
-  // useEffect(() => {
-  //   // console.log('Mounted');
-  //   // Set Defaults
-  //   // setCurrentTransactions([]);
+  useEffect(() => {
+    // console.log('Mounted');
+    // Set Defaults
+    // setCurrentTransactions([]);
 
-  //   // setCategories(defaultCategories);
+    // setCategories(defaultCategories);
 
-  //   // clearState()
+    // clearState()
 
-  //   setIsReady(false);
+    setIsReady(false);
 
-  //   loadResources();
+    loadResources();
 
-  //   // setIsReady(false);
+    // setIsReady(false);
 
-  //   // retrieveUserStoredSettings();
+    // retrieveUserStoredSettings();
 
-  //   setIsReady(true)
+    // setIsReady(true)
 
-  //   // return () => {
-  //   //   clearState()
-  //   // }
+    // return () => {
+    //   clearState()
+    // }
     
-  // }, []);
+  }, []);
+
+  // useEffect(() => {
+  //   if (currentTransaction) {
+  //     setCurrentAmount(currentTransaction.amount *  100)
+  //     showSlideView();
+  //     // console.log('currentTransaction: ', currentTransaction);
+  //   } else {
+  //     hideSlideView();
+  //     // console.log('\n');
+  //   }
+  // }, [currentTransaction]);
+
+  async function save () {
+    // setIsReady(false)
+    // setIsUpdatingTransaction(true)
+    let storage = await loadSettingsStorage(global.storageKey);
+    storage.transactions = currentTransactions;
+    saveSettingsStorage(global.storageKey, storage)
+    // setIsUpdatingTransaction(false)
+    // showMessage('Saved transactions')
+
+    // setIsReady(true)
+  }
 
   useEffect(() => {
     if (currentTransaction) {
@@ -1259,7 +1281,8 @@ export default function Home(props) {
       // console.log('currentTransaction: ', currentTransaction);
     } else {
       hideSlideView();
-      // console.log('\n');
+
+      save()
     }
   }, [currentTransaction]);
 
@@ -1582,7 +1605,6 @@ export default function Home(props) {
   );
 
   const crossDeviceSync = async () => {
-    
     // check if user is online
     let bool = await isDeviceOnline();
     if (bool !== true) {
@@ -1590,7 +1612,20 @@ export default function Home(props) {
       return;
     }
 
-    let storage = await loadSettingsStorage(global.storageKey);
+    // check if device is synced
+    // if (await getIsDeviceSynced() === true) return
+
+
+    // alert(await getIsDeviceSynced());
+
+
+
+    // check if user has device sync enabled
+    // if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
+
+    // setIsReady(false);
+
+    // setIsSyncing(true)
 
     /* Sync Transactions */
     // compare both transaction lists
@@ -1603,7 +1638,7 @@ export default function Home(props) {
 
     try {
       // get user's local transactions
-      
+      let storage = await loadSettingsStorage(global.storageKey);
       local_transactions = storage.transactions;
       // console.log('local_transactions.length: ', local_transactions.length);
       // console.log('local_transactions: ', local_transactions);
@@ -1613,24 +1648,24 @@ export default function Home(props) {
       // console.log('online_transactions.length: ', online_transactions.length);
       // console.log('online_transactions: ', online_transactions);
 
-      // // /* 1st save any new categories from online transactions */
-      // online_transactions.forEach(async (element, index) => {
-      //   if (!element.category) return
-      //   try {
-      //     let found = await searchByName(element.category.name, storage.categories);
+      // /* 1st save any new categories from online transactions */
+      online_transactions.forEach(async (element, index) => {
+        if (!element.category) return
+        try {
+          let found = await searchByName(element.category.name, storage.categories);
 
-      //     if (!found) {
-      //       storage.categories.unshift(element.category)
-      //       saveSettingsStorage(global.storageKey, storage)
-      //     }
-      //   } catch(e) {
-      //     // statements
-      //     throw new Error('Category Not on This Devvice Yet!')
-      //     console.log('Not Found!', element.category)
-      //   }
-      // });
+          if (!found) {
+            storage.categories.unshift(element.category)
+            
+          }
 
-
+          saveSettingsStorage(global.storageKey, storage)
+        } catch(e) {
+          // statements
+          throw new Error('Category Not on This Devvice Yet!')
+          console.log('Not Found!', element.category)
+        }
+      });
 
       // check for local transactions that dont exist in online transactions yet
       // ie: offline-mode transactions
@@ -1651,12 +1686,12 @@ export default function Home(props) {
       // console.log('storage.transactions.length: ', storage.transactions.length);
 
       // save storage transactions to device storage
-      // saveSettingsStorage(storageKey, storage);
+      saveSettingsStorage(storageKey, storage);
 
-      // setIsReady(true)
+      setIsReady(true)
     } catch(crossDeviceSyncError) {
-      throw new Error('Error performing crossDeviceSync:', e);
-      // console.log('crossDeviceSyncError: ', crossDeviceSyncError);
+      // throw new Error('Error performing crossDeviceSync:', e);
+      console.log('crossDeviceSyncError: ', crossDeviceSyncError);
     }
 
 
@@ -1752,18 +1787,18 @@ export default function Home(props) {
       //   merged[i].owner = currentOwner
       // }
 
-      // merged.forEach((element) => {
-      //   if (!element.owner || element.owner === '') element.owner = global.storageKey;
-      // });
+      merged.forEach((element) => {
+        if (!element.owner || element.owner === '') element.owner = global.storageKey;
+      });
 
       // console.log('merged: ', merged);
       // console.log('merged.length: ', merged.length);
 
-      // storeUserCategories(merged);
+      storeUserCategories(merged);
 
       storage.categories = merged;
 
-      // console.log('merged: ', merged);
+      console.log('merged: ', merged);
 
       setCategories(merged)
 
@@ -1771,12 +1806,15 @@ export default function Home(props) {
 
 
       saveSettingsStorage(global.storageKey, storage);
+
+      
+
     } catch(categorySync) {
-      throw new Error('Error performing crossDeviceSync:', e);
-      // console.log('categorySync: ', categorySync);
+      // throw new Error('Error performing crossDeviceSync:', e);
+      console.log('categorySync: ', categorySync);
     }
 
-    setIsReady(true);
+    // setIsReady(true);
 
     // setIsSyncing(false);
 
@@ -1856,7 +1894,21 @@ export default function Home(props) {
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         // onWillFocus={clearState} // {(payload) => clearState()}
-        onWillFocus={loadResources}
+        onWillFocus={async () => {
+            
+
+            // retrieveUserStoredSettings()
+
+            // global.hasSyncedDevice = false;
+
+            retrieveUserStoredSettings();
+
+            global.isConnected = await isDeviceOnline();
+            
+            global.authenticated = await getAuthentication();
+
+          }
+        }
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         onWillBlur={async () =>
@@ -1865,7 +1917,7 @@ export default function Home(props) {
             setCurrentTransaction(null);
             // hideSlideView();
 
-            // setIsDeviceSynced(false);
+            setIsDeviceSynced(false);
 
           }
         }

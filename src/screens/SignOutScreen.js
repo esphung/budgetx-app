@@ -136,7 +136,11 @@ function ChangePasswordScreen(props) {
 
       AsyncStorage.removeItem('isFederated');
 
-      AsyncStorage.removeItem('authenticated');      
+      AsyncStorage.removeItem('authenticated');
+
+      AsyncStorage.removeItem('isAppleSignedIn');
+
+      // AsyncStorage.setItem('isAppleSignedIn', JSON.stringify(global.isAppleSignedIn))    
 
       // AsyncStorage.removeItem('storageKey');
 

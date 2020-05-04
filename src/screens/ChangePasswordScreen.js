@@ -146,6 +146,8 @@ function ChangePasswordScreen(props) {
       // // AsyncStorage.removeItem('isUserAuthenticated');
       AsyncStorage.removeItem('authenticated');
 
+      AsyncStorage.removeItem('isAppleSignedIn')
+
 
       // global.storageKey = '';
 
