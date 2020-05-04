@@ -14,20 +14,17 @@ UPDATED:    12/04/2019 07:44 PM Changed to hook state
 */
 
 
-
-
-
 import React, { useState, useEffect } from 'react';
 
 import { Linking } from 'expo';
 
 import PropTypes from 'prop-types';
 
-import { withNavigation } from 'react-navigation';
+import { withNavigation, NavigationEvents } from 'react-navigation';
 
-import SignIn from './SignInScreen'
+// import SignIn from './SignInScreen';
 
-import { showMessage, hideMessage } from "react-native-flash-message";
+import { showMessage } from 'react-native-flash-message';
 
 // import NetInfo from "@react-native-community/netinfo";
 
@@ -38,21 +35,21 @@ import {
   saveSettingsStorage,
   // compareListTransactions,
   retrieveOnlineTransactions,
-  retrieveOnlineCategories,
-  pushAllTransactionsToCloud,
+  // retrieveOnlineCategories,
+  // pushAllTransactionsToCloud,
 } from '../storage/SettingsStorage';
 
 import {
   // StyleSheet,
   ActivityIndicator,
   View,
-  ScrollView,
-  Button,
-  TouchableOpacity,
-  Text,
-  Image,
-  TextInput,
-  SafeAreaView,
+  // ScrollView,
+  // Button,
+  // TouchableOpacity,
+  // Text,
+  // Image,
+  // TextInput,
+  // SafeAreaView,
   AsyncStorage,
   Alert,
   Share,
@@ -60,17 +57,17 @@ import {
 
 /* my custom queries */
 import {
-  updateTransaction,
+  // updateTransaction,
   removeTransaction,
   // removePayee,
   removeCategory,
   // savePayee,
-  saveCategory,
-  saveTransaction,
+  // saveCategory,
+  // saveTransaction,
   updateCategory,
   // fetchStoredTransactions,
   // fetchStoredCategories,
-  getTransactionByID,
+  // getTransactionByID,
 } from '../storage/my_queries';
 
 import defaultCategories from '../data/categories';
@@ -85,8 +82,6 @@ import * as StoreReview from 'expo-store-review';
 import * as MailComposer from 'expo-mail-composer';
 
 // import { TouchableOpacity } from 'react-native-gesture-handler';
-
-import { NavigationEvents } from 'react-navigation';
 
 import ProfileRectangle from '../components/settings/ProfileRectangle';
 
@@ -122,22 +117,24 @@ import colors from '../../colors'; // ui colors
 
 import styles from '../../styles';
 
-import uuidv4 from '../functions/uuidv4';
+// import uuidv4 from '../functions/uuidv4';
 
 import { isDeviceOnline } from '../../network-functions';
 
-import searchByName from '../functions/searchByName';
+// import searchByName from '../functions/searchByName';
 
-import searchByID from '../functions/searchByID';
+// import searchByID from '../functions/searchByID';
 
 import {
-  getHasRatedUs,
-  getIsBackedUp,
-  setHasRatedUs,
+  // getHasRatedUs,
+  // getIsBackedUp,
+  // setHasRatedUs,
   setIsBackedUp,
-  getIsDeviceSyncOn,
-  setIsDeviceSyncOn,
+  // getIsDeviceSyncOn,
+  // setIsDeviceSyncOn,
+  getAuthentication,
 } from '../../globals';
+
 
 // import { } from 'Utils';
 
@@ -192,26 +189,26 @@ ${objectRows}
 //   return bool;
 // };
 
-const findArrayDifferences = (otherArray) => {
-  return (current) => {
-    return otherArray.filter((other) => {
-      return other.id === current.id // && other.version === current.version
-    }).length === 0;
-  }
-};
+// const findArrayDifferences = (otherArray) => {
+//   return (current) => {
+//     return otherArray.filter((other) => {
+//       return other.id === current.id; // && other.version === current.version
+//     }).length === 0;
+//   };
+// };
 
-const storeUserCategories = async (list) => {
-  try {
-    const storage = await loadSettingsStorage(storageKey);
+// const storeUserCategories = async (list) => {
+//   try {
+//     const storage = await loadSettingsStorage(global.storageKey);
 
-    storage.categories = list;
-    
-    saveSettingsStorage(storageKey, storage);
-  } catch (error) {
-    // statements
-    console.log('storeUserCategories error:', error);
-  }
-};
+//     storage.categories = list;
+
+//     saveSettingsStorage(global.storageKey, storage);
+//   } catch (error) {
+//     // statements
+//     console.log('storeUserCategories error:', error);
+//   }
+// };
 
 // const setIsBackedUp = (bool) => {
 //   // Saves to storage as a JSON-string
@@ -240,9 +237,6 @@ const storeUserCategories = async (list) => {
 //   global.hasRatedUs = value;
 //   return value // boolean false
 // };
-
-
-
 
 function Settings(props) {
   // const [isPasscodeEnabled, setIsPasscodeEnabled] = useState(null);
@@ -280,7 +274,7 @@ function Settings(props) {
 
   const [currentOwner, setCurrentOwner] = useState(global.storageKey);
 
-  const [shouldShowOfflineDialogBox, setShouldShowOfflineDialogBox] = useState(false);
+  // const [shouldShowOfflineDialogBox, setShouldShowOfflineDialogBox] = useState(false);
 
   const [shouldShowCloudSyncDialogBox, setShouldShowCloudSyncDialogBox] = useState(false);
 
@@ -454,219 +448,6 @@ function Settings(props) {
 // };
 
 
-  const crossDeviceSync = async () => {
-    // check if user is online
-    let bool = await isDeviceOnline();
-    if (bool !== true) {
-      showMessage('Device Currently Offline');
-      return;
-    }
-
-    // check if user has device sync enabled
-    // if (!global.isDeviceCrossSyncOn || global.isDeviceCrossSyncOn !== true) return;
-
-    if (isUserLoggedIn !== true) return
-
-    // setIsReady(false);
-
-    setIsSyncing(true)
-
-    /* Sync Transactions */
-    // compare both transaction lists
-    let online_transactions = []; // online trans
-    let local_transactions = [];  // local trans in device storage
-
-    try {
-      // get user's local transactions
-      let storage = await loadSettingsStorage(global.storageKey);
-      local_transactions = storage.transactions;
-      // console.log('local_transactions.length: ', local_transactions.length);
-      // console.log('local_transactions: ', local_transactions);
-
-       // get user's online transactions
-      online_transactions = await retrieveOnlineTransactions();
-      // console.log('online_transactions.length: ', online_transactions.length);
-      // console.log('online_transactions: ', online_transactions);
-
-      // check for local transactions that dont exist in online transactions yet
-      // ie: offline-mode transactions
-      const onlyInLocal = local_transactions.filter(findArrayDifferences(online_transactions));
-      const onlyInOnline = online_transactions.filter(findArrayDifferences(local_transactions));
-
-      // only upload new local transactions; not all of them
-      if (onlyInLocal.length > 0) {
-        for (var i = onlyInLocal.length - 1; i >= 0; i--) {
-          // console.log('onlyInLocal[i]: ', onlyInLocal[i]);
-          saveTransaction(onlyInLocal[i]);
-        }
-      }
-
-      // add new online transactions to local transactions  on to user's device
-      // storage.transactions = await retrieveOnlineTransactions();
-      storage.transactions = local_transactions.concat(onlyInOnline);
-      // console.log('storage.transactions.length: ', storage.transactions.length);
-
-      // save storage transactions to device storage
-      saveSettingsStorage(storageKey, storage);
-    } catch(crossDeviceSyncError) {
-      // throw new Error('Error performing crossDeviceSync:', e);
-      console.log('crossDeviceSyncError: ', crossDeviceSyncError);
-    }
-
-
-
-
-    /* Sync identical transactions */
-    // console.log('compareListTransactions(): ', await compareListTransactions());
-
-    let outdated_transactions = await compareListTransactions();
-
-    if (outdated_transactions && outdated_transactions.length > 0) {
-      // pull newer online transaction and replace outdated local with it
-
-      for (var i = outdated_transactions.length - 1; i >= 0; i--) {
-        const existing_local_transaction = searchByID(outdated_transactions[i].id, local_transactions);
-        console.log('existing_local_transaction: ', existing_local_transaction);
-        // console.log('online_transactions[i]: ', online_transactions[i]);
-
-        let online_newer_transaction = await getTransactionByID(existing_local_transaction.id);
-        console.log('online_newer_transaction: ', online_newer_transaction);
-
-        try {
-          let storage = await loadSettingsStorage(global.storageKey);
-
-          let list = storage.transactions;
-
-          let found = searchByID(existing_local_transaction.id, list);
-
-          let pos = list.indexOf(found);
-
-          list[pos] = online_newer_transaction;
-
-          saveSettingsStorage(global.storageKey, storage);
-        } catch(e) {
-          // statements
-          console.log(e);
-        }
-      }
-    }
-
-    /* Sync Categories */
-    // compare both category lists
-    let online_categories = []; // online trans
-    let local_categories = [];  // local trans in device storage
-
-    try {
-      // get user's local categories
-      let storage = await loadSettingsStorage(global.storageKey);
-      local_categories = storage.categories;
-      // console.log('local_categories.length: ', local_categories.length);
-      // console.log('local_categories: ', local_categories);
-
-      //  // get user's online categories
-      online_categories = await retrieveOnlineCategories();
-      // console.log('online_categories.length: ', online_categories.length);
-      // console.log('online_categories: ', online_categories);
-
-      for (var i = online_categories.length - 1; i >= 0; i--) {
-        try {
-          let found = searchByName(online_categories[i].name, local_categories)
-          if (found) {
-            const pos = local_categories.indexOf(found);
-            local_categories[pos] = online_categories[i];
-          }
-        } catch(e) {
-          // statements
-          console.log(e);
-        }
-      }
-
-      var arr1 = local_categories;
-      var arr2  = online_categories;
-
-      let merged = [];
-
-      for(let i=0; i<arr1.length; i++) {
-      merged.push({
-        ...arr1[i],
-        ...(arr2.find((itmInner) => itmInner.name === arr1[i].name))}
-        );
-      }
-
-      // console.log('merged: ', merged);
-      // console.log('merged.length: ', merged.length);
-
-      storeUserCategories(merged);
-
-      // storage.categories = local_categories
-
-      saveSettingsStorage(storageKey, storage);
-
-      pushAllCategoriesToCloud();
-
-    } catch(categorySync) {
-      // throw new Error('Error performing crossDeviceSync:', e);
-      console.log('categorySync: ', categorySync);
-    }
-
-    // setIsReady(true);
-
-    setIsSyncing(false);
-
-        showMessage({
-          message: `Synced data successfully`,
-          // description: 
-          type: 'success', // "success", "info", "warning", "danger"
-          icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-        });  
-
-
-
-
-
-
-    // go back to user home screen
-    navigation.navigate('Home');
-  }
-  const crossDeviceSyncDialogBox = (
-    <View>
-      <Dialog.Container headerStyle={{
-          // backgroundColor: 'pink',
-          // backgroundColor: colors.dark,
-        }}
-        contentStyle={{
-          // backgroundColor: colors.dark,
-        }}
-        footerStyle={
-          {
-            // backgroundColor: colors.dark,
-          }
-        }
-        // visible={true}
-        >
-        <Dialog.Title>Cross-Device Syncing</Dialog.Title>
-        <Dialog.Description>
-          Device syncing is automatically performed when the Home page is refreshed
-        </Dialog.Description>
-
-        <Dialog.Button label="Ok" onPress={() => {
-          
-          // global.isDeviceCrossSyncOn = true
-          // let bool = true
-
-          // crossDeviceSync();
-
-          // global.isDeviceSyncOn = bool
-
-          // setIsSyncBtnEnabled(bool)
-
-          // setIsDeviceSyncOn(bool)
-
-          setShouldShowCloudSyncDialogBox(false)
-        }} />
-      </Dialog.Container>
-    </View>
-  );
 
   // // create an event handler
   // const recordBtnPress = () => {
@@ -692,48 +473,27 @@ function Settings(props) {
   //   //   });
   // }
 
-  const dialogBox = (
-    <View>
-      <Dialog.Container visible={true}>
-        <Dialog.Title>Offline</Dialog.Title>
-        <Dialog.Description>
-          Cannot sync without internet connection
-        </Dialog.Description>
-        <Dialog.Button label="Cancel" onPress={() => setShouldShowOfflineDialogBox(false)} />
-        <Dialog.Button label="Ok" onPress={() => setShouldShowOfflineDialogBox(false)} />
-      </Dialog.Container>
-    </View>
-  );
-
-    const updateCloudDialogBox = (
-  <View>
-    <Dialog.Container visible={true}>
-      <Dialog.Title>Update Cloud</Dialog.Title>
-      <Dialog.Description>
-        Update this data across all devices?
-      </Dialog.Description>
-      <Dialog.Button label="No" onPress={() => {
-        setShouldShowUpdateCloudDialogBox(false)
-        props.navigation.navigate('Home');
-      }} />
-      <Dialog.Button label="Yes" onPress={() => {
-        // update transactions in cloud
-        pushAllTransactionsToCloud();
-        props.navigation.navigate('Home');
-      }} />
-    </Dialog.Container>
-  </View>
-);
+  // const dialogBox = (
+  //   <View>
+  //     <Dialog.Container visible={shouldShowOfflineDialogBox}>
+  //       <Dialog.Title>Offline</Dialog.Title>
+  //       <Dialog.Description>
+  //         Cannot sync without internet connection
+  //       </Dialog.Description>
+  //       <Dialog.Button label="Cancel" onPress={() => setShouldShowOfflineDialogBox(false)} />
+  //       <Dialog.Button label="Ok" onPress={() => setShouldShowOfflineDialogBox(false)} />
+  //     </Dialog.Container>
+  //   </View>
+  // );
 
 
-
-  function handleFirstConnectivityChange(isConnected) {
-    // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-    NetInfo.isConnected.removeEventListener(
-      'connectionChange',
-      handleFirstConnectivityChange
-    );
-  }
+  // function handleFirstConnectivityChange(isConnected) {
+  //   // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+  //   NetInfo.isConnected.removeEventListener(
+  //     'connectionChange',
+  //     handleFirstConnectivityChange
+  //   );
+  // }
 
   // useEffect(() => {
   //   // alert(global.isDeviceSyncOn)
@@ -745,6 +505,7 @@ function Settings(props) {
 
   async function retrieveStoredSettings() {
     // global.isDeviceSyncOn = await getIsDeviceSyncOn()
+    setIsReady(false)
 
 
 
@@ -797,11 +558,11 @@ function Settings(props) {
         //   message: `You are ${auth_error}`,
         //   type: 'danger', // "success", "info", "warning", "danger"
         //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-        // });  
+        // });
         
     });
 
-    setIsBackupDisabled(global.isBackedUp);
+    // setIsBackupDisabled(global.isBackedUp);
 
 
 
@@ -1003,7 +764,7 @@ function Settings(props) {
 
     for (var i = categories.length - 1; i >= 0; i--) {
       // console.log('categories[i]: ', categories[i]);
-      await removeCategory(categories[i])
+      removeCategory(categories[i])
     }
 
     // let storage = await loadSettingsStorage(global.storageKey)
@@ -1012,15 +773,15 @@ function Settings(props) {
 
     // let  storage = await loadSettingsStorage(global.storageKey)
     Object.keys(storage).forEach( function(element, index) {
-      console.log('element: ', element);
-      if (element  !== 'user' && element !== 'image_url') {
+      // console.log('element: ', element);
+      if (element !== 'user' && element !== 'image_url') {
         storage[element] = '';
       }
     });
 
     // storage = null;
 
-    await saveSettingsStorage(global.storageKey, storage);
+   saveSettingsStorage(global.storageKey, storage);
 
     // global.isBackedUp = false;
     // global.isDeviceSyncOn = null
@@ -1351,8 +1112,6 @@ function Settings(props) {
 
 
   const onClick = () => {
-
-
     Share.share({
       ...Platform.select({
         ios: {
@@ -1366,20 +1125,22 @@ function Settings(props) {
         }
       }),
       // title: 'Wow, did you see that?'
-    }, {
-      ...Platform.select({
-        ios: {
-          // iOS only:
-          excludedActivityTypes: [
-            // 'com.apple.UIKit.activity.PostToTwitter'
-          ]
-        },
-        android: {
-          // Android only:
-          dialogTitle: `Share : ${global.appName}`
-        }
-      })
-    });
+    },
+    // {
+    //   ...Platform.select({
+    //     ios: {
+    //       // iOS only:
+    //       excludedActivityTypes: [
+    //         // 'com.apple.UIKit.activity.PostToTwitter'
+    //       ]
+    //     },
+    //     android: {
+    //       // Android only:
+    //       dialogTitle: `Share : ${global.appName}`
+    //     }
+    //   })
+    // }
+    );
   }
 
   const onExport = async () => {
@@ -1498,8 +1259,18 @@ function Settings(props) {
 
   const rateUsBtnPressed = async () => {
     // store review
-    StoreReview.requestReview();
-    // AsyncStorage.setItem('hasRatedUs', String(true));
+    StoreReview.isAvailableAsync().then(() => {
+      try {
+        StoreReview.requestReview().catch((e) => {
+          console.log('e: ', e);
+        })
+        AsyncStorage.setItem('hasRatedUs',JSON.stringify(true));
+      } catch(e) {
+        // statements
+        Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602')
+        console.log(e);
+      }
+    }).catch((err) => console.log('Store Review Error:', err))
   };
 
   function contactSupportBtnPressed() {
@@ -1526,10 +1297,20 @@ function Settings(props) {
     props.navigation.navigate('ChangePasswordScreen');
   }
 
+  function signOutBtnPressed () {
+    props.navigation.navigate('SignOutScreen');
+  }
+
   function signInBtnPressed() {
     // console.log(props.navigation);
     // AsyncStorage.removeItem('userToken')
-    props.navigation.navigate('WelcomeScreen');
+    props.navigation.navigate('SignIn');
+    // props.navigation.popToTop();
+  }
+    function signUpBtnPressed() {
+    // console.log(props.navigation);
+    // AsyncStorage.removeItem('userToken')
+    props.navigation.navigate('SignUp');
     // props.navigation.popToTop();
   }
 
@@ -1541,27 +1322,27 @@ function Settings(props) {
     restoreDataAlert();
   }
 
-  // console.log('currentOwner: ', currentOwner);
-  const crossDeviceSyncBtnPressed = async () => {
-    // check if user online
-    const online = await isDeviceOnline();
-    if (online !== true) {
-      setShouldShowOfflineDialogBox(true);
-      return;
-    }
+  // // console.log('currentOwner: ', currentOwner);
+  // const crossDeviceSyncBtnPressed = async () => {
+  //   // check if user online
+  //   global.isConnected = await isDeviceOnline();
+  //   if (global.isConnected !== true) {
+  //     setShouldShowOfflineDialogBox(true);
+  //     return;
+  //   }
 
-    // check if user logged in
-    if (!isUserLoggedIn) return;
+  //   // check if user logged in
+  //   if (!iglobal.authenticated) return;
 
-    // // developer debugging only let this user sync
-    // if (global.storageKey !== '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey === '216747749558231') {
-    //   showMessage('Update to 4.x!');
-    //   return;
-    // }
+  //   // // developer debugging only let this user sync
+  //   // if (global.storageKey !== '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey === '216747749558231') {
+  //   //   showMessage('Update to 4.x!');
+  //   //   return;
+  //   // }
 
-    // alert => would you like to sync transactions in the cross-device with this device?
-    setShouldShowCloudSyncDialogBox(true);
-  }
+  //   // alert => would you like to sync transactions in the cross-device with this device?
+  //   setShouldShowCloudSyncDialogBox(true);
+  // }
 
   async function onPress(name) {
     // const name = btn.key;
@@ -1576,23 +1357,32 @@ function Settings(props) {
     } else if (name === 'Export Transactions') {
       exportBtnPressed();
     }
-    else if (name === 'Change Password/Sign Out') {
+    else if (name === 'Change Password') {
       changePasswordBtnPressed();
+    }
+    else if (name === 'Sign Out') {
+      signOutBtnPressed();
     }
     else if (name === 'Sign In/Sign Up') {
       signInBtnPressed();
     }
-    else if (name.includes('Device Sync')) {
-      crossDeviceSyncBtnPressed();
-      // let bool = global.isDeviceSyncOn
-
-      // if (bool === true) {
-      //   setIsDeviceSyncOn(false)
-      // } else {
-      //   setIsDeviceSyncOn(true)
-      // }
-
+    else if (name === 'Sign In') {
+      signInBtnPressed();
     }
+    else if (name === 'Sign Up') {
+      signUpBtnPressed();
+    }
+    // else if (name.includes('Device Sync')) {
+    //   crossDeviceSyncBtnPressed();
+    //   // let bool = global.isDeviceSyncOn
+
+    //   // if (bool === true) {
+    //   //   setIsDeviceSyncOn(false)
+    //   // } else {
+    //   //   setIsDeviceSyncOn(true)
+    //   // }
+
+    // }
     else if (name === 'Reset Data') {
       resetDataBtnPressed();
     } else if (name === 'Customize Categories') {
@@ -1605,24 +1395,31 @@ function Settings(props) {
       restoreBackupDataBtnPressed();
     }
   }
-  const checkConnectivity = async () => {
-    NetInfo.isConnected.fetch().then(isConnected => {
-      // console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      {
-        // isConnected ? showFlashMessage('Online') : showFlashMessage('Offline');
-        isConnected ? null : showMessage('You are currently offline');
-      }
-    });
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      handleFirstConnectivityChange
-    );
-  }
+  // const checkConnectivity = async () => {
+  //   NetInfo.isConnected.fetch().then(isConnected => {
+  //     // console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+  //     isConnected ? null : showMessage('Currentlly offline');
+  //     {
+  //       // isConnected ? showFlashMessage('Online') : showFlashMessage('Offline');
+        
+  //     }
+  //   });
+  //   NetInfo.isConnected.addEventListener(
+  //     'connectionChange',
+  //     handleFirstConnectivityChange
+  //   );
+  // }
 
   useEffect(() => {
     // checkConnectivity();
 
     retrieveStoredSettings();
+
+    return  () => {
+      setInput('')
+      global.emailAddressInput = ''
+      global.email = ''
+    }
   }, []);
 
   // useEffect(() => {
@@ -1656,36 +1453,29 @@ function Settings(props) {
   //   };
   // }, [isPasscodeEnabled])
 
-  const rateUsBtn = <BlueButton title="Rate Us" onPress={
-                    async () => {
-                      await rateUsBtnPressed();
-                      setHasRatedUs(true);
-                    }
-                  } />
+  const rateUsBtn = 
+  <BlueButton title="Rate Us" onPress={rateUsBtnPressed} />
 
   
 
-  const getAuthentication = async () => {
-    let authenticated = false;
-    await Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // console.log('cognito: ', cognito);
-        authenticated = (cognito) ? true : false;
-      }).catch((err) => {
-        console.log('err: ', err);
-      })
-    return authenticated
-  };
+  // const getAuthentication = async () => {
+  //   let authenticated = false;
+  //   await Auth.currentAuthenticatedUser()
+  //     .then((cognito) => {
+  //       // console.log('cognito: ', cognito);
+  //       authenticated = (cognito) ? true : false;
+  //     }).catch((err) => {
+  //       console.log('err: ', err);
+  //     })
+  //   return authenticated
+  // };
 
   const view = (
     <View
       style={styles.container}
     >
     {
-      shouldShowOfflineDialogBox && dialogBox
-    }
-    {
-      // shouldShowCloudSyncDialogBox && crossDeviceSyncDialogBox
+      // dialogBox
     }
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
@@ -1693,20 +1483,26 @@ function Settings(props) {
               {
                 // alert(await getHasRatedUs())
 
-                global.hasRatedUs = (await getHasRatedUs())
+                // global.hasRatedUs = await getHasRatedUs()
 
                 setIsBackupDisabled(global.isBackedUp)
 
                 let loggedIn = await getAuthentication();
 
-                setIsUserLoggedIn(loggedIn);
+                // setIsUserLoggedIn(loggedIn);
 
+                global.authenticated = await getAuthentication();
 
-                
+                global.isFederated = await AsyncStorage.getItem('isFederated' );
+
+                global.isConnected  = await isDeviceOnline()
+
 
                 // setIsRestoreDisabled(backup)
 
                 retrieveStoredSettings();
+
+                
               }
             } // {(payload) => checkConnectivity()}
             // other props
@@ -1733,6 +1529,7 @@ function Settings(props) {
           style={
             {
               flex: 0.3,
+
               justifyContent: 'center',
             }
           }
@@ -1838,9 +1635,7 @@ function Settings(props) {
         {
           shouldShowResetDialog && resetDataDialogBox
         }
-        {
-          // shouldShowUpdateCloudDialogBox && isUserLoggedIn && updateCloudDialogBox
-        }
+
         {
           isExportingTransactions && <ActivityIndicator color="#ddd" size="large" />
         }
@@ -1850,7 +1645,7 @@ function Settings(props) {
     </View>
   );
 
-  return view;
+  return isReady && view;
 }
 
 Settings.navigationOptions = ({ navigation }) => {
@@ -1896,38 +1691,38 @@ Settings.navigationOptions = ({ navigation }) => {
 
 
 
-  // Sign out from the app
-  const signOutAlert = async () => {
-    await Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out from the app? You will need internet access to sign back in and recover your data!',
-      [
-        {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
-        // Calling signOut
-        { text: 'OK',
-        onPress: () => signOut()},
-      ],
-      { cancelable: false },
-    );
-  };
-  // Confirm sign out
-  const signOut = async () => {
-    await Auth.signOut()
-    .then(async () => {
-      // console.log('Sign out complete');
+  // // Sign out from the app
+  // const signOutAlert = async () => {
+  //   await Alert.alert(
+  //     'Sign Out',
+  //     'Are you sure you want to sign out from the app? You will need internet access to sign back in and recover your data!',
+  //     [
+  //       {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
+  //       // Calling signOut
+  //       { text: 'OK',
+  //       onPress: () => signOut()},
+  //     ],
+  //     { cancelable: false },
+  //   );
+  // };
+  // // Confirm sign out
+  // const signOut = async () => {
+  //   await Auth.signOut()
+  //   .then(async () => {
+  //     // console.log('Sign out complete');
 
-      setHasRatedUs(false);
+  //     setHasRatedUs(false);
 
-      setIsBackedUp(false)
+  //     setIsBackedUp(false)
 
-      AsyncStorage.setItem('storageKey', JSON.stringify(''))
+  //     AsyncStorage.setItem('storageKey', JSON.stringify(''))
       
-      navigation.navigate('AuthLoading');
+  //     navigation.navigate('AuthLoading');
 
 
-    })
-    .catch((err) => console.log('Error while signing out!', err));
-  };
+  //   })
+  //   .catch((err) => console.log('Error while signing out!', err));
+  // };
 
   const navbar = {
     title: 'Settings',

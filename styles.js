@@ -443,10 +443,12 @@ export default StyleSheet.create({
     // backgroundColor: colors.dark,
   },
   iconStyle: {
-    // flex: 0.1,
+    flex: 0.1,
     color: colors.white, // '#5a52a5',
-    fontSize: 17,
-    marginLeft: 15,
+    // fontSize: 17,
+    marginLeft: 25,
+    marginRight: 10,
+    marginTop: 2,
 
 
 

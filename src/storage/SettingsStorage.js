@@ -311,10 +311,10 @@ export const loadSettingsStorage = async (key) => {
     }
 
     /* set user profile image if there is */
-    // if (storageObject.image_url) {
-    //   let Image_Http_URL ={ uri: storageObject.image_url};
-    //   global.avatar = Image_Http_URL;
-    // }
+    if (storageObject.user) {
+      let Image_Http_URL = { uri: storageObject.user.image_url};
+      global.avatar = Image_Http_URL;
+    }
     return JSON.parse(storageObject);
   } catch (error) {
     console.log('Error loading storageObject:', error);

@@ -214,9 +214,20 @@ function UserOptions(props) {
     //   }
     // }
 
-    // /* Sign In/Sign Up */
-    // if (key === 'Sign In/Sign Up' && isUserLoggedIn) {
-    //     // title = null;
+    /* Sign In/Sign Up */
+    if (key === 'Sign In' && global.authenticated) {
+        key = null;
+        // textColor = colors.offWhite
+        // backgroundColor = 'transparent';
+        // isDisabled = true
+        // caret = null;
+        rowHeight = 0;
+        // caret = null;
+        // opacity = 0.5
+      
+    }
+    // if (key === 'Sign In' && (!global.authenticated || global.isFederated)) {
+    //     key = 'Sign Up'
     //     // textColor = colors.offWhite
     //     // backgroundColor = 'transparent';
     //     // isDisabled = true
@@ -365,7 +376,8 @@ function UserOptions(props) {
       //   // borderStyle: 'solid',
       // }]}
       data={[
-        { key: 'Sign In/Sign Up', isDisabled: isUserLoggedIn },
+        // { key: 'Sign In/Sign Up', isDisabled: global.authenticated },
+        { key: 'Sign In', isDisabled: global.authenticated },
         { key: 'Device Sync' + ' ' + ((global.authenticated) ? 'Enabled' : 'Disabled'), isDisabled: !global.authenticated },
         { key: 'Customize Categories', isDisabled: false },
         // { key: 'Backup Data', isDisabled: isBackupDisabled },
@@ -376,7 +388,8 @@ function UserOptions(props) {
         
 
         { key: '', isDisabled: true },
-        { key: 'Change Password/Sign Out', isDisabled: !isUserLoggedIn },
+        { key: 'Change Password', isDisabled: !global.authenticated },
+        { key: 'Sign Out', isDisabled: false },
         { key: 'Export Transactions', isDisabled: isExportTransactionsDisabled },
         // { key: 'Restore Backup Data', isDisabled: !isBackupDisabled },
         { key: 'Contact Support', isDisabled: false },

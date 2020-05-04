@@ -42,6 +42,10 @@ function SlideUpView(props) {
     setShouldShowCalendarPicker,
     setTop,
     isUpdatingTransaction,
+
+          isEditable,
+      value,
+      handleChange,
   } = props;
 
   const keyboardAvoidingView = (
@@ -92,10 +96,14 @@ function SlideUpView(props) {
                 transaction={transaction}
                 updateTransactionDate={updateTransactionDate}
                 updateTransactionCategory={updateTransactionCategory}
+  
                 shouldShowCalendarPicker={shouldShowCalendarPicker}
                 setShouldShowCalendarPicker={setShouldShowCalendarPicker}
                 setTop={setTop}
                 isUpdatingTransaction={isUpdatingTransaction}
+                isEditable={true}
+                value={value}
+                handleChange={handleChange}
  
               />
             </View>

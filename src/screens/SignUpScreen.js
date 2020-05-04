@@ -211,6 +211,7 @@ function SignUpScreen(props) {
     }
     return () => {
       // effect
+      
     };
   });
 
@@ -478,15 +479,27 @@ function SignUpScreen(props) {
           // console.log('Error when signing up: ', err.message);
           // Alert.alert('Error when signing up: ', err.message);
 
-          showMessage({
-            message: 'Sign Up Failed!',
-            description: err.message,
-            type: 'danger',
-          });
+          
+
+          // console.log('err: ', err);
+
+          if (err.code  === 'UsernameExistsException') {
+            signIn();
+
+            
+          }
+
+          else {
+            showMessage({
+              message: 'Sign Up Failed!',
+              description: err.message,
+              type: 'danger',
+            });
+          }
 
           // record analytics
-          const name = `Failed user sign up`;
-          Analytics.record({ name: name });
+          // const name = `Failed user sign up`;
+          // Analytics.record({ name: name });
           // console.log(`Analytic Recorded: ${name}`);
 
           // setDialogTitle('Error when signing up!');
@@ -516,6 +529,28 @@ function SignUpScreen(props) {
       Analytics.record({ name: name });
       // console.log(`Analytic Recorded: ${name}`);
     }
+  }
+  async function signIn () {
+    
+    // body... 
+    await Auth.signIn(email, password).then((succ) =>  {
+      global.email = ''
+
+      global.emailAddressInput = '';
+
+
+      props.navigation.navigate('AuthLoading')
+      console.log('succ: ', succ);
+    }).catch(() => {
+      props.navigation.goBack();
+
+      setIsLoading(false);
+
+    });
+
+    setIsLoading(false);
+    
+
   }
 
    const checkForFBUserSettings = async () => {
@@ -629,79 +664,75 @@ function SignUpScreen(props) {
 
    const checkForExisitngSettings = async () => {
 
-    let storage = await loadSettingsStorage(global.storageKey);
+    // let storage = await loadSettingsStorage(global.storageKey);
 
-    /* Previous settings */
-    settings = {
-        user: {},
-        transactions: storage.transactions, // what ever currently existing transactions exist
-        categories: storage.categories,
-        payees: storage.payees, // ???
-        image_url: global.avatar,
-        version: 0,
-      };
-    // let transactions = []
+    // /* Previous settings */
+    // settings = {
+    //     user: {},
+    //     transactions: storage.transactions, // what ever currently existing transactions exist
+    //     categories: storage.categories,
+    //     payees: storage.payees, // ???
+    //     image_url: global.avatar,
+    //     version: 0,
+    //   };
+    // // let transactions = []
    
 
-    await Auth.signIn(email, password)
-      .then(async user => {
-         // console.log('user: ', user);
+    // await Auth.signIn(email, password)
+    //   .then(async user => {
+    //      // console.log('user: ', user);
 
-        // console.log('Object.keys(fb): ', Object.keys(fb));s
+    //     // console.log('Object.keys(fb): ', Object.keys(fb));s
 
-        /* Create financely user from fb credentials */
+    //     /* Create financely user from fb credentials */
 
-        settings.user = new User(user.attributes.sub)
+    //     settings.user = new User(user.attributes.sub)
 
-        // new_user.name = (fb.name);
+    //     // new_user.name = (fb.name);
 
-        settings.user.email = user.attributes.email; // global.emailAddressInput
+    //     settings.user.email = user.attributes.email; // global.emailAddressInput
 
-        // new_user.picture = fb.picture
+    //     // new_user.picture = fb.picture
 
-        // console.log('new_user: ', new_user);s
+    //     // console.log('new_user: ', new_user);s
 
-        /* Create Settings to be stored on sign in confirmation */
+    //     /* Create Settings to be stored on sign in confirmation */
         
 
-        // console.log('storage: ', storage);
-        // let Image_Http_URL ={ uri: fb.picture.data.url};
-        // global.avatar = Image_Http_URL;
+    //     // console.log('storage: ', storage);
+    //     // let Image_Http_URL ={ uri: fb.picture.data.url};
+    //     // global.avatar = Image_Http_URL;
 
         
 
-        global.avatar = settings.image_url
+    //     global.avatar = settings.image_url
 
-        global.storageKey = settings.user.id
+    //     global.storageKey = settings.user.id
 
-        await saveSettingsStorage(global.storageKey, settings);
+    //     await saveSettingsStorage(global.storageKey, settings);
 
-        props.navigation.navigate('AuthLoading');
-      })
-      .catch(err => console.log(err)
-    )
+    //     props.navigation.navigate('AuthLoading');
+    //   })
+    //   .catch(err => console.log(err)
+    // )
   };
 
 
   // Confirm users and redirect them to the SignIn page
   async function confirmSignUp() {
     if (authCode !== null) {
-      // const { email, authCode } = this.state;
-      // if (!username) {
-      //   usernameInputRef.current._root.focus();
-      //   Alert.alert('Please provide a username');
-      //   return;
-      // }
-      await Auth.confirmSignUp(email, authCode)
+      Auth.confirmSignUp(email, authCode)
         .then(() => {
 
-          /* if new fb user log them in */
-          checkForFBUserSettings()
+          // /* if new fb user log them in */
+          // checkForFBUserSettings()
 
-          checkForExisitngSettings()
+          // checkForExisitngSettings()
 
 
-          props.navigation.navigate('SignIn');
+          // props.navigation.navigate('SignIn');
+
+          props.navigation.navigate('AuthLoading');
 
 
 
@@ -1004,20 +1035,7 @@ function SignUpScreen(props) {
     return confirm;
   }
 
-  if (!isLoading) {
-    return view;
-  }
-  return (
-    <SpinnerMask>
-{/*      <AppLoading
-        autoHideSplash
-        startAsync={clearState}
-        onFinish={() => {}}
-        onError={console.warn}
-      />*/}
-    </SpinnerMask>
-
-  );
+  return isLoading && <SpinnerMask>{view}</SpinnerMask> || view
 }
 
 /*

@@ -37,6 +37,8 @@ import FacebookLogin from '../components/FacebookLoginButton';
 
 import HelpMessage from '../../storybook/stories/HelpMessage';
 
+import uuidv4 from '../functions/uuidv4';
+
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 // Auth.federatedSignIn
@@ -52,14 +54,14 @@ const getAuthentication = async () => {
 };
 
 function WelcomeScreen(props) {
-  const [userData, setUserData] = useState(null);
+  // const [userData, setUserData] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRoute = async (destination) => {
     try {
       // statements
-      await props.navigation.navigate(destination);
+      props.navigation.navigate(destination);
     } catch (e) {
       // statements
       console.log('Error with welcomescreen route', e);
@@ -103,11 +105,16 @@ function WelcomeScreen(props) {
     
     // setUserData(userData);
 
+    global.storageKey = userData.id
+
+    let Image_Http_URL = { uri: userData.picture.data.url};
+
+    global.avatar = Image_Http_URL;
+
     // global.storageKey = userData.id
 
-    await AsyncStorage.setItem('storageKey', userData.id);
+    AsyncStorage.setItem('storageKey', global.storageKey);
 
-    // await AsyncStorage.setItem('storageKey', global.storageKey)
 
     let storage = await loadSettingsStorage(userData.id);
 
@@ -115,13 +122,32 @@ function WelcomeScreen(props) {
 
     storage.user.email = userData.email;
 
+    storage.user.image_url = userData.picture.data.url;
+
     saveSettingsStorage(global.storageKey, storage);
+
+    // console.log('storage: ', storage);
 
     // global.isUserAuthenticated = true;
 
-    global.authenticated = true;
+    // global.authenticated = true;
 
-    await setIsLoading(false)
+    AsyncStorage.setItem('authenticated', JSON.stringify(true))
+
+    AsyncStorage.setItem('isFederated', JSON.stringify(true))
+
+    let userToken = global.storageKey + '@session' + uuidv4();
+
+      // console.log('userToken: ', userToken);
+      await AsyncStorage.setItem('userToken', userToken); // save user token
+
+    // let userToken = global.storageKey + '@session' + String(Math.random(1,8)*100);
+
+    // await AsyncStorage.setItem('userToken', userToken); // save user token
+
+
+
+    setIsLoading(false)
 
     handleRoute('AuthLoading');
 }
@@ -140,11 +166,20 @@ function WelcomeScreen(props) {
         // AsyncStorage.removeItem('isUserAuthenticated');
         AsyncStorage.removeItem('authenticated');
 
-
         global.storageKey = '';
+
+        global.email = '';
+
+        global.emailAddressInput = '';
 
         // global.isUserAuthenticated = false;
         global.authenticated = false;
+
+        global.isFederated = false;
+
+        AsyncStorage.setItem('authenticated', JSON.stringify(false))
+
+        AsyncStorage.setItem('isFederated', JSON.stringify(false))
 
         global.avatar = require('../../assets/avatar.png');
 
@@ -161,16 +196,16 @@ function WelcomeScreen(props) {
         //   });
         // });
 
-        setHasRatedUs(false);
+        // setHasRatedUs(false);
 
-        setIsBackedUp(false)
+        // setIsBackedUp(false)
 
         AsyncStorage.setItem('storageKey', JSON.stringify(''))
 
-          navigation.navigate('AuthLoading');
+        navigation.navigate('AuthLoading');
 
-          // console.log('Sign out complete');
-          showMessage('Signed out');
+        // console.log('Sign out complete');
+        // showMessage('Signed out');
         })
         .catch((err) => console.log('Error while signing out!', err));
 
@@ -179,9 +214,7 @@ function WelcomeScreen(props) {
         await setIsLoading(false)
 
         handleRoute('AuthLoading');
-  
-}
-
+      }
 
   const signUpSignInBtns = (
     <View style={styles.infoContainer}>
@@ -190,7 +223,13 @@ function WelcomeScreen(props) {
 
         <Button title="Sign Up" onPress={() => handleRoute('SignUp')} />
 
-        <Button title="Sign In" onPress={() => handleRoute('SignIn')} />
+        <Button title="Sign In" onPress={() => {
+          if (global.isFederated) {
+            handleRoute('AuthLoading')
+          } else {
+            handleRoute('SignIn')
+          }
+        }} />
 
         <View style={{
           flexDirection: 'row',
@@ -208,7 +247,6 @@ function WelcomeScreen(props) {
       </View>
     </View>
   );
-
   const welcome = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
@@ -217,9 +255,14 @@ function WelcomeScreen(props) {
           <View style={styles.container}>
             
             {/* Facebook Login */}
-            {/*<FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />*/}
+            {
+              //(!global.isFederated && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
+            }
             
-            { signUpSignInBtns }
+            {
+
+              signUpSignInBtns
+            }
 
             {
               isLoading && spinner

@@ -44,6 +44,8 @@ import getCurrencySymbol from '../../functions/getCurrencySymbol';
 
 import NoteTextInput from '../NoteTextInput';
 
+import AmountInputView from './AmountInputView'
+
 import searchByID from '../../../src/functions/searchByID';
 
 import {
@@ -54,15 +56,15 @@ import {
 // test label
 const dateLabel = {
   // width: 242,
-  height: 28,
+  // height: 28,
 
   // flex: 1,
 
 
-  // width: '100%',
+  width: '100%',
   // height: '30%',
   fontFamily: 'SFProDisplay-Regular',
-  // fontSize: 15,
+  fontSize: 16,
   // fontWeight: 'normal',
   // fontStyle: 'normal',
   // letterSpacing: 0.13,
@@ -109,6 +111,9 @@ function SlideUpTransactionRect(props) {
      updateTransactionCategory,
      updateTransactionNote,
      updateTransactionDate,
+    isEditable,
+    value,
+    handleChange,
      shouldShowCalendarPicker,
      setShouldShowCalendarPicker,
      setTop, isUpdatingTransaction
@@ -398,12 +403,12 @@ function SlideUpTransactionRect(props) {
         bottom: 0,
         // justifyContent: 'center',
         // backgroundColor: colors.dark,
-        position: 'absolute',
+        // position: 'absolute',
         // opacity: 0.1,
         // borderWidth: 1,
         // borderColor: 'white',
         // borderStyle: 'solid',
-        zIndex: 0,
+        // zIndex: 0,
       }
     }>
       <ActivityIndicator size="large" color={colors.offWhite} />
@@ -421,7 +426,7 @@ function SlideUpTransactionRect(props) {
               // borderWidth: 1,
               // borderColor: 'white',
               // borderStyle: 'solid',
-              zIndex: -1,
+              // zIndex: -1,
             }
           ]
         }
@@ -449,18 +454,33 @@ function SlideUpTransactionRect(props) {
 
         {/* date label */}
         {
-          // isReady &&
+          isReady &&
 
           (
-            <View style={styles.dateAmountRectangle}>
-              <View>{ touchableText }</View>
-            <Text style={amountLabel}>
-              <Text style={{ color: colors.offWhite }}>
-                {`${getCurrencySymbol(currentAmount)}`}
-              </Text>
-              {`${Math.abs(currentAmount).toFixed(2)}`}
-            </Text>
-          </View>
+            <View style={[
+              styles.dateAmountRectangle,
+              {
+
+              }
+              ]}>
+         { 
+                touchableText
+              }
+              <AmountInputView
+              isEditable={true}
+              value={value}
+              handleChange={handleChange} />
+{/*
+              <Text style={[amountLabel, {
+                // fontSize: 19,
+              }] }>
+                {
+                  `${getCurrencySymbol(currentAmount)}`
+                }
+                {`${Math.abs(currentAmount).toFixed(2)}`}
+              </Text>*/}
+        </View>
+        
           )
         }
         </View>
@@ -506,13 +526,14 @@ function SlideUpTransactionRect(props) {
 
                 />*/
               }
+
               </View>
               )
             }
 
              <FlatList
                 contentContainerStyle={{
-                  // alignItems: 'center',
+                  alignItems: 'center',
                   paddingHorizontal: 5,
                   paddingVertical: 6,
 
@@ -529,13 +550,27 @@ function SlideUpTransactionRect(props) {
                 keyExtractor={(item) => item.key}
               />
 
+
               {
                 // !isUpdatingTransaction &&
                 noteInput
               }
+              <View style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                height: 100,
+                width: '90%',
+                // borderWidth: 1,
+                // borderColor: 'white',
+                // borderStyle: 'solid',
+              }}>
+             
+                
+              </View>
 
               {
-                !isReady && updatingTransactionIndicator
+                // !isReady && updatingTransactionIndicator
               }
 
           </View>

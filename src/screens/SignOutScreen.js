@@ -31,7 +31,8 @@ import {
   Container,
   Item,
   Input,
-  // Icon,
+  Icon,
+  Button,
 } from 'native-base';
 
 // AWS Amplify
@@ -237,105 +238,22 @@ function ChangePasswordScreen(props) {
         behavior="padding"
         enabled={false}
       >
-      {
-        global.authenticated &&
-        <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
-            {/* Info */}
-            <Container style={styles.infoContainer}>
-              <View style={styles.container}>
-                <View
-                  style={
-                    [styles.buttonStyle, { borderRadius: 4, marginBottom: 20 }]
-                  }
-                >
-                  <Text style={styles.buttonText}>Change password</Text>
-                </View>
-                {/* Old password */}
-                <Item rounded style={styles.itemStyle}>
-                  <Ionicons onPress={() => toggleShowPasswords()} active name="md-lock" style={styles.iconStyle} />
-                  <Input
-                    style={styles.input}
-                    placeholder="Old password"
-                    placeholderTextColor="#adb4bc"
-                    returnKeyType="next"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry={isPasswordVisible}
-                    onSubmitEditing={() => handleOldPasswordInputSubmit()}
-                    onChangeText={(value) => onChangeText('oldPassword', value)}
+      
+      <Container
+        style={
+          {
+            
 
-                    keyboardAppearance="dark"
-                  />
-                </Item>
-                {/* New password */}
-                <Item rounded style={styles.itemStyle}>
-                  <Ionicons active name="md-lock" style={styles.iconStyle} />
-                  <Input
-                    style={styles.input}
-                    placeholder="New password"
-                    placeholderTextColor="#adb4bc"
-                    returnKeyType="go"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry={isPasswordVisible}
-                    ref={newPasswordInputRef}
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingBottom: 100,
 
-                    onSubmitEditing={() => handleNewPasswordInputSubmit()}
-                    onChangeText={(value) => onChangeText('newPassword', value)}
-
-                    keyboardAppearance="dark"
-                  />
-                </Item>
-                <TouchableOpacity
-                  disabled={!isSubmitBtnEnabled}
-                  onPress={changePassword}
-                  style={getButtonStyle(isSubmitBtnEnabled)}
-                >
-                  <Text style={styles.buttonText}>
-                    Submit
-                  </Text>
-                </TouchableOpacity>
-                <View
-                  style={
-                    {
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      paddingBottom: 100,
-                    }
-                  }
-                />
-               { /*
-               <TouchableOpacity
-                  style={
-                    [styles.buttonStyle,
-                      {
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                      },
-                    ]
-                  }
-                  onPress={signOutAlert}
-                >
-                  <Ionicons active name="md-power" style={{ color: '#fff', paddingRight: 10 }} />
-                  <Text style={styles.buttonText}>
-                    Sign out
-                  </Text>
-                </TouchableOpacity>
-              */}
-              </View>
-            </Container>
-          </View>
-        </TouchableWithoutFeedback> ||
-        <View
-          style={
-            {
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingBottom: 100,
-            }
+            backgroundColor: colors.darkTwo,
           }
-        ><TouchableOpacity
+        }
+      >
+
+        <Button
           style={
             [styles.buttonStyle,
               {
@@ -346,13 +264,14 @@ function ChangePasswordScreen(props) {
           }
           onPress={() => setShouldShowSignOutDialog(true)}
         >
-          <Ionicons active name="md-power" style={{ color: '#fff', paddingRight: 10 }} />
+          {/*<Ionicons active name="md-power" size={17} style={styles.iconStyle} />*/}
           <Text style={styles.buttonText}>
+
             Sign out
           </Text>
-        </TouchableOpacity>
-      </View>
-      }
+        </Button>
+      </Container>
+      
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

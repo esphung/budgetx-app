@@ -12,6 +12,8 @@ import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
 import OfflineScreen from './src/screens/OfflineScreen';
 
+// import SignOutScreen from './src/screens/SignOutScreen';
+
 import colors from './colors';
 
 // Auth stack
@@ -23,14 +25,14 @@ const AuthStackNavigator = createStackNavigator({
       headerBackTitle: null,
     }),
   },
-  SignUp: {
+  SignUpScreen: {
     screen: SignUpScreen,
     navigationOptions: () => ({
       title: 'Create a New Account',
       headerBackTitle: null,
     }),
   },
-  SignIn: {
+  SignInScreen: {
     screen: SignInScreen,
     initialParams:{ itemId: 42 },
     navigationOptions: () => ({
@@ -45,6 +47,13 @@ const AuthStackNavigator = createStackNavigator({
       headerBackTitle: null,
     }),
   },
+  // SignOutScreen: {
+  //   screen: SignOutScreen,
+  //   navigationOptions: () => ({
+  //     title: 'Device Offline',
+  //     headerBackTitle: null,
+  //   }),
+  // },
 
   OfflineScreen: {
     screen: OfflineScreen,

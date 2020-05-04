@@ -108,6 +108,8 @@ global.appDeveloper = 'Eric Phung';
 
 global.appDesigner = 'Andrey Nasanov';
 
+global.isFederated = false;
+
 global.showGlobalValues = async () => {
   console.log(
     [
@@ -115,6 +117,7 @@ global.showGlobalValues = async () => {
       `global.authenticated: ${global.authenticated}`,
       `global.displayName: ${global.displayName}`,
       `global.isConnected: ${global.isConnected}`,
+      `global.isFederated: ${global.isFederated}`,
       // `global.isBackedUp: ${global.isBackedUp}`,
       // `global.isDeviceSyncOn: ${global.isDeviceSyncOn}`,
       // `global.isDeviceSynced: ${global.isDeviceSynced}`,

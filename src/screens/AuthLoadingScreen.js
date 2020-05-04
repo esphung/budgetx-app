@@ -117,12 +117,16 @@ export default function AuthLoadingScreen(props) {
       await AsyncStorage.setItem('authenticated', 'false');
       global.authenticated = await AsyncStorage.getItem('authenticated');
 
+      
+      
+
       if (global.authenticated === true) {
         // console.log('authenticated: ', authenticated);
         // console.log('User Locally Authenticated');
         global.storageKey = await AsyncStorage.getItem('storageKey');
       }
       else {
+
         console.log('User Not Locally Authenticated');
         global.storageKey = uuidv4();
         await AsyncStorage.setItem('storageKey', global.storageKey)
@@ -136,6 +140,8 @@ export default function AuthLoadingScreen(props) {
 
     global.authenticated = await getAuthentication();
     // console.log('global.authenticated: ', global.authenticated);
+
+    global.isFederated = await AsyncStorage.getItem('isFederated');
 
     // await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
     // alert(global.storageKey);

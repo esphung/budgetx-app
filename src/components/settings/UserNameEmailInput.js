@@ -69,15 +69,15 @@ function UserNameEmailInput(props) {
 
   const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
 
-  const [nameLabelText, setCurrentNameLabelText] = useState('ID');
+  const [idLabelText, setCurrentIdText] = useState('Id');
 
-  const [emailLabelText, setCurrentEmailLabelText] = useState('Email');
+  const [emailLabelText, setEmailLabelText] = useState('Email');
 
-  const [currentName, setCurrentName] = useState('');
+  const [uniqueId, setUniqueId] = useState('');
 
-  const [currentEmail, setCurrentEmail] = useState(global.email);
+  const [email, setEmail] = useState(global.emailAddressInput);
 
-  const [currentFullName, setCurrentFullName] = useState('');
+  const [name, setName] = useState('');
 
   const [shouldAuthCodeAutoFocus, setShouldAuthCodeAutoFocus] = useState(false);
 
@@ -99,6 +99,12 @@ function UserNameEmailInput(props) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const authCodeInputRef = useRef(null);
+
+  function submitNewEmailAddress (email) {
+    // body...
+
+    props.navigation.navigate('SignUp');
+  }
 
   async function verifyNewEmailAddress (email) {
     setIsSendingCode(true);
@@ -142,7 +148,7 @@ function UserNameEmailInput(props) {
 
     setIsConfirming(true);
 
-    global.emailAddressInput = currentEmail
+    global.emailAddressInput = email
 
     props.navigation.navigate('SignIn');
 
@@ -199,7 +205,7 @@ function UserNameEmailInput(props) {
                     }}
                     // clearButtonMode="always"
 
-                    value={currentEmail}
+                    value={email}
 
                     editable={false}
 
@@ -252,50 +258,69 @@ function UserNameEmailInput(props) {
     </View>
   );
 
-  const confirmationDialog = <Dialog.Container visible={isDialogVisible}>
-        <Dialog.Title>Verify new email?</Dialog.Title>
-        <Dialog.Description>
-        A confirmation code will be sent to this email address.
-        If it is an invalid email this account will unverified and you will
-        </Dialog.Description>
-        <Dialog.Button label="Cancel" onPress={() => setIsDialogVisible(false)} />
-        <Dialog.Button label="Ok" 
-        onPress={() => verifyNewEmailAddress(currentEmail)}
-        />
-      </Dialog.Container>
-
-  const errorDialog =
- <Dialog.Container visible={isError}>
-        <Dialog.Title>Error</Dialog.Title>
-        <Dialog.Description>
-
-          Helllo
-        </Dialog.Description>
-        {/*<Dialog.Button label="Cancel" onPress={() => {}} />*/}
-        <Dialog.Button label="Ok"
-        onPress={
-          () => {
-
-            setIsError(false)
-          }
-          // okDialogueBtnPressed
+    const confirmationDialog =
+    <Dialog.Container visible={isDialogVisible}>
+      <Dialog.Title>Would You Like to Sign Up?</Dialog.Title>
+      <Dialog.Description>
+      A confirmation code will be sent to this email address.
+      </Dialog.Description>
+      <Dialog.Button label="Cancel" onPress={() => setIsDialogVisible(false)} />
+      <Dialog.Button label="Ok" 
+      onPress={() =>
+        {
+          global.emailAddressInput = email;
+          setIsDialogVisible(false);
+          submitNewEmailAddress(email);
+          
         }
-        />
-      </Dialog.Container>
+      }
+      />
+    </Dialog.Container>
+
+  // const confirmationDialog = <Dialog.Container visible={isDialogVisible}>
+  //       <Dialog.Title>Verify new email?</Dialog.Title>
+  //       <Dialog.Description>
+  //       A confirmation code will be sent to this email address.
+  //       If it is an invalid email this account will unverified and you will
+  //       </Dialog.Description>
+  //       <Dialog.Button label="Cancel" onPress={() => setIsDialogVisible(false)} />
+  //       <Dialog.Button label="Ok" 
+  //       onPress={() => verifyNewEmailAddress(email)}
+  //       />
+  //     </Dialog.Container>
+
+ //  const errorDialog =
+ // <Dialog.Container visible={isError}>
+ //        <Dialog.Title>Error</Dialog.Title>
+ //        <Dialog.Description>
+
+ //          Helllo
+ //        </Dialog.Description>
+ //        {<Dialog.Button label="Cancel" onPress={() => {}} />}
+ //        <Dialog.Button label="Ok"
+ //        onPress={
+ //          () => {
+
+ //            setIsError(false)
+ //          }
+ //          // okDialogueBtnPressed
+ //        }
+ //        />
+ //      </Dialog.Container>
 
 
 
   function submit(key, value) {
     // console.log(key + ':', value);
     if (key === 'name') {
-      setCurrentName(value);
+      setUniqueId(value);
     } else if (key === 'email') {
-      // setCurrentEmail(value);
+      // setEmail(value);
       handleEmailSubmit(value)
     }
 
-    // if (currentName && currentEmail) {
-    //   if (isValidEmail(currentEmail) && isValidName(currentName)) {
+    // if (uniqueId && email) {
+    //   if (isValidEmail(email) && isValidName(uniqueId)) {
     //     alert('Success!');
     //   } else {
     //     alert('Failed!')
@@ -332,7 +357,7 @@ function UserNameEmailInput(props) {
     try {
       const user = await Auth.currentAuthenticatedUser();
       // console.log('user: ', user);
-      await Auth.updateUserAttributes(user, { email: currentEmail })
+      await Auth.updateUserAttributes(user, { email: email })
       // .then(
       //   async () => {
 
@@ -410,7 +435,7 @@ function UserNameEmailInput(props) {
 
     try {
       let storage = await loadSettingsStorage(global.storageKey)
-      await setCurrentEmail(storage.user.email)
+      setEmail(storage.user.email)
       global.email = storage.user.email
     } catch(e) {
       // statements
@@ -418,30 +443,36 @@ function UserNameEmailInput(props) {
     }
 
 
-    console.log('currentEmail: ', currentEmail);
+    console.log('email: ', email);
   }
 
   function handleTextChange(text) {
-    setCurrentName(text);
+    setUniqueId(text);
   }
 
   function handleEmailChange(text) {
-    setCurrentEmail(text);
-    // setCurrentEmailPlaceholder(text);
+    setEmail(text);
+    // setEmailPlaceholder(text);
   }
 
-  const submitFullName = async ()  => {
+  const submitName = async ()  => {
     let storage = await loadSettingsStorage(global.storageKey);
 
-    storage.user.full_name = currentFullName;
+    storage.user.full_name = name;
+
+    storage.user.name = name
 
     saveSettingsStorage(global.storageKey, storage);
 
     try {
       const user = await Auth.currentAuthenticatedUser();
       console.log('user.attributes: ', user.attributes);
-      // await Auth.updateUserAttributes(user, { 'name': currentFullName });
-      await Auth.updateUserAttributes(user, { 'custom:full_name': storage.user.full_name });
+      await Auth.updateUserAttributes(user, { 'name': name });
+      await Auth.updateUserAttributes(user, { 'custom:name': storage.user.full_name });
+
+      console.log('user: ', user);
+
+      // storage.user.full_name = name
 
 
       
@@ -450,6 +481,8 @@ function UserNameEmailInput(props) {
       // onError(error);
       console.log('error updating full name: ', error);
     }
+
+    saveSettingsStorage(global.storageKey, storage);
 
     
   }
@@ -460,11 +493,11 @@ function UserNameEmailInput(props) {
     // console.log('storage.user: ', storage.user);
 
     // saveSettingsStorage(global.storageKey, storage)
-    setCurrentFullName(text);
+    setName(text);
   }
   // function submitEmailPressed(text) {
   //   console.log('Submit:', text);
-  //   if (isValidName(currentName) && isValidEmail(currentEmail)) {
+  //   if (isValidName(uniqueId) && isValidEmail(email)) {
   //     setIsLoginEnabled(true);
   //   }
   // }
@@ -482,17 +515,17 @@ function UserNameEmailInput(props) {
 
 
   // useEffect(() => {
-  //   if (isValidEmail(currentEmail)) {
-  //     // console.log(currentEmail);
-  //     console.log('currentEmail: ', currentEmail);
+  //   if (isValidEmail(email)) {
+  //     // console.log(email);
+  //     console.log('email: ', email);
   //   }
-  // }, [currentEmail]);
+  // }, [email]);
 
   // useEffect(() => {
   //   if (user) {
   //     // console.log(user);
-  //     setCurrentName(user.username);
-  //     setCurrentEmail(user.attributes.currentEmail);
+  //     setUniqueId(user.username);
+  //     setEmail(user.attributes.email);
   //   }
   //   return () => {
   //     // effect
@@ -509,81 +542,87 @@ function UserNameEmailInput(props) {
   //   // setIsInputEnabled(true);
   // }, [])
 
-  useEffect(() => {
+  async function loadResources () {
+    const storage = await loadSettingsStorage(global.storageKey);
+
+    setUniqueId(storage.user.id)
+
+    setName(storage.user.name)
+
+    setEmail(storage.user.email)
+
     Auth.currentAuthenticatedUser().then(async (cognito) => {
       // console.log(cognito.attributes);
       // alert(cognito.attributes.email)
-      setCurrentEmail(cognito.attributes.email);
-      setCurrentName(cognito.attributes.sub);
+      // setEmail(cognito.attributes.email);
+      // setCurrentID(cognito.attributes.sub);
 
-      global.storageKey = cognito.attributes.sub
+      // global.storageKey = cognito.attributes.sub
 
-      // setEmailLabelText('Email Address')
-      // setNameLabelText('User ID');
+      // // setEmailLabelText('Email Address')
+      // // setNameLabelText('User ID');
 
-      // setIsLoginEnabled(false)
+      // // setIsLoginEnabled(false)
 
-      const storage = await loadSettingsStorage(global.storageKey);
+     
 
-      if (storage.user.full_name) {
-        // setCurrentEmail(storage.user.name);
-        setCurrentFullName(storage.user.full_name)
-        // setCurrentEmailLabelText('Name')
+      // if (storage.user.full_name) {
+      //   // setEmail(storage.user.name);
+      //   // setCurrentID(storage.user.id);
+      //   // setName(storage.user.full_name)
+      //   // setEmailLabelText('Name')
 
-       // || storage.user.id);
-      }
+      //  // || storage.user.id);
+      // }
       // // console.log('storage.user: ', storage.user);
       // if (storage.user.email) {
-      //   setCurrentEmail(storage.user.email)
+      //   setEmail(storage.user.email)
       // } else if (storage.user.name) {
-      //   setCurrentEmail(storage.user.name)
+      //   setEmail(storage.user.name)
         
       // }
       // else {
-      //   setCurrentEmail('No email address')
+      //   setEmail('No email address')
       //   // setEmailLabelText('Email Address')
         
       // }
-      if (storage.user.username) {
-        setCurrentName(storage.user.username)
-      } else if (storage.user.id) {
-        setCurrentName(storage.user.id)
-      }
+      // if (storage.user.username) {
+      //   setUniqueId(storage.user.username)
+      // } else if (storage.user.id) {
+      //   setUniqueId(storage.user.id)
+      // }
 
       // AsyncStorage.setItem('isLoginEnabled', 'false');
       // global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled');
       // console.log('isLoginEnabled: ', isLoginEnabled);
 
-      setIsSignUpDisabled(true);
+      // setIsSignUpDisabled(true);
     })
     .catch(async (err) => {
       // console.log('err: ', eZsrr);
-      const storage = await loadSettingsStorage(global.storageKey);
+      // const storage = await loadSettingsStorage(global.storageKey);
 
-      if (storage.user.name) {
-        setCurrentEmail(storage.user.name);
-        setCurrentFullName(storage.user.full_name)
-        setCurrentEmailLabelText('Name')
+      // if (storage.user.name) {
+      //   setEmail(storage.user.name);
+      //  // || storage.user.id);
+      // }
+      // // else {
+      // //   setName(storage.user.full_name)
+      // // }
 
-       // || storage.user.id);
-      }
-      // console.log('storage.user: ', storage.user);
-      if (storage.user.email) {
-        setCurrentEmail(storage.user.email)
-      } else if (storage.user.name) {
-        setCurrentEmail(storage.user.name)
+      // // console.log('storage.user: ', storage.user);
+      // if (storage.user.email) {
+      //   setEmail(storage.user.email)
+      // } else {
+      //   setEmail('No email address')
         
-      }
-      else {
-        setCurrentEmail('No email address')
-        // setEmailLabelText('Email Address')
-        
-      }
-      if (storage.user.username) {
-        setCurrentName(storage.user.username)
-      } else if (storage.user.id) {
-        setCurrentName(storage.user.id)
-      }
+      // }
+      
+      // if (storage.user.username) {
+      //   setUniqueId(storage.user.username)
+      // } else if (storage.user.id) {
+      //   setUniqueId(storage.user.id)
+      // }
 
       // setIsLoginEnabled(true)
       // AsyncStorage.setItem('isLoginEnabled', 'true')
@@ -593,31 +632,52 @@ function UserNameEmailInput(props) {
       setIsSignUpDisabled(false);
 
     })
+  }
+
+  useEffect(() => {
+    loadResources();
     return () => {
       // effect
+      setEmail('')
+      global.emailAddressInput = ''
+      global.email = ''
     };
   }, []);
 
   async function onSubmitEditingEmailInput() {
-    let str = currentEmail.trim();
-    // body... 
-    if (str) {
-      // must be valid email
-      if (isValidEmail(str) !== true) {
-        console.warn('Must be valid');
-        // setCurrentEmail('');
-      }
-      //  cannot match verified user email;
-      else if ((str === global.email) || (global.email === (str))) {
-        console.warn('Cannot match!');
-        // setCurrentEmail('');
-      }
-      else {
-        setCurrentEmail(str);
-        setIsDialogVisible(true)
-      }
+    if (global.authenticated) return
+
+    let str = email.trim();
+
+  // if (global.isFederated) {
+  //   let settings = await loadSettingsStorage(global.storageKey);
+
+  //   settings.user.email = str;
+
+  //   saveSettingsStorage(global.storageKey, settings);
+  // }
+
+
+    if (isValidEmail(str) !== true) {
+      showMessage('Invalid Email');
+      return
       
     }
+
+    
+
+
+    
+    if (!global.authenticated) {
+      global.emailAddressInput = str
+      submitNewEmailAddress(str);
+    }
+
+    // global.emailAddressInput = ''
+  
+
+      
+    
   }
   let view = (
     <TouchableOpacity
@@ -639,7 +699,7 @@ function UserNameEmailInput(props) {
       }
     }
     >
-      {/* User currentName input */}
+      {/* User uniqueId input */}
       <Text style={
        [
          styles.textStyle,
@@ -650,7 +710,7 @@ function UserNameEmailInput(props) {
       }
       >
       {
-        nameLabelText
+        idLabelText
       }
       </Text>
       <Text
@@ -672,48 +732,48 @@ function UserNameEmailInput(props) {
           }
           ]
         }
-        placeholder={'Enter username'}
+        // placeholder={'Enter username'}
 
-        clearButtonMode="while-editing"
+        // clearButtonMode="while-editing"
 
-        placeholderTextColor={colors.offWhite}
+        // placeholderTextColor={colors.offWhite}
 
-        keyboardAppearance="dark" // ios
+        // keyboardAppearance="dark" // ios
 
-        textContentType="username" // ios
+        // textContentType="username" // ios
 
-        // keyboardType="currentName-phone-pad"
+        // // keyboardType="uniqueId-phone-pad"
 
-        returnKeyType="done"
+        // returnKeyType="done"
 
-        // autoCorrect={true}
+        // // autoCorrect={true}
 
-        autoCapitalize="none" // "words"
+        // autoCapitalize="none" // "words"
 
-        maxLength={14}
+        // maxLength={14}
 
-        onSubmitEditing={() => submit('name', currentName)}
+        // onSubmitEditing={() => submit('id', uniqueId)}
 
-        onChangeText={handleTextChange}
+        // onChangeText={handleTextChange}
 
-        value={currentName}
+        // value={uniqueId}
 
-        // autoFocus={shouldNameAutofocus}
+        // // autoFocus={shouldNameAutofocus}
 
-        autoCompleteType="username" // android
+        // autoCompleteType="username" // android
 
-        // enablesReturnKeyAutomatically={true}
+        // // enablesReturnKeyAutomatically={true}
 
-        // editable={isNameInputEnabled}
-        editable={false}
+        // // editable={isNameInputEnabled}
+        // editable={false}
 
-        // clearButtonMode="always"
+        // // clearButtonMode="always"
 
-        clearTextOnFocus={shouldClearNameInput}
+        // clearTextOnFocus={shouldClearNameInput}
 
       >
       {
-        currentName.substring(0, (global.maxUsernameLength - 1))
+        uniqueId.substring(0, (global.maxUsernameLength - 1))
       }
       </Text>
 
@@ -752,7 +812,7 @@ function UserNameEmailInput(props) {
       {/* User First Name input */}
       <Text style={[styles.textStyle, {marginLeft: 10,}]}
       >
-      Full Name
+      Name
       </Text>
       <TextInput
 
@@ -773,7 +833,7 @@ function UserNameEmailInput(props) {
             }
             ]
           }
-          placeholder={'Enter full name'}
+          placeholder="Enter name"
 
           clearButtonMode="while-editing"
 
@@ -783,21 +843,21 @@ function UserNameEmailInput(props) {
 
           textContentType="givenName" // ios
 
-          // keyboardType="currentName-phone-pad"
+          // keyboardType="uniqueId-phone-pad"
 
           returnKeyType="done"
 
           // autoCorrect={true}
 
-          autoCapitalize="words" // "words"
+          // autoCapitalize="words" // "words"
 
-          maxLength={14}
+          maxLength={24}
 
-          onSubmitEditing={submitFullName}
+          onSubmitEditing={submitName}
 
           onChangeText={handleFullNameChange}
 
-          value={currentFullName}
+          value={name}
 
           // autoFocus={shouldNameAutofocus}
 
@@ -806,7 +866,7 @@ function UserNameEmailInput(props) {
           // enablesReturnKeyAutomatically={true}
 
           // editable={isNameInputEnabled}
-          editable={global.authenticated}
+          editable={true}
 
           // clearButtonMode="always"
 
@@ -863,7 +923,7 @@ function UserNameEmailInput(props) {
             ]
           }
           
-          placeholder="No email address"
+          placeholder="No verified email address"
 
           clearButtonMode="while-editing"
 
@@ -871,9 +931,9 @@ function UserNameEmailInput(props) {
 
           keyboardAppearance="dark" // ios
 
-          // textContentType="currentName" // ios
+          // textContentType="uniqueId" // ios
 
-          // keyboardType="currentName-phone-pad"
+          // keyboardType="uniqueId-phone-pad"
 
           returnKeyType="done"
 
@@ -883,26 +943,28 @@ function UserNameEmailInput(props) {
 
           maxLength={global.maxEmailLength}
 
-          // onSubmitEditing={() => submit('email', currentEmail)}
+          // onSubmitEditing={() => submit('email', email)}
           onSubmitEditing={onSubmitEditingEmailInput}
 
           onChangeText={handleEmailChange}
 
           // editable={global.authenticated}
-          editable={false}
+          // editable={false}
 
-          value={currentEmail}
+          value={email}
 
           textContentType="emailAddress" // ios
 
           autoCompleteType="email" // android
+
+          // clearTextOnFocus={shouldClearNameInput}
 
         >
         </TextInput>
 
       </View>
       {
-        (currentEmail !== global.email) && confirmationDialog
+        confirmationDialog
       }
     </TouchableOpacity>
     );

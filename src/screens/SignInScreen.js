@@ -8,6 +8,8 @@ import { NetworkConsumer } from 'react-native-offline';
 
 import { showMessage, hideMessage } from "react-native-flash-message";
 
+import FacebookLogin from '../components/FacebookLoginButton';
+
 // import the Analytics category
 // import Analytics from '@aws-amplify/analytics';
 // Analytics.record({ name: String!, attributes: Object, metrics: Object })
@@ -27,7 +29,7 @@ import {
   // StyleSheet,
   View,
   Text,
-  // AsyncStorage,
+  AsyncStorage,
   TouchableOpacity,
   TouchableWithoutFeedback,
   SafeAreaView,
@@ -47,10 +49,10 @@ import {
   Input,
 } from 'native-base';
 
-// import {
-//   loadUserObject,
-//   saveUserObject,
-// } from '../../src/storage/UserStorage';
+import {
+  loadSettingsStorage,
+  saveSettingsStorage,
+} from '../../src/storage/SettingsStorage';
 
 // import { Asset } from 'expo-asset';
 
@@ -75,6 +77,8 @@ import isValidUsername from '../../src/functions/isValidUsername';
 import isValidEmail from '../../src/functions/isValidEmail';
 
 import Dialog from "react-native-dialog";
+
+import uuidv4 from '../functions/uuidv4';
 
 function SignInScreen(props) {
   // state hooks
@@ -230,6 +234,7 @@ function SignInScreen(props) {
           <View style={styles.container}>
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
+               
 
 {/*              <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-person" style={styles.iconStyle} />
@@ -335,18 +340,16 @@ function SignInScreen(props) {
   // methods
   const signIn = async () => {
     setIsLoading(true);
-    // const userTokenValue = '123456789';
-    // await AsyncStorage.setItem('userToken', userTokenValue);
-    // // console.log('userToken set:', userTokenValue);
+
+  
+
+      // console.log('userToken: ', userToken);
+      await AsyncStorage.setItem('userToken', String('')); 
+    
     // props.navigation.navigate('AuthLoading');
     await Auth.signIn(email, password)
-      .then((cognito) => {
+      .then(async (cognito) => {
         // console.log(cognito);
-
-        
-
-        
-
         if (cognito) {
           // set username key here!
           showMessage(`Signed in as ${cognito.attributes.email}`);
@@ -357,7 +360,13 @@ function SignInScreen(props) {
             attributes: { username: cognito.attributes.email }
           });
 
+          const userTokenValue = String(global.storageKey) + '@session123456789';
+          await AsyncStorage.setItem('userToken', userTokenValue);
+          // console.log('userToken set:', userTokenValue);
 
+          AsyncStorage.setItem('isFederated', JSON.stringify(false))
+
+          AsyncStorage.setItem('authenticated', JSON.stringify(true))
           props.navigation.navigate('AuthLoading');
           // setIsLoading(false);
         }
@@ -493,6 +502,128 @@ function SignInScreen(props) {
     // };
   }, []);
 
+    const handleFacebookSignIn = async (userData) => {
+    setIsLoading(true);
+    // do stuff with the new user's data
+    // console.log('userData: ', userData);
+    
+    // setUserData(userData);
+
+    global.storageKey = userData.id
+
+    let Image_Http_URL = { uri: userData.picture.data.url};
+
+    global.avatar = Image_Http_URL;
+
+    // global.storageKey = userData.id
+
+    AsyncStorage.setItem('storageKey', global.storageKey);
+
+
+    let storage = await loadSettingsStorage(userData.id);
+
+    storage.user.name = userData.name;
+
+    storage.user.email = userData.email;
+
+    storage.user.image_url = userData.picture.data.url;
+
+    saveSettingsStorage(global.storageKey, storage);
+
+    console.log('storage: ', storage);
+
+    // global.isUserAuthenticated = true;
+
+    // global.authenticated = true;
+
+    AsyncStorage.setItem('authenticated', JSON.stringify(true))
+
+    AsyncStorage.setItem('isFederated', JSON.stringify(true))
+
+    let userToken = global.storageKey + '@session' + uuidv4();
+
+      // console.log('userToken: ', userToken);
+      await AsyncStorage.setItem('userToken', userToken); // save user token
+
+    // let userToken = global.storageKey + '@session' + String(Math.random(1,8)*100);
+
+    // await AsyncStorage.setItem('userToken', userToken); // save user token
+
+
+
+    setIsLoading(false);
+
+    props.navigation.navigate('AuthLoading');
+}
+
+  const handleFacebookSignOut = async (userData) => {
+    setIsLoading(true);
+    // do stuff with the new user's data
+    await Auth.signOut()
+      .then(() => {
+        AsyncStorage.removeItem('userToken');
+
+        AsyncStorage.removeItem('storageKey');
+
+        AsyncStorage.removeItem('isLoginEnabled');
+
+        // AsyncStorage.removeItem('isUserAuthenticated');
+        AsyncStorage.removeItem('authenticated');
+
+        global.storageKey = '';
+
+        global.email = '';
+
+        global.emailAddressInput = '';
+
+        // global.isUserAuthenticated = false;
+        global.authenticated = false;
+
+        global.isFederated = false;
+
+        AsyncStorage.setItem('authenticated', JSON.stringify(false))
+
+        AsyncStorage.setItem('isFederated', JSON.stringify(false))
+
+        global.avatar = require('../../assets/avatar.png');
+
+
+        // console.log('Removed AsyncsStorage Variables ..');
+
+
+        // AsyncStorage.getAllKeys((err, keys) => {
+        //   AsyncStorage.multiGet(keys, (error, stores) => {
+        //     stores.map((result, i, store) => {
+        //       console.log({ [store[i][0]]: store[i][1] });
+        //       return true;
+        //     });
+        //   });
+        // });
+
+        // setHasRatedUs(false);
+
+        // setIsBackedUp(false)
+
+        AsyncStorage.setItem('storageKey', JSON.stringify(''))
+
+        navigation.navigate('AuthLoading');
+
+        // console.log('Sign out complete');
+        // showMessage('Signed out');
+        })
+        .catch((err) => console.log('Error while signing out!', err));
+
+// userToken = global.storageKey + '@session' + uuidv4();
+
+      // console.log('userToken: ', userToken);
+      await AsyncStorage.setItem('userToken', String('')); 
+
+        await setIsLoading(false)
+
+        handleRoute('AuthLoading');
+      }
+
+
   const signin = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
@@ -501,6 +632,10 @@ function SignInScreen(props) {
           <View style={styles.container}>
             <Container style={styles.infoContainer}>
               <View style={styles.container}>
+              {/* Facebook Login */}
+            {
+              (!global.isFederated && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
+            }
                 {/* email section */}
                 <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
@@ -585,6 +720,7 @@ function SignInScreen(props) {
                   />
                 </Item>
                 <HelpMessage message={helpMessage} />
+                
               </View>
             </Container>
           </View>

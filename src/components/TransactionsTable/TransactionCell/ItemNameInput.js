@@ -25,13 +25,13 @@ export default function PizzaTranslator(props) {
     }
   }
 
-  useEffect(() => {
-    // updateTransactionPayee(transaction, text);
-    // console.log('text: ', text);
-    return () => {
-      // effect
-    };
-  }, [text]);
+  // useEffect(() => {
+  //   // updateTransactionPayee(transaction, text);
+  //   // console.log('text: ', text);
+  //   return () => {
+  //     // effect
+  //   };
+  // }, [text]);
   return (
     <View style={{  maxWidth: 135, flexGrow: 1, justifyContent: 'center',}}>
       <TextInput

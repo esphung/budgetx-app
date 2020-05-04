@@ -21,6 +21,7 @@ export default function AmountInputView(props) {
   const { handleChange, value, isEditable } = props;
 
   function handleValueChange(value) {
+    
     handleChange(value);
   }
 

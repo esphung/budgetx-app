@@ -25,7 +25,7 @@ const getAuthentication = async () => {
   })
 };
 
-getAuthentication()
+// getAuthentication()
 
 export default function FacebookLogin(props) {
   const [isLoggedin, setLoggedinStatus] = useState(false);
@@ -80,11 +80,11 @@ export default function FacebookLogin(props) {
 
           // console.log('data.id: ', data.id);
 
-          global.storageKey = data.id
+          // global.storageKey = data.id
 
-          let Image_Http_URL ={ uri: data.picture.data.url};
+          // let Image_Http_URL ={ uri: data.picture.data.url};
 
-          global.avatar = Image_Http_URL;
+          // global.avatar = { uri: userData.picture.data.url }
 
           setLoggedinStatus(true);
 
@@ -93,7 +93,7 @@ export default function FacebookLogin(props) {
 
 
 
-          // handleFacebookSignIn(data);
+          handleFacebookSignIn(data);
 
 
 
@@ -150,6 +150,9 @@ export default function FacebookLogin(props) {
 
   const login = () => {
     // console.log('userData: ', userData);
+
+
+
     handleFacebookSignIn(userData);
   };
 
@@ -188,8 +191,8 @@ export default function FacebookLogin(props) {
           { userData &&
             (
               <View>
-              <BlueButton title="Login" onPress={login} />
-              <BlueButton title="Logout" onPress={logout} />
+              {global.isFederated &&  <BlueButton title="Login" onPress={() => {}} />}
+             {/*<BlueButton title="Logout" onPress={logout} />*/}
               </View>
             )
           }

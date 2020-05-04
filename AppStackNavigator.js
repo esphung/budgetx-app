@@ -35,6 +35,10 @@ import SignInScreen from './src/screens/SignInScreen';
 
 import SignUpScreen from './src/screens/SignUpScreen';
 
+import SignOutScreen from './src/screens/SignOutScreen';
+
+import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
+
 import colors from './colors';
 
 const StackNavigator = createStackNavigator({
@@ -67,25 +71,37 @@ const StackNavigator = createStackNavigator({
     screen: SignUpScreen,
     navigationOptions: () => ({
       title: 'Sign up with an email',
-      headerBackTitle: null,
+      // headerBackTitle: null,
     }),
   },
   SignIn: {
     screen: SignInScreen,
     navigationOptions: () => ({
-      title: 'Log In to Your Account',
-      headerBackTitle: null,
+      title: 'Log in to your account',
+      // headerBackTitle: null,
     }),
   },
-
+  SignOutScreen: {
+    screen: SignOutScreen,
+    navigationOptions: () => ({
+      // title: 'Sign Out',
+      // headerBackTitle: null,
+    }),
+  },
   WelcomeScreen: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
       title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
-      headerBackTitle: null,
+      // headerBackTitle: null,
     }),
   },
-
+  ForgetPassword: {
+    screen: ForgetPasswordScreen,
+    navigationOptions: () => ({
+      title: 'Create a New Password',
+      // headerBackTitle: null,
+    }),
+  },
 },
 {
   headerMode: 'screen', 
