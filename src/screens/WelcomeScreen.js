@@ -99,60 +99,109 @@ function WelcomeScreen(props) {
 
 
   const handleFacebookSignIn = async (userData) => {
-    setIsLoading(true);
-    // do stuff with the new user's data
-    // console.log('userData: ', userData);
+
+//     try {
+//               // statements
+//               Auth.federatedSignIn('facebook',
+//               { token, expires },
+//               data,)
+//               .then((result) => {
+//               if (result.isCancelled) {
+//                 console.log("Login cancelled");
+//               } else {
+//                 console.log("Login success with permissions: " + result.grantedPermissions.toString());
+//               }
+//             },(error) => {
+//                 console.log("Login fail with error: " + error);
+//               }
+//               ).catch(stuff => {})
+//             } catch(e) {
+//               // statements
+//               console.log(e);
+//             }
+
+            
+ 
+// // users/facebook_sign_in
+// AWS.config.region = config.AWSRegion
+// AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+//   IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+//   Logins: {
+//     'graph.facebook.com': '24df2ee78d93a59bcb8d05aaaf5da7b5' // facebookAccessToken
+//   }
+// })
+
+// AWS.config.credentials.get((err) => {
+//   // Here I get no errors, I presume that I have logged Facebook user in 
+//   const accessKeyId = AWS.config.credentials.accessKeyId
+//   const secretAccessKey = AWS.config.credentials.secretAccessKey
+//   const sessionToken = AWS.config.credentials.sessionToken
+//   // here I can do stuff probably, 
+//   // but I would like to receive token that would allow me to do stuff, 
+//   // rather than context I can do stuff in
+// })
+
+// console.log('AWS.config: ', AWS.config);
+
+
+
+    // setIsLoading(true);
+    // // do stuff with the new user's data
+    // // console.log('userData: ', userData);
     
-    // setUserData(userData);
-
-    global.storageKey = userData.id
-
-    let Image_Http_URL = { uri: userData.picture.data.url};
-
-    global.avatar = Image_Http_URL;
+    // // setUserData(userData);
 
     // global.storageKey = userData.id
 
-    AsyncStorage.setItem('storageKey', global.storageKey);
+    // let Image_Http_URL = { uri: userData.picture.data.url};
+
+    // global.avatar = Image_Http_URL;
+
+    // // global.storageKey = userData.id
+
+    // AsyncStorage.setItem('storageKey', global.storageKey);
 
 
-    let storage = await loadSettingsStorage(userData.id);
+    // let storage = await loadSettingsStorage(userData.id);
 
-    storage.user.name = userData.name;
+    // storage.user.name = userData.name;
 
-    storage.user.email = userData.email;
+    // storage.user.email = userData.email;
 
-    storage.user.image_url = userData.picture.data.url;
+    // storage.user.image_url = userData.picture.data.url;
 
-    saveSettingsStorage(global.storageKey, storage);
+    // saveSettingsStorage(global.storageKey, storage);
 
-    // console.log('storage: ', storage);
+    // // console.log('storage: ', storage);
 
-    // global.isUserAuthenticated = true;
+    // // global.isUserAuthenticated = true;
 
-    // global.authenticated = true;
+    // // global.authenticated = true;
 
-    AsyncStorage.setItem('authenticated', JSON.stringify(true))
+    // AsyncStorage.setItem('authenticated', JSON.stringify(true))
 
-    AsyncStorage.setItem('isFederated', JSON.stringify(true))
+    // AsyncStorage.setItem('isFederated', JSON.stringify(true))
 
-    let userToken = global.storageKey + '@session' + uuidv4();
+    // let userToken = global.storageKey + '@session' + uuidv4();
 
-      // console.log('userToken: ', userToken);
-      await AsyncStorage.setItem('userToken', userToken); // save user token
+    //   // console.log('userToken: ', userToken);
+    // AsyncStorage.setItem('userToken', userToken); // save user token
 
-    // let userToken = global.storageKey + '@session' + String(Math.random(1,8)*100);
+    // // let userToken = global.storageKey + '@session' + String(Math.random(1,8)*100);
 
-    // await AsyncStorage.setItem('userToken', userToken); // save user token
+    // // await AsyncStorage.setItem('userToken', userToken); // save user token
 
 
 
-    setIsLoading(false)
+    // setIsLoading(false)
 
-    handleRoute('AuthLoading');
+    // Auth.currentSession().then((user) => console.log('user: ', user)).catch((err) => console.log('err: ', err))
+
+    // handleRoute('AuthLoading');
 }
 
   const handleFacebookSignOut = async (userData) => {
+
     setIsLoading(true);
     // do stuff with the new user's data
     await Auth.signOut()
@@ -211,7 +260,9 @@ function WelcomeScreen(props) {
 
 
 
-        await setIsLoading(false)
+        setIsLoading(false)
+
+        Auth.signOut({ global: true })
 
         handleRoute('AuthLoading');
       }
@@ -224,11 +275,11 @@ function WelcomeScreen(props) {
         <Button title="Sign Up" onPress={() => handleRoute('SignUp')} />
 
         <Button title="Sign In" onPress={() => {
-          if (global.isFederated) {
-            handleRoute('AuthLoading')
-          } else {
+          // if (global.isFederated) {
+          //   handleRoute('AuthLoading')
+          // } else {
             handleRoute('SignIn')
-          }
+          // }
         }} />
 
         <View style={{

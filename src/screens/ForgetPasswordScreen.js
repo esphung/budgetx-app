@@ -10,6 +10,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 
+import * as MailComposer from 'expo-mail-composer';
+
 import OfflineScreen from '../screens/OfflineScreen';
 
 import SpinnerMask from '../../src/components/SpinnerMask';
@@ -17,6 +19,8 @@ import SpinnerMask from '../../src/components/SpinnerMask';
 import HelpMessage from '../../storybook/stories/HelpMessage';
 
 import { showMessage } from 'react-native-flash-message';
+
+import TouchableText from '../../storybook/stories/TouchableText';
 
 import {
   TouchableOpacity,
@@ -50,6 +54,8 @@ import isValidUsername from '../../src/functions/isValidUsername';
 import getButtonStyle from '../../src/functions/getButtonStyle';
 
 import isValidEmail from '../../src/functions/isValidEmail';
+
+// import uuidv4 from '../../src/functions/uuidv4';
 
 function ForgotPasswordScreen(props) {
   // input refs
@@ -377,6 +383,22 @@ function ForgotPasswordScreen(props) {
                 </TouchableOpacity>
 
                 <HelpMessage message={helpMessage} />
+                <TouchableText title="email support?" onPress={async () => {
+                  const time_stamp = String(Date.now())
+                  try {
+                    await MailComposer.composeAsync({
+                      recipients: [global.adminEmailAddress],
+                      subject: `Email Support`,  // `Issue #${Date.now()}`,
+                      body: `Issue Number:${time_stamp}`,
+                      attachments: [],
+                      isHtml: false,
+                    });
+                  } catch(err) {
+                    // could not send to Mail
+                    console.log('err: ', err.message);
+                    showMessage(err.message)
+                  }
+                }} />
               </View>
             </Container>
           </View>

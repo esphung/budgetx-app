@@ -64,6 +64,13 @@ export default function AuthLoadingScreen(props) {
     let userToken = await AsyncStorage.getItem('userToken');
     // console.log('userToken: ', userToken);
     // let userToken = null
+
+    global.authenticated = await AsyncStorage.getItem('authenticated');
+
+        global.isFederated = await AsyncStorage.getItem('isFederated');
+
+        global.isAppleSignedIn = await AsyncStorage.getItem('isAppleSignedIn')
+        console.log('isAppleSignedIn: ', isAppleSignedIn);
     if (userToken) {
       // console.log('Local Storage userToken: ', userToken);
       global.storageKey = await AsyncStorage.getItem('storageKey');
@@ -103,6 +110,10 @@ export default function AuthLoadingScreen(props) {
 
   // Get the logged in users and remember them
   async function loadApp() {
+
+
+
+
     // try offline stored useruserToken first
     let userToken = await retrieveCognitoUserToken();
 
@@ -148,6 +159,13 @@ export default function AuthLoadingScreen(props) {
     // await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
     // alert(global.storageKey);
 
+
+    /* Play App Intro Slider */
+    let hasSeenIntro = await AsyncStorage.getItem('hasSeenIntro');
+    console.log('hasSeenIntro: ', hasSeenIntro);
+
+    if (!hasSeenIntro) props.navigation.navigate('MyAppIntroSlider');
+
     // global.showGlobalValues()
     props.navigation.navigate(userToken ? 'App' : 'Auth');
   }
@@ -164,6 +182,7 @@ export default function AuthLoadingScreen(props) {
   // }, []);
 
   useEffect(() => {
+
     loadApp();
     return () => {
       // effect

@@ -39,9 +39,22 @@ import SignOutScreen from './src/screens/SignOutScreen';
 
 import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
+import ExampleScreen from './src/screens/ExampleScreen';
+
+// import OnboardingPages from './src/screens/OnboardingPages';
+
+import MyAppIntroSlider from './src/screens/MyAppIntroSlider';
+
 import colors from './colors';
 
 const StackNavigator = createStackNavigator({
+  // OnboardingPages: {
+  //   screen: OnboardingPages,
+  //   navigationOptions: () => ({
+  //     title: `${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
+  //     headerBackTitle: null,
+  //   }),
+  // },
 
   Home: {
     screen: Home, // ApolloProviderHOC(Home),
@@ -102,17 +115,37 @@ const StackNavigator = createStackNavigator({
       // headerBackTitle: null,
     }),
   },
+  ExampleScreen: {
+    screen: ExampleScreen, // ApolloProviderHOC(Home),
+    navigationOptions: () => ({
+      title: '',
+      headerBackTitle: null,
+    }),
+  },
+  MyAppIntroSlider: {
+    screen: MyAppIntroSlider,
+    navigationOptions: () => ({
+      // title: `${global.appName}`, // ScreenName, // for the header screen // `Welcome to this App`
+      headerBackTitle: null,
+
+      // headerStyle: {
+      //   backgroundColor: 'transparent'
+      // },
+
+      headerTransparent: {}
+    }),
+  },
 },
 {
   headerMode: 'screen', 
   cardStyle: {
     backgroundColor: colors.darkTwo,
-  }
+  },
 
   // Search: {
   //   screen: Search,
   // },
-  // initialRouteName: 'Home',
+  // initialRouteName: 'MyAppIntroSlider',
 });
 
 const AppContainer = createAppContainer(StackNavigator);

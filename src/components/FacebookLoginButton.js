@@ -67,16 +67,16 @@ export default function FacebookLogin(props) {
           .then(async data => {
             console.log('data: ', data);
             
-          //   if (!(await getAuthentication())) {
+            if (!(await getAuthentication())) {
 
 
-          //   // /*  SIGNS FB USER INTO AWS COGNITO */
-          //   // let a = await Auth.federatedSignIn(
-          //   //   'facebook',
-          //   //   { token, expires },
-          //   //   data,
-          //   // );
-          // }
+            /*  SIGNS FB USER INTO AWS COGNITO */
+            let a = await Auth.federatedSignIn(
+              'facebook',
+              { token, expires },
+              data,
+            );
+          }
 
           // console.log('data.id: ', data.id);
 

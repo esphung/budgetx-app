@@ -100,9 +100,9 @@ import amplify from './aws-exports';
 
 Amplify.configure({
   ...amplify,
-  // Analytics: {
-  //   disabled: true,
-  // },
+  Analytics: {
+    // disabled: true,
+  },
 });
 
 AWS.config.region = 'us-east-1'; // Region

@@ -82,7 +82,7 @@ function HeaderLeftView(props) {
 
   // const [isReady, setIsReady] = useState(false);
 
-  const [emailInputText, setEmailInputText] = React.useState(((!global.authenticated) ? 'Enter your email' : ''));
+  const [emailInputText, setEmailInputText] = React.useState('');
 
   const emailInputRef = useRef(null);
 
@@ -261,7 +261,8 @@ function HeaderLeftView(props) {
 
             editable={!global.authenticated}
 
-            placeholder={normalMessage}
+            placeholder="Enter your email"
+            placeholderTextColor={colors.white}
             style={styles.normalMessage}
             // editable={false}
             onChangeText={(text) => {

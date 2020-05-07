@@ -18,7 +18,7 @@ import styles from '../../../styles';
 import CurrencyInput from './CurrencyInput';
 
 export default function AmountInputView(props) {
-  const { handleChange, value, isEditable } = props;
+  const { handleChange, value, isEditable, amountLabelText } = props;
 
   function handleValueChange(value) {
 
@@ -37,7 +37,11 @@ export default function AmountInputView(props) {
       >
         <Text style={[styles.amountInputLabel, {
           marginTop: 11
-        }]}>Amount Spent:</Text>
+        }]}>
+        {
+        amountLabelText
+      }
+        </Text>
       </View>
 
       <View
@@ -45,6 +49,11 @@ export default function AmountInputView(props) {
           {
             flex: 1,
             // flexDirection: 'row-reverse',
+
+            // paddingRight: ((!amountLabelText) ? 125 : 0),
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
           }
         }
       >
@@ -66,7 +75,9 @@ export default function AmountInputView(props) {
           }
         }
       >
-        <Text style={styles.amountInputSymbol}>$</Text>
+        {
+          // amountLabelText &&
+          <Text style={styles.amountInputSymbol}>$</Text>}
       </View>
 
     </View>

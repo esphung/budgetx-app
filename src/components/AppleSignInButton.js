@@ -44,16 +44,23 @@ export default function AppleSignInButton(props) {
 
           // console.log('credential: ', credential);
 
+          // if (credential.email) {
+          //   console.log('credential.email: ', credential.email);
+          //   props.appleSignInCallback(credential)
+          // } else {
+          //   throw new Error('User not given email from Apple')
+          // }
+
 
 
 
         } catch (e) {
           if (e.code === 'ERR_CANCELED') {
             // handle that the user canceled the sign-in flow
-            throw new Error(e.code)
+            // throw new Error(e.code)
           } else {
             // handle other errors
-            throw new Error(e)
+            // throw new Error(e)
           }
         }
       }}

@@ -29,6 +29,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             03/11/2020 04:11 PM | 3.0.3
             03/29/2020 12:33 PM | Added Detox
             05/02/2020 05:58 PM
+            05/06/2020 02:26 PM | Cognito js
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -39,7 +40,8 @@ import {
   SafeAreaView,
   ActivityIndicator,
   // Platform,
-  // Text,
+  Text,
+  Dimensions,
 } from 'react-native';
 
 // import Constants from 'expo-constants';
@@ -80,6 +82,10 @@ import AmountInputView from '../components/home/AmountInputView';
 import KeypadView from '../components/home/KeypadView';
 import SlideUpView from '../components/home/SlideUpView';
 
+// import { BarChartExample } from '../components/BarChartExample';
+
+// import MyPieChart from '../components/MyPieChart';
+
 // data models
 import Transaction from '../models/Transaction';
 
@@ -100,7 +106,6 @@ import searchByName from '../functions/searchByName';
 import uuidv4 from '../functions/uuidv4';
 
 // import defaultCategories from '../data/categories';
-
 
 import getUniqueId from '../functions/getUniqueId';
 
@@ -127,30 +132,29 @@ import {
   // getIsBackedUp,
   setIsDeviceSynced,
   getIsDeviceSynced,
-  getAuthentication,
+  // getAuthentication,
 } from '../../globals';
+
+const getAuthentication = async () => {
+  global.authenticated = false;
+  Auth.currentAuthenticatedUser()
+    .then(async (cognito) => {
+      // console.log('cognito: ', cognito);
+      global.authenticated = (await cognito) ? true : false;
+    }).catch((err) => {
+      // console.log('err: ', err);
+    })
+  return global.authenticated
+};
 
 import { isDeviceOnline } from '../../network-functions';
 
-// global.showGlobalValues()
+const screenWidth = Dimensions.get("window").width;
 
-// console.log('getExistingPayee({id: "12"}): ', getExistingPayee({id: "12"}));
-
+const screenHeight = Dimensions.get("window").height;
 
 
 const compareListTransactions = async (local_transactions, online_transactions) => {
-  // load online transactions
-  // let online_transactions = await retrieveOnlineTransactions();
-  // console.log('online_transactions.length: ', online_transactions.length);
-
-  // load local transactions
-  // let local_transactions = await retrieveLocalTransactions();
-  // console.log('local_transactions.length: ', local_transactions.length);
-
-  // let storage = await loadSettingsStorage(global.storageKey);
-  // local_transactions = storage.transactions;
-  // console.log('local_transactions.length: ', local_transactions.length);
-
   const props = ['id', 'version'];
 
   const result = local_transactions.filter((o1) => {
@@ -166,8 +170,6 @@ const compareListTransactions = async (local_transactions, online_transactions) 
           return newo;
       }, {});
   });
-  // console.log('compareListTransactions(local, online) => result: ', result);
-  // console.log('result: ', result);
   return result;
 };
 
@@ -221,19 +223,6 @@ const storeUserCategories = async (list) => {
     throw new Error(error);
   }
 };
-
-// const retrieveAuthenticatedStorageKey = async () => {
-//   let key;
-//   await Auth.currentAuthenticatedUser()
-//     .then((cognito) => {
-//       key = cognito.attributes.sub;
-//     })
-//     .catch(async (err) => {
-//       console.log('err: ', err);
-//       return;
-//     });
-//   return key;
-// };
 
 const updateOnlineTransaction = async (transaction) => {
   const updated = {
@@ -390,6 +379,16 @@ export default function Home(props) {
   // const [shouldShowSlideView, setShouldShowSlideView] = useState(false);
 
   const [isReady, setIsReady] = useState(false);
+
+  const [amountLabelText, setAmountLabelText] = useState('Amount Spent:')
+
+  const [currentPieChartData, setCurrentPieChartData] = useState(null);
+
+  const [isPieChartVisible, setIsPieChartVisible] = useState(false);
+
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // getTransactionCategoryPieChartData()
 
   // const clearInputs = () => {
   //   setCurrentPayee('')
@@ -552,16 +551,20 @@ export default function Home(props) {
   const updateTransactionNote = async (string) => {
     // load stored user transactions
     try {
-      const storageObj = await loadSettingsStorage(global.storageKey);
+      // const storageObj = await loadSettingsStorage(global.storageKey);
 
-      const list = storageObj.transactions;
+      // const list = storageObj.transactions;
 
-      const found = await searchByID(currentTransaction.id, list);
+      // const found = await searchByID(currentTransaction.id, list);
 
-      found.note = string;
-      updateStoredTransaction(list, found);
+      currentTransaction.note = string;
 
-      setCurrentTransaction(found);
+      updateStoredTransaction(currentTransactions, currentTransaction);
+
+      if (global.authenticated) save()
+
+      setCurrentTransaction(null);
+      
 
     } catch (e) {
       console.log('e: ', e);
@@ -569,70 +572,9 @@ export default function Home(props) {
     Analytics.record({ name: 'Updated a transaction note' });
   };
 
-  const updateTransactionAmount = async (amount) => {
-    console.log('amount: ', amount);
-    // load stored user transactions
-
-    currentTransaction.amount = amount
-
-    console.log('currentTransaction.amount: ', currentTransaction.amount);
-    // try {
-    //   const storageObj = await loadSettingsStorage(global.storageKey);
-
-    //   const list = storageObj.transactions;
-
-    //   const found = await searchByID(currentTransaction.id, list);
-
-    //   found.amount = amount;
-
-    //   const pos = list.indexOf(found);
-
-    //   storageObj.transactions[pos] = found
-
-    //   saveSettingsStorage(global.storageKey, storageObj)
-
-    //   updateStoredTransaction(list, found);
-
-    //   setCurrentTransaction(found);
-
-    // } catch (e) {
-    //   console.log('e: ', e);
-    // }
-    // Analytics.record({ name: 'Updated a transaction note' });
-  };
-  const pushAllCategoriesToCloud = async () => {
-
-    // let online_categories = await listAllOnlineCategories();
-
-    // console.log('online_categories.length: ', online_categories.length);
-
-    // try {
-    //   const storage = await loadSettingsStorage(global.storageKey);
-    //   // console.log('local_transactions: ', local_transactions);
-
-    //  for (var i = 0; i < storage.categories.length; i++) {
-    //     // /* Create New Category */
-    //     const category = new Category(
-    //       storage.categories[i].id, // id
-    //       storage.categories[i].name, // name
-    //       storage.categories[i].color, // color
-    //       storage.categories[i].type, // type
-    //       global.storageKey, // owner
-    //       storage.categories[i].version, // version
-    //     );
-
-    //     updateCategory(category);
-
-    //   // saveCategory(storage.categories[i])
-    //     // console.log('storage.transactions[i]: ', storage.transactions[i]);
-    //  }
-
-    // } catch(e) {
-    //   // statements
-    //   console.log(e);
-    // }
-  };
   async function retrieveUserStoredSettings() {
+
+
     global.isConnected = await isDeviceOnline();
     // console.log('global.isConnected: ', global.isConnected);
     
@@ -645,17 +587,19 @@ export default function Home(props) {
 
         global.email = cognito.attributes.email;
 
+
+
         crossDeviceSync();
 
         const storage = await loadSettingsStorage(global.storageKey);
-        console.log('storage: ', storage);
+        // console.log('storage: ', storage);
 
         storage.user.id = cognito.attributes.sub;
 
         storage.user.email = cognito.attributes.email
 
         // for (var i = storage.categories.length - 1; i >= 0; i--) {
-        //   storage.categories[i].owner = cognito.attributes.sub;
+        //   console.log('storage.categories[i]: ', storage.categories[i]);
         // }
 
         // /* Replace duplicates???? */
@@ -679,13 +623,20 @@ export default function Home(props) {
         saveSettingsStorage(global.storageKey, storage)
 
         global.authenticated = true;
+
+        setCurrentOwner(global.storageKey);
+
+
     })
     .catch(async () => {
       try {
+
         
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
         // console.log(userObject);
         // console.log('storageKey: ', storageKey);
+
+        global.storageKey = userObject.user.id
 
         setCurrentOwner(userObject.user.id);
 
@@ -696,6 +647,8 @@ export default function Home(props) {
         setCategories(userObject.categories);
 
         setCurrentTransactions(userObject.transactions);
+
+        global.authenticated = false
 
         // setIsUserLoggedIn(false);
       } catch(e) {
@@ -708,7 +661,7 @@ export default function Home(props) {
     // saveUndoHistory();
 
 
-    setCurrentOwner(global.storageKey);
+    
 
     
 
@@ -731,9 +684,9 @@ export default function Home(props) {
     // setIsReady(true);
 
 
-    global.showGlobalValues();
+    // global.showGlobalValues();
 
-    setIsReady(true)
+    // setIsReady(true)
   }
 
   Home.reloadTransactions = () => {
@@ -744,30 +697,30 @@ export default function Home(props) {
     // setIsStoringNewTransaction(true);
 
     // check for maximum unauthorized user transactions
-    if (!global.authenticated && currentTransactions.length >= 5) {
-      showMessage({
-        description: 'Sign up for more',
+    // if ((!global.authenticated) && currentTransactions.length >= 5) {
+    //   showMessage({
+    //     description: 'Sign up for more',
 
-        message: 'Maximum transactions',
+    //     message: 'Maximum transactions',
 
-        textStyle: styles.textStyle,
+    //     textStyle: styles.textStyle,
 
-        type: 'warning',
+    //     type: 'warning',
 
-        // position: 'top',
+    //     // position: 'top',
 
-        icon: {
-          icon: 'auto',
-          position: 'right',
-        },
+    //     icon: {
+    //       icon: 'auto',
+    //       position: 'right',
+    //     },
 
-        onPress:
-          () => {
-            props.navigation.navigate('SignUp');
-          },
-      });
-      return;
-    }
+    //     onPress:
+    //       () => {
+    //         props.navigation.navigate('SignUp');
+    //       },
+    //   });
+    //   return;
+    // }
 
     // user is authorized
 
@@ -876,49 +829,32 @@ export default function Home(props) {
 
           Analytics.record({ name: 'Removed an online transaction' });
         }
-        
       }
-
-        } catch(e) {
+      } catch(e) {
       // statements
       console.log(e);
     }
-
-    
-
     retrieveUserStoredSettings();
 
     setCurrentTransaction(null);
 
     setIsRemovingStoredTransaction(false);
 
-    
-
     Analytics.record({ name: 'Removed a local transaction' });
   }
   function handleChange(value) {
-    console.log(Math.abs(value/100))
-    // else if (value >= 900000) return
-    // check for limit of 11 digits
-
-    console.log('currentTransaction: ', currentTransaction);
-
-
     if (currentTransaction) {
       // currentTransaction.type = 'INCOME'
          // Math.abs(num) => Always positive
         // -Math.abs(num) => Always negative
         // if (value < 0.00) return
           
-      console.log('currentTransaction.amount: ', currentTransaction.amount);
+      // console.log('currentTransaction.amount: ', currentTransaction.amount);
       if (currentTransaction.type === 'INCOME') currentTransaction.amount = Math.abs(value/100);
       if (currentTransaction.type === 'EXPENSE') currentTransaction.amount =  -Math.abs(value/100);
       // updateStoredTransaction(currentTransactions, currentTransaction);
+      save()
     }
-
-
-
-
     if (String(value).length <= global.amountInputMaxLength) {
       setCurrentAmount(value);
     }
@@ -957,17 +893,7 @@ export default function Home(props) {
     if (invalid) showMessage({ message: message, description: `Please Enter ${a} valid ${invalid.toLowerCase()}`, duration: 1350 }) // console.log('invalid: ', invalid);
     return bool;
   };
-  const getAuthentication = async () => {
-    global.authenticated = false;
-    await Auth.currentAuthenticatedUser()
-      .then((cognito) => {
-        // console.log('cognito: ', cognito);
-        global.authenticated = (cognito) ? true : false;
-      }).catch((err) => {
-        // console.log('err: ', err);
-      })
-    return global.authenticated
-  };
+
   const getTransactionOnlineByID = async (id) => {
     /* Process retrieved server transaction */
     let stored = await getTransactionByID(id); // retrieve newly created from online trans by id
@@ -988,10 +914,6 @@ export default function Home(props) {
     // console.log('category: ', category);
 
     const { type, note, version } = stored
-
-    // const note = stored.note;
-
-    // const version = stored.version;
 
     let obj = new Transaction(
       id,
@@ -1050,12 +972,29 @@ export default function Home(props) {
     //   return;
     // }
 
+      setCurrentAmount(0)
+    setCurrentCategory(null)
+    setCurrentCategory(null)
+    setCurrentPayee(null)
+    setCurrentDate(new Date())
+    setCurrentType('')
+    setCurrentNote('')
+    setCurrentVersion(0)
+
+
+
+
     storeNewTransaction(transaction); // store new transaction locally
 
-    let isConnected = await isDeviceOnline();
-    if (isConnected) {
+    
+
+    global.isConnected = await isDeviceOnline();
+    if (global.isConnected) {
       global.authenticated = await getAuthentication();
-      // alert(authenticated);
+      
+      await Auth.currentAuthenticatedUser().then((sess) => console.log('sess: ', sess)).catch((e) => console.log('e: ', e))
+
+      
       if (global.authenticated) {
         updateCategory(category);
         // savePayee(payee);
@@ -1066,14 +1005,7 @@ export default function Home(props) {
 
     // await saveTransaction(transaction); // store new transaction online
 
-    setCurrentAmount(0)
-    setCurrentCategory(null)
-    setCurrentCategory(null)
-    setCurrentPayee(null)
-    setCurrentDate(new Date())
-    setCurrentType('')
-    setCurrentNote('')
-    setCurrentVersion(0)
+  
 
     // setIsReady(true);
 
@@ -1081,57 +1013,46 @@ export default function Home(props) {
     // setIsBackedUp(false)
   }
 
-  const saveUndoHistory = async () => {
-    let success = false;
-    // const undo_storage_key = `${storageKey}_BACKUPSETTINGS`
+  // const saveUndoHistory = async () => {
+  //   let success = false;
+  //   // const undo_storage_key = `${storageKey}_BACKUPSETTINGS`
 
-    let undo_storage_key = `${global.storageKey}_HISTORY`
+  //   let undo_storage_key = `${global.storageKey}_HISTORY`
+  //   // load stored settings
+  //   try {
+  //     const storageObj = await loadSettingsStorage(undo_storage_key);
 
-    // load stored settings
-    try {
-      const storageObj = await loadSettingsStorage(undo_storage_key);
+  //     let key = global.storageKey.replace('_HISTORY', '');
 
-      let key = global.storageKey.replace('_HISTORY', '');
+  //     saveSettingsStorage(key, storageObj);
 
-      
+  //     global.storageKey = key
 
-      saveSettingsStorage(key, storageObj);
+  //   } catch (e) {
+  //     // statements
+  //     console.log('e:', e);
+  //     // console.log(e);
+  //   }
+  // };
+  // const loadUndoHistory = async () => {
+  //   // let success = false;
+  //   try {
+  //     let undo_storage_key = `${global.storageKey}_HISTORY`; // history for REDOs
+  //     const undoObj = await loadSettingsStorage(undo_storage_key);
 
-      global.storageKey = key
+  //     let key = global.storageKey.replace('_HISTORY', '');
 
-    } catch (e) {
-      // statements
-      console.log('e:', e);
-      // console.log(e);
-    }
-  };
+  //     saveSettingsStorage(key, undoObj)
 
-  const loadUndoHistory = async () => {
-    // let success = false;
-    try {
-      let undo_storage_key = `${global.storageKey}_HISTORY`; // history for REDOs
-      const undoObj = await loadSettingsStorage(undo_storage_key);
+  //     global.storageKey = key
+  //   } catch (e) {
+  //     // statements
+  //     console.log('Could not save undo history:', e);
+  //     // console.log(e);
+  //   };
 
-      let key = global.storageKey.replace('_HISTORY', '');
-
-      
-
-      saveSettingsStorage(key, undoObj)
-
-      global.storageKey = key
-
-
-
-    } catch (e) {
-      // statements
-      console.log('Could not save undo history:', e);
-      // console.log(e);
-    }
-
-    ;
-
-    // setCurrentTransactions(undoObj.transactions);
-  };
+  //   // setCurrentTransactions(undoObj.transactions);
+  // };
   function backspaceBtnPressed() {
     const strValue = String(currentAmount);
     // pop last char from string value
@@ -1146,17 +1067,16 @@ export default function Home(props) {
     const balance = (calculateBalance(currentTransactions));
     setCurrentBalance(balance);
     setIsCalculatingBalance(false);
-
-    // setIsCalculatingBalance(false);
-
     // calculate spent
     setIsCalculatingSpent(true);
     const spent = (calculateMonthSpent(currentTransactions));
     setCurrentSpent(spent);
     setIsCalculatingSpent(false);
+
+    // if (currentTransactions) {
+    //   setCurrentPieChartData(getTransactionCategories(currentTransactions))
+    // }
   }, [currentTransactions]);
-
-
 
   useEffect(() => {
     if (currentCategory) {
@@ -1180,9 +1100,6 @@ export default function Home(props) {
 
       setCurrentCategoryOwner(currentOwner);
       setCurrentCategoryVersion(currentVersion);
-
-      
-
       setCurrentType(currentCategory.type);
     } else {
       setCurrentCategoryID('')
@@ -1224,6 +1141,12 @@ export default function Home(props) {
     global.isConnected = await isDeviceOnline();
     
     global.authenticated = await getAuthentication();
+
+
+
+    // setCurrentPieChartData(getTransactionCategories(currentTransactions))
+
+
   }
 
   useEffect(() => {
@@ -1245,22 +1168,25 @@ export default function Home(props) {
 
     // setIsReady(true)
 
-    // return () => {
-    //   clearState()
-    // }
+    return () => {
+      setCurrentTransaction(null)
+      setCurrentCategory(null)
+      setCurrentAmount(0)
+    }
     
   }, []);
 
-  // useEffect(() => {
-  //   if (currentTransaction) {
-  //     setCurrentAmount(currentTransaction.amount *  100)
-  //     showSlideView();
-  //     // console.log('currentTransaction: ', currentTransaction);
-  //   } else {
-  //     hideSlideView();
-  //     // console.log('\n');
-  //   }
-  // }, [currentTransaction]);
+  useEffect(() => {
+    if (currentTransaction) {
+      // setCurrentAmount(currentTransaction.amount *  100)
+      // showSlideView();
+      // console.log('currentTransaction: ', currentTransaction);
+    } else {
+      hideSlideView();
+      setCurrentAmount(0)
+      // console.log('\n');
+    }
+  }, [currentTransaction]);
 
   async function save () {
     // setIsReady(false)
@@ -1276,13 +1202,16 @@ export default function Home(props) {
 
   useEffect(() => {
     if (currentTransaction) {
+      setAmountLabelText('');
       setCurrentAmount(currentTransaction.amount *  100)
       showSlideView();
       // console.log('currentTransaction: ', currentTransaction);
     } else {
+      setAmountLabelText('Amount Spent:');
       hideSlideView();
 
-      save()
+     if (global.authenticated) save()
+     setCurrentTransaction(null)
     }
   }, [currentTransaction]);
 
@@ -1536,6 +1465,7 @@ export default function Home(props) {
       isEditable={false}
       value={currentAmount}
       handleChange={handleChange}
+      amountLabelText={amountLabelText}
     />
   );
   let keypad = (
@@ -1605,12 +1535,14 @@ export default function Home(props) {
   );
 
   const crossDeviceSync = async () => {
+    if (!global.authenticated) return
     // check if user is online
     let bool = await isDeviceOnline();
     if (bool !== true) {
       showMessage('Device Currently Offline');
       return;
     }
+
 
     // check if device is synced
     // if (await getIsDeviceSynced() === true) return
@@ -1625,7 +1557,7 @@ export default function Home(props) {
 
     // setIsReady(false);
 
-    // setIsSyncing(true)
+    setIsSyncing(true)
 
     /* Sync Transactions */
     // compare both transaction lists
@@ -1643,6 +1575,7 @@ export default function Home(props) {
       // console.log('local_transactions.length: ', local_transactions.length);
       // console.log('local_transactions: ', local_transactions);
 
+
        // get user's online transactions
       online_transactions = await retrieveOnlineTransactions();
       // console.log('online_transactions.length: ', online_transactions.length);
@@ -1650,21 +1583,33 @@ export default function Home(props) {
 
       // /* 1st save any new categories from online transactions */
       online_transactions.forEach(async (element, index) => {
-        if (!element.category) return
-        try {
+        if (!element.category) {
+          // console.log('element.category is missing: ', element.category);
+          return
+        } else {
+           try {
           let found = await searchByName(element.category.name, storage.categories);
 
           if (!found) {
+            console.log('element.category: ', element.category);
             storage.categories.unshift(element.category)
+            saveSettingsStorage(global.storageKey, storage)
             
           }
 
-          saveSettingsStorage(global.storageKey, storage)
+          
         } catch(e) {
           // statements
-          throw new Error('Category Not on This Devvice Yet!')
-          console.log('Not Found!', element.category)
+          if (element.category.name) {
+            storage.categories.unshift(element.category)
+            saveSettingsStorage(global.storageKey, storage)
+          }
+          // throw new Error('Category Not on This Device Yet!')
+
+          // console.log('Not Found!', element.category)
         }
+        }
+       
       });
 
       // check for local transactions that dont exist in online transactions yet
@@ -1686,7 +1631,9 @@ export default function Home(props) {
       // console.log('storage.transactions.length: ', storage.transactions.length);
 
       // save storage transactions to device storage
-      saveSettingsStorage(storageKey, storage);
+      saveSettingsStorage(global.storageKey, storage);
+
+      setCurrentTransactions(storage.transactions)
 
       setIsReady(true)
     } catch(crossDeviceSyncError) {
@@ -1725,6 +1672,8 @@ export default function Home(props) {
           list[pos] = online_newer_transaction;
 
           saveSettingsStorage(global.storageKey, storage);
+
+
         } catch(e) {
           // statements
           console.log(e);
@@ -1736,8 +1685,6 @@ export default function Home(props) {
     // compare both category lists
     let online_categories = []; // online trans
     let local_categories = [];  // local trans in device storage
-
-    // pushAllCategoriesToCloud();
 
     try {
       // get user's local categories
@@ -1783,9 +1730,9 @@ export default function Home(props) {
       // console.log('uniqueIds: ', uniqueIds);
 
       /* update owner if category owner dne */
-      // for (var i = merged.length - 1; i >= 0; i--) {
-      //   merged[i].owner = currentOwner
-      // }
+      for (var i = merged.length - 1; i >= 0; i--) {
+        merged[i].owner = currentOwner
+      }
 
       merged.forEach((element) => {
         if (!element.owner || element.owner === '') element.owner = global.storageKey;
@@ -1798,7 +1745,7 @@ export default function Home(props) {
 
       storage.categories = merged;
 
-      console.log('merged: ', merged);
+      // console.log('merged: ', merged);
 
       setCategories(merged)
 
@@ -1816,14 +1763,14 @@ export default function Home(props) {
 
     // setIsReady(true);
 
-    // setIsSyncing(false);
+    setIsSyncing(false);
 
-    showMessage({
-      message: `Synced data successfully`,
-      // description: 
-      type: 'success', // "success", "info", "warning", "danger"
-      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
-    });
+    // showMessage({
+    //   message: `Synced data successfully`,
+    //   // description: 
+    //   type: 'success', // "success", "info", "warning", "danger"
+    //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+    // });
 
 
 
@@ -1861,18 +1808,38 @@ export default function Home(props) {
       value={Math.abs(currentAmount)}
       handleChange={handleChange}
     />
-
-
   );
+  // let barChartExample = (
+  //   <View style={
+  //     [
+  //       // styles.container,
+  //       {
+  //         flex: 1,
 
-  // useEffect(() => {
-  //   if (currentPayee) {
-  //     setCurrentPayeeID(currentPayee.id);
-  //     setCurrentPayeeName(currentPayee.name);
-  //   } else {
-  //     setCurrentPayeeID('');
-  //     setCurrentPayeeName('');
-  //   }
+  //         flexDirection: 'row-reverse',
+  //         height: screenHeight * 0.06,
+  //         marginTop: 25,
+  //       },
+  //       {
+  //         position: 'absolute',
+  //         top: 0,
+  //         bottom: 0,
+  //         right: 0,
+  //         left: 0,
+
+  //         width: screenWidth,
+
+  //         // opacity: 0.5,
+
+  //         // borderWidth: 1,
+  //         // borderColor: 'red',
+  //         // borderStyle: 'solid',
+  //       }
+  //     ]
+  //   }>
+  //     <BarChartExample data={currentPieChartData}  />
+  //   </View>
+  // );
 
   // }, [currentPayee])
   const view = (
@@ -1894,21 +1861,7 @@ export default function Home(props) {
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
         // onWillFocus={clearState} // {(payload) => clearState()}
-        onWillFocus={async () => {
-            
-
-            // retrieveUserStoredSettings()
-
-            // global.hasSyncedDevice = false;
-
-            retrieveUserStoredSettings();
-
-            global.isConnected = await isDeviceOnline();
-            
-            global.authenticated = await getAuthentication();
-
-          }
-        }
+        onWillFocus={retrieveUserStoredSettings}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
         onWillBlur={async () =>
@@ -1917,11 +1870,11 @@ export default function Home(props) {
             setCurrentTransaction(null);
             // hideSlideView();
 
-            setIsDeviceSynced(false);
+            // setIsDeviceSynced(false);
 
           }
         }
-        // onDidBlur={payload => console.log('did blur',payload)}
+        // onDidBlur={retrieveUserStoredSettings}
       />
       
       {/* North Panel View (leave room for navigation bar; contains balance view and spacing) */}
@@ -1946,23 +1899,7 @@ export default function Home(props) {
 
         {/* Balance View */}
         <View
-          // style={
-          //   {
-          //     flex: 0.1,
-          //     width: '100%',
-          //     // flex: 1,
-          //     justifyContent: 'center',
-          //     alignItems: 'center',
-          //     // top: '14%', // 110,
-          //     top: 80, // 70
-          //     // top: '9%',
-          //     // position: 'absolute',
-
-          //     // borderWidth: 1,
-          //     // borderColor: 'white',
-          //     // borderStyle: 'dotted',
-          //   }
-          // }
+          
           style={[{
             flex: 1,
             marginTop: 50,
@@ -1982,8 +1919,29 @@ export default function Home(props) {
             currentSpentValue={currentSpent}
             isCalculatingBalance={isCalculatingBalance}
             isCalculatingSpent={isCalculatingSpent}
+            // myPieChart={myPieChart}
+            isPieChartVisible={true}
           />
         </View>
+        {
+         isSyncing && <View style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            // borderWidth: 1,
+            // borderColor: 'white',
+            width: '100%',
+            // borderStyle: 'solid',
+          }}>
+          <Text style={[styles.textStyle,{
+            fontSize: 14,
+            color: colors.shamrockGreen,
+            opacity:  0.5,
+          }]}>Device Syncing</Text>
+          <ActivityIndicator color="white" />
+         
+          </View>
+        }
 
       </View>
 
@@ -2023,54 +1981,24 @@ export default function Home(props) {
         isReady && isCalculatingBalance && spinner
       }
       {
-        // !isReady && spinner
+        // isPieChartVisible && barChartExample
       }
-          
-
-
+     
 
 
     </SafeAreaView>
   );
   return view;
+  // return barChartExample
+  
 }
 
-Home.navigationOptions = (props) => {
-  // console.log('props: ', props);
-  let boldMessage = 'Get device cross-sync';
-
-  if (global.fullName) {
-    boldMessage = global.fullName
-  }
-
-  let normalMessage = `${global.appName} ${global.appVersion}`;
-
-  // const normalMessage = 'Enter your email';
-  async function onUsernameSubmit(string) {
-    // console.log('string: ', string);
-    const storageObj = await loadSettingsStorage(string);
-    // console.log(storageObj);
-
-    if (storageObj) {
-      // overwrite current user settings
-      saveSettingsStorage(global.storageKey, storageObj);
-
-      // global.storageKey = string; // ??
-
-      // Home.retrieveUserStoredSettings();
-      Home.reloadTransactions();
-    }
-  }
+Home.navigationOptions = () => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
     headerLeft: (
-    <HeaderLeftView
-     onUsernameSubmit={onUsernameSubmit}
-     // getNormalMessage={getNormalMessage}
-     boldMessage={boldMessage}
-     // normalMessage={normalMessage}
-     />),
+    <HeaderLeftView />),
     headerRight: <HeaderRightView />,
   };
   return header;

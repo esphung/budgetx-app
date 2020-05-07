@@ -12,12 +12,21 @@ import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
 import OfflineScreen from './src/screens/OfflineScreen';
 
+// import OnboardingPages from './src/screens/OnboardingPages';
+
 // import SignOutScreen from './src/screens/SignOutScreen';
 
 import colors from './colors';
 
 // Auth stack
 const AuthStackNavigator = createStackNavigator({
+  // OnboardingPages: {
+  //   screen: OnboardingPages,
+  //   navigationOptions: () => ({
+  //     title: `${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
+  //     headerBackTitle: null,
+  //   }),
+  // },
   WelcomeScreen: {
     screen: WelcomeScreen,
     navigationOptions: () => ({

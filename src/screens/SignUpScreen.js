@@ -48,6 +48,17 @@ import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 // import the Analytics category
 import Analytics from '@aws-amplify/analytics';
 
+
+// import 'cross-fetch/polyfill';
+import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
+
+// ES Modules, e.g. transpiling with Babel
+import {
+    CognitoUserPool,
+    CognitoUserAttribute,
+    CognitoUser,
+} from 'amazon-cognito-identity-js';
+
 import { showMessage } from 'react-native-flash-message';
 
 import Dialog from 'react-native-dialog';
@@ -75,6 +86,12 @@ import {
 } from '../storage/SettingsStorage';
 
 import User from '../models/User';
+
+AWS.config.region = 'us-east-1'; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+  IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+});
+
 
 
 
@@ -172,48 +189,51 @@ function SignUpScreen(props) {
   //   setIsLoading(false);
   // };
 
-  // useEffect(() => {
-  //   // Default render of country flag
-  //   const defaultFlag = countries.filter((obj) => obj.name === 'United States')[0].flag;
-  //   // setFlag(defaultFlag);
+  useEffect(() => {
+    // // Default render of country flag
+    // const defaultFlag = countries.filter((obj) => obj.name === 'United States')[0].flag;
+    // // setFlag(defaultFlag);
 
-  //   setDialCode(countries.filter((obj) => obj.name === 'United States')[0].dial_code)
-  //   // setCountryData(countries);
+    // setDialCode(countries.filter((obj) => obj.name === 'United States')[0].dial_code)
+    // // setCountryData(countries);
+    // setHelpMessage('Hello.');
+    setHelpMessage('sign up with your email and pick a password');
+    // return () => {
+    //   // effect
+    //   setHelpMessage('enter your email and pick a password');
+    // };
+  }, []);
+
+  // useEffect(() => {
+  //   // if (!username || username.length < global.minUsernameLength || !isValidUsername(username)) {
+  //   //   setHelpMessage('Username invalid');
+  //   // }
+
+  //   // if (!password) {
+  //   //   setHelpMessage('Password invalid');
+  //   // }
+
+  //   if (!email || !password  || password.length < minPasswordLength) {
+  //     setHelpMessage('this way you can save your stuff in the cloud');
+  //   } else if (!isValidEmail(email)) {
+  //     setHelpMessage('Invalid email');
+  //   } else if (password.length < global.minPasswordLength) {
+  //     setHelpMessage('Password too short');
+  //   }
+
+
+  //   // else if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
+  //   //   setHelpMessage('Phone is invalid');
+  //   // }
+
+  //   // else {
+  //   //   setHelpMessage('');
+  //   // }
   //   return () => {
   //     // effect
-  //   };
-  // }, []);
-
-  useEffect(() => {
-    // if (!username || username.length < global.minUsernameLength || !isValidUsername(username)) {
-    //   setHelpMessage('Username invalid');
-    // }
-
-    // if (!password) {
-    //   setHelpMessage('Password invalid');
-    // }
-
-    if (!email || !password  || password.length < minPasswordLength) {
-      setHelpMessage('this way you can save your stuff');
-    } else if (!isValidEmail(email)) {
-      setHelpMessage('Invalid email');
-    } else if (password.length < global.minPasswordLength) {
-      setHelpMessage('Password too short');
-    }
-
-
-    // else if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
-    //   setHelpMessage('Phone is invalid');
-    // }
-
-    else {
-      setHelpMessage('');
-    }
-    return () => {
-      // effect
       
-    };
-  });
+  //   };
+  // });
 
   useEffect(() => {
     if (password && isValidEmail(email) && password.length >= global.minPasswordLength) {
@@ -259,18 +279,63 @@ function SignUpScreen(props) {
     }
   }
 
+  function cognitoSignUp (emailInput, passwordInput) {
+    var poolData = {
+    UserPoolId:  'us-east-1_9xOuE8Wfh', // '...', // Your user pool id here
+    ClientId: '19d0h4e6cc04l9d8dc4tf2imhq', // '...', // Your client id here
+    };
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+     
+    var attributeList = [];
+     
+    var dataEmail = {
+        Name: 'email',
+        Value: emailInput, // 'email@mydomain.com',
+    };
+     
+    var dataPhoneNumber = {
+        Name: 'phone_number',
+        Value: '+15555555555',
+    };
+    var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+    var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(
+        dataPhoneNumber
+    );
+     
+    attributeList.push(attributeEmail);
+    attributeList.push(attributePhoneNumber);
+     
+    userPool.signUp(
+      // 'username',
+      'email',
+      'password', attributeList, null, function(
+        err,
+        result
+    ) {
+        if (err) {
+            showMessage(err.message || JSON.stringify(err));
+            console.log('err: ', err);
+            return;
+        }
+        var cognitoUser = result.user;
+        console.log('user name is ' + cognitoUser.getUsername());
+        showMessage('user name is ' + cognitoUser.getUsername());
+    });
+  }
+
   function handleUsernameInputSubmit() {
     passwordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
   function handlePasswordInputSubmit() {
-    emailInputRef.current._root.focus();
+    // emailInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
+    signUp()
   }
 
   function handleEmailInputSubmit() {
-    // phoneNumberInputRef.current._root.focus();
+    passwordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
@@ -448,7 +513,14 @@ function SignUpScreen(props) {
   */
   // Sign up user with AWS Amplify Auth
   async function signUp() {
-    let isSuccessful = false;
+
+    await Auth.currentAuthenticatedUser().then((user) => console.log('user: ', user)).catch((err) => {
+      // throw new Error('Already signed in!', e)
+      showMessage(e.message)
+      setHelpMessage('Already signed in!')
+      return
+    })
+    // cognitoSignUp(email, password);
     setIsLoading(true);
       // Alert.alert('Phonef valid');
 
@@ -460,75 +532,36 @@ function SignUpScreen(props) {
       password: password,
       // attributes: { email },
     })
-      .then(() => {
-        isSuccessful = true;
-        // console.log('Sign up successful!');
-        // Alert.alert('Enter the confirmation code you received.');
-        // SHOW CONFIRRMATION DIALOG BOX HERE
-        // setDialogTitle('Sign Up Successful!');
-        // setDialogMessage('Enter the confirmation code you received.');
-        // setIsDialogVisible(true);
-
-        // setIsConfirmVisible(true);
-        
-      })
-      .catch((err) => {
-        // console.log('err: ', err);
-        isSuccessful = false;
-        if (err) {
-          // console.log('Error when signing up: ', err.message);
-          // Alert.alert('Error when signing up: ', err.message);
-
-          
-
-          // console.log('err: ', err);
-
-          if (err.code  === 'UsernameExistsException') {
-            signIn();
-
-            
-          }
-
-          else {
-            showMessage({
-              message: 'Sign Up Failed!',
-              description: err.message,
-              type: 'danger',
-            });
-          }
-
-          // record analytics
-          // const name = `Failed user sign up`;
-          // Analytics.record({ name: name });
-          // console.log(`Analytic Recorded: ${name}`);
-
-          // setDialogTitle('Error when signing up!');
-          // setDialogMessage(err.message);
-          // setIsDialogVisible(true);
-        }
-      });
-    setIsLoading(false);
-
-    if (isSuccessful) {
-      // setDialogTitle('Sign Up Successful!');
-      // setDialogMessage('Enter the confirmation code you received.');
-      // setIsDialogVisible(true);
-
-      showMessage({
-        message: 'Sent confirmation code!',
-        description: 'Please check your email!',
-        type: 'success',
-      });
-
-      setIsResendCodeBtnEnabled(true);
-
+    .then((succ) => {
+      showMessage('Confirmation code sent!');
+      setHelpMessage(`Enter the confirmation code you received at ${email}`);
       setIsConfirmVisible(true);
+      setIsLoading(false);
 
-      // record analytics
-      const name = `Successful user sign up`;
-      Analytics.record({ name: name });
-      // console.log(`Analytic Recorded: ${name}`);
-    }
+      Analytics.record({ email: email });
+      console.log(`Successful sign up Recorded: ${email}`);
+    })
+    .catch((err) => {
+      setIsLoading(false);
+      setIsConfirmVisible(false);
+      console.log('err: ', err);
+      setHelpMessage(err.message);
+      showMessage('sign up failed');
+
+
+      if (err.code  === 'UsernameExistsException') {
+        console.log('err: ', err);
+        showMessage('User exists already. Enter your password to sign in');
+        
+        //   // signIn();
+        global.emailAddressInput = email
+        //   global.passwordInput = password  
+        props.navigation.navigate('SignIn')
+
+      }
+      Analytics.record({ email: email });
+      console.log(`Failed sign up Recorded: ${email}`);
+    });
   }
   async function signIn () {
     
@@ -723,40 +756,11 @@ function SignUpScreen(props) {
     if (authCode !== null) {
       Auth.confirmSignUp(email, authCode)
         .then(() => {
-
-          // /* if new fb user log them in */
-          // checkForFBUserSettings()
-
-          // checkForExisitngSettings()
-
-
-          // props.navigation.navigate('SignIn');
+          showMessage('Sign Up Successful!');
+          setHelpMessage('Sign Up Successful!')
 
           props.navigation.navigate('AuthLoading');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          // console.log('Confirm sign up successful');
-          // Alert.alert('Confirm sign up successful');
-
-
-
-          showMessage({
-            message: 'Sign Up Successful!',
-            type: 'success',
-          });
+          
         })
         .catch((err) => {
           // console.log('Error when entering confirmation code: ', err.message);
@@ -765,8 +769,9 @@ function SignUpScreen(props) {
           showMessage({
             message: 'Error when entering confirmation code',
             description: err.message,
-            type: 'danger',
+            // type: 'danger',
           });
+          setHelpMessage(err.message);
           
         });
     }
@@ -779,16 +784,18 @@ function SignUpScreen(props) {
       // Alert.alert('Confirmation code resent successfully!');
       showMessage({
         message: 'Confirmation code resent successfully!',
-        type: 'success',
+        // type: 'success',
       });
+      setHelpMessage('Confirmation code resent successfully!')
       // console.log('Confirmation code resent successfully');
     })
     .catch((err) => {
       showMessage({
         message: 'Error requesting new confirmation code: ',
         description: err.message,
-        type: 'success',
+        // type: 'success',
       });
+      setHelpMessage(err.message)
     });
   }
 
@@ -875,6 +882,7 @@ function SignUpScreen(props) {
                     Resend code
                   </Text>
                 </TouchableOpacity>
+                <HelpMessage message={helpMessage} />
               </View>
             </Container>
           </View>
@@ -929,7 +937,7 @@ function SignUpScreen(props) {
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="email"
+                    placeholder="enter a valid email"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
                     returnKeyType="next"
@@ -954,7 +962,7 @@ function SignUpScreen(props) {
                   <Ionicons active name="md-lock" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="password"
+                    placeholder="choose a password"
                     placeholderTextColor={colors.offWhite}
                     returnKeyType="next"
                     autoCapitalize="none"
@@ -982,19 +990,19 @@ function SignUpScreen(props) {
                       //   setIsDialogVisible(true);
                       // }
 
-                      if (password.length < global.minPasswordLength) {
-                        setDialogTitle('Password Invalid');
-                        setDialogMessage(`Password not long enough. Make it atleast ${global.minPasswordLength} letters or numbers.`);
-                        setIsDialogVisible(true);
-                      }
+                      // if (password.length < global.minPasswordLength) {
+                      //   setDialogTitle('Password Invalid');
+                      //   setDialogsMessage(`Password not long enough. Make it atleast ${global.minPasswordLength} letters or numbers.`);
+                      //   setIsDialogVisible(true);
+                      // }
 
-                      else {
+                      // else {
                         // console.log(username);
                         // console.log(password);
                         // console.log(email);
                         // console.log(phoneNumber);
                         signUp();
-                      }
+                      // }
                     }}
                     style={getButtonStyle(isSignUpBtnEnabled)}
                     disabled={!isSignUpBtnEnabled}

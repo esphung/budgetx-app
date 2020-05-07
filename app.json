@@ -1,5 +1,8 @@
 {
+
   "expo": {
+    "scheme": "expoamplifytest",
+    "githubUrl": "https://github.com/esphung/budgetx-app",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -9,6 +12,8 @@
       "bundleIdentifier": "com.ericphung.financely",
       "requireFullScreen": true,
       "isTabletOnly": false,
+      "usesAppleSignIn": true,
+      "appStoreUrl": "https://apps.apple.com/us/app/financely/id1491309602",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Financely lets you choose an image for your profile."
       }
@@ -36,7 +41,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "4.7.0",
+    "version": "4.7.3",
 
     "facebookScheme": "fb582566462305004",
 

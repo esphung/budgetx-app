@@ -220,7 +220,7 @@ function SlideUpTransactionRect(props) {
       // statements
       console.log('Could not retrieve stored user currentCategories\n', e);
     }
-    console.log(...categories);
+    // console.log(...categories);
     return categories;
   };
 

@@ -507,6 +507,8 @@ function Settings(props) {
     // global.isDeviceSyncOn = await getIsDeviceSyncOn()
     setIsReady(false)
 
+    const storage = await loadSettingsStorage(global.storageKey);
+
 
 
     // alert(global.isDeviceSyncOn);
@@ -518,7 +520,7 @@ function Settings(props) {
 
     await Auth.currentAuthenticatedUser()
     .then(async (cognito) => {
-      const storage = await loadSettingsStorage(global.storageKey);
+      
       
       setCurrentOwner(storage.user.id);
 
@@ -1079,13 +1081,29 @@ function Settings(props) {
   };
 
   const getKeys = (obj) => {
-    let keys = []
-    Object.keys(obj).forEach((key) => {
-      // parse the nested object's properties
-      if (key) {
-        keys.push(`${key}`);
-      }
-    });
+    // console.log('obj[0]: ', obj[0]);
+    let keys = Object.keys(obj[0])
+    // forEach((key, value) => {
+    //   console.log('key, value: ', key, value);
+    //   // parse the nested object's properties
+    //   keys.push(`${key}`);
+      
+    // });
+
+
+//     keys:  Array [
+//   "id",
+//   "date",
+//   "amount",
+//   "owner",
+//   "payee",
+//   "category",
+//   "type",
+//   "note",
+//   "version",
+// ]
+
+    // console.log('keys: ', keys);
     return keys;
   }
 
@@ -1144,6 +1162,21 @@ function Settings(props) {
   }
 
   const onExport = async () => {
+    // console.log('currentTransactions: ', currentTransactions);
+    // console.log('getKeys(currentTransactions): ', getKeys(currentTransactions));
+
+  //   keys:  Array [
+  // "id",
+  // "date",
+  // "amount",
+  // "owner",
+  // "payee",
+  // "category",
+  // "type",
+  // "note",
+  // "version",
+  // ]
+    // return
     if (currentTransactions.length <= 0) {
       showMessage('You have no transactions');
       return
@@ -1153,7 +1186,7 @@ function Settings(props) {
           title: 'My Transactions',
           subject: 'My Transactions',
           // tintColor: 'dark',
-          message: JSON.stringify(currentTransactions, getKeys(currentTransactions[0]), 4),
+          message: JSON.stringify(currentTransactions, null, 2),
         });
 
         // console.log('result: ', result);
@@ -1491,7 +1524,12 @@ function Settings(props) {
 
                 // setIsUserLoggedIn(loggedIn);
 
-                global.authenticated = await getAuthentication();
+                await Auth.currentAuthenticatedUser().then((user) => {
+                  global.authenticated = true
+                  global.storageKey = user.attributes.sub
+                }).catch((e) => console.log('e: ', e))
+
+                // global.authenticated = await getAuthentication();
 
                 global.isFederated = await AsyncStorage.getItem('isFederated' );
 
@@ -1508,7 +1546,7 @@ function Settings(props) {
             // other props
             // onDidFocus={payload => console.log('did focus',payload)}
             // onWillBlur={async () => global.isBackedUp = await getIsBackedUp()}
-            // onDidBlur={payload => console.log('did blur',payload)}
+            onDidBlur={retrieveStoredSettings}
           />
 
         <View style={rectangle5} />
@@ -1537,11 +1575,11 @@ function Settings(props) {
           {
             <SubscriptionRect
             onPress={() => {
-              if (!isUserLoggedIn) {
-                navigation.navigate('WelcomeScreen');
-              } else {
-                directToAppStoreDownload()
-              }
+              // if (!global.authenticated) {
+                navigation.navigate('SignUp');
+              // } else {
+              //   directToAppStoreDownload()
+              // }
             }}
             isUserLoggedIn={isUserLoggedIn}
             isUserOnline={async () => await isDeviceOnline()}

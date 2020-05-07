@@ -121,7 +121,7 @@ function SignInScreen(props) {
 
   const [username, setUsername] = useState(global.emailAddressInput);
 
-  const [password, setPassword] = useState(null);
+  const [password, setPassword] = useState(global.passwordInput);
 
   const [authCode, setAuthCode] = useState(null);
 
@@ -534,9 +534,12 @@ function SignInScreen(props) {
     const handleFacebookSignIn = async (userData) => {
     setIsLoading(true);
     // do stuff with the new user's data
-    // console.log('userData: ', userData);
+    console.log('userData: ', userData);
     
     // setUserData(userData);
+
+    
+
 
     global.storageKey = userData.id
 
@@ -544,12 +547,22 @@ function SignInScreen(props) {
 
     global.avatar = Image_Http_URL;
 
+
+    let storage = await loadSettingsStorage(global.storageKey);
+
     // global.storageKey = userData.id
 
     AsyncStorage.setItem('storageKey', global.storageKey);
 
+    for (var i = storage.transactions.length - 1; i >= 0; i--) {
+      storage.transactions[i].owner = global.storageKey
+    }
 
-    let storage = await loadSettingsStorage(userData.id);
+    for (var i = storage.categories.length - 1; i >= 0; i--) {
+      storage.categories[i].owner = global.storageKey
+    }
+
+    storage.user.id = userData.id;
 
     storage.user.name = userData.name;
 
@@ -565,14 +578,14 @@ function SignInScreen(props) {
 
     // global.authenticated = true;
 
-    AsyncStorage.setItem('authenticated', JSON.stringify(true))
+    // AsyncStorage.setItem('authenticated', JSON.stringify(true))
 
     AsyncStorage.setItem('isFederated', JSON.stringify(true))
 
     let userToken = global.storageKey + '@session' + uuidv4();
 
       // console.log('userToken: ', userToken);
-      await AsyncStorage.setItem('userToken', userToken); // save user token
+    await AsyncStorage.setItem('userToken', userToken); // save user token
 
     // let userToken = global.storageKey + '@session' + String(Math.random(1,8)*100);
 
@@ -665,10 +678,10 @@ function SignInScreen(props) {
               <View style={styles.container}>
               {/* Facebook Login */}
             {
-              (!global.isFederated && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
+              (!global.isFederated && !global.isAopleSignedIn && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
             }
             {
-              (!global.authenticated && !global.isAppleSignedIn) && <AppleSignInButton appleSignInCallback={appleSignInCallback} />
+              (!global.isFederated && !global.isAppleSignedIn && !global.authenticated) && <AppleSignInButton appleSignInCallback={appleSignInCallback} />
             }
                 {/* email section */}
                 <Item rounded style={styles.itemStyle}>
@@ -766,61 +779,99 @@ function SignInScreen(props) {
   const offline = <OfflineScreen />;
 
   async function appleSignInCallback(authResult) {
-    console.log('authResult: ', authResult);
-
-    // let userId = authResult.authorizationCode
-
-    // global.storageKey = userId
-    AsyncStorage.setItem('storageKey', global.storageKey)
-
-    let token = authResult.identityToken
-    AsyncStorage.setItem('userToken', JSON.stringify(token))
-
-    let userEmail =  authResult.email
-
-    let userFullName = authResult.fullName.givenName + ' ' + authResult.fullName.familyName
-
-    let settings = await loadSettingsStorage(global.storageKey);
-
-    if (userEmail) settings.user.email = userEmail
-
-    if (userFullName) settings.user.full_name = userFullName
-    // settings.user.name = userFullName;
-
-    saveSettingsStorage(global.storageKey, settings);
-
-    // global.isFederated = true;
-    
-    // AsyncStorage.setItem('isFederated', JSON.stringify(global.isFederated))
-
     global.isAppleSignedIn = true
 
     AsyncStorage.setItem('isAppleSignedIn', JSON.stringify(global.isAppleSignedIn))
 
+
+
+    // if (!authResult.email) {
+    //   // throw new Error('No email from Apple!', authResult)
+
+
+
+    //   return
+    // }
+
+    // if (authResult.fullName.familyName && authResult.fullName.givenName) {} {
+    //    // // global.storageKey = userId
+    //   // AsyncStorage.setItem('storageKey', global.storageKey)
+
+    //   // let token = authResult.identityToken
+    //   // AsyncStorage.setItem('userToken', JSON.stringify(token))
+
+    //   // let userEmail =  authResult.email
+
+    //   let userFullName = authResult.fullName.givenName + ' ' + authResult.fullName.familyName
+
+    //   let settings = await loadSettingsStorage(global.storageKey);
+
+    //   // if (userEmail) settings.user.email = userEmail
+
+    //   if (userFullName) settings.user.full_name = userFullName
+    //   settings.user.full_name = userFullName;
+
+    //   saveSettingsStorage(global.storageKey, settings);
+    // }
+
+
+
+    
+    console.log('authResult: ', authResult);
+
+    // // let userId = authResult.authorizationCode
+
+    // // global.storageKey = userId
+    // AsyncStorage.setItem('storageKey', global.storageKey)
+
+    // let token = authResult.identityToken
+    // AsyncStorage.setItem('userToken', JSON.stringify(token))
+
+    // let userEmail =  authResult.email
+
+    // let userFullName = authResult.fullName.givenName + ' ' + authResult.fullName.familyName
+
+    // let settings = await loadSettingsStorage(global.storageKey);
+
+    // if (userEmail) settings.user.email = userEmail
+
+    // if (userFullName) settings.user.full_name = userFullName
+    // // settings.user.name = userFullName;
+
+    // saveSettingsStorage(global.storageKey, settings);
+
+    // // global.isFederated = true;
+    
+    // // AsyncStorage.setItem('isFederated', JSON.stringify(global.isFederated))
+
     
 
 
-     // Add the apple's id token to the Cognito credentials login map.
-     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
-        Logins: {
-           'appleid.apple.com': authResult['identityToken']
-        }
-     });
+   // Add the apple's id token to the Cognito credentials login map.
+   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+      Logins: {
+         'appleid.apple.com': authResult['identityToken']
+      }
+   });
 
-     // Obtain AWS credentials
-     AWS.config.credentials.get((result) => {
-        // Access AWS resources here.
+   // Obtain AWS credentials
+   AWS.config.credentials.get((result) => {
+      // Access AWS resources here.
 
-        // console.log('Success!')
-        console.log('result: ', result);
-        // alert('Coming Soon!')
+      // console.log('Success!')
+      console.log('result: ', result);
+      // alert('Coming Soon!')
 
 
 
-        props.navigation.navigate('AuthLoading');
+      
 
-     });
+
+   });
+
+     // props.navigation.navigate('AuthLoading');
+  props.navigation.navigate('AuthLoading');
 }
 
   const view = (

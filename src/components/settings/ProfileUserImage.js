@@ -202,14 +202,14 @@ function ProfileUserImage(props) {
     // console.log('imageName: ', imageName);
     const fileType = mime.lookup(imageResult.uri);
     // console.log('fileType: ', fileType);
-    const access = { level: "protected", contentType: fileType, };
+    const access = { level: "public", contentType: fileType, };
     // console.log('access: ', access);
     fetch(imageResult.uri).then(response => {
       setIsLoading(true)
       response.blob()
         .then(blob => {
           // Storage.put(`@${global.storageKey}/${imageName}`, blob, access)
-          Storage.put(`picture.jpg`, blob, access)
+          Storage.put(`@${global.storageKey}/picture.jpg`, blob, access)
             .then(async succ => {
               // SUCCESSFUL UPLOAD TO S3
               console.log('succ', succ);
@@ -228,7 +228,7 @@ function ProfileUserImage(props) {
               // setIsLoading(false);
               try {
                 setIsLoading(true);
-                let stored = await Storage.get('picture.jpg', {level:  'protected'});
+                let stored = await Storage.get(`@${global.storageKey}/picture.jpg`, {level:  'public'});
                 // console.log('stored: ', stored);
 
                 global.avatar = {uri: stored}
@@ -368,10 +368,10 @@ function ProfileUserImage(props) {
     //   // setIsLoading(false);
 
     // }
-    if (global.authenticated) {
+    // if (global.authenticated) {
       try {
         setIsLoading(true)
-        let stored = await Storage.get('picture.jpg', {level:  'protected'});
+        let stored = await Storage.get(`@${global.storageKey}/picture.jpg`, {level:  'public'});
         // console.log('stored: ', stored);
         global.avatar = ({uri: stored})
         // return
@@ -381,7 +381,7 @@ function ProfileUserImage(props) {
         // throw new Error(e)
         global.avatar = global.defaultAvatar
       }
-    }
+    // }
 
     // if (!global.isConnected) {
     //   global.avatar = global.defaultAvatar
@@ -477,7 +477,7 @@ function ProfileUserImage(props) {
       // {...rest}
       onPress={
           async () => {
-              if (global.authenticated) getPermissionAsync()
+              if (true) getPermissionAsync()
                 else
                   setShouldShowLoginBox(true);
           }
@@ -486,12 +486,13 @@ function ProfileUserImage(props) {
     <View
     style={[styles.userImageMaskView, props.style]}
   >
-  
+  <ImageBackground style={styles.userImage} source={global.defaultAvatar} >
     <Image
       // resizeMode="contasin"
       style={styles.userImage}
       source={image} // {global.placeholder500x500}
     />
+    </ImageBackground>
         {
       dialogBox
     }

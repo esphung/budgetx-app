@@ -122,6 +122,8 @@ function ChangePasswordScreen(props) {
 
       global.emailAddressInput = '';
 
+      global.passwordInput = ''
+
       global.authenticated = false;
 
       global.emailAddressInput = '';
@@ -176,7 +178,11 @@ function ChangePasswordScreen(props) {
 
       // setIsBackedUp(false)
 
+      AWS.config.credentials = null
+
       AsyncStorage.setItem('storageKey', JSON.stringify(''))
+
+      Auth.signOut({ global: true })
 
       navigation.navigate('AuthLoading');
 

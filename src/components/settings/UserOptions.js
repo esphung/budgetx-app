@@ -215,15 +215,18 @@ function UserOptions(props) {
     // }
 
     /* Sign In/Sign Up */
-    if (key === 'Sign In' && global.authenticated) {
+    if (key === 'Sign In') {
+      if (global.authenticated || global.isFederated || global.isAppleSignedIn) {
         key = null;
         // textColor = colors.offWhite
         // backgroundColor = 'transparent';
-        // isDisabled = true
+        isDisabled = true
         // caret = null;
         rowHeight = 0;
         // caret = null;
         // opacity = 0.5
+      }
+        
       
     }
     // if (key === 'Sign In' && (!global.authenticated || global.isFederated)) {
