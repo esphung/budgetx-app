@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { withNavigation } from 'react-navigation';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign, Entypo } from '@expo/vector-icons';
 
 import {
   Alert,
@@ -715,8 +715,10 @@ function UserNameEmailInput(props) {
        ]
       }
       >
+      {/* Id Icon */}
+      <AntDesign name="idcard" size={styles.iconStyle.fontSize} color={colors.white} />
       {
-        idLabelText
+        // idLabelText
       }
       </Text>
       <Text
@@ -816,9 +818,19 @@ function UserNameEmailInput(props) {
       }
       >
       {/* User First Name input */}
-      <Text style={[styles.textStyle, {marginLeft: 10,}]}
+      <Text style={
+       [
+         styles.textStyle,
+         {
+          marginLeft: 10,
+         }
+       ]
+      }
       >
-      Name
+
+      <Ionicons name="md-person" size={styles.iconStyle.fontSize} color={colors.white} />
+
+      {/*Name*/}
       </Text>
       <TextInput
 
@@ -906,8 +918,9 @@ function UserNameEmailInput(props) {
           ]
         }
         >
+        <Entypo name="email" size={styles.iconStyle.fontSize} color={colors.white} />
         {
-          emailLabelText
+          // emailLabelText
         }
         </Text>
         <TextInput

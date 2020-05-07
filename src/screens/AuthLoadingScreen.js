@@ -162,9 +162,9 @@ export default function AuthLoadingScreen(props) {
 
     /* Play App Intro Slider */
     let hasSeenIntro = await AsyncStorage.getItem('hasSeenIntro');
-    console.log('hasSeenIntro: ', hasSeenIntro);
+    // console.log('hasSeenIntro: ', hasSeenIntro);
 
-    console.log('props.navigation: ', props.navigation);
+    // console.log('props.navigation: ', props.navigation);
 
     if (!hasSeenIntro) props.navigation.navigate('MyAppIntroSlider');
 

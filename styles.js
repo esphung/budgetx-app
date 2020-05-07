@@ -443,12 +443,14 @@ export default StyleSheet.create({
     // backgroundColor: colors.dark,
   },
   iconStyle: {
-    flex: 0.1,
+    // flex: 0.1,
+    // alignItems: 'center',
+    // justifyContent: 'center',
     color: colors.white, // '#5a52a5',
     // fontSize: 17,
     marginLeft: 25,
     marginRight: 10,
-    marginTop: 2,
+    // marginTop: 2,
 
 
 

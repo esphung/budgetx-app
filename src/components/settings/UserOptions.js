@@ -8,7 +8,7 @@ import {
   // FlatList,
 } from 'react-native';
 
-import { MaterialCommunityIcons, SimpleLineIcons, Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons, SimpleLineIcons, Entypo, FontAwesome, AntDesign } from '@expo/vector-icons';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -128,10 +128,9 @@ function UserOptions(props) {
 
     if (key.includes('Device Sync')) {
       // caret = null;
-      caret = <MaterialCommunityIcons name="cloud-sync" size={24} color={colors.offWhite} />
+      caret = <MaterialCommunityIcons name="cloud-sync" size={styles.iconStyle.fontSize} color={colors.white} />
       // disabled = true
     }
-
 
 
 
@@ -182,44 +181,53 @@ function UserOptions(props) {
     // }
 
     /* Reset Data */
-    if (key === 'Reset Data') {
-      textColor = colors.pinkRed;
+    if (key.includes('Reset Data')) {
+      // caret = null;
+            textColor = colors.pinkRed;
       backgroundColor = 'transparent';
-      caret = null;
+      // caret = null;
       opacity = 0.5
+      caret = <FontAwesome name="trash-o" size={styles.iconStyle.fontSize} color={colors.white} />
+      // disabled = true
+    }
+
+    if (key === 'Contact Support') {
+      caret = <AntDesign name="customerservice" size={styles.iconStyle.fontSize} color={colors.white} />
     }
     
     // /* Change Password/Sign Out */
-    // if (title === 'Change Password/Sign Out') {
-    //   // isDisabled = !isUserLoggedIn
-    //   if (isDisabled) {
-    //     // title = null;
-    //     textColor = colors.offWhite
-    //     // backgroundColor = 'transparent';
+    if (key.includes('Sign Out')) {
+      caret = <AntDesign name="poweroff" size={styles.iconStyle.fontSize} color={colors.white} />
+      // isDisabled = !isUserLoggedIn
+      // if (isDisabled) {
+      //   // title = null;
+      //   textColor = colors.offWhite
+      //   // backgroundColor = 'transparent';
         
-    //     caret = null;
-    //     // rowHeight = 24;
-    //     // caret = null;
-    //     // opacity = 0.5
-    //   }
-    // }
+      //   caret = null;
+      //   // rowHeight = 24;
+      //   // caret = null;
+      //   // opacity = 0.5
+      // }
+    }
     //    /* Sync This Device */
-    // if (title === 'Sync This Device') {
-    //   if (isUserLoggedIn) {
+    if (key === 'Change Password') {
+      caret = <AntDesign name="unlock" size={styles.iconStyle.fontSize} color={colors.white} />
+      // if (isUserLoggedIn) {
         
-    //     textColor = colors.offWhite
-    //     // backgroundColor = 'transparent';
-    //     isDisabled = true
-    //     caret = null;
-    //     // rowHeight = 0;
-    //     // caret = null;
-    //     // opacity = 0.5
-    //   }
-    // }
+      //   textColor = colors.offWhite
+      //   // backgroundColor = 'transparent';
+      //   isDisabled = true
+      //   caret = null;
+      //   // rowHeight = 0;
+      //   // caret = null;
+      //   // opacity = 0.5
+      // }
+    }
 
     /* Sign In/Sign Up */
     if (key === 'Sign In') {
-      caret = <SimpleLineIcons name="login" size={styles.listItemTitleStyle.fontSize} color={colors.offWhite} />
+      caret = <SimpleLineIcons name="login" size={styles.iconStyle.fontSize} color={colors.white} />
       // key = (<Text style={styles.listItemTitleStyle}>{ key } <SimpleLineIcons name="login" size={styles.listItemTitleStyle.fontSize} color={colors.white} /></Text>)
       if (global.authenticated || global.isFederated || global.isAppleSignedIn) {
         key = null;
@@ -246,26 +254,27 @@ function UserOptions(props) {
       
     // }
     //   /* Export Transactions */
-    // else if (title === 'Export Transactions') {
-    //   // isDisabled = !isUserLoggedIn/
-    //   if (isExportTransactionsDisabled) {
-    //     // title = null;
-    //     textColor = colors.offWhite
-    //     // backgroundColor = 'transparent';
-    //     isDisabled = isExportTransactionsDisabled
-    //     caret = null;
-    //     // rowHeight = 0;
-    //     // caret = null;
-    //     // opacity = 0.5
-    //   }
-    // }
+    if (key  === ('Export Transactions')) {
+      caret = <AntDesign name="file1" size={styles.iconStyle.fontSize} color={colors.white}  />
+      // isDisabled = !isUserLoggedIn/
+      // if (isExportTransactionsDisabled) {
+      //   // title = null;
+      //   textColor = colors.offWhite
+      //   // backgroundColor = 'transparent';
+      //   isDisabled = isExportTransactionsDisabled
+      //   caret = null;
+      //   // rowHeight = 0;
+      //   // caret = null;
+      //   // opacity = 0.5
+      // }
+    }
    
     // else {
     //   isDisabled = false
     // }
 
     if (key === 'Customize Categories') {
-      caret  = <Entypo name="add-to-list" size={24} color={colors.offWhite} />
+      caret = <Entypo name="add-to-list" size={styles.iconStyle.fontSize} color={colors.white} />
  
 
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 
 import { showMessage, hideMessage } from "react-native-flash-message";
 
@@ -265,10 +265,13 @@ function SignOutScreen({ navigation }) {
         style={
           {
             
-
+            flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
             paddingBottom: 100,
+            // borderWidth: 2,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
 
             backgroundColor: colors.darkTwo,
           }
@@ -277,16 +280,31 @@ function SignOutScreen({ navigation }) {
 
         <Button
           style={
-            [styles.buttonStyle,
+            [
+            styles.buttonStyle,
               {
-                flexDirection: 'row',
+
+                // flexDirection: 'row',
                 justifyContent: 'center',
+                // alignItems: 'center',
+
+            // borderWidth: 2,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
               },
             ]
           }
           onPress={() => setShouldShowSignOutDialog(true)}
         >
           {/*<Ionicons active name="md-power" size={17} style={styles.iconStyle} />*/}
+          <AntDesign style={[styles.iconStyle,
+            {
+
+            }
+          ]} name="poweroff"
+          // size={styles.buttonText.fontSize}
+          // color={colors.offWhite}
+          />
           <Text style={styles.buttonText}>
 
             Sign out
