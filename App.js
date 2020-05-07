@@ -98,17 +98,6 @@ import SwitchNavigator from './SwitchNavigator';
 
 import amplify from './aws-exports';
 
-Amplify.configure({
-  ...amplify,
-  Analytics: {
-    // disabled: true,
-  },
-});
-
-AWS.config.region = 'us-east-1'; // Region
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
-});
 
 
 // const getAuthentication = async () => {
@@ -123,6 +112,24 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 //   return global.authenticated;
 // };
 
+try {
+  Amplify.configure({
+    ...amplify,
+    Analytics: {
+      // disabled: true,
+    },
+  });
+
+  AWS.config.region = 'us-east-1'; // Region
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+  });
+
+} catch(e) {
+  // statements
+  console.log('error loading amplify config file, e: ', e);
+}
+
 export default function App() {
   // state hooks
   const [fontsAreLoaded, setFontsAreLoaded] = useState(false);
@@ -131,6 +138,8 @@ export default function App() {
 
   async function loadApplicationResources() {
     // global.isBackedUp = await getIsBackedUp();
+
+
 
     // getAuthenticatedSettings()
 
@@ -143,8 +152,8 @@ export default function App() {
       // stored fonts have been loaded
       setFontsAreLoaded(true);
     } catch (err) {
-      // console.log('Error loading stored fonts: ', err);
-      throw new Error('Error loading stored fonts: ', err);
+      console.log('Error loading stored fonts: ', err);
+      // throw new Error('Error loading stored fonts: ', err);
     }
 
     // global.isDeviceSynced = await getIsDeviceSynced();

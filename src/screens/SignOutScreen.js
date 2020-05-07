@@ -297,18 +297,27 @@ function SignOutScreen({ navigation }) {
           onPress={() => setShouldShowSignOutDialog(true)}
         >
           {/*<Ionicons active name="md-power" size={17} style={styles.iconStyle} />*/}
-          <AntDesign style={[styles.iconStyle,
-            {
 
-            }
-          ]} name="poweroff"
-          // size={styles.buttonText.fontSize}
-          // color={colors.offWhite}
-          />
           <Text style={styles.buttonText}>
 
             Sign out
+
+
+
           </Text>
+           <AntDesign
+                           style={
+                    {
+                      marginLeft: 10,
+                    }
+                  }
+                  // name="login"
+                  size={styles.iconStyle.fontSize}
+                  color={colors.white}
+          name="poweroff"
+          // size={styles.buttonText.fontSize}
+          // color={colors.offWhite}
+          />
         </Button>
       </Container>
       

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 
 import { showMessage, hideMessage } from "react-native-flash-message";
 
 import Dialog from 'react-native-dialog';
+
+import HelpMessage from '../../storybook/stories/HelpMessage';
 
 import {
   setHasRatedUs,
@@ -60,8 +62,12 @@ function ChangePasswordScreen(props) {
 
   const [shouldShowSignOutDialog, setShouldShowSignOutDialog] = useState(false);
 
+  const [icon, setIcon] = useState(null);
+
   // input refs
   const newPasswordInputRef = useRef(null);
+
+  const [helpMessage, setHelpMessage] = useState('')
 
   function onChangeText(key, value) {
     // console.log(key, value);
@@ -137,7 +143,7 @@ function ChangePasswordScreen(props) {
 
       AsyncStorage.removeItem('authenticated');      
 
-      // AsyncStorage.removeItem('storageKey');
+      AsyncStorage.removeItem('storageKey');
 
       // global.clearGlobalValues()
 
@@ -173,7 +179,7 @@ function ChangePasswordScreen(props) {
 
       // setIsBackedUp(false)
 
-      AsyncStorage.setItem('storageKey', JSON.stringify(''))
+      // AsyncStorage.setItem('storageKey', JSON.stringify(''))
 
       navigation.navigate('AuthLoading');
 
@@ -208,12 +214,44 @@ function ChangePasswordScreen(props) {
   };
 
   useEffect(() => {
-    if (newPassword && oldPassword && (newPassword !== oldPassword)) {
-      setIsSubmitBtnEnabled(true);
+    if (newPassword && oldPassword) {
+      if (newPassword === oldPassword) {
+        setIcon( <AntDesign onPress={() => toggleShowPasswords()}
+                    name="unlock"
+                    // size={styles.iconStyle.fontSize}
+                    // color={styles.iconStyle.color}
+                    style={styles.iconStyle}
+                    />)
+        setIsSubmitBtnEnabled(true);
+        setHelpMessage('')
+        
+      } else {
+        setIcon( <AntDesign onPress={() => toggleShowPasswords()}
+                    name="lock"
+                    // size={styles.iconStyle.fontSize}
+                    // color={styles.iconStyle.color}
+                    style={styles.iconStyle}
+                    />)
+        setIsSubmitBtnEnabled(false);
+        setHelpMessage('password don\'t match')
+      }
     } else {
-      setIsSubmitBtnEnabled(false);
+      // set help message
+      setHelpMessage('enter the old password\nand the new password you want')
     }
   }, [newPassword, oldPassword]);
+
+  useEffect(() => {
+    setIcon( <AntDesign onPress={() => toggleShowPasswords()}
+                  name="lock"
+                  // size={styles.iconStyle.fontSize}
+                  // color={styles.iconStyle.color}
+                  style={styles.iconStyle}
+                  />)
+    return () => {
+      // effect
+    };
+  }, [])
 
   const dialogBox = (
     <View>
@@ -239,6 +277,7 @@ function ChangePasswordScreen(props) {
         behavior="padding"
         enabled={false}
       >
+
       {
         global.authenticated &&
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
@@ -255,7 +294,9 @@ function ChangePasswordScreen(props) {
                 </View>
                 {/* Old password */}
                 <Item rounded style={styles.itemStyle}>
-                  <Ionicons onPress={() => toggleShowPasswords()} active name="md-lock" style={styles.iconStyle} />
+                 {
+                  icon
+                 }
                   <Input
                     style={styles.input}
                     placeholder="Old password"
@@ -272,7 +313,9 @@ function ChangePasswordScreen(props) {
                 </Item>
                 {/* New password */}
                 <Item rounded style={styles.itemStyle}>
-                  <Ionicons active name="md-lock" style={styles.iconStyle} />
+                {
+                  icon
+                }
                   <Input
                     style={styles.input}
                     placeholder="New password"
@@ -298,6 +341,7 @@ function ChangePasswordScreen(props) {
                     Submit
                   </Text>
                 </TouchableOpacity>
+                <HelpMessage message={helpMessage} />
                 <View
                   style={
                     {
@@ -348,11 +392,14 @@ function ChangePasswordScreen(props) {
           }
           onPress={() => setShouldShowSignOutDialog(true)}
         >
+
           <Ionicons active name="md-power" style={{ color: '#fff', paddingRight: 10 }} />
           <Text style={styles.buttonText}>
             Sign out
           </Text>
         </TouchableOpacity>
+
+         
       </View>
       }
       </KeyboardAvoidingView>

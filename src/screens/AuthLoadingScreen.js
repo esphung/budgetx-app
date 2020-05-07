@@ -70,7 +70,7 @@ export default function AuthLoadingScreen(props) {
         global.isFederated = await AsyncStorage.getItem('isFederated');
 
         global.isAppleSignedIn = await AsyncStorage.getItem('isAppleSignedIn')
-        console.log('isAppleSignedIn: ', isAppleSignedIn);
+        // console.log('isAppleSignedIn: ', isAppleSignedIn);
     if (userToken) {
       // console.log('Local Storage userToken: ', userToken);
       global.storageKey = await AsyncStorage.getItem('storageKey');
@@ -162,7 +162,7 @@ export default function AuthLoadingScreen(props) {
 
     /* Play App Intro Slider */
     let hasSeenIntro = await AsyncStorage.getItem('hasSeenIntro');
-    // console.log('hasSeenIntro: ', hasSeenIntro);
+    console.log('hasSeenIntro: ', hasSeenIntro);
 
     // console.log('props.navigation: ', props.navigation);
 

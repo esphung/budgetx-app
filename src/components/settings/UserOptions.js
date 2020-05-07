@@ -128,7 +128,7 @@ function UserOptions(props) {
 
     if (key.includes('Device Sync')) {
       // caret = null;
-      caret = <MaterialCommunityIcons name="cloud-sync" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialCommunityIcons name="sync" size={styles.iconStyle.fontSize} color={colors.white} />
       // disabled = true
     }
 

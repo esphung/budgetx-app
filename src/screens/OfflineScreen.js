@@ -8,6 +8,8 @@ import {
   View,
 } from 'react-native';
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { NetworkConsumer } from 'react-native-offline';
 
 import colors from '../../colors';
@@ -27,7 +29,7 @@ const OfflineScreen = () => {
       >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <InfoBox title="It appears you are offline!" />
+            <InfoBox icon={(<MaterialCommunityIcons name="access-point-network-off" size={styles.iconStyle.fontSize} color={colors.shamrockGreen} />)} title="It appears you are offline!" />
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

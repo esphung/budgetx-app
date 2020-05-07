@@ -9,6 +9,8 @@ import {
   ImageBackground,
 } from 'react-native';
 
+import { NavigationEvents } from 'react-navigation';
+
 import * as ImagePicker from 'expo-image-picker';
 
 import Constants from 'expo-constants';
@@ -77,11 +79,11 @@ function ProfileUserImage(props) {
 
   const [image, setImage] = useState(global.avatar);
 
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(true);
 
   // const [storageKey, setStorageKey] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [shouldShowLoginBox, setShouldShowLoginBox] = useState(false);
 
@@ -99,15 +101,15 @@ function ProfileUserImage(props) {
     // setIsLoading(true);
     // clearState();
 
-    getImage();
+    // getImage();
 
 
-    return () => {
-      // effect
-      // setIsReady(false);
-      // setIsLoading(true);
+    // return () => {
+    //   // effect
+    //   setIsReady(true);
+    //   setIsLoading(false);
 
-    };
+    // };
   }, []);
 
 
@@ -148,27 +150,10 @@ function ProfileUserImage(props) {
 
   // this handles the imagse upload to S3
   const handleImagePicked = async (imageResult) => {
-    // console.log('imageResult: ', imageResult);
-    // if (await isDeviceOnline() && global.isFederated && !global.authenticated) {
-    //    try {
-    //      fetch(image.uri).then(response => {
-    //      response.blob()
-    //       .then(blob => {
-    //         const imageName = global.avatar.uri.replace(/^.*[\\\/]/, '');
-    //         console.log('imageName: ', imageName);
-    //         const fileType = mime.lookup(global.avatar.uri);
-    //         console.log('fileType: ', fileType);
-    //         const access = { level: "public", contentType: fileType, };
 
-    //         Storage.put(`@${global.storageKey}/picture.jpg`, blob, access)
-    //    })})
-        
-    //    } catch(e) {
-    //      // statements
-    //      throw new Error(e);
-    //      // console.log('error uploading picture e: ', e);
-    //    }
-    //  }
+
+    // console.log('imageResult: ', imageResult);
+
 
     // if (isUserLoggedIn && await getAuthentication() && await isDeviceOnline()) {
     //   try {
@@ -197,6 +182,10 @@ function ProfileUserImage(props) {
 
     // setIsLoading(true);
 
+    let settings = await loadSettingsStorage(global.storageKey);
+
+
+    
 
     const imageName = imageResult.uri.replace(/^.*[\\\/]/, '');
     // console.log('imageName: ', imageName);
@@ -206,6 +195,12 @@ function ProfileUserImage(props) {
     // console.log('access: ', access);
     fetch(imageResult.uri).then(response => {
       setIsLoading(true)
+
+      setTimeout(() => {
+        setIsLoading(false);
+
+        setIsReady(true)
+      }, 3000)
       response.blob()
         .then(blob => {
           // Storage.put(`@${global.storageKey}/${imageName}`, blob, access)
@@ -217,9 +212,9 @@ function ProfileUserImage(props) {
               // global.currentBucketImage = `@${global.storageKey}/${imageName}`;
               // global.currentBucketImage = `picture.jpg`;
 
-              let settings = await loadSettingsStorage(global.storageKey);
+              // let settings = await loadSettingsStorage(global.storageKey);
 
-              settings.user.currentBucketImage = global.currentBucketImage;
+              // settings.user.currentBucketImage = global.currentBucketImage;
               // console.log('bucketProfileImagePath: ', bucketProfileImagePath);
 
               // settings.image_url = 'https://s3.amazonaws.com/' + global.bucketName + global.currentBucketImage
@@ -227,30 +222,41 @@ function ProfileUserImage(props) {
               // settings.avatar = { uri: 'https://s3.amazonaws.com/' + global.bucketName + global.currentBucketImage}
               // setIsLoading(false);
               try {
-                setIsLoading(true);
+                // setIsLoading(true);
                 let stored = await Storage.get(`@${global.storageKey}/picture.jpg`, {level:  'public'});
                 // console.log('stored: ', stored);
 
-                global.avatar = {uri: stored}
+                 let settings = await loadSettingsStorage(global.storageKey);
 
-
-                if (stored) {
-                  // console.log('stored: ', stored);
                   settings.user.image_url = stored
-                  // settings.avatar = { uri: stored };
 
-                  saveSettingsStorage(global.storageKey, settings);
+                  saveSettingsStorage(global.storageKey, settings)
 
-                  // global.avatar = (settings.avatar) ? settings.avatar : global.avatar
+                    global.avatar = { uri: settings.user.image_url }
 
-                  // await setImage(global.avatar);
+                  setImage(global.avatar);
 
                   setIsLoading(false);
 
-                  setImage({ uri: settings.user.image_url })
+                  setIsReady(true)
+
+                
 
 
-                }
+                // if (stored) {
+                //   // console.log('stored: ', stored);
+                  
+
+                  
+
+
+
+                  
+
+                  
+
+
+                // }
 
                 // global.avatar = settings.avatar
 
@@ -310,7 +316,18 @@ function ProfileUserImage(props) {
         // setImage(global.avatar);
     });
 
+    settings.user.image_url = imageResult.uri
+                  // settings.avatar = { uri: stored };
+
+    saveSettingsStorage(global.storageKey, settings);
+
+    global.avatar = { uri: settings.user.image_url }
+
+    setImage(global.avatar);
+
     setIsLoading(false);
+
+    setIsReady(true)
 
 
 
@@ -329,25 +346,52 @@ function ProfileUserImage(props) {
   };
 
   const getImage = async () => {
-    // retrieveStoredSettingsImage(global.storageKey);
-    // console.log('isUserLoggedIn: ', isUserLoggedIn);
 
-    // await getAuthentication()
+    try {
+      let storage = await loadSettingsStorage(global.storageKey);
+      // console.log('storage: ', storage.user);
+      global.avatar = {uri: storage.user.image_url}
+      setImage(global.avatar);
+      setIsReady(true);
+      setIsLoading(false);
 
-    let storage = await loadSettingsStorage(global.storageKey);
-    // console.log('storage: ', storage);
-    global.avatar = {uri: storage.user.image_url}
+    } catch(e) {
+      // statements
+      // global.avatar = global.defaultAvatar;
+      // setImage(global.avatar);
+      console.log('error seting image:', e);
+    }
 
-    // global.avatar = global.defaultAvatar;
+    // if (await isDeviceOnline() === true && global.authenticated) {
+    //    try {
+    //      fetch(image.uri).then(response => {
+    //      response.blob()
+    //       .then(blob => {
+    //         const imageName = global.avatar.uri.replace(/^.*[\\\/]/, '');
+    //         console.log('imageName: ', imageName);
+    //         const fileType = mime.lookup(global.avatar.uri);
+    //         console.log('fileType: ', fileType);
+    //         const access = { level: "public", contentType: fileType, };
+
+    //         Storage.put(`@${global.storageKey}/picture.jpg`, blob, access)
+    //    })})
+        
+    //    } catch(e) {
+    //      // statements
+    //      throw new Error(e);
+    //      // console.log('error uploading picture e: ', e);
+    //    }
+    //  }
+    
 
     // let stored = await Storage.get('picture.jpg', {level:  'public'});
     // // console.log('stored: ', stored);
     // global.avatar = ({uri: stored})
 
     
-    if (global.isConnected) {
-      global.avatar = { uri: storage.user.image_url }
-    }
+    // if (global.isConnected) {
+      
+    // }
 
 
     // if (!global.authenticated) {
@@ -369,32 +413,44 @@ function ProfileUserImage(props) {
 
     // }
     // if (global.authenticated) {
-      try {
-        setIsLoading(true)
-        let stored = await Storage.get(`@${global.storageKey}/picture.jpg`, {level:  'public'});
-        // console.log('stored: ', stored);
-        global.avatar = ({uri: stored})
-        // return
-      } catch(e) {
-        // statements
-        console.log(e);
-        // throw new Error(e)
-        global.avatar = global.defaultAvatar
-      }
+
+        try {
+          // setIsLoading(true)
+          let stored = await Storage.get(`@${global.storageKey}/picture.jpg`, {level:  'public'});
+          // console.log('stored: ', stored);
+          global.avatar = ({uri: stored})
+          let settings = await loadSettingsStorage(global.storageKey)
+          settings.user.image_url = stored
+
+          saveSettingsStorage(global.storageKey, settings)
+          // setImage(global.avatar);
+          // setIsLoading(false);
+          // setIsReady(true);
+
+          // return
+        } catch(e) {
+          // statements
+          console.log(e);
+          // throw new Error(e)
+          // global.avatar = global.defaultAvatar
+          // setImage(global.avatar);
+          // setIsLoading(false);
+          // setIsReady(true);
+        }
+
+      // setTimeout(async function(){
+        setIsReady(true);
+        setIsLoading(false);
+        setImage(global.avatar)
+      // }, 3000)
+      
     // }
 
     // if (!global.isConnected) {
     //   global.avatar = global.defaultAvatar
     // }
 
-
-   
-
-    setImage(global.avatar);
-
-    setIsLoading(false);
-
-    setIsReady(true);
+    // global.avatar = { uri: storage.user.image_url }
   }
 
   const handleChooseImage = () => {
@@ -583,12 +639,34 @@ function ProfileUserImage(props) {
 // } /></TouchableOpacity>
   
   return <View>
+        <NavigationEvents
+        // try only this. and your component will auto refresh when this is the active component
+        onWillFocus={() => {
+          setIsLoading(false)
+          setIsReady(true)
+          try {
+            getImage();
+          } catch(e) {
+            // statements
+            console.log(e);
+          }
+        }} // {(payload) => clearState()}
+        // onWillFocus={''}
+        // other props
+        // onDidFocus={payload => console.log('did focus',payload)}
+        onWillBlur={() => {
+          setIsLoading(false)
+          setIsReady(true)
+        }}
+        // onDidBlur={retrieveUserStoredSettings}
+      />
+      
   {
     imageView
     
     
   }{
-         (!isReady || isLoading) &&
+  (!isReady || isLoading) &&
     <View style={{
     position: 'absolute',
     left: 0,

@@ -1727,8 +1727,8 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
       styles.btnText,
           {
           color: 'red',
-          // opacity: 0.6,
-        }]}>Reset</Text></TouchableOpacity></View>),
+          opacity: 0.5,
+        }]}>reset</Text></TouchableOpacity></View>),
     // resetCategories: () => {
     //   CustomizeCategoriesScreen.resetCategories(storageKey);
 

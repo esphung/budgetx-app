@@ -589,9 +589,15 @@ export default function Home(props) {
 
         global.email = cognito.attributes.email;
 
+        setTimeout(() => {
+          // console.log('global.email: ', global.email);
+          setIsSyncing(false)
+        }, 3000)
 
-
-        crossDeviceSync();
+        if (await isDeviceOnline()) {
+          setIsSyncing(true)
+          crossDeviceSync()
+        }
 
         const storage = await loadSettingsStorage(global.storageKey);
         // console.log('storage: ', storage);
@@ -1424,13 +1430,14 @@ export default function Home(props) {
   );
 
   const crossDeviceSync = async () => {
-    if (!global.authenticated) return
+    let units = 0
+    // if (!global.authenticated) return
     // check if user is online
-    let bool = await isDeviceOnline();
-    if (bool !== true) {
-      showMessage('Device Currently Offline');
-      return;
-    }
+    // let bool = await isDeviceOnline();
+    // if (bool !== true) {
+    //   showMessage('Device Currently Offline');
+    //   return;
+    // }
 
 
     // check if device is synced
@@ -1446,7 +1453,7 @@ export default function Home(props) {
 
     // setIsReady(false);
 
-    setIsSyncing(true)
+    
 
     /* Sync Transactions */
     // compare both transaction lists
@@ -1483,6 +1490,7 @@ export default function Home(props) {
             console.log('element.category: ', element.category);
             storage.categories.unshift(element.category)
             saveSettingsStorage(global.storageKey, storage)
+            units++
             
           }
 
@@ -1492,6 +1500,7 @@ export default function Home(props) {
           if (element.category.name) {
             storage.categories.unshift(element.category)
             saveSettingsStorage(global.storageKey, storage)
+            units++
           }
           // throw new Error('Category Not on This Device Yet!')
 
@@ -1511,6 +1520,7 @@ export default function Home(props) {
         for (var i = onlyInLocal.length - 1; i >= 0; i--) {
           // console.log('onlyInLocal[i]: ', onlyInLocal[i]);
           saveTransaction(onlyInLocal[i]);
+          units++
         }
       }
 
@@ -1524,7 +1534,9 @@ export default function Home(props) {
 
       setCurrentTransactions(storage.transactions)
 
-      setIsReady(true)
+      units++
+
+      // setIsReady(true);
     } catch(crossDeviceSyncError) {
       // throw new Error('Error performing crossDeviceSync:', e);
       console.log('crossDeviceSyncError: ', crossDeviceSyncError);
@@ -1562,6 +1574,8 @@ export default function Home(props) {
 
           saveSettingsStorage(global.storageKey, storage);
 
+          units++
+
 
         } catch(e) {
           // statements
@@ -1582,6 +1596,8 @@ export default function Home(props) {
       // console.log('local_categories.length: ', local_categories.length);
       // console.log('local_categories: ', local_categories);
 
+      units++
+
 
       //  // get user's online categories
       // online_categories = await retrieveOnlineCategories();
@@ -1595,6 +1611,7 @@ export default function Home(props) {
           if (found) {
             const pos = local_categories.indexOf(found);
             local_categories[pos] = online_categories[i];
+            units++
           }
         } catch(e) {
           // statements
@@ -1638,7 +1655,7 @@ export default function Home(props) {
 
       setCategories(merged)
 
-     
+      units++
 
 
       saveSettingsStorage(global.storageKey, storage);
@@ -1664,7 +1681,7 @@ export default function Home(props) {
 
 
 
-
+    console.log('units: ', units);
 
     // go back to user home screen
     // navigation.navigate('Home');
@@ -1861,13 +1878,13 @@ export default function Home(props) {
             </View>
           </View>
       {
-        isReady && !isSlideViewHidden && transactionSlide
+        !isSlideViewHidden && transactionSlide
       }
       {
-        isReady && isRemovingStoredTransaction && spinner
+        // isReady && isRemovingStoredTransaction && spinner
       }
       {
-        isReady && isCalculatingBalance && spinner
+        // isReady && isCalculatingBalance && spinner
       }
       {
         // isPieChartVisible && barChartExample

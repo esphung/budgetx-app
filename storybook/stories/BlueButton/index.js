@@ -1,5 +1,7 @@
 import React from 'react';
 
+// import { AntDesign } from '@expo/vector-icons';
+
 import { View, Text } from 'react-native';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -14,7 +16,7 @@ import colors from '../../../colors';
 import styles from '../../../styles';
 
 function BlueButton(props) {
-  const { onPress, title } = props;
+  const { onPress, title, icon } = props;
   const view = (
     <View
       style={
@@ -45,9 +47,13 @@ function BlueButton(props) {
           }
         }
       >
+
         <Text
           style={styles.buttonText}
         >
+      {
+        icon
+      }
           { title }
         </Text>
       </TouchableOpacity>

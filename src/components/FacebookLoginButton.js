@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as Facebook from 'expo-facebook';
 
+
+import { AntDesign } from '@expo/vector-icons';
+
 // import { LoginManager } from "react-native-fbsdk";
 
 import colors from '../../colors';
@@ -216,7 +219,7 @@ export default function FacebookLogin(props) {
             </TouchableOpacity>
           */}
 
-        <BlueButton title="Facebook" onPress={facebookLogIn} />
+        <BlueButton icon={(<AntDesign name="facebook-square" size={styles.buttonText.fontSize} color={colors.white} />)} title="acebook" onPress={facebookLogIn} />
         
       </View>
   );

@@ -10,7 +10,7 @@ UPDATED:    12/10/2019 02:26 PM
 
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 
@@ -1004,12 +1004,31 @@ function SignUpScreen(props) {
                         signUp();
                       // }
                     }}
-                    style={getButtonStyle(isSignUpBtnEnabled)}
+                    style={[getButtonStyle(isSignUpBtnEnabled),
+                      {
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                      }
+                      ]
+                      }
                     disabled={!isSignUpBtnEnabled}
                   >
                     <Text style={styles.buttonText}>
-                      Sign Up
+                      sign up
                     </Text>
+                               <AntDesign
+              style={
+                    {
+                      marginLeft: 10,
+                    }
+                  }
+                  // name="login"
+                  size={styles.iconStyle.fontSize}
+                  color={colors.white}
+          name="poweroff"
+          // size={styles.buttonText.fontSize}
+          // color={colors.offWhite}
+          />
                   </TouchableOpacity>
                 </View>
 

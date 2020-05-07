@@ -784,6 +784,7 @@ export default StyleSheet.create({
     // borderStyle: 'solid',
   },
   infoBoxStyle: {
+    flexDirection: 'row',
     // Offline message box
     alignSelf: 'center',
 

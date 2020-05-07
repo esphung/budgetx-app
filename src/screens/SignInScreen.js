@@ -2,7 +2,7 @@ import React, { useState, useEffect,  useRef } from 'react';
 
 import PropTypes from 'prop-types';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 
 import { NetworkConsumer } from 'react-native-offline';
 
@@ -42,6 +42,8 @@ import {
 
 // import the Analytics category
 import Analytics from '@aws-amplify/analytics';
+
+import { isDeviceOnline } from '../../network-functions';
 
 import {
   Container,
@@ -293,7 +295,7 @@ function SignInScreen(props) {
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder="email"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
                     returnKeyType="next"
@@ -317,7 +319,7 @@ function SignInScreen(props) {
                   <Input
                     disabled={!isAuthCodeInputEnabled}
                     style={styles.input}
-                    placeholder="Confirmation code"
+                    placeholder="confirmation code"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="numeric"
                     returnKeyType="done"
@@ -342,7 +344,7 @@ function SignInScreen(props) {
                   style={getButtonStyle(isConfirmSignUpBtnEnabled)}
                 >
                   <Text style={styles.buttonText}>
-                    Confirm Sign Up
+                    confirm sign up
                   </Text>
                 </TouchableOpacity>
 
@@ -352,7 +354,7 @@ function SignInScreen(props) {
                   style={getButtonStyle(isResendCodeBtnEnabled)}
                 >
                   <Text style={styles.buttonText}>
-                    Resend code
+                    resend code
                   </Text>
                 </TouchableOpacity>
 
@@ -368,6 +370,10 @@ function SignInScreen(props) {
 
   // methods
   const signIn = async () => {
+    if (await isDeviceOnline()  !== true) {
+      return
+    }
+
     setIsLoading(true);
 
   
@@ -523,6 +529,7 @@ function SignInScreen(props) {
     if (global.emailAddressInput) {
       setEmail(global.emailAddressInput);
     }
+    setIsLoading(false);
     // if (email) {
     //   passwordInputRef.current._root.focus();
     // }
@@ -688,7 +695,7 @@ function SignInScreen(props) {
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder="email"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
                     returnKeyType="next"
@@ -717,7 +724,7 @@ function SignInScreen(props) {
                   <Ionicons active name="md-lock" style={styles.iconStyle} />
                   <Input
                     style={styles.input}
-                    placeholder="Password"
+                    placeholder="password"
                     placeholderTextColor={colors.offWhite} // "#adb4bc"
                     returnKeyType="go"
                     autoCapitalize="none"
@@ -741,11 +748,26 @@ function SignInScreen(props) {
                 <TouchableOpacity
                   disabled={!isSignInBtnEnabled}
                   onPress={signIn}
-                  style={getButtonStyle(isSignInBtnEnabled)}
+                  style={[getButtonStyle(isSignInBtnEnabled), {
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                  }]}
                 >
                   <Text style={styles.buttonText}>
-                    Sign In
+                  
+                    sign in
                   </Text>
+                  <SimpleLineIcons
+                  // style={styles.iconStyle}
+
+                  style={
+                    {
+                      marginLeft: 10,
+                    }
+                  }
+                  name="login"
+                  size={styles.iconStyle.fontSize}
+                  color={colors.white} />
                 </TouchableOpacity>
 
 
@@ -877,24 +899,27 @@ function SignInScreen(props) {
   const view = (
     <NetworkConsumer>
       {
-        ({ isConnected }) => ((isConnected && !global.isConfirmSent) ? signin : confirm)
+        // ({ isConnected }) => ((isConnected && !global.isConfirmSent) ? signin : confirm)
+        ({ isConnected }) => ((isConnected) ? ((global.isConfirmSent) ? confirm : signin) : offline)
+
       }
     </NetworkConsumer>
   );
 
-  if (isDialogVisible) {
-    return confirmationDialog;
-  }
+  // if (isDialogVisible) {
+  //   return confirmationDialog;
+  // }
 
-  if (isConfirmVisible) {
-    return confirm;
-  }
+  // if (isConfirmVisible) {
+  //   return confirm;
+  // }
 
-  if (isLoading === true) {
+  if (isLoading) {
     return <SpinnerMask />;
   }
     // return <AppleSignInButton appleSignInCallback={appleSignInCallback} />
     return view;
+    // return offline
 }
 
 SignInScreen.navigationOptions = () => {

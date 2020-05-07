@@ -30,14 +30,14 @@ const AuthStackNavigator = createStackNavigator({
   WelcomeScreen: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
-      title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
+      title: `welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
       headerBackTitle: null,
     }),
   },
   SignUpScreen: {
     screen: SignUpScreen,
     navigationOptions: () => ({
-      title: 'Create a New Account',
+      title: 'create a new account',
       headerBackTitle: null,
     }),
   },
@@ -45,14 +45,14 @@ const AuthStackNavigator = createStackNavigator({
     screen: SignInScreen,
     initialParams:{ itemId: 42 },
     navigationOptions: () => ({
-      title: 'Log In to Your Account',
+      title: 'log In to your account',
       headerBackTitle: null,
     }),
   },
   ForgetPassword: {
     screen: ForgetPasswordScreen,
     navigationOptions: () => ({
-      title: 'Create a New Password',
+      title: 'create a new password',
       headerBackTitle: null,
     }),
   },

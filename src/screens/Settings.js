@@ -260,7 +260,7 @@ function Settings(props) {
 
   const [optionOpacity, setOptionOpacity] = useState(1.0)
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(global.isAuthenticated);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(global.authenticated);
 
   const [isUserOnline, setIsUserOnline] = useState(false);
 
@@ -524,13 +524,21 @@ function Settings(props) {
       
       setCurrentOwner(storage.user.id);
 
+      global.storageKey = storage.user.id
+
+      AsyncStorage.setItem('storageKey', (global.storageKey))
+
       // setCategories(storage.categories);
 
       setCurrentTransactions(storage.transactions);
 
       // setCurrentSettingsVersion(storage.version);
 
-      setIsUserLoggedIn(true); // cognito (logged in)
+      global.authenticated = true
+
+      AsyncStorage.setItem('authenticated', JSON.stringify(true))
+
+      setIsUserLoggedIn(global.authenticated); // cognito (logged in)
 
       setIsExportTransactionsDisabled(false);
 
@@ -544,13 +552,21 @@ function Settings(props) {
    
         setCurrentOwner(userObject.user.id);
 
+        global.storageKey = userObject.user.id
+
+        AsyncStorage.setItem('storageKey', (global.storageKey))
+
         setCurrentTransactions(userObject.transactions);
 
         // setCategories(userObject.categories);
 
         // setCurrentSettingsVersion(userObject.version);
 
-        setIsUserLoggedIn(false); // local (not logged in)
+        global.authenticated = false
+
+        AsyncStorage.setItem('authenticated', JSON.stringify(false))
+
+        setIsUserLoggedIn(global.authenticated); // local (not logged in)
 
         setIsExportTransactionsDisabled(true);
 
@@ -558,8 +574,8 @@ function Settings(props) {
 
         // showMessage({
         //   message: `You are ${auth_error}`,
-        //   type: 'danger', // "success", "info", "warning", "danger"
-        //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
+        //   // type: 'danger', // "success", "info", "warning", "danger"
+        //   // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type) // description: "My message description",
         // });
         
     });
