@@ -96,10 +96,10 @@ const StackNavigator = createStackNavigator({
   },
   SignOutScreen: {
     screen: SignOutScreen,
-    navigationOptions: () => ({
-      // title: 'Sign Out',
-      // headerBackTitle: null,
-    }),
+    // navigationOptions: () => ({
+    //   title: '',
+    //   headerBackTitle: '',
+    // }),
   },
   WelcomeScreen: {
     screen: WelcomeScreen,
@@ -126,13 +126,14 @@ const StackNavigator = createStackNavigator({
     screen: MyAppIntroSlider,
     navigationOptions: () => ({
       // title: `${global.appName}`, // ScreenName, // for the header screen // `Welcome to this App`
-      headerBackTitle: null,
+      // headerBackTitle: '',
 
       // headerStyle: {
       //   backgroundColor: 'transparent'
       // },
+      // headerLeft: null,
 
-      headerTransparent: {}
+      // headerTransparent: {}
     }),
   },
 },

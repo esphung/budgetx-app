@@ -15,7 +15,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@expo/vector-icons": "6.2.1",
+    "@expo/vector-icons": "^10.0.0",
     "@react-native-community/async-storage": "^1.8.1",
     "@react-native-community/datetimepicker": "2.1.0",
     "@react-native-community/netinfo": "4.6.0",

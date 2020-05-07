@@ -741,6 +741,7 @@ function Settings(props) {
   // }, [isBackupDisabled, isRestoreDisabled])
 
   useEffect(() => {
+
     if (currentTransactions && currentTransactions.length> 0) {
       setIsExportTransactionsDisabled(false)
     }
@@ -754,6 +755,7 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
+    setIsReady(false)
     let backupKey = global.storageKey;
     let storage = await loadSettingsStorage(global.storageKey)
 
@@ -857,6 +859,8 @@ function Settings(props) {
     global.displayName = settings.user.full_name;
 
     global.username = settings.user.username;
+
+    setIsReady(true)
 
     navigation.navigate('AuthLoading');
   };

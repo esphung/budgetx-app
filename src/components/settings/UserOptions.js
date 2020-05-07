@@ -8,6 +8,8 @@ import {
   // FlatList,
 } from 'react-native';
 
+import { MaterialCommunityIcons, SimpleLineIcons, Entypo } from '@expo/vector-icons';
+
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -117,7 +119,7 @@ function UserOptions(props) {
   function renderItem({ key, isDisabled }) {
     let rowHeight = 45;
     let backgroundColor = colors.dark;
-    let caret = '>';
+    let caret;
     let textColor = colors.white;
     let opacity = 1.0;
 
@@ -125,8 +127,9 @@ function UserOptions(props) {
     // console.log('disabled: ', disabled);
 
     if (key.includes('Device Sync')) {
-      caret = null;
-      disabled = true
+      // caret = null;
+      caret = <MaterialCommunityIcons name="cloud-sync" size={24} color={colors.offWhite} />
+      // disabled = true
     }
 
 
@@ -216,6 +219,8 @@ function UserOptions(props) {
 
     /* Sign In/Sign Up */
     if (key === 'Sign In') {
+      caret = <SimpleLineIcons name="login" size={styles.listItemTitleStyle.fontSize} color={colors.offWhite} />
+      // key = (<Text style={styles.listItemTitleStyle}>{ key } <SimpleLineIcons name="login" size={styles.listItemTitleStyle.fontSize} color={colors.white} /></Text>)
       if (global.authenticated || global.isFederated || global.isAppleSignedIn) {
         key = null;
         // textColor = colors.offWhite
@@ -223,7 +228,7 @@ function UserOptions(props) {
         isDisabled = true
         // caret = null;
         rowHeight = 0;
-        // caret = null;
+        
         // opacity = 0.5
       }
         
@@ -259,14 +264,11 @@ function UserOptions(props) {
     //   isDisabled = false
     // }
 
-    // if (item.key === 'Passcode') {
-    //   if (props.isPasscodeEnabled === true) {
-    //     title = `Passcode Enabled`;
-    //   } else {
-    //     title = `Passcode Disabled`;
-    //   }
+    if (key === 'Customize Categories') {
+      caret  = <Entypo name="add-to-list" size={24} color={colors.offWhite} />
+ 
 
-    // }
+    }
 
     if (isDisabled) {
       // title = null;
@@ -343,7 +345,10 @@ function UserOptions(props) {
           // borderStyle: 'solid',
         }}
         >
-          <Text style={styles.arrow}>{ caret }</Text>
+          <Text style={[styles.listItemTitleStyle, {
+            textAlign: 'right',
+            paddingRight: 20,
+          }]}>{ caret }</Text>
         </View>
       </TouchableOpacity>
     );

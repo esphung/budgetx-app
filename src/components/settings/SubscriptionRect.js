@@ -6,6 +6,8 @@ import {
   Image,
 } from 'react-native';
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { TouchableOpacity, } from 'react-native-gesture-handler';
 
 // import { NetworkConsumer } from 'react-native-offline';
@@ -103,14 +105,17 @@ function SubscriptionRect(props) {
           // borderStyle: 'solid',
         }}>
           <View style={oval2}>
-            <Image
+
+          <MaterialCommunityIcons name="bank-outline" size={36} color={colors.white} />
+
+{/*            <Image
               resizeMode="contain"
               style={{
                 height: 33,
                 width: 33,
               }}
               source={global.walletIcon}
-            />
+            />*/}
           </View>
         </View>
         <View style={

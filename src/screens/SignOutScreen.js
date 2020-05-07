@@ -45,11 +45,19 @@ import styles from '../../styles';
 import getButtonStyle from '../../src/functions/getButtonStyle';
 
   
+let value = 'Hello'
 
 
+function SignOutScreen({ navigation }) {
+  // const { navigation } = props;
 
-function ChangePasswordScreen(props) {
-  const { navigation } = props;
+
+  // React.useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     title: value === '' ? 'No title' : value,
+  //   });
+  // }, [navigation, value]);
+
   // hooks
   const [oldPassword, setOldPassword] = useState(null);
 
@@ -153,6 +161,8 @@ function ChangePasswordScreen(props) {
       // // AsyncStorage.removeItem('isUserAuthenticated');
       AsyncStorage.removeItem('authenticated');
 
+      AsyncStorage.removeItem('hasSeenIntro');
+
 
       // global.storageKey = '';
 
@@ -165,26 +175,28 @@ function ChangePasswordScreen(props) {
       // // console.log('Removed AsyncsStorage Variables ..');
 
 
-      // // AsyncStorage.getAllKeys((err, keys) => {
-      // //   AsyncStorage.multiGet(keys, (error, stores) => {
-      // //     stores.map((result, i, store) => {
-      // //       console.log({ [store[i][0]]: store[i][1] });
-      // //       return true;
-      // //     });
-      // //   });
-      // // });
+      // AsyncStorage.getAllKeys((err, keys) => {
+      //   AsyncStorage.multiGet(keys, (error, stores) => {
+      //     stores.map((result, i, store) => {
+      //       console.log({ [store[i][0]]: store[i][1] });
+      //       return true;
+      //     });
+      //   });
+      // });
 
       // setHasRatedUs(false);
 
       // setIsBackedUp(false)
 
-      AWS.config.credentials = null
+      // AWS.config.credentials = null
 
       AsyncStorage.setItem('storageKey', JSON.stringify(''))
 
       Auth.signOut({ global: true })
 
       navigation.navigate('AuthLoading');
+
+      // navigation.popToTop()
 
       // global.showGlobalValues();
 
@@ -288,7 +300,7 @@ function ChangePasswordScreen(props) {
   return view;
 }
 
-ChangePasswordScreen.navigationOptions = () => {
+SignOutScreen.navigationOptions = () => {
   const navbar = {
     headerTransparent: {},
     headerTintColor: colors.white,
@@ -297,4 +309,4 @@ ChangePasswordScreen.navigationOptions = () => {
   return navbar;
 };
 
-export default ChangePasswordScreen;
+export default SignOutScreen;

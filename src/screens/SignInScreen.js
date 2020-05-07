@@ -681,7 +681,7 @@ function SignInScreen(props) {
               (!global.isFederated && !global.isAopleSignedIn && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
             }
             {
-              (!global.isFederated && !global.isAppleSignedIn && !global.authenticated) && <AppleSignInButton appleSignInCallback={appleSignInCallback} />
+              // (!global.isFederated && !global.isAppleSignedIn && !global.authenticated) && <AppleSignInButton appleSignInCallback={appleSignInCallback} />
             }
                 {/* email section */}
                 <Item rounded style={styles.itemStyle}>

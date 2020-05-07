@@ -42,6 +42,7 @@ import {
   // Platform,
   Text,
   Dimensions,
+  Button,
 } from 'react-native';
 
 // import Constants from 'expo-constants';
@@ -481,15 +482,16 @@ export default function Home(props) {
 
     showMessage({
       message: 'Updated transaction',
-      duration: 550,
+      // duration: 550,
       // position: 'top',
 
       // description: "My message description",
-      type: 'success', // "success", "info", "warning", "danger"
+      // type: 'success', // "success", "info", "warning", "danger"
       // backgroundColor: colors.dark, // "purple", // background color
-      color: colors.white, // "#606060", // text color
+      color: colors.shamrockGreen, // "#606060", // text color
+      opacity: 0.5,
 
-      // textStyle: styles.textStyle,
+      textStyle: styles.textStyle,
 
       icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
     });
@@ -801,46 +803,45 @@ export default function Home(props) {
     retrieveUserStoredSettings()
   }
   async function removeStoredTransaction(transaction) {
-    setIsRemovingStoredTransaction(true);
+    const userObject = await loadSettingsStorage(global.storageKey);
 
-    let list = [];
-
+    let list = userObject.transactions;
     try {
-      const userObject = await loadSettingsStorage(global.storageKey);
+      const found = searchByID(transaction.id, list);
 
-      list = userObject.transactions;
-
-      const found = await searchByID(transaction.id, list);
+      // console.log('found: ', found);
 
       if (found) {
         const pos = list.indexOf(found);
 
         list.splice(pos, 1);
 
+        setCurrentTransactions(list);
+
+        setCurrentTransaction(null);
+
         userObject.transactions = list;
 
         saveSettingsStorage(global.storageKey, userObject);
 
-        /* rremove transaction online in db */
-        if (global.authenticated && global.isConnected) {
+        /* remove transaction online in db */
+        if (global.authenticated && await isDeviceOnline()) {
           removeTransaction(transaction)
-
           removePayee(transaction.payee)
-
-          Analytics.record({ name: 'Removed an online transaction' });
+          // Analytics.record({ name: 'Removed an online transaction' });
         }
       }
       } catch(e) {
       // statements
       console.log(e);
     }
-    retrieveUserStoredSettings();
+    // retrieveUserStoredSettings();
 
-    setCurrentTransaction(null);
+    
 
-    setIsRemovingStoredTransaction(false);
+    // setIsRemovingStoredTransaction(false);
 
-    Analytics.record({ name: 'Removed a local transaction' });
+    // Analytics.record({ name: 'Removed a local transaction' });
   }
   function handleChange(value) {
     if (currentTransaction) {
@@ -1189,15 +1190,9 @@ export default function Home(props) {
   }, [currentTransaction]);
 
   async function save () {
-    // setIsReady(false)
-    // setIsUpdatingTransaction(true)
     let storage = await loadSettingsStorage(global.storageKey);
     storage.transactions = currentTransactions;
     saveSettingsStorage(global.storageKey, storage)
-    // setIsUpdatingTransaction(false)
-    // showMessage('Saved transactions')
-
-    // setIsReady(true)
   }
 
   useEffect(() => {
@@ -1214,119 +1209,13 @@ export default function Home(props) {
      setCurrentTransaction(null)
     }
   }, [currentTransaction]);
-
-  // useEffect(() => {
-  //   isStoringNewTransaction && showMessage(
-  //     {
-  //       message: 'Stored new transaction',
-  //       // description: '...',
-  //       type: 'success',
-  //       // position: 'top',
-  //       icon: { icon: 'auto', position: 'right' },
-
-  //       textStyle: styles.textStyle,
-
-  //       // backgroundColor: colors.dark, // "purple", // background color
-
-  //       duration:  2505,
-  //     })
-  //   return () => {
-  //     // isStoringNewTransaction effect
-  //   };
-  // }, [isStoringNewTransaction]);
-
-  // useEffect(() => {
-  //   isRemovingStoredTransaction &&
-  //   showMessage(
-  //     {
-  //       // message: 'Removed a stored transaction',
-  //       description: 'Press here to undo',
-  //       message: 'Deleted transaction',
-  //       // type: 'warning',
-  //       // position: 'top',
-  //       // icon: { icon: 'auto', position: 'right' },
-
-  //       // backgroundColor: colors.dark, // "purple", // background color
-
-  //       textStyle: styles.textStyle,
-
-  //       onPress: () => {
-  //         // let user undo action
-  //         // if (!isUserLoggedIn) {
-  //           // loadUndoHistory()
-  //         // }
-  //       },
-
-  //       duration: 2500,
-  //     }
-  //   )
-
-  //   return () => {
-  //     // isRemovingStoredTransaction effect
-  //   };
-  // }, [isRemovingStoredTransaction]);
-
-  // useEffect(() => {
-  //   retrieveUserStoredSettings()
-  //   // console.log('mount');
-
-  //   // setIsReady(true);
-  //   // setIsUpdatingTransaction(false)
-
-  //   // compareListTransactions();
-
-  //   // crossDeviceSync();
-
-
-  //   return () => {
-  //     // effect
-  //     // console.log('clean up');
-  //     // setIsDeviceSynced(false);
-
-  //   };
-  // }, []);
-
-
-  // useEffect(() => {
-  //   if (currentType) {
-  //     // console.log('currentType: ', currentType);
-  //   }
-  //   return () => {
-  //     // current type input effect
-  //   };
-  // }, [currentType]);
-
-  // useEffect(() => {
-  //   if (currentOwner) {
-  //     // console.log('currentOwner: ', currentOwner);
-  //   }
-  //   return () => {
-  //     //current Owner input effect
-  //   };
-  // }, [currentOwner]);
-
-  // actions
   const transactionBtnPressed = (transaction) => {
-    // if (currentTransaction === transaction) {
-    //   // already selected
-    //   setCurrentTransaction(null);
-    //   // if (isSlideViewHidden !== true) {
-    //   //   hideSlideView();
-    //   // }
-    // } else {
-    //   // not same transaction
-    //   setCurrentTransaction(transaction);
-    //   // showSlideView()
-    // }
-
     showNewTransactionSlide(transaction);
   };
-
   const deleteBtnPressed = async (transaction) => {
     setIsRemovingStoredTransaction(true);
-    await removeStoredTransaction(transaction);
+    removeStoredTransaction(transaction);
     setIsRemovingStoredTransaction(false);
-    // clearState();
   };
 
   const categoryBtnPressed = (category) => {

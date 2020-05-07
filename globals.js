@@ -13,6 +13,8 @@ import {
 
 import app from './app.json';
 
+global.appIconImage243x260 = require('./assets/appIconImage243x260.png');
+
 /* testing and debug variables */
 global.testOfflineMode = null;
 

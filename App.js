@@ -170,7 +170,7 @@ export default function App() {
   } else {
     view = (
       <NetworkProvider>
-        <View style={{ flex: 1 }}>
+        
         {/*<DisplayImageExample uri={global.image_url} />*/}
           <SwitchNavigator />
           {/* Global Flash Message */}
@@ -190,7 +190,7 @@ export default function App() {
             position="top"
           />
           {/* <--- flash message is here as last component */}
-        </View>
+        
       </NetworkProvider>
     ); // has login
   }

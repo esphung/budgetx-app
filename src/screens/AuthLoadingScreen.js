@@ -164,7 +164,10 @@ export default function AuthLoadingScreen(props) {
     let hasSeenIntro = await AsyncStorage.getItem('hasSeenIntro');
     console.log('hasSeenIntro: ', hasSeenIntro);
 
+    console.log('props.navigation: ', props.navigation);
+
     if (!hasSeenIntro) props.navigation.navigate('MyAppIntroSlider');
+
 
     // global.showGlobalValues()
     props.navigation.navigate(userToken ? 'App' : 'Auth');
