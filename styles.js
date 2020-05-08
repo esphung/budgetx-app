@@ -447,7 +447,7 @@ export default StyleSheet.create({
     // alignItems: 'center',
     // justifyContent: 'center',
     color: colors.white, // '#5a52a5',
-    // fontSize: 17,
+    fontSize: 17,
     marginLeft: 25,
     marginRight: 10,
     // marginTop: 2,

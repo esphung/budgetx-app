@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 // import PropTypes from 'prop-types';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 
 import { AppLoading } from 'expo';
 
@@ -152,8 +152,8 @@ function searchByID(key, myArray) {
 }
 
 const pushAllCategoriesToCloud = async () => {
-  if (!global.authenticated) return
-  try {
+  await Auth.currentAuthenticatedUser().then(async (user) => {
+     try {
     const storage = await loadSettingsStorage(global.storageKey);
     // console.log('local_transactions: ', local_transactions);
 
@@ -181,6 +181,8 @@ const pushAllCategoriesToCloud = async () => {
     // statements
     console.log(e);
   }
+  }).catch((err) => console.log('err: ', err))
+
 }
 
 
@@ -346,7 +348,7 @@ function CellItem({
 export default function CustomizeCategoriesScreen() {
   const [selected, setSelected] = useState(new Map());
 
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(true);
 
   // const [storageKey, setStorageKey] = useState(null);
 
@@ -376,9 +378,26 @@ export default function CustomizeCategoriesScreen() {
 
   const [flatlistData, setFlatlistData] = useState(getFlatListDataFromObject(colors));
 
-  // CustomizeCategoriesScreen.reloadCategories = function() {
-  //   retrieveStoredCategories()
-  // }
+  const [dialogVisible, setDialogVisible] = useState(false)
+
+  const resetDialog = <Dialog.Container visible={dialogVisible}>
+          <Dialog.Title>Categories reset</Dialog.Title>
+          <Dialog.Description>
+            Do you want to delete these categories? You cannot undo this action.
+          </Dialog.Description>
+          <Dialog.Button label="Cancel" onPress={() => setDialogVisible(false)} />
+          <Dialog.Button label="Delete" onPress={() => {
+            resetCategories()
+            setDialogVisible(false)
+          }
+        } />
+        </Dialog.Container>
+
+  CustomizeCategoriesScreen.showDialog = function() {
+    // retrieveStoredCategories()
+    // alert('message?: DOMString')
+    setDialogVisible(true)
+  }
 
   const compareLists = async (a, b) => {
   // load online transactions
@@ -520,7 +539,7 @@ export default function CustomizeCategoriesScreen() {
     }
   }
 
-    await saveSettingsStorage(global.storageKey, storageObj);
+    saveSettingsStorage(global.storageKey, storageObj);
 
     setData(defaultCategories);
 
@@ -529,10 +548,10 @@ export default function CustomizeCategoriesScreen() {
     setIsReady(true)
   };
 
-  CustomizeCategoriesScreen.reloadCategories = () => {
-    // alert('message?: DOMString');
-    resetCategories();
-  };
+  // CustomizeCategoriesScreen.reloadCategories = () => {
+  //   // alert('message?: DOMString');
+  //   resetCategories();
+  // };
 
   // export function movieLength() {
   //   return this.state.movies.length;
@@ -787,7 +806,12 @@ export default function CustomizeCategoriesScreen() {
 
 
   const retrieveStoredCategories = async () => {
-    setAuthenticated(await getAuthentication())
+    // setAuthenticated(await getAuthentication())
+    await Auth.currentAuthenticatedUser().then((user) =>  {
+      global.authenticated = true
+    }).catch(() => {
+      global.authenticated = false
+    })
     const storage = await loadSettingsStorage(storageKey);
     // console.log(storage)
     try {
@@ -874,7 +898,7 @@ export default function CustomizeCategoriesScreen() {
           }
         }
         // disabled={isDisabled}
-        authenticated={authenticated}
+        authenticated={global.authenticated}
 
         onPress={() => onPress(item)}
 
@@ -954,7 +978,7 @@ export default function CustomizeCategoriesScreen() {
     // retrieveCognitoUserKey();
     // console.log('Cleared state');
 
-    setIsReady(true);
+    // setIsReady(true);
   }
 
   // useEffect(() => {
@@ -990,41 +1014,44 @@ export default function CustomizeCategoriesScreen() {
   //   };
   // }, [])
 
-  useEffect(() => {
-    // console.log('Data changed.. saved data');
-    if (data) {
-      // const success = storeUserCategories(data.filter((item) => { return item.name }))
-      // console.log('success: ', success);
-      if (true) {
-        updateUserTransactionCategories(data);
-        // console.log('Updated Transaction Categories');
-      }
-    }
-    // else if (data && data.length < 1) {
-    //   setHelpMessage('No categories available.');
-    // }
-    return () => {
-      // effect
-      // setHelpMessage('Swipe left or right to edit');
+  // useEffect(() => {
+  //   // console.log('Data changed.. saved data');
+  //   if (data) {
+  //     // const success = storeUserCategories(data.filter((item) => { return item.name }))
+  //     // console.log('success: ', success);
+  //     // if (true) {
+  //       updateUserTransactionCategories(data);
+  //       // console.log('Updated Transaction Categories');
+  //     // }
+  //   }
+  //   // else if (data && data.length < 1) {
+  //   //   setHelpMessage('No categories available.');
+  //   // }
+  //   return () => {
+  //     // effect
+  //     // setHelpMessage('Swipe left or right to edit');
 
-      // setHelpMessage('Swipe Left to Edit or Right Delete');
+  //     // setHelpMessage('Swipe Left to Edit or Right Delete');
       
-      // setIsLoading(false);
+  //     // setIsLoading(false);
 
 
 
-    };
-  }, [data]);
+  //   };
+  // }, [data]);
 
   useEffect(() => {
-    clearState();
+    // clearState();
+
+    // retrieveStoredCategories();
 
     setFlatlistData(getFlatListDataFromObject(colors).concat(getFlatListDataFromObject(getCrayolaColors())))
 
-    retrieveStoredCategories();
+    
     return () => {
       // effect
-      setIsReady(true);
+      // clearState()
+      // setIsReady(true);
     };
   }, [])
 
@@ -1269,13 +1296,13 @@ export default function CustomizeCategoriesScreen() {
         // borderStyle: 'solid',
 
         borderBottomWidth: 0,
-        opacity: (Object.keys(colors).includes(name) || authenticated) ? 1.0 : 0.4
+        opacity: (Object.keys(colors).includes(name) || global.authenticated) ? 1.0 : 0.4
       }}>
         
         
            <TouchableOpacity
         onPress={onPress}
-        disabled={(Object.keys(colors).includes(name) !== true && !authenticated)}
+        disabled={(Object.keys(colors).includes(name) !== true && !global.authenticated)}
         // style={styles.buttonStyle}
         style={[
           // styles.buttonStyle,
@@ -1568,16 +1595,9 @@ export default function CustomizeCategoriesScreen() {
 
         <HelpMessage message={helpMessage} />
 
-        <View style={{
-          height: 10,
-          width: '100%',
-          margin: 2,
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }} />
         <BlueButton
+          icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
           title="Add New"
           onPress={() => {
             Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
@@ -1616,6 +1636,9 @@ export default function CustomizeCategoriesScreen() {
         isAddingCategory &&
         // true &&
         <ActivityIndicator color={colors.offWhite} size="small" />
+      }
+      {
+        resetDialog
       }
     </SafeAreaView>
   );
@@ -1673,6 +1696,8 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
 
   // const [storageKey, setStorageKey] = useState(null);
 
+
+
   // let categories = null;
 
   // let key = retrieveCognitoUserKey();
@@ -1695,21 +1720,35 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   //     });
   // }
 
-  const promptUserForCategoryReset = async (props) => {
-    await new Promise(() => {
-      const title = 'Are You Sure?';
-      const message = 'This cannot be undone.';
-      const buttons = [
-        { text: 'Cancel', type: 'cancel' },
-        {
-          text: 'Reset All of My Categories',
-          onPress:  () => CustomizeCategoriesScreen.reloadCategories()
+  const promptUserForCategoryReset = async () => {
+    CustomizeCategoriesScreen.showDialog()
+    // return  <Dialog.Container visible={dialogVisible}>
+    //       <Dialog.Title>Account delete</Dialog.Title>
+    //       <Dialog.Description>
+    //         Do you want to delete this account? You cannot undo this action.
+    //       </Dialog.Description>
+    //       <Dialog.Button label="Cancel" onPress={this.handleCancel} />
+    //       <Dialog.Button label="Delete" onPress={this.handleDelete} />
+    //     </Dialog.Container>
+
+
+    // await new Promise(() => {
+    //   const title = 'Are You Sure?';
+    //   const message = 'This cannot be undone.';
+    //   const buttons = [
+    //     { text: 'Cancel', type: 'cancel' },
+    //     {
+    //       text: 'Reset All of My Categories',
+    //       onPress: CustomizeCategoriesScreen.reloadCategories
 
     
-        }
-      ];
-      Alert.alert(title, message, buttons);
-    });
+    //     }
+    //   ];
+    //   Alert.alert(title, message, buttons);
+
+    // });
+
+
   };
 
   const navbar = {
@@ -1722,13 +1761,13 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
     headerRight: (<View style={{
       marginRight: 10,
     }}>
-    <TouchableOpacity onPress={() => CustomizeCategoriesScreen.reloadCategories()}>
+    <TouchableOpacity onPress={promptUserForCategoryReset}>
     <Text style={[
-      styles.btnText,
+      styles.buttonText,
           {
-          color: 'red',
-          opacity: 0.5,
-        }]}>reset</Text></TouchableOpacity></View>),
+          color: colors.pinkRed,
+          // opacity: 0.5,
+        }]}>reset <FontAwesome5 name="eraser" size={24} color={colors.pinkRed} /></Text></TouchableOpacity></View>),
     // resetCategories: () => {
     //   CustomizeCategoriesScreen.resetCategories(storageKey);
 

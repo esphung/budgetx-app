@@ -98,6 +98,8 @@ import SwitchNavigator from './SwitchNavigator';
 
 import amplify from './aws-exports';
 
+import { WalkthroughProvider } from 'react-native-walkthrough';
+
 
 
 // const getAuthentication = async () => {
@@ -112,23 +114,17 @@ import amplify from './aws-exports';
 //   return global.authenticated;
 // };
 
-try {
-  Amplify.configure({
-    ...amplify,
-    Analytics: {
-      // disabled: true,
-    },
-  });
+Amplify.configure({
+  ...amplify,
+  Analytics: {
+    // disabled: true,
+  },
+});
 
-  AWS.config.region = 'us-east-1'; // Region
-  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
-  });
-
-} catch(e) {
-  // statements
-  console.log('error loading amplify config file, e: ', e);
-}
+AWS.config.region = 'us-east-1'; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+  IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+});
 
 export default function App() {
   // state hooks
@@ -178,29 +174,33 @@ export default function App() {
     view = <AppLoading />;
   } else {
     view = (
-      <NetworkProvider>
+      <WalkthroughProvider>
+        <NetworkProvider>
         
-        {/*<DisplayImageExample uri={global.image_url} />*/}
-          <SwitchNavigator />
-          {/* Global Flash Message */}
-          <FlashMessage
-            style={
-              {
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: colors.dark,
-                opacity: 0.9,
-                // borderWidth: 1,
-                // borderColor: 'white',
-                // borderStyle: 'solid',
+          
+          {/*<DisplayImageExample uri={global.image_url} />*/}
+            <SwitchNavigator />
+            {/* Global Flash Message */}
+            <FlashMessage
+              style={
+                {
+                  // flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: colors.dark,
+                  opacity: 0.5,
+                  // borderWidth: 1,
+                  // borderColor: 'white',
+                  // borderStyle: 'solid',
+                }
               }
-            }
-            position="top"
-          />
-          {/* <--- flash message is here as last component */}
-        
-      </NetworkProvider>
+              position="top"
+            />
+            {/* <--- flash message is here as last component */}
+            
+        </NetworkProvider>
+        </WalkthroughProvider>
+   
     ); // has login
   }
   return view;

@@ -39,7 +39,9 @@ import SignOutScreen from './src/screens/SignOutScreen';
 
 import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
-import ExampleScreen from './src/screens/ExampleScreen';
+// import ExampleScreen from './src/screens/ExampleScreen';
+
+import MetricsScreen from './src/screens/MetricsScreen';
 
 // import OnboardingPages from './src/screens/OnboardingPages';
 
@@ -115,10 +117,17 @@ const StackNavigator = createStackNavigator({
       // headerBackTitle: null,
     }),
   },
-  ExampleScreen: {
-    screen: ExampleScreen, // ApolloProviderHOC(Home),
+  // ExampleScreen: {
+  //   screen: ExampleScreen, // ApolloProviderHOC(Home),
+  //   navigationOptions: () => ({
+  //     title: '',
+  //     headerBackTitle: null,
+  //   }),
+  // },
+  MetricsScreen: {
+    screen: MetricsScreen, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
-      title: '',
+      title: 'Metrics',
       headerBackTitle: null,
     }),
   },

@@ -11,7 +11,19 @@ DATE:       Sun Nov  3 14:25:49 2019
 
 import React from 'react';
 
+import { MaterialCommunityIcons, EvilIcons, FontAwesome5, Entypo, Octicons } from '@expo/vector-icons';
+
+// import {
+//   WalkthroughElement,
+//   startWalkthrough,
+//   // dispatchWalkthroughEvent
+// } from 'react-native-walkthrough';
+
 import PropTypes from 'prop-types';
+
+import colors from '../../../colors';
+
+import styles from '../../../styles';
 
 import {
   // StyleSheet,
@@ -29,7 +41,10 @@ import {
 
 import { withNavigation } from 'react-navigation';
 
-import styles from '../../../styles';
+// import ToolTip from '../../components/ToolTip';
+
+// import addTransactionWalkthrough from '../../guides/addTransactionWalkthrough';
+
 
 function HeaderRightView(props) {
   const { navigation } = props;
@@ -37,6 +52,16 @@ function HeaderRightView(props) {
   // function searchBtnPressed() {
   //   navigation.navigate('Search');
   // }
+
+  const helpBtnPressed = () => {
+    // global.showToolTip = true
+    // startWalkthrough(addTransactionWalkthrough)
+    // console.log('navigation: ', navigation);
+  };
+
+  const metricsBtnPressed  = () => {
+    navigation.navigate('MetricsScreen');
+  };
 
   function settingsBtnPressed() {
     navigation.navigate('Settings');
@@ -46,13 +71,15 @@ function HeaderRightView(props) {
     <View style={
       {
         // flex: 1,
+        height: 50,
+        width:  (screenWidth)/(2),
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         // height: '100%',
         // width: '100%',
-        marginRight: 4, // '20%', // 3,
-        marginTop: 20,
+        // marginRight: 4, // '20%', // 3,
+        // marginTop: 20,
 
         // borderWidth: 1,
         // borderColor: 'white',
@@ -60,32 +87,125 @@ function HeaderRightView(props) {
       }
     }
     >
-      {/* ==== Search Button ==== */}
+  {/* ==== Extra Button ==== */}
+    <TouchableOpacity
+      // onPress={searchBtnPressed}
+      disabled
+      onPress={() => {}}
+      style={[
+        // styles.searchBtnTouchableOpacity,
+        {
+        flex: 1,
+        width:  (screenWidth)/(8),
 
-      { /*
-      <TouchableOpacity
-        onPress={searchBtnPressed}
-        style={styles.searchBtnTouchableOpacity}
-      >
-
+        alignItems: 'center',
+        justifyContent: 'center',
+        // width: screenWidth,
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }]}
+    >
+      {/*<FontAwesome5 name="dollar-sign" size={24} color={colors.white} />*/}
+{/*
         <Image
           resizeMode="contain"
           style={styles.searchImage}
           source={global.searchIcon}
         />
+*/}
+    </TouchableOpacity>
+
+          {/* ==== Help Button ==== */}
+
+
+      <TouchableOpacity
+        // onPress={searchBtnPressed}
+        onPress={helpBtnPressed}
+        style={[
+          // styles.searchBtnTouchableOpacity,
+          {
+          flex: 1,
+          width:  (screenWidth)/(8),
+
+          alignItems: 'center',
+          justifyContent: 'center',
+          // width: screenWidth,
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }]}
+      >
+      {
+            /* Category picker tooltip */
+            // <ToolTip message="Add a new transaction" />
+          }
+      {/*<Entypo style={{
+        opacity: 0.5
+      }} name="help" size={24} color={colors.white} />*/}
+{/*
+        <Image
+          resizeMode="contain"
+          style={styles.searchImage}
+          source={global.searchIcon}
+        />
+*/}
+      </TouchableOpacity>
+
+    {/* ==== Metrics Button ==== */}
+
+    <TouchableOpacity
+      // onPress={searchBtnPressed}
+      // disabled
+      onPress={metricsBtnPressed}
+      style={[
+        // styles.searchBtnTouchableOpacity,
+        {
+        flex: 1,
+        width: (screenWidth)/(8),
+
+        alignItems: 'center',
+        justifyContent: 'center',
+        // width: screenWidth,
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+      }]}
+    >
+      <Octicons name="graph" size={24} color={colors.white} />
+{/*
+        <Image
+          resizeMode="contain"
+          style={styles.searchImage}
+          source={global.searchIcon}
+        />
+*/}
 
       </TouchableOpacity>
-      */ }
+
+
 
       {/* ==== Settings Button ==== */}
 
       <TouchableOpacity
-        testID="UniqueId204"
+        // testID="UniqueId204"
         onPress={settingsBtnPressed}
-        style={styles.settingsBtnTouchableOpacityMask}
-      >
+        // style={styles.settingsBtnTouchableOpacityMask}
+        style={{
+          flex: 1,
+          width:  (screenWidth)/(8),
 
-        <Image
+          alignItems: 'center',
+          justifyContent: 'center',
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}
+      >
+      <EvilIcons name="gear" size={36} color={colors.white} />
+
+     {/*   <Image
           resizeMode="contain"
           style={
             [
@@ -100,7 +220,7 @@ function HeaderRightView(props) {
 
           accessibilityLabel="Settings"
           accessible
-        />
+        />*/}
 
       </TouchableOpacity>
 

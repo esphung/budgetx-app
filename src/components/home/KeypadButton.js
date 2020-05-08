@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 
+import { WalkthroughElement } from 'react-native-walkthrough';
+
 // import {
 //  // TouchableNativeFeedback,
 //  // TouchableHighlight,
@@ -47,13 +49,17 @@ export default function KeypadButton(props) {
   function addKey() {
     let view;
     view = (
+      
       <View style={styles.addKeyView}>
+      <WalkthroughElement id="add-button">
         <Text
           style={styles.addKeyTitle}
         >
           Add
         </Text>
+        </WalkthroughElement>
       </View>
+      
     );
     return view;
   }

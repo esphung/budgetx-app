@@ -112,7 +112,7 @@ const slides = [
     title: `know how much you have\n`,
     subtitle: 'when you have it',
     text: 'banks are not always up to date. everytime you make a new transaction, add it to financely',
-    foot: '\nno more overdrafting',
+    foot: '\nnever overdraft again',
     image: global.appIconImage243x260,
     // backgroundColor: '#59b2ab',
     style: {},

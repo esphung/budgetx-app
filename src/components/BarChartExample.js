@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
+import React, {
+  // useState
+} from 'react';
 
 import { StyleSheet, Text, View, Button, Dimensions } from 'react-native';
+
+import {
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -11,60 +17,73 @@ import colors from '../../colors';
 import styles from '../../styles';
 
 import {
-  LineChart,
-  BarChart,
+  // LineChart,
+  // BarChart,
   PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
+  // ProgressChart,
+  // ContributionGraph,
+  // StackedBarChart
 } from 'react-native-chart-kit';
 
+
 function BarChartExample(props) {
-  const { data } = props;
+  const { data, pieChartPressed, showLegend } = props;
   // console.log('data: ', data);
 
+  // const [showLegend, setShowLegend] = useState(false);
+
+  // const [showAbsolute, setShowAbsolute] = useState(false);
+
   const chartConfig = {
-    backgroundGradientFrom: colors.darkTwo, // "#1E2923",
-    backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: colors.dark, // "#08130D",
-    backgroundGradientToOpacity: 0.5,
+    // backgroundGradientFrom: "#1E2923",
+    // backgroundGradientFromOpacity: 1,
+    // backgroundGradientTo:  "#08130D",
+    // backgroundGradientToOpacity: 0.5,
     color: (opacity = 1) => `rgba(26, 155, 146, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false // optional
+    // strokeWidth: 2, // optional, default 3
+    // barPercentage: 0.5,
+    // useShadowColorFromDataset: false // optional
   };
 
   const pieChart = <PieChart
     data={data}
-    width={screenWidth/3}
-    height={((screenHeight) * (0.15))/3}
+    width={screenWidth}
+    height={(screenHeight)/4}
     chartConfig={chartConfig}
     accessor="count"
     backgroundColor="transparent"
-    paddingLeft="25"
-    absolute
-    hasLegend={false}
+    // paddingLeft="5"
+    paddingLeft={screenWidth/4}
+    // absolute
+    hasLegend={showLegend}
+    // hasLegend={showLegend}
   />
 
   return (
-    <View style={{
-      // backgroundColor: '#fff',
-      justifyContent: 'center',
-      flexDirection: 'row-reverse',
-      alignItems: 'center',
-
+    <TouchableOpacity
+    onPress={pieChartPressed}
+    style={{
+      width: screenWidth,
+      // paddingRight: 10,
+      // opacity: 0.5
       // borderWidth: 1,
-      // borderColor: 'black',
+      // borderColor: 'white',
       // borderStyle: 'solid',
-    }}>
- 
+
+    }}
+    //   onPress={
+    //     () => setShowLegend(!showLegend)
+    //     // () => setShowAbsolute(!showAbsolute)
+    //   }
+    >
     {
       
-      data && pieChart || null
+      data && pieChart
     }
-    </View>
+    </TouchableOpacity>
   );
 }
+
 
 module.exports = { BarChartExample }
 

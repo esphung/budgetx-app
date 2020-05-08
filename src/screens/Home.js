@@ -32,7 +32,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             05/06/2020 02:26 PM | Cognito js
 */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Fragment } from 'react';
 
 import {
   View,
@@ -43,6 +43,7 @@ import {
   Text,
   Dimensions,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 
 // import Constants from 'expo-constants';
@@ -57,6 +58,8 @@ import Auth from '@aws-amplify/auth';
 import { NavigationEvents } from 'react-navigation';
 
 import { showMessage } from 'react-native-flash-message';
+
+import { WalkthroughElement, startWalkthrough, dispatchWalkthroughEvent, goToWalkthroughElementWithId } from 'react-native-walkthrough';
 
 // ui colors
 import colors from '../../colors';
@@ -82,6 +85,8 @@ import ScrollingPillCategoriesView from '../components/home/ScrollingPillCategor
 import AmountInputView from '../components/home/AmountInputView';
 import KeypadView from '../components/home/KeypadView';
 import SlideUpView from '../components/home/SlideUpView';
+
+import ToolTip from '../components/ToolTip';
 
 // import { BarChartExample } from '../components/BarChartExample';
 
@@ -135,6 +140,20 @@ import {
   getIsDeviceSynced,
   // getAuthentication,
 } from '../../globals';
+
+// import profileWalkthrough from '../guides/profileWalkthrough';
+
+
+// import addTransactionWalkthrough from '../guides/addTransactionWalkthrough';
+
+// import addCategoryWalkthrough from '../guides/addCategoryWalkthrough';
+
+import {
+  addTransactionWalkthrough,
+  addCategoryWalkthrough,
+  addAmountWalkthrough,
+  pressAddBtnWalkthrough,
+} from '../guides/walkthroughs'
 
 const getAuthentication = async () => {
   global.authenticated = false;
@@ -304,6 +323,8 @@ const updateStoredCategoryProperties = async (category) => {
   // console.log('category: ', category);
 };
 
+
+
 export default function Home(props) {
   // state hooks
   const [currentTransactions, setCurrentTransactions] = useState(initialState.currentTransactions);
@@ -407,6 +428,11 @@ export default function Home(props) {
   //   setCurrentType('');
   // };
 
+  const showCategoryToolTip = () => {
+    // goToWalkthroughElementWithId('category-scroller')
+    startWalkthrough(addTransactionWalkthrough)
+  };
+
   const showSlideView = useCallback(
     () => {
       // console.log('hello');
@@ -480,21 +506,21 @@ export default function Home(props) {
       updateOnlineTransaction(transactions[pos]);
     }
 
-    showMessage({
-      message: 'Updated transaction',
-      // duration: 550,
-      // position: 'top',
+    // showMessage({
+    //   message: 'Updated transaction',
+    //   // duration: 550,
+    //   // position: 'top',
 
-      // description: "My message description",
-      // type: 'success', // "success", "info", "warning", "danger"
-      // backgroundColor: colors.dark, // "purple", // background color
-      color: colors.shamrockGreen, // "#606060", // text color
-      opacity: 0.5,
+    //   // description: "My message description",
+    //   // type: 'success', // "success", "info", "warning", "danger"
+    //   // backgroundColor: colors.dark, // "purple", // background color
+    //   color: colors.shamrockGreen, // "#606060", // text color
+    //   opacity: 0.5,
 
-      textStyle: styles.textStyle,
+    //   textStyle: styles.textStyle,
 
-      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-    });
+    //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+    // });
 
     Analytics.record({ name: 'Updated a stored transaction' });
 
@@ -589,15 +615,9 @@ export default function Home(props) {
 
         global.email = cognito.attributes.email;
 
-        setTimeout(() => {
-          // console.log('global.email: ', global.email);
-          setIsSyncing(false)
-        }, 3000)
 
-        if (await isDeviceOnline()) {
-          setIsSyncing(true)
-          crossDeviceSync()
-        }
+
+        crossDeviceSync();
 
         const storage = await loadSettingsStorage(global.storageKey);
         // console.log('storage: ', storage);
@@ -882,22 +902,27 @@ export default function Home(props) {
       bool = false
     }
     if (!currentDate) {
-      invalid = 'Date'
+      // invalid = 'Date'
     }
     else if (!currentAmount) {
-      invalid = 'Amount'
+      // invalid = 'Amount'
+      startWalkthrough(addAmountWalkthrough)
     }
     else if (!currentOwner) {
       invalid = 'Owner'
     }
     else if (!currentCategory) {
-      invalid = 'Category'
+      invalid = 'Category';
+      // alert('message?: DOMString')
+      // showCategoryToolTip()
+      startWalkthrough(addCategoryWalkthrough)
+      // goToWalkthroughElementWithId('category-scroller')
     }
 
-    let a = 'a';
-    if (invalid === 'Amount') a = 'an'
+    // let a = 'a';
+    // if (invalid === 'Amount') a = 'an'
 
-    if (invalid) showMessage({ message: message, description: `Please Enter ${a} valid ${invalid.toLowerCase()}`, duration: 1350 }) // console.log('invalid: ', invalid);
+    // if (invalid) showMessage({ message: message, description: `Please Enter ${a} valid ${invalid.toLowerCase()}`, duration: 1350 }) // console.log('invalid: ', invalid);
     return bool;
   };
 
@@ -1175,6 +1200,8 @@ export default function Home(props) {
 
     // setIsReady(true)
 
+    
+
     return () => {
       setCurrentTransaction(null)
       setCurrentCategory(null)
@@ -1303,6 +1330,8 @@ export default function Home(props) {
   };
 
   let stickyTable = (
+
+
     <View
     style={
       {
@@ -1319,7 +1348,27 @@ export default function Home(props) {
 
       zIndex: -1,
       }
-    }><MyStickyTable
+    }>
+
+{/*    <TouchableOpacity
+    style={[styles.buttonStyle, {
+      height: screenHeight/2,
+
+            // top: 0,
+      // left: 0,
+      // right: 0,
+      // bottom: 0,
+      // height: 500,
+      // position: 'absolute',
+
+    }]}
+    onPress={ () => {}
+      // () => navigate('Profile', {name: 'Jane'})}
+  }
+  >*/}
+    {/*<Text  style={styles.textStyle}>{"Go to Jane's profile"}</Text>*/}
+
+    <MyStickyTable
       isUpdatingTransaction={isUpdatingTransaction}
       transactions={currentTransactions}
       currentTransaction={currentTransaction}
@@ -1345,15 +1394,21 @@ export default function Home(props) {
       updateStoredTransaction={(item) => updateStoredTransaction(currentTransactions, item)}
 
 
-    /></View>
+    />
+    {/*</TouchableOpacity>*/}
+ 
+    </View>
+
   );
   let scrollingPills = (
+    <WalkthroughElement id="category-scroller">
     <ScrollingPillCategoriesView
       onPress={categoryBtnPressed}
       categories={categories}
       isSelected={isCurrentCategory}
       // currentCategory={currentCategory}
     />
+    </WalkthroughElement>
   );
   let amountInput = (
     <AmountInputView
@@ -1364,11 +1419,13 @@ export default function Home(props) {
     />
   );
   let keypad = (
+    <WalkthroughElement id="keypad-amount">
     <KeypadView
       handlePress={numberBtnPressed}
       addBtnPressed={addBtnPressed}
       backspaceBtnPressed={backspaceBtnPressed}
     />
+    </WalkthroughElement>
   );
 
   // if (!shouldShowScrollingPills) {
@@ -1430,14 +1487,13 @@ export default function Home(props) {
   );
 
   const crossDeviceSync = async () => {
-    let units = 0
-    // if (!global.authenticated) return
+    if (!global.authenticated) return
     // check if user is online
-    // let bool = await isDeviceOnline();
-    // if (bool !== true) {
-    //   showMessage('Device Currently Offline');
-    //   return;
-    // }
+    let bool = await isDeviceOnline();
+    if (bool !== true) {
+      showMessage('Device Currently Offline');
+      return;
+    }
 
 
     // check if device is synced
@@ -1453,7 +1509,7 @@ export default function Home(props) {
 
     // setIsReady(false);
 
-    
+    setIsSyncing(true)
 
     /* Sync Transactions */
     // compare both transaction lists
@@ -1490,7 +1546,6 @@ export default function Home(props) {
             console.log('element.category: ', element.category);
             storage.categories.unshift(element.category)
             saveSettingsStorage(global.storageKey, storage)
-            units++
             
           }
 
@@ -1500,7 +1555,6 @@ export default function Home(props) {
           if (element.category.name) {
             storage.categories.unshift(element.category)
             saveSettingsStorage(global.storageKey, storage)
-            units++
           }
           // throw new Error('Category Not on This Device Yet!')
 
@@ -1520,7 +1574,6 @@ export default function Home(props) {
         for (var i = onlyInLocal.length - 1; i >= 0; i--) {
           // console.log('onlyInLocal[i]: ', onlyInLocal[i]);
           saveTransaction(onlyInLocal[i]);
-          units++
         }
       }
 
@@ -1534,9 +1587,7 @@ export default function Home(props) {
 
       setCurrentTransactions(storage.transactions)
 
-      units++
-
-      // setIsReady(true);
+      setIsReady(true)
     } catch(crossDeviceSyncError) {
       // throw new Error('Error performing crossDeviceSync:', e);
       console.log('crossDeviceSyncError: ', crossDeviceSyncError);
@@ -1574,8 +1625,6 @@ export default function Home(props) {
 
           saveSettingsStorage(global.storageKey, storage);
 
-          units++
-
 
         } catch(e) {
           // statements
@@ -1596,8 +1645,6 @@ export default function Home(props) {
       // console.log('local_categories.length: ', local_categories.length);
       // console.log('local_categories: ', local_categories);
 
-      units++
-
 
       //  // get user's online categories
       // online_categories = await retrieveOnlineCategories();
@@ -1611,7 +1658,6 @@ export default function Home(props) {
           if (found) {
             const pos = local_categories.indexOf(found);
             local_categories[pos] = online_categories[i];
-            units++
           }
         } catch(e) {
           // statements
@@ -1655,7 +1701,7 @@ export default function Home(props) {
 
       setCategories(merged)
 
-      units++
+     
 
 
       saveSettingsStorage(global.storageKey, storage);
@@ -1681,7 +1727,7 @@ export default function Home(props) {
 
 
 
-    console.log('units: ', units);
+
 
     // go back to user home screen
     // navigation.navigate('Home');
@@ -1692,7 +1738,7 @@ export default function Home(props) {
 
 
   const transactionSlide = (
-    <SlideUpView
+   <SlideUpView
       slideViewBounceValue={slideViewBounceValue}
       transaction={currentTransaction}
       // dismiss={() => {
@@ -1714,6 +1760,7 @@ export default function Home(props) {
       value={Math.abs(currentAmount)}
       handleChange={handleChange}
     />
+  
   );
   // let barChartExample = (
   //   <View style={
@@ -1747,6 +1794,26 @@ export default function Home(props) {
   //   </View>
   // );
 
+  const displayIndicator = (
+    <View style={{
+        // flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        // borderWidth: 1,
+        // borderColor: 'white',
+        width: '100%',
+        // borderStyle: 'solid',
+      }}>
+      <Text style={[styles.textStyle,{
+        fontSize: 14,
+        color: colors.shamrockGreen,
+        opacity:  0.5,
+      }]}>Device Syncing</Text>
+      <ActivityIndicator color="white" />
+     
+      </View>
+  )
   // }, [currentPayee])
   const view = (
     <SafeAreaView
@@ -1766,10 +1833,10 @@ export default function Home(props) {
     >
       <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
-        // onWillFocus={clearState} // {(payload) => clearState()}
+        // onWillFocus={() => startWalkthrough(addTransactionWalkthrough)} // {(payload) => clearState()}
         onWillFocus={retrieveUserStoredSettings}
         // other props
-        // onDidFocus={payload => console.log('did focus',payload)}
+        // onDidFocus={() => startWalkthrough(addTransactionWalkthrough)}
         onWillBlur={async () =>
           {
             // setIsUpdatingTransaction(false)
@@ -1804,10 +1871,11 @@ export default function Home(props) {
 
 
         {/* Balance View */}
+       <WalkthroughElement id="balance-view">
         <View
           
           style={[{
-            flex: 1,
+            // flex: 1,
             marginTop: 50,
             
             justifyContent: 'center',
@@ -1826,32 +1894,33 @@ export default function Home(props) {
             isCalculatingBalance={isCalculatingBalance}
             isCalculatingSpent={isCalculatingSpent}
             // myPieChart={myPieChart}
-            isPieChartVisible={true}
+            // isPieChartVisible={true}
           />
-        </View>
-        {
-         isSyncing && <View style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            // borderWidth: 1,
-            // borderColor: 'white',
-            width: '100%',
-            // borderStyle: 'solid',
-          }}>
-          <Text style={[styles.textStyle,{
-            fontSize: 14,
-            color: colors.shamrockGreen,
-            opacity:  0.5,
-          }]}>Device Syncing</Text>
-          <ActivityIndicator color="white" />
-         
           </View>
+          </WalkthroughElement>
+        
+        
+        {
+         isSyncing && displayIndicator
         }
 
       </View>
+<View style={{ flex: 0.9, }}>
+     { stickyTable }
+    </View>
 
-      <View style={{ flex: 0.9, }}>{ stickyTable }</View>
+
+{/*  <TouchableOpacity
+    style={styles.buttonStyle}
+    onPress={() => {
+      // goToWalkthroughElementWithId('start-button')
+      startWalkthrough(addTransactionWalkthrough)
+    }
+    }
+  >
+    <Text style={styles.buttonText}>{"Test Button"}</Text>
+  </TouchableOpacity>*/}
+
 
       {/* sticky table, scrolling pills, amount view,  keypad with transactions */}
 
@@ -1870,8 +1939,13 @@ export default function Home(props) {
         
           {/* Scrolling pills, amount view and keypad */}
 
-                  <View style={{ flex: 1, }}>
-            { isSlideViewHidden && scrollingPills }
+          <View style={{ flex: 1, }}>
+          {
+            /* Category picker tooltip */
+            // <ToolTip message="Add a new transaction" />
+          }
+     
+          { isSlideViewHidden && scrollingPills }
             <View style={{ flex: 0, }}>{ isSlideViewHidden && scrollingPills && amountInput }</View>
             <View style={{ flex: 1, }}>
               { isSlideViewHidden && amountInput && keypad }
@@ -1888,8 +1962,54 @@ export default function Home(props) {
       }
       {
         // isPieChartVisible && barChartExample
+
       }
-     
+{/*            {
+        <TouchableOpacity
+          onPress={() => startWalkthrough(profileWalkthrough)}
+        >
+          <Text>{"Show me how to view a profile"}</Text>
+        </TouchableOpacity>
+      }*/}
+{/*      {
+
+
+<WalkthroughElement id="profile-button">
+  <TouchableOpacity
+    style={styles.profileButton}
+    onPress={() => navigate('Profile', {name: 'Jane'})}
+  >
+    <Text>{"Go to Jane's profile"}</Text>
+  </TouchableOpacity>
+</WalkthroughElement>
+      }*/}
+
+     {/* {
+        <TouchableOpacity
+          style={[
+            styles.buttonStyle,
+            {
+            position: 'absolute',
+            alignSelf: 'center',
+
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: 'white',
+            borderStyle: 'solid',
+          }]}
+
+          onPress={() => {
+
+            // startWalkthrough(profileWalkthrough)
+            startWalkthrough(addTransactionWalkthrough)
+          }}
+        >
+        <Text style={styles.textStyle}>{'Show me how to add a transaction'}</Text>
+        </TouchableOpacity>
+      }*/}
+
+
 
 
     </SafeAreaView>
@@ -1904,7 +2024,8 @@ Home.navigationOptions = () => {
   const header = {
     headerTransparent: {},
     headerLeft: (
-    <HeaderLeftView />),
+      <HeaderLeftView />
+    ),
     headerRight: <HeaderRightView />,
   };
   return header;

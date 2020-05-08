@@ -9,6 +9,8 @@ import {
   ImageBackground,
 } from 'react-native';
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { NavigationEvents } from 'react-navigation';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -101,7 +103,7 @@ function ProfileUserImage(props) {
     // setIsLoading(true);
     // clearState();
 
-    // getImage();
+    getImage();
 
 
     // return () => {
@@ -542,7 +544,22 @@ function ProfileUserImage(props) {
     <View
     style={[styles.userImageMaskView, props.style]}
   >
-  <ImageBackground style={styles.userImage} source={global.defaultAvatar} >
+  
+  <ImageBackground style={styles.userImage} source={global.defaultAvatar}>
+{/*  <MaterialCommunityIcons
+  style={{
+    flex: 1,
+    position: 'absolute',
+    top: 20,
+    // bottom: 0,
+
+    left: 20,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    zIndex: 3,
+  }}
+  name="pencil" size={17} color={colors.offWhite} />*/}
+
     <Image
       // resizeMode="contasin"
       style={styles.userImage}
@@ -639,28 +656,28 @@ function ProfileUserImage(props) {
 // } /></TouchableOpacity>
   
   return <View>
-        <NavigationEvents
+{/*        <NavigationEvents
         // try only this. and your component will auto refresh when this is the active component
-        onWillFocus={() => {
-          setIsLoading(false)
-          setIsReady(true)
-          try {
-            getImage();
-          } catch(e) {
-            // statements
-            console.log(e);
-          }
-        }} // {(payload) => clearState()}
+        // onWillFocus={() => {
+        //   // setIsLoading(false)
+        //   // setIsReady(true)
+        //   // try {
+        //     // getImage();
+        //   // } catch(e) {
+        //   //   // statements
+        //   //   console.log(e);
+        //   }
+        // }} // {(payload) => clearState()}
         // onWillFocus={''}
         // other props
         // onDidFocus={payload => console.log('did focus',payload)}
-        onWillBlur={() => {
-          setIsLoading(false)
-          setIsReady(true)
-        }}
+        // onWillBlur={() => {
+        //   setIsLoading(false)
+        //   setIsReady(true)
+        // }}
         // onDidBlur={retrieveUserStoredSettings}
       />
-      
+      */}
   {
     imageView
     

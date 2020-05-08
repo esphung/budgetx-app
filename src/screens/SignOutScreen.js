@@ -306,7 +306,7 @@ function SignOutScreen({ navigation }) {
 
           </Text>
            <AntDesign
-                           style={
+              style={
                     {
                       marginLeft: 10,
                     }

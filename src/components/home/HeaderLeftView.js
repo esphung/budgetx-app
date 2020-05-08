@@ -64,7 +64,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import ProfileUserImage from '../settings/ProfileUserImage';
 
-global.showGlobalValues()
+// global.showGlobalValues()
 
 function HeaderLeftView(props) {
   const { onUsernameSubmit, getNormalMessage } = props;
@@ -122,7 +122,7 @@ function HeaderLeftView(props) {
       }
 
       try {
-        // setBoldMessage((storage.user.full_name) ? storage.user.full_name : global.displayName) // : global.displayName);
+        setBoldMessage((storage.user.name) ? storage.user.name : 'Cross-device sync enabled') // : global.displayName);
         
         setNormalMessage(storage.user.email);
       } catch(e) {
@@ -222,18 +222,19 @@ function HeaderLeftView(props) {
   return (
       <View
         style={
-          styles.headerLeft
-          // {
-          //   flexDirection: 'row',
-          //   marginTop: 20,
-          //   marginLeft: 15,
+          // styles.headerLeft,
+          {
+            height: 50,
+        width:  (screenWidth)/(1.8),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingLeft: 10,
 
-          //   alignItems: 'center',
-
-          //   borderWidth: 1,
-          //   borderColor: 'white',
-          //   borderStyle: 'solid',
-          // }
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+          }
         }
       >
       <NavigationEvents
@@ -248,7 +249,7 @@ function HeaderLeftView(props) {
           imageView
         }
 
-        <View style={styles.userMessageView}>
+        <View style={[styles.userMessageView,{}]}>
           <Input editable={false} style={styles.boldMessage}>
             {
               boldMessage
