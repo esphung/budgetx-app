@@ -50,14 +50,14 @@ import Analytics from '@aws-amplify/analytics';
 
 
 // import 'cross-fetch/polyfill';
-import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
+// import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
 
 // ES Modules, e.g. transpiling with Babel
-import {
-    CognitoUserPool,
-    CognitoUserAttribute,
-    CognitoUser,
-} from 'amazon-cognito-identity-js';
+// import {
+//     CognitoUserPool,
+//     CognitoUserAttribute,
+//     CognitoUser,
+// } from 'amazon-cognito-identity-js';
 
 import { showMessage } from 'react-native-flash-message';
 
@@ -279,49 +279,49 @@ function SignUpScreen(props) {
     }
   }
 
-  function cognitoSignUp (emailInput, passwordInput) {
-    var poolData = {
-    UserPoolId:  'us-east-1_9xOuE8Wfh', // '...', // Your user pool id here
-    ClientId: '19d0h4e6cc04l9d8dc4tf2imhq', // '...', // Your client id here
-    };
-    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+  // function cognitoSignUp (emailInput, passwordInput) {
+  //   var poolData = {
+  //   UserPoolId:  'us-east-1_9xOuE8Wfh', // '...', // Your user pool id here
+  //   ClientId: '19d0h4e6cc04l9d8dc4tf2imhq', // '...', // Your client id here
+  //   };
+  //   var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
      
-    var attributeList = [];
+  //   var attributeList = [];
      
-    var dataEmail = {
-        Name: 'email',
-        Value: emailInput, // 'email@mydomain.com',
-    };
+  //   var dataEmail = {
+  //       Name: 'email',
+  //       Value: emailInput, // 'email@mydomain.com',
+  //   };
      
-    var dataPhoneNumber = {
-        Name: 'phone_number',
-        Value: '+15555555555',
-    };
-    var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-    var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(
-        dataPhoneNumber
-    );
+  //   var dataPhoneNumber = {
+  //       Name: 'phone_number',
+  //       Value: '+15555555555',
+  //   };
+  //   var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+  //   var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(
+  //       dataPhoneNumber
+  //   );
      
-    attributeList.push(attributeEmail);
-    attributeList.push(attributePhoneNumber);
+  //   attributeList.push(attributeEmail);
+  //   attributeList.push(attributePhoneNumber);
      
-    userPool.signUp(
-      // 'username',
-      'email',
-      'password', attributeList, null, function(
-        err,
-        result
-    ) {
-        if (err) {
-            showMessage(err.message || JSON.stringify(err));
-            console.log('err: ', err);
-            return;
-        }
-        var cognitoUser = result.user;
-        console.log('user name is ' + cognitoUser.getUsername());
-        showMessage('user name is ' + cognitoUser.getUsername());
-    });
-  }
+  //   userPool.signUp(
+  //     // 'username',
+  //     'email',
+  //     'password', attributeList, null, function(
+  //       err,
+  //       result
+  //   ) {
+  //       if (err) {
+  //           showMessage(err.message || JSON.stringify(err));
+  //           console.log('err: ', err);
+  //           return;
+  //       }
+  //       var cognitoUser = result.user;
+  //       console.log('user name is ' + cognitoUser.getUsername());
+  //       showMessage('user name is ' + cognitoUser.getUsername());
+  //   });
+  // }
 
   function handleUsernameInputSubmit() {
     passwordInputRef.current._root.focus();

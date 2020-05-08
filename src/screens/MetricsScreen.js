@@ -13,25 +13,25 @@ import {
 
 import { BarChartExample } from '../components/BarChartExample';
 
-import searchByID from '../functions/searchByID';
+// import searchByID from '../functions/searchByID';
 
-import searchByName from '../functions/searchByName';
+// import searchByName from '../functions/searchByName';
 
-function breakName(name) {
-  // return first token if name too long
-  if (name.length > 10) {
-    name = name.replace(/^(.{6}[^\s]*).*/, '$1');
+// function breakName(name) {
+//   // return first token if name too long
+//   if (name.length > 10) {
+//     name = name.replace(/^(.{6}[^\s]*).*/, '$1');
 
    
     
     
-  }
+//   }
 
-  if (name.length > 10) {
-    name = name.substring(0, 10) + '...'
-  }
-  return name
-}
+//   if (name.length > 10) {
+//     name = name.substring(0, 10) + '...'
+//   }
+//   return name
+// }
 
 import {
   loadSettingsStorage,
@@ -257,48 +257,48 @@ import styles from '../../styles';
 //   // },
 // ]
 
-const getTransactionCategories = (transactions) => {
-  let result = [];
+// const getTransactionCategories = (transactions) => {
+//   let result = [];
 
-  transactions.forEach((transaction) => {
-    if (!transaction.category) {
-      return
-    }
-    let category = searchByID(transaction.category.id, result);
+//   transactions.forEach((transaction) => {
+//     if (!transaction.category) {
+//       return
+//     }
+//     let category = searchByID(transaction.category.id, result);
 
-    if (category) {
-      // alert(transaction.category.name)
-      // add to existing item count and return
-      category.count++;
+//     if (category) {
+//       // alert(transaction.category.name)
+//       // add to existing item count and return
+//       category.count++;
 
-      return
+//       return
 
-    } else {
-      // new list item
-      let category = transaction.category
-      // console.log('category: ', category);
-      category.count = 0;
+//     } else {
+//       // new list item
+//       let category = transaction.category
+//       // console.log('category: ', category);
+//       category.count = 0;
 
-      // for (var i = transactions.length - 1; i >= 0; i--) {
-      //   // console.log('(transactions[i].category.id: ', (transactions[i].category.id))
-      //   if (transactions[i].category.id === category.id) {
-          category.count += 1
-      //   }
-      // }
+//       // for (var i = transactions.length - 1; i >= 0; i--) {
+//       //   // console.log('(transactions[i].category.id: ', (transactions[i].category.id))
+//       //   if (transactions[i].category.id === category.id) {
+//           category.count += 1
+//       //   }
+//       // }
 
-      category.legendFontColor = styles.textStyle.color // '#ddd' // element.category.color
+//       category.legendFontColor = styles.textStyle.color // '#ddd' // element.category.color
 
-      category.legendFontSize = styles.textStyle.fontSize
+//       category.legendFontSize = styles.textStyle.fontSize
 
-      category.name = breakName(category.name)
+//       category.name = breakName(category.name)
 
-      result.push(category);
+//       result.push(category);
 
-      return
-    }
-  });
-  return result;
-};
+//       return
+//     }
+//   });
+//   return result;
+// };
 
 export default function MetricsScreen() {
   const [data, setData] = useState([]);
@@ -311,7 +311,7 @@ export default function MetricsScreen() {
     const storage = await loadSettingsStorage(global.storageKey);
     // console.log('storage.transactions.length: ', storage.transactions.length);
 
-    setData(getTransactionCategories(storage.transactions))
+    setData(storage.transactions)
   }
 
   useEffect(() => {
@@ -347,7 +347,7 @@ export default function MetricsScreen() {
         // onWillBlur={}
         // onDidBlur={retrieveUserStoredSettings}
       />*/}
-      <BarChartExample data={data} pieChartPressed={pieChartPressed} showLegend={false} />
+      <BarChartExample data={data} />
     </SafeAreaView>
   );
 }
