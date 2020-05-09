@@ -66,7 +66,7 @@ export default function calculateMonthSpent(array) {
         // console.log(dates.compare(array[i].date, lastDate));
         if (array[i].amount <= 0.00) {
           // console.log(array[i].amount);
-          balance += array[i].amount;
+          balance += Math.abs(array[i].amount);
         }
       }
     }

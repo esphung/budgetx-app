@@ -40,7 +40,25 @@ export function calculateEachMonthTotalEarned(array, date) {
       // console.log(dates.compare(array[i].date, lastDate));
       if (transactionMonth === dateMonth) {
         // console.log(array[i].amount);
-        balance += array[i].amount;
+        balance += Math.abs(array[i].amount);
+      }
+    }
+  }
+  return Math.abs(balance);
+}
+
+export function calculateEachDayTotalSpent(array, date) {
+  let balance = 0.00;
+  let i = array.length - 1;
+  for (i; i >= 0; i -= 1) {
+    if (array[i].type === 'INCOME') {
+      let transactionDay = new Date(array[i].date).getDay()
+      let dateDay = new Date(date).getDay()
+      // console.log(transactionMonth, dateMonth);
+      // console.log(dates.compare(array[i].date, lastDate));
+      if (transactionDay === dateDay) {
+        // console.log(array[i].amount);
+        balance += Math.abs(array[i].amount);
       }
     }
   }

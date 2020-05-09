@@ -27,6 +27,7 @@ import searchByName from '../functions/searchByName';
 
 import {
   calculateEachMonthTotalSpent,
+  calculateEachDayTotalSpent,
   calculateEachMonthTotalEarned,
 } from '../functions/calculateEachMonthTotalSpent';
 
@@ -106,8 +107,8 @@ function getProgressChartTypeData(transactions) {
   let result = {
     labels: labels,
     data: [
-      (incomes)/100,
-      (expenses)/100,
+      (incomes)/transactions.length,
+      (expenses)/transactions.length,
     ]
   }
   return result
@@ -128,7 +129,7 @@ const getPieChartTopFiveData = (transactions) => {
     if (category) {
       // alert(transaction.category.name)
       // add to existing item count and return
-      category.count++;
+      category.count += Math.abs(transaction.amount)
 
       return
 
@@ -141,7 +142,7 @@ const getPieChartTopFiveData = (transactions) => {
       // for (var i = transactions.length - 1; i >= 0; i--) {
       //   // console.log('(transactions[i].category.id: ', (transactions[i].category.id))
       //   if (transactions[i].category.id === category.id) {
-          category.count += 1
+          category.count += Math.abs(transaction.amount)
       //   }
       // }
 
@@ -161,7 +162,7 @@ const getPieChartTopFiveData = (transactions) => {
     return b.count - a.count
   })
 
-  result = result.slice(0,5);
+  result = result.slice(0,8);
 
 // console.log(objList.slice(0,3))
 
@@ -182,7 +183,7 @@ const getPieChartData = (transactions) => {
     if (category) {
       // alert(transaction.category.name)
       // add to existing item count and return
-      category.count++;
+      category.count += Math.abs(transaction.amount);
 
       return
 
@@ -195,9 +196,10 @@ const getPieChartData = (transactions) => {
       // for (var i = transactions.length - 1; i >= 0; i--) {
       //   // console.log('(transactions[i].category.id: ', (transactions[i].category.id))
       //   if (transactions[i].category.id === category.id) {
-          category.count += 1
+          category.count += Math.abs(transaction.amount)
       //   }
       // }
+
 
       category.legendFontColor = category.color // '#ddd' // element.category.color
 
@@ -308,9 +310,9 @@ export function BarChartExample(props) {
     backgroundGradientToOpacity: 0.5,
     color: (opacity = 1) => `rgba(26, 155, 146, ${opacity})`,
     // color: (opacity = 1) => `${colors.offWhite}`,
-    // strokeWidth: 2, // optional, default 3
-    // barPercentage: 0.5,
-    // useShadowColorFromDataset: false // optional
+    strokeWidth: 2, // optionsal, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false // optional
   };
 
 
@@ -353,7 +355,7 @@ function getProgressChartExpenseData(transactions, total) {
     transactions.forEach((transaction) => {
       // if (transaction.category.type === 'EXPENSE') {
         if (transaction.category.name.includes(labels[i])){
-          data[i]++
+          data[i] += Math.abs(transaction.amount)
         }
       // }
 
@@ -363,7 +365,7 @@ function getProgressChartExpenseData(transactions, total) {
     // console.log(JSON.stringify(transaction))
     })
 
-    data[i] = (data[i]/10)
+    data[i] = (data[i]/totalThisMonth)
 
     // console.log('(data[i]/total)*1000: ', (data[i]/total)*1000);
   }
@@ -445,8 +447,8 @@ function getProgressChartExpenseData(transactions, total) {
         // borderColor: 'white',
         // borderStyle: 'solid',
 
-        marginLeft: 20,
-        marginRight: 20,
+        // marginLeft: 20,
+        // marginRight: 20,
       }}
       data={barChartData}
       width={screenWidth}
@@ -462,7 +464,7 @@ function getProgressChartExpenseData(transactions, total) {
     <SafeAreaView style={
       {
         // flex: 1,
-        // alignItems: 'center',
+        alignItems: 'center',
 
       }
     }>
@@ -500,7 +502,7 @@ function getProgressChartExpenseData(transactions, total) {
         // borderStyle: 'solid',
         justifyContent: 'center',
         textAlign: 'center'
-      }]}>{(showingTopFive) ? 'Top five' : 'All'} categories</Text>
+      }]}>{(showingTopFive) ? 'Top' : 'All'} categories</Text>
 
         {
           
@@ -513,7 +515,7 @@ function getProgressChartExpenseData(transactions, total) {
       
 
      
-   {/*   <TouchableOpacity
+    <TouchableOpacity
         // disabled
         onPress={() => setShowingTypeData(!showingTypeData)}
       >
@@ -525,14 +527,15 @@ function getProgressChartExpenseData(transactions, total) {
         // borderStyle: 'solid',
         justifyContent: 'center',
         textAlign: 'center'
-      }]}>${(totalThisMonth.toFixed(2))} this month compared to{'\n'} ${(budget.toFixed(2))} last month</Text>
+      }]}>${(totalThisMonth.toFixed(2))} spent this month compared to{'\n'} ${(budget.toFixed(2))} last month</Text>
         {
-          // progressChart
+          progressChart
         }
 
         </TouchableOpacity>
 
-*/}
+
+
 
 
 
@@ -554,7 +557,8 @@ function getProgressChartExpenseData(transactions, total) {
        }
 
         </TouchableOpacity>
-      
+
+
 
 
       </ScrollView>
