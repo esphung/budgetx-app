@@ -89,7 +89,7 @@ import uuidv4 from '../functions/uuidv4';
 
 /* my custom queries */
 import {
-  // updateTransaction,
+  updateTransaction,
   // removeTransaction,
   // removePayee,
   removeCategory,
@@ -97,6 +97,7 @@ import {
   saveCategory,
   // saveTransaction,
   updateCategory,
+  getCategoryByID,
   // fetchStoredTransactions,
   // fetchStoredCategories,
   // getTransactionByID,
@@ -152,14 +153,14 @@ function searchByID(key, myArray) {
 }
 
 const pushAllCategoriesToCloud = async () => {
-  await Auth.currentAuthenticatedUser().then(async (user) => {
+  Auth.currentAuthenticatedUser().then(async (user) => {
      try {
     const storage = await loadSettingsStorage(global.storageKey);
     // console.log('local_transactions: ', local_transactions);
 
    for (var i = 0; i < storage.categories.length; i++) {
 
-    await removeCategory(storage.categories[i])
+    // removeCategory(storage.categories[i])
 
       // /* Create New Category */
       const category = new Category(
@@ -171,10 +172,10 @@ const pushAllCategoriesToCloud = async () => {
         storage.categories[i].version + 1, // version
       );
 
-      updateCategory(category);
+    updateCategory(category);
 
-    // saveCategory(storage.categories[i])
-      console.log('storage.categories[i]: ', storage.categories[i]);
+    // saveCategory(categories)
+      // console.log('storage.categories[i]: ', storage.categories[i]);
    }
 
   } catch(e) {
@@ -393,7 +394,7 @@ export default function CustomizeCategoriesScreen() {
         } />
         </Dialog.Container>
 
-  CustomizeCategoriesScreen.showDialog = function() {
+  CustomizeCategoriesScreen.showDialog = () => {
     // retrieveStoredCategories()
     // alert('message?: DOMString')
     setDialogVisible(true)
@@ -664,7 +665,7 @@ export default function CustomizeCategoriesScreen() {
         // console.log(userObject)
 
         // await saveUserObject(userObject);
-        await saveSettingsStorage(storageKey, userObject);
+        saveSettingsStorage(storageKey, userObject);
 
         setData(list);
 
@@ -673,7 +674,9 @@ export default function CustomizeCategoriesScreen() {
         setHelpMessage('Added category');
       }
 
-      // saveCategory(obj)
+      Auth.currentAuthenticatedUser().then((cognito) => {
+        saveCategory(obj)
+      }).catch((errr)  => console.log('err: ', err))
     }
 
 
@@ -771,33 +774,57 @@ export default function CustomizeCategoriesScreen() {
   };
 
   const updateUserTransactionCategories = async (list) => {
-    let success = false;
+    // let success = false;
     const storage = await loadSettingsStorage(storageKey);
 
     const transactions = storage.transactions;
-    // console.log('Transactions found:', transactions.length);
 
-    try {
-      transactions.forEach( function(element, index) {
-        var foundCategory = (searchByName(element.category.name, list))
-        if (foundCategory) {
-          // console.log('Found:', foundCategory);
-          // change out category
-          const category = new Category(foundCategory.id, foundCategory.name, foundCategory.color, foundCategory.type);
-          // category.id = foundCategory.id;
-          // element.category = searchByID(foundCategory.id, list);
-          element.category = category; // searchByID(foundCategory.id, data);
-          success = true;
-        }
-      });
-    } catch(e) {
-      // statements
-      console.log('Could not update transaction', e);
-    }
+    // update all of the user's transactions 'categories
 
-    if (success) {
-      saveSettingsStorage(storageKey, storage);
-    }
+    await transactions.forEach(async (element) => {
+      var foundCategory = (searchByName(element.category.name, list))
+          // id,
+          // name,
+          // color,
+          // type,
+          // owner,
+          // version
+      if (foundCategory) {
+        // console.log('Found:', foundCategory);
+        // change out category
+        const category = new Category(
+          foundCategory.id,
+          foundCategory.name,
+          foundCategory.color,
+          foundCategory.type,
+          foundCategory.owner,
+          foundCategory.version,
+          );
+        // category.id = foundCategory.id;
+        // element.category = searchByID(foundCategory.id, list);
+        element.category = category; // searchByID(foundCategory.id, data);
+        // success = true;
+
+        
+
+        /* try to update online transactions */
+        Auth.currentAuthenticatedUser().then((cognito) => {
+          updateTransaction(element)
+        }).catch((err) => {
+          // console.log('unauth user updating user transactions in CustomizeCategoriesScreen: ', err);
+        })
+
+        // console.log('onlineCategory: ', onlineCategory);
+      }
+    });
+    
+    storage.transactions = transactions
+
+    saveSettingsStorage(storageKey, storage);
+
+    // if (success) {
+    //   saveSettingsStorage(storageKey, storage);
+    // }
     // storage.categories = list;
 
     // saveSettingsStorage(storageKey, storage);
@@ -1584,16 +1611,39 @@ export default function CustomizeCategoriesScreen() {
         }
       >
         <View style={{
-          height: 10,
-          width: '100%',
-          margin: 2,
+          
+          // height: 50,
+
+          width:  screenWidth,
+
+          alignItems: 'center',
+          justifyContent: 'center',
+          // width: '100%',
+          // margin: 2,
 
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'solid',
-        }} />
+        }}>
 
         <HelpMessage message={helpMessage} />
+        </View>
+
+                <View style={{
+          // flexDirection: 'column',
+          // height: 50,
+
+          width:  screenWidth,
+
+          alignItems: 'center',
+          justifyContent: 'center',
+          // width: '100%',
+          // margin: 2,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}>
 
 
         <BlueButton
@@ -1603,6 +1653,8 @@ export default function CustomizeCategoriesScreen() {
             Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
           }}
         />
+
+        </View>
 
                 <View style={{
           height: 10,

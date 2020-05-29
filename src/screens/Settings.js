@@ -307,7 +307,7 @@ function Settings(props) {
           position: 'absolute',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#ddd',
+          // backgroundColor: '#ddd',
           opacity: 0.1,
 
         }
@@ -626,62 +626,62 @@ function Settings(props) {
     }
   };
 
-  const backupStoredSettings = async () => {
-    // setIsSyncing(true);
-    let success = false;
-    // const backup_key = `${storageKey}_BACKUPSETTINGS`
+  // const backupStoredSettings = async () => {
+  //   // setIsSyncing(true);
+  //   let success = false;
+  //   // const backup_key = `${storageKey}_BACKUPSETTINGS`
 
-    // load stored settings
-    try {
-      const storageObj = await loadSettingsStorage(storageKey);
+  //   // load stored settings
+  //   try {
+  //     const storageObj = await loadSettingsStorage(storageKey);
 
-       /* Device Cross Syncing for  User's online  with backup */
-        // if (await isDeviceOnline() && isUserLoggedIn === true && global.isDeviceCrossSyncOn === true) {
-        //   if (global.storageKey === '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey === '216747749558231') {
-        //     for (var i = storageObj.transactions.length - 1; i >= 0; i--) {
-        //       saveTransaction(storageObj.transactions[i])
-        //     }
-        //   }
-        // }
+  //      /* Device Cross Syncing for  User's online  with backup */
+  //       // if (await isDeviceOnline() && isUserLoggedIn === true && global.isDeviceCrossSyncOn === true) {
+  //       //   if (global.storageKey === '056049d7-ad75-4138-84d6-5d54db151d83' || global.storagKey === '216747749558231') {
+  //       //     for (var i = storageObj.transactions.length - 1; i >= 0; i--) {
+  //       //       saveTransaction(storageObj.transactions[i])
+  //       //     }
+  //       //   }
+  //       // }
 
-      let backup_key = `${storageObj.user.id}_BACKUP_SETTINGS`
-      // console.log('backup_key: ', backup_key);
+  //     let backup_key = `${storageObj.user.id}_BACKUP_SETTINGS`
+  //     // console.log('backup_key: ', backup_key);
 
-      // set stored user transactions
-      if (storageObj !== null && storageKey !== null) {
-        // console.log('stored user settings transactions:', storageObj.transactions);
-        saveSettingsStorage(backup_key, storageObj);
-        // console.log(key)
-        success = true;
+  //     // set stored user transactions
+  //     if (storageObj !== null && storageKey !== null) {
+  //       // console.log('stored user settings transactions:', storageObj.transactions);
+  //       saveSettingsStorage(backup_key, storageObj);
+  //       // console.log(key)
+  //       success = true;
 
-        setShouldShowUpdateCloudDialogBox(true)
+  //       setShouldShowUpdateCloudDialogBox(true)
 
-        setIsBackupDisabled(true);
+  //       setIsBackupDisabled(true);
 
-        await setIsBackedUp(true);
-      }
-    } catch (e) {
-      // statements
-      console.log('Could not back up settings', e);
-      // console.log(e);
-    }
+  //       await setIsBackedUp(true);
+  //     }
+  //   } catch (e) {
+  //     // statements
+  //     console.log('Could not back up settings', e);
+  //     // console.log(e);
+  //   }
 
-    // if (success) {
-    //   Alert.alert('Data backed up successfully');
-    // }
+  //   // if (success) {
+  //   //   Alert.alert('Data backed up successfully');
+  //   // }
 
-    // alert(await global.getIsBackedUp())
+  //   // alert(await global.getIsBackedUp())
 
-    // setIsSyncing(false);
+  //   // setIsSyncing(false);
 
-    // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
-    if (success) {
-      // restoreBackUpData();
-      await showBackupCompleteAlert();
+  //   // UPDATE CURRENT SETTINGS TO THIS BACKUP DATA !!!
+  //   if (success) {
+  //     // restoreBackUpData();
+  //     await showBackupCompleteAlert();
 
-      // navigation.navigate('Home');
-    }
-  };
+  //     // navigation.navigate('Home');
+  //   }
+  // };
 
   const backupDataAlert = async () => {
     await Alert.prompt(
@@ -1530,6 +1530,7 @@ function Settings(props) {
     {
       // dialogBox
     }
+    
         <NavigationEvents
             // try only this. and your component will auto refresh when this is the active component
             onWillFocus={async () =>
@@ -1596,7 +1597,7 @@ function Settings(props) {
             <SubscriptionRect
             onPress={() => {
               // if (!global.authenticated) {
-                navigation.navigate('SignUp');
+                navigation.navigate('WelcomeScreen');
               // } else {
               //   directToAppStoreDownload()
               // }
@@ -1698,12 +1699,15 @@ function Settings(props) {
           isExportingTransactions && <ActivityIndicator color="#ddd" size="large" />
         }
         {
-          isSyncing && spinner
+          // isSyncing && spinner
+        }
+        {
+          !isReady && spinner
         }
     </View>
   );
 
-  return isReady && view;
+  return view
 }
 
 Settings.navigationOptions = ({ navigation }) => {

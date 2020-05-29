@@ -87,10 +87,10 @@ import {
 
 import User from '../models/User';
 
-AWS.config.region = 'us-east-1'; // Region
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
-});
+// AWS.config.region = 'us-east-1'; // Region
+// AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+//   IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
+// });
 
 
 
@@ -198,6 +198,8 @@ function SignUpScreen(props) {
     // // setCountryData(countries);
     // setHelpMessage('Hello.');
     setHelpMessage('sign up with your email and pick a password');
+
+
     // return () => {
     //   // effect
     //   setHelpMessage('enter your email and pick a password');
@@ -516,7 +518,7 @@ function SignUpScreen(props) {
 
     await Auth.currentAuthenticatedUser().then((user) => console.log('user: ', user)).catch((err) => {
       // throw new Error('Already signed in!', e)
-      showMessage(e.message)
+      showMessage(err.message)
       setHelpMessage('Already signed in!')
       return
     })
@@ -549,16 +551,16 @@ function SignUpScreen(props) {
       showMessage('sign up failed');
 
 
-      if (err.code  === 'UsernameExistsException') {
-        console.log('err: ', err);
-        showMessage('User exists already. Enter your password to sign in');
+      // if (err.code  === 'UsernameExistsException') {
+      //   console.log('err: ', err);
+      //   showMessage('User exists already. Enter your password to sign in');
         
-        //   // signIn();
-        global.emailAddressInput = email
-        //   global.passwordInput = password  
-        props.navigation.navigate('SignIn')
+      //   //   // signIn();
+      //   global.emailAddressInput = email
+      //   //   global.passwordInput = password  
+      //   props.navigation.navigate('SignIn')
 
-      }
+      // }
       Analytics.record({ email: email });
       console.log(`Failed sign up Recorded: ${email}`);
     });
@@ -759,7 +761,7 @@ function SignUpScreen(props) {
           showMessage('Sign Up Successful!');
           setHelpMessage('Sign Up Successful!')
 
-          props.navigation.navigate('AuthLoading');
+          props.navigation.navigate('SignIn');
           
         })
         .catch((err) => {

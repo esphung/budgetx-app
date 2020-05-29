@@ -217,20 +217,23 @@ function SignInScreen(props) {
     let isSuccessful = false;
     if (authCode !== null) {
       // const { username, authCode } = this.state;
-      if (!username) {
+      if (!email) {
         // usernameInputRef.current._root.focus();
         // Alert.alert('Please provide a username');
         setHelpMessage('Please provide a username');
         return;
       }
 
-      await Auth.confirmSignUp(username, authCode)
+      await Auth.confirmSignUp(email, authCode)
         .then(() => {
           isSuccessful = true;
           // props.navigation.navigate('SignIn');
           setHelpMessage('Confirm successful!');
           // console.log('Confirm sign up successful');
           // Alert.alert('Confirm sign up successful');
+          // global.isConfirmSent = false
+          setIsConfirmVisible(false)
+          props.navigation.navigate('SignIn')
         })
         .catch((err) => {
           if (!err.message) {
@@ -242,6 +245,7 @@ function SignInScreen(props) {
     }
     if (isSuccessful) {
       setIsConfirmVisible(false);
+
     }
   }
 
@@ -370,7 +374,7 @@ function SignInScreen(props) {
 
   // methods
   const signIn = async () => {
-    if (await isDeviceOnline()  !== true) {
+    if (await isDeviceOnline() !== true) {
       return
     }
 
@@ -378,8 +382,8 @@ function SignInScreen(props) {
 
   
 
-      // console.log('userToken: ', userToken);
-      await AsyncStorage.setItem('userToken', String('')); 
+    // console.log('userToken: ', userToken);
+    await AsyncStorage.setItem('userToken', String('')); 
     
     // props.navigation.navigate('AuthLoading');
     await Auth.signIn(email, password)
@@ -387,7 +391,7 @@ function SignInScreen(props) {
         // console.log(cognito);
         if (cognito) {
           // set username key here!
-          showMessage(`Signed in as ${cognito.attributes.email}`);
+          // showMessage(`Signed in as ${cognito.attributes.email}`);
 
           // create an event handler
           Analytics.record({
@@ -408,19 +412,23 @@ function SignInScreen(props) {
 
       })
       .catch((err) => {
+        // eskosbassment@icloud.com
         // console.log('Error when signing in: ', err.message);
         // Alert.alert('Error when signing in: ', err.message);
         setHelpMessage(err.message);
+        console.log('err: ', err);
         setIsLoading(false);
 
-        if (err.message.includes('User is not confirmed.')) {
-          setDialogTitle(err.message);
+        if (err.code.includes('UserNotConfirmedException')) {
+          // alert('message?: DOMString')
+          setIsConfirmVisible(true);
+          // setDialogTitle(err.message);
           setDialogMessage('Please enter the verification code we sent you or have us send it to you again.')
           setIsDialogVisible(true);
 
           setIsResendCodeBtnEnabled(true);
 
-          setIsConfirmVisible(true);
+          
 
           
 
@@ -513,7 +521,7 @@ function SignInScreen(props) {
   }, [password, isLoading, helpMessage]);
 
   useEffect(() => {
-    if (!authCode || !username) {
+    if (!authCode) {
       setIsConfirmSignUpBtnEnabled(false);
     } else {
       setIsConfirmSignUpBtnEnabled(true);
@@ -528,6 +536,9 @@ function SignInScreen(props) {
   useEffect(() => {
     if (global.emailAddressInput) {
       setEmail(global.emailAddressInput);
+    }
+    if (global.isConfirmSent) {
+      setIsConfirmVisible(true)
     }
     setIsLoading(false);
     // if (email) {
@@ -900,7 +911,7 @@ function SignInScreen(props) {
     <NetworkConsumer>
       {
         // ({ isConnected }) => ((isConnected && !global.isConfirmSent) ? signin : confirm)
-        ({ isConnected }) => ((isConnected) ? ((global.isConfirmSent) ? confirm : signin) : offline)
+        ({ isConnected }) => ((isConnected) ? ((isConfirmVisible) ? confirm : signin) : offline)
 
       }
     </NetworkConsumer>

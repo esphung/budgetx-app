@@ -7,15 +7,21 @@ import {
   deleteTransaction,
   deleteCategory,
   deletePayee,
+  createCategory,
 } from '../graphql/mutations';
 
 import {
   getTransaction,
-  getCategory,
-  createCategory,
+  // getCategory,
+  listCategorys,
 } from '../graphql/queries';
 
 import uuidv4 from '../functions/uuidv4';
+
+
+import searchByID from '../functions/searchByID';
+
+
 
 /* fetch cloud resources functions */
 export const fetchStoredCategories = async () => {
@@ -43,12 +49,19 @@ export const fetchStoredTransactions = async () => {
 export const listAllOnlineCategories = async () => {
  let list = [];
   try {
-    const graphqldata = await API.graphql(graphqlOperation(listCategorys));
-    console.log('graphqldata: ', graphqldata);
-    list = graphqldata.data
-    console.log('list: ', list);
+    const graphqldata = await API.graphql(graphqlOperation(listTransactions));
+    // console.log('graphqldata: ', graphqldata);
+    let transactions = graphqldata.data.listTransactions.items
+
+    transactions.forEach((transaction) => {
+      if (!transaction.category) return
+      if (!(searchByID(transaction.category.id, list) )) {
+        list.push(transaction.category)
+      }
+    })
+    // console.log('list.length: ', list.length);
   } catch (err) {
-    console.log('error fetching user categories: ', err);
+    console.log('error fetching user categories from online transactions: ', err);
   }
   return list;
 };
@@ -84,23 +97,39 @@ query ListTransactions {
   }
 }
 `;
-export const listCategorys = gql`
-query ListCategorys {
-  listCategorys {
-    items {
-      id
-      name
-      color
-      type
-      owner
-      version
-    }
-    # nextToken
-  }
-}
-`;
+// export const listCategorys = gql`
+// query ListCategorys {
+//   listCategorys {
+//     items {
+//       id
+//       name
+//       color
+//       type
+//       owner
+//       version
+//     }
+//     # nextToken
+//   }
+// }
+// `;
 /* custom GQLs query return functions */
 export const CreateCategoryGQL = (category) => {
+//   const query = gql`
+// mutation CreateCategory {
+//   createCategory(input: {
+//  id: ${'"'+category.id+'"'}
+//     name: ${'"'+category.name+'"'}
+//     color: ${'"'+category.color+'"'}
+//     type: ${'"'+category.type+'"'}
+//     # owner: "81d12192-d55f-452c-be43-7f508638e438"
+//   }) {
+//     id
+//     name
+//     type
+//     owner
+//   }
+// }`
+
   const query = gql`
 mutation createCategory {
   createCategory (input: {
@@ -108,7 +137,7 @@ mutation createCategory {
     name: ${'"'+category.name+'"'}
     color: ${'"'+category.color+'"'}
     type: ${'"'+category.type+'"'}
-    owner: ${'"'+category.owner+'"'}
+    # owner: ${'"'+category.owner+'"'}
     version: ${category.version}
   }) {
     id
@@ -180,9 +209,9 @@ mutation updateTransaction {
     id: ${'"'+updated.id+'"'}
     date: ${'"'+updated.date+'"'}
     amount: ${updated.amount}
-    owner: ${'"'+updated.owner+'"'}
+    # owner: ${'"'+updated.owner+'"'}
     # payee: ${updated.payee}
-    version: ${updated.version}
+    version: ${(updated.version + 1)}
     note: ${'"'+updated.note+'"'}
     type: ${'"'+updated.type+'"'}
 
@@ -206,8 +235,8 @@ mutation updateCategory {
     name: ${'"'+updated.name+'"'}
     color: ${'"'+updated.color+'"'}
     type: ${'"'+updated.type+'"'}
-    owner: ${'"'+updated.owner+'"'}
-    version: ${updated.version}
+    # owner: ${'"'+updated.owner+'"'}
+    version: ${(updated.version + 1)}
   }) {
     id
     name
@@ -219,6 +248,22 @@ mutation updateCategory {
 }`;
   return graphql_query
 };
+
+// export const GetCategoryByIDGQL = (id) => {
+//   const graphql_query = gql`
+// query GetCategory {
+//   getCategory(id: ${'"'+id+'"'}) {
+//     id
+//     name
+//     type
+//     owner
+//     version
+//   }
+// }
+//   `
+//   return graphql_query
+// }
+
 
 
 // export const GetTransactionByIDGQL = (id) => {
@@ -240,7 +285,7 @@ mutation updateCategory {
 export const removeCategory = async (category) => {
   try {
     await API.graphql(graphqlOperation(deleteCategory, { input: { id: category.id } }));
-    // console.log('category successfully deleted.', category.id);
+    console.log('category successfully deleted.', category.id);
   } catch (err) {
     console.log('error deleting category...', err);
   }
@@ -286,16 +331,10 @@ export const saveCategory = async (category) => {
       await API.graphql(categoryMutation);
       console.log('category successfully created:', category.id);
     } catch (e) {
-      // console.log('error saving category:', e);
-      console.log('save category error:', category);
-
-      // updateCategory(category);
-
-      // throw new Error('Update category error (duplicate)');
-      
-      // category.version = category.version + 1
-      
-
+      console.log('error saving category:', e);
+      // console.log('save category error:', category);
+      console.log(`trying to update ccategory ${category.id} instead ...`);
+      updateCategory(category);
     }
   // }
 
@@ -359,6 +398,7 @@ export const saveTransaction = async (transaction) => {
   // console.log('input: ', input);
   try {
     const mutation = await graphqlOperation(CreateTransactionGQL(input)); // store transaction in cloud
+    saveCategory(input.category)
     await API.graphql(mutation);
     console.log('transaction successfully created:', input.id);
   } catch (err) {
@@ -368,32 +408,31 @@ export const saveTransaction = async (transaction) => {
   }
 }
 export const updateTransaction = async (updated) => {
-  let input = formatTransactionInput(updated)
+  // let input = formatTransactionInput(updated)
   // console.log('input: ', input);
   try {
-    await API.graphql(graphqlOperation(UpdateTransactionGQL(input)));
-    console.log('transaction successfully updated:', input.id);
+    await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
+    console.log('transaction successfully updated:', updated.id);
   } catch (err) {
     // transaction dne yet (most likely)
     console.log('error updating transaction...', err);
-    saveTransaction(input);
+    removeTransaction(updated)
+    if (!err.data.updateCategory) {
+    saveTransaction(updated);
+  }
   }
 };
 export const updateCategory = async (updated) => {
-  // console.log('updated category: ', updated);
-  if (!updated.version) {
-    updated.version = 0;
-  }
   try {
-    // console.log('updated: ', updated);
     let response = await API.graphql(graphqlOperation(UpdateCategoryGQL(updated)));
-    console.log('category successfully updated...', response.data.updateCategory.id);
+    console.log('category successfully updated...', response.data.updateCategory);
+
 
   } catch (err) {
     // console.log('error updating category...', err); // err
     // err.data.updateCategory
     // saveCategory(updated);
-    await removeCategory(updated)
+    removeCategory(updated)
     if (!err.data.updateCategory) {
       // category doesnt exist yet
       saveCategory(updated)
@@ -411,13 +450,19 @@ export const getTransactionByID = async (id) => {
   }
   return obj;
 };
-export const getCategoryByID = async (id) => {
-  let obj;
-  try {
-    let stored = await API.graphql(graphqlOperation(getCategory, { id: id }))
-    obj = stored.data.getCategory;
-  } catch (err) {
-    console.log('error getting category by id...', err);
-  }
-  return obj;
-};
+// export const getCategoryByID = async (id) => {
+//   // let obj;
+//   // try {
+//   //   let stored = await API.graphql(graphqlOperation(getCategory, { id: id }))
+//   //   obj = stored.data.getCategory;
+//   //   return obj;
+//   // } catch (err) {
+//   //   throw new Error(err.message)
+//   //   console.log('error getting category by id...', err);
+//   // }
+//   // return obj;
+// };
+
+
+
+
