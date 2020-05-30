@@ -3,7 +3,8 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  Text
+  Text,
+  Platform,
 } from 'react-native';
 
 // ui colors
@@ -24,11 +25,14 @@ function StickyDateHeader(props) {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
+    flex: 1,
 
-    width: '100%', // 375,
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    // width: '100%', // 375,
     height: 31,
-    opacity: 0.9, // 0.5
+    // opacity: 0.9, // 0.5
     backgroundColor: colors.dark,
 
     // borderWidth: 1,
@@ -37,15 +41,17 @@ const styles = StyleSheet.create({
   },
 
   dateLabelText: {
-    width: '100%', // 131,
-    height: 20,
-    fontFamily: 'SFProDisplay-Regular',
+    // width: '100%', // 131,
+    padding: 5,
+    // height: 17,
+    // height: 31,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
     fontSize: 17,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    letterSpacing: 0.13,
-    textAlign: 'center',
-    color: 'rgba(255, 255, 255, 0.5)'
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    // letterSpacing: 0.13,
+    // textAlign: 'center',
+    color: colors.offWhite, // 'rgba(255, 255, 255, 0.5)'
   }
 });
 

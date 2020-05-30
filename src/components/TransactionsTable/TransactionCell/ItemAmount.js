@@ -27,6 +27,9 @@ function ItemAmount(props) {
     <Text  style={
       {
         paddingRight: 10,
+
+        
+
       }
     }>
       <Text style={{
@@ -37,11 +40,11 @@ function ItemAmount(props) {
         // fontWeight: 'normal',
         // fontStyle: 'normal',
         // letterSpacing: 0.29,
-        textAlign: 'right',
+        // textAlign: 'right',
         color: colors.offWhite,
       }}
       >
-        {`${getCurrencySymbol(item.amount)}`}
+        {`${getCurrencySymbol(item.amount).replace('$','')}`}
       </Text>
 
       <Text style={{
@@ -58,6 +61,21 @@ function ItemAmount(props) {
       >
         {`${Math.abs(item.amount).toFixed(2)}`}
 
+      </Text>
+
+      <Text style={{
+        // width: '100%',
+        // height: 20,
+        fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+        fontSize: 17,
+        // fontWeight: 'normal',
+        // fontStyle: 'normal',
+        // letterSpacing: 0.29,
+        // textAlign: 'right',
+        color: colors.offWhite,
+      }}
+      >
+      {`${' $'}`}
       </Text>
     </Text>
   );

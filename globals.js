@@ -59,7 +59,7 @@ global.isStorybookModeOn = false;
 
 // global.isLoginEnabled = false;
 
-global.amountInputMaxLength = 7;
+global.amountInputMaxLength = 9;
 
 global.emailAddressInput = '';
 

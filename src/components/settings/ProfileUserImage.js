@@ -7,6 +7,7 @@ import {
   View,
   ActivityIndicator,
   ImageBackground,
+  Platform,
 } from 'react-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -87,7 +88,7 @@ function ProfileUserImage(props) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [shouldShowLoginBox, setShouldShowLoginBox] = useState(false);
+  const [shouldShowAndroidUserBox, setShouldShowAndroidUserBox] = useState(false);
 
   const [isPermissionDialogVisible, setIsPermissionDialogVisible] = useState(false);
 
@@ -117,13 +118,20 @@ function ProfileUserImage(props) {
 
   const dialogBox = (
     <View>
-      <Dialog.Container visible={shouldShowLoginBox}>
-        <Dialog.Title>Please Login</Dialog.Title>
+      <Dialog.Container visible={shouldShowAndroidUserBox}>
+        <Dialog.Title>Android User</Dialog.Title>
         <Dialog.Description>
-          Cannot use feature without a profile
+          Hello
         </Dialog.Description>
-        {/* <Dialog.Button label="Cancel" onPress={() => setShouldShowLoginBox(false)} /> */}
-        <Dialog.Button label="Ok" onPress={() => setShouldShowLoginBox(false)} />
+        <Dialog.Button label="Cancel" onPress={() => setShouldShowAndroidUserBox(false)} />
+        <Dialog.Button label="Ok" onPress={() => {
+          // ask for image picker permissions for ANDROID user
+          // setIsPermissionDialogVisible(true)
+          setShouldShowAndroidUserBox(false)
+
+          ImagePicker.requestCameraPermissionsAsync()
+
+        }} />
       </Dialog.Container>
     </View>
   );
@@ -135,59 +143,27 @@ function ProfileUserImage(props) {
         <Dialog.Description>
           We need camera roll permissions to make this work!
         </Dialog.Description>
-        {/* <Dialog.Button label="Cancel" onPress={() => setShouldShowLoginBox(false)} /> */}
-        <Dialog.Button label="Ok" onPress={() => setIsPermissionDialogVisible(false)} />
+        {/* <Dialog.Button label="Cancel" onPress={() => setShouldShowAndroidUserBox(false)} /> */}
+        <Dialog.Button label="Ok" onPress={() => {
+          // console.log('Platform.OS: ', Platform.OS);
+          setIsPermissionDialogVisible(false)
+        }} />
       </Dialog.Container>
     </View>
   );
 
 
 
-  async function clearState() {
-    // setImage(global.defaultAvatar);
-    // retrieveStoredSettingsImage()
+  // async function clearState() {
+  //   // setImage(global.defaultAvatar);
+  //   // retrieveStoredSettingsImage()
 
-    // setImage(global.avatar)
-  }
+  //   // setImage(global.avatar)
+  // }
 
   // this handles the imagse upload to S3
   const handleImagePicked = async (imageResult) => {
-
-
-    // console.log('imageResult: ', imageResult);
-
-
-    // if (isUserLoggedIn && await getAuthentication() && await isDeviceOnline()) {
-    //   try {
-    //       await Storage.put(imageName, pickerResult.uri, fileType);
-    //       console.log('Successfully uploaded ', imageName, 'to bucket!');
-    //     } catch (err) {
-    //       console.log('error upload s3 image: ', err);
-    //       // Alert.alert(err);s
-    //     }
-    //   }
-    // console.log('pickerResult: ', pickerResult);
-
-    // global.avatar = ({ uri: pickerResult.uri });
-
-    // try {
-    //   saveProfileImage(pickerResult);
-    // } catch(e) {
-    //   // statements
-    //   console.log(e);
-    //   setImage(global.avatar);
-    // }
-
-    // setIsLoading(false);
-
-          
-
-    // setIsLoading(true);
-
     let settings = await loadSettingsStorage(global.storageKey);
-
-
-    
 
     const imageName = imageResult.uri.replace(/^.*[\\\/]/, '');
     // console.log('imageName: ', imageName);
@@ -535,9 +511,25 @@ function ProfileUserImage(props) {
       // {...rest}
       onPress={
           async () => {
-              if (true) getPermissionAsync()
-                else
-                  setShouldShowLoginBox(true);
+            console.log('Platform.OS: ', Platform.OS);
+              if (Platform.OS !== 'android') {
+                // user is on ios
+                getPermissionAsync();
+              }
+                else {
+                  // user is on android
+                  
+
+                  try {
+                    // statements
+                    pickImage();
+                  } catch(e) {
+                    // statements
+                    console.log(e);
+                    setShouldShowAndroidUserBox(true);
+                  }
+
+                }
           }
         }
       >
@@ -594,7 +586,7 @@ function ProfileUserImage(props) {
   //         async () => {
   //           // if (global.authenticated) {
   //             await getPermissionAsync();
-  //           //   setShouldShowLoginBox(true)
+  //           //   setShouldShowAndroidUserBox(true)
   //           // }
   //         }
   //       }
@@ -648,7 +640,7 @@ function ProfileUserImage(props) {
 //           async () => {
 //             // if (global.authenticated) {
 //               await getPermissionAsync();
-//             //   setShouldShowLoginBox(true)
+//             //   setShouldShowAndroidUserBox(true)
 //             // }
 //           }
 //         }
@@ -722,7 +714,7 @@ function ProfileUserImage(props) {
     //           // if (global.authenticated) {
     //             await getPermissionAsync();
 
-    //           //   setShouldShowLoginBox(true)
+    //           //   setShouldShowAndroidUserBox(true)
     //           //   // return
     //           // }
               

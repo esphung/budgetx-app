@@ -85,14 +85,14 @@ const StackNavigator = createStackNavigator({
   SignUp: {
     screen: SignUpScreen,
     navigationOptions: () => ({
-      title: 'Sign up with an email',
-      // headerBackTitle: null,
+      title: '',
+      headerBackTitle: null,
     }),
   },
   SignIn: {
     screen: SignInScreen,
     navigationOptions: () => ({
-      title: 'Log in to your account',
+      // title: 'Log in to your account',
       // headerBackTitle: null,
     }),
   },
@@ -100,21 +100,21 @@ const StackNavigator = createStackNavigator({
     screen: SignOutScreen,
     // navigationOptions: () => ({
     //   title: '',
-    //   headerBackTitle: '',
+      headerBackTitle: '',
     // }),
   },
   WelcomeScreen: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
-      title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
-      // headerBackTitle: null,
+      // title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
+      headerBackTitle: null,
     }),
   },
   ForgetPassword: {
     screen: ForgetPasswordScreen,
     navigationOptions: () => ({
       title: 'Create a New Password',
-      // headerBackTitle: null,
+      headerBackTitle: null,
     }),
   },
   // ExampleScreen: {

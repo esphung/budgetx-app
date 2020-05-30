@@ -196,11 +196,14 @@ export default StyleSheet.create({
 
   /* Amount Input */
   amountInputView: {
+    flex: 1,
     height: 46,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: colors.dark,
+
+    paddingRight: 12,
 
     // borderWidth: 1,
     // borderColor: 'white',
@@ -208,7 +211,7 @@ export default StyleSheet.create({
   },
   amountInputLabel: {
     // flex: 0.9,
-    flex: 1,
+    // flex: 1,
 
 
     // width: '100%',
@@ -393,10 +396,8 @@ export default StyleSheet.create({
   itemSymbolStyle: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
     fontSize: 17,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.13,
-    textAlign: 'right',
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   input: {
     // alignItems: 'center',
@@ -674,13 +675,13 @@ export default StyleSheet.create({
 
     borderRadius: 9,
     backgroundColor: colors.dark,
-    shadowColor: '#0f1725',
-    shadowOffset: {
+    shadowColor: Platform.OS === 'android' ? null : '#0f1725',
+    shadowOffset: Platform.OS === 'android' ? null : {
       width: 5,
       height: 5,
     },
-    shadowRadius: 16,
-    shadowOpacity: 1,
+    shadowRadius: Platform.OS === 'android' ? null : 16,
+    shadowOpacity: Platform.OS === 'android' ? null : 1,
 
     // borderWidth: 2,
     // borderColor: 'white',
@@ -827,4 +828,7 @@ export default StyleSheet.create({
     paddingHorizontal: 6,
     textAlign: 'center',
   },
+  // dateLabelText: {
+  //   color: 'red',
+  // },
 });

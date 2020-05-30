@@ -30,18 +30,16 @@ export default function AmountInputView(props) {
       <View
         style={
           {
-            flex: 0.7,
+            // flex: 1,
             // flexDirection: 'row-reverse',
           }
         }
       >
-        <Text style={[styles.amountInputLabel, {
-          marginTop: 11
-        }]}>
         {
-        amountLabelText
-      }
-        </Text>
+          amountLabelText && <Text style={[styles.amountInputLabel, {
+          marginTop: 11
+        }]}>{ amountLabelText }</Text>
+        }
       </View>
 
       <View
@@ -70,7 +68,7 @@ export default function AmountInputView(props) {
       <View
         style={
           {
-            flex: 0.2,
+            // flex: 0.2,
             // flexDirection: 'row-reverse',
           }
         }

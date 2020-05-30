@@ -8,7 +8,7 @@ import {
   // FlatList,
 } from 'react-native';
 
-import { MaterialCommunityIcons, SimpleLineIcons, Entypo, FontAwesome, AntDesign } from '@expo/vector-icons';
+import { MaterialCommunityIcons,  MaterialIcons, SimpleLineIcons, Entypo, FontAwesome, AntDesign } from '@expo/vector-icons';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -82,18 +82,15 @@ function UserOptions(props) {
   let opacity = (1.0)
 
   function renderSeparator(item) {
-    let view;
-    // console.log('item.leadingItem: ', item.leadingItem);
-
-    if (item.leadingItem.key === 'Contact Support' || item.leadingItem.key === '' || item.leadingItem.key === 'Backup Data') return null
-    view = <View
+    const view = (
+        <View
           style={{
             flex: 1,
             backgroundColor: colors.dark,
             justifyContent: 'center',
             alignItems: 'center',
+            // borderWidth: 0.5,
 
-            // borderWidth: 1,
             // borderColor: colors.dark,
             // borderStyle: 'solid',
           }}
@@ -101,9 +98,9 @@ function UserOptions(props) {
           <View
             style={
               {
-                width: '90%', // 346,
+                width: screenWidth * 0.9, // 346,
                 // alignSelf: 'center',
-                // height: 0.5,
+                // height: 0.25,
 
                 borderWidth: 0.5,
                 borderColor: colors.darkTwo,
@@ -112,7 +109,12 @@ function UserOptions(props) {
             }
           />
         </View>
-    return view;
+      );
+    // }
+
+    if (true) {
+      return view;
+    }
   }
 
 
@@ -128,7 +130,7 @@ function UserOptions(props) {
 
     if (key.includes('Device Sync')) {
       // caret = null;
-      caret = <MaterialCommunityIcons name="sync" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
       // disabled = true
     }
 
@@ -183,21 +185,24 @@ function UserOptions(props) {
     /* Reset Data */
     if (key.includes('Reset Data')) {
       // caret = null;
-            textColor = colors.pinkRed;
+      textColor = colors.pinkRed;
       backgroundColor = 'transparent';
       // caret = null;
       opacity = 0.5
-      caret = <FontAwesome name="trash-o" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
+      /*caret = <FontAwesome name="trash-o" size={styles.iconStyle.fontSize} color={colors.white} />*/
       // disabled = true
     }
 
     if (key === 'Contact Support') {
-      caret = <AntDesign name="customerservice" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
+      /*caret = <AntDesign name="customerservice" size={styles.iconStyle.fontSize} color={colors.white} />*/
     }
     
     // /* Change Password/Sign Out */
     if (key.includes('Sign Out')) {
-      caret = <AntDesign name="poweroff" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
+      /*caret = <AntDesign name="poweroff" size={styles.iconStyle.fontSize} color={colors.white} />*/
       // isDisabled = !isUserLoggedIn
       // if (isDisabled) {
       //   // title = null;
@@ -212,7 +217,8 @@ function UserOptions(props) {
     }
     //    /* Sync This Device */
     if (key === 'Change Password') {
-      caret = <AntDesign name="unlock" size={styles.iconStyle.fontSize} color={colors.white} />
+      // caret = <AntDesign name="unlock" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
       // if (isUserLoggedIn) {
         
       //   textColor = colors.offWhite
@@ -227,18 +233,20 @@ function UserOptions(props) {
 
     /* Sign In/Sign Up */
     if (key === 'Sign In') {
-      caret = <SimpleLineIcons name="login" size={styles.iconStyle.fontSize} color={colors.white} />
+      
+      // caret = <SimpleLineIcons name="login" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
       // key = (<Text style={styles.listItemTitleStyle}>{ key } <SimpleLineIcons name="login" size={styles.listItemTitleStyle.fontSize} color={colors.white} /></Text>)
-      if (global.authenticated || global.isFederated || global.isAppleSignedIn) {
-        key = null;
-        // textColor = colors.offWhite
-        // backgroundColor = 'transparent';
-        isDisabled = true
-        // caret = null;
-        rowHeight = 0;
+      // if (global.authenticated || global.isFederated || global.isAppleSignedIn) {
+      //   key = null;
+      //   // textColor = colors.offWhite
+      //   // backgroundColor = 'transparent';
+      //   isDisabled = true
+      //   // caret = null;
+      //   rowHeight = 0;
         
-        // opacity = 0.5
-      }
+      //   // opacity = 0.5
+      // }
         
       
     }
@@ -255,7 +263,8 @@ function UserOptions(props) {
     // }
     //   /* Export Transactions */
     if (key  === ('Export Transactions')) {
-      caret = <AntDesign name="file1" size={styles.iconStyle.fontSize} color={colors.white}  />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
+      // caret = <AntDesign name="file1" size={styles.iconStyle.fontSize} color={colors.white}  />
       // isDisabled = !isUserLoggedIn/
       // if (isExportTransactionsDisabled) {
       //   // title = null;
@@ -274,7 +283,8 @@ function UserOptions(props) {
     // }
 
     if (key === 'Customize Categories') {
-      caret = <Entypo name="add-to-list" size={styles.iconStyle.fontSize} color={colors.white} />
+      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
+      // caret = <Entypo name="add-to-list" size={styles.iconStyle.fontSize} color={colors.white} />
  
 
     }
@@ -288,6 +298,7 @@ function UserOptions(props) {
       // rowHeight = 24;
       // caret = null;
       // opacity = 0.5
+
     }
 
     // console.log('isDisabled: ', isDisabled);
@@ -298,10 +309,10 @@ function UserOptions(props) {
         style={
           {
             flexDirection: 'row',
-            // width: '100%',
-            // height: 46,
+            width: '100%',
+            height: 46,
             // width: 370,
-            height: rowHeight, // 46,
+            // height: rowHeight, // 46,
             backgroundColor, // colors.dark,
 
             opacity
@@ -356,7 +367,7 @@ function UserOptions(props) {
         >
           <Text style={[styles.listItemTitleStyle, {
             textAlign: 'right',
-            paddingRight: 20,
+            paddingRight: 10,
           }]}>{ caret }</Text>
         </View>
       </TouchableOpacity>
@@ -394,8 +405,8 @@ function UserOptions(props) {
       // }]}
       data={[
         // { key: 'Sign In/Sign Up', isDisabled: global.authenticated },
-        { key: 'Sign In', isDisabled: global.authenticated },
-        { key: 'Device Sync' + ' ' + ((global.authenticated) ? 'Enabled' : 'Disabled'), isDisabled: !global.authenticated },
+        { key: 'Sign In', isDisabled: isUserLoggedIn },
+        { key: 'Device Sync' + ' ' + ((global.authenticated) ? 'Enabled' : 'Disabled'), isDisabled: true }, // !global.authenticated },
         { key: 'Customize Categories', isDisabled: false },
         // { key: 'Backup Data', isDisabled: isBackupDisabled },
         // { key: 'Passcode', isDisabled: false },
@@ -406,7 +417,7 @@ function UserOptions(props) {
 
         { key: '', isDisabled: true },
         { key: 'Change Password', isDisabled: !global.authenticated },
-        { key: 'Sign Out', isDisabled: false },
+        { key: 'Sign Out', isDisabled: !isUserLoggedIn },
         { key: 'Export Transactions', isDisabled: isExportTransactionsDisabled },
         // { key: 'Restore Backup Data', isDisabled: !isBackupDisabled },
         { key: 'Contact Support', isDisabled: false },
@@ -418,7 +429,7 @@ function UserOptions(props) {
       ]}
 
       renderItem={({ item, isDisabled }) => renderItem(item, isDisabled)}
-      ItemSeparatorComponent={(item) => renderSeparator(item)}
+      ItemSeparatorComponent={renderSeparator}
     />
   );
   return view;

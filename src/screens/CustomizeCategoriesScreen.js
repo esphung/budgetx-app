@@ -1819,7 +1819,9 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
           {
           color: colors.pinkRed,
           // opacity: 0.5,
-        }]}>reset <FontAwesome5 name="eraser" size={24} color={colors.pinkRed} /></Text></TouchableOpacity></View>),
+        }]}>Reset
+        {/*<FontAwesome5 name="eraser" size={24} color={colors.pinkRed} />*/}
+        </Text></TouchableOpacity></View>),
     // resetCategories: () => {
     //   CustomizeCategoriesScreen.resetCategories(storageKey);
 

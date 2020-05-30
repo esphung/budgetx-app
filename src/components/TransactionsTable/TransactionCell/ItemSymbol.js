@@ -26,11 +26,14 @@ function ItemSymbol(props) {
           styles.itemSymbolStyle,
           {
             color: color,
-            fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+            // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
             // fontSize: 17,
             // fontWeight: 'normal',
             // fontStyle: 'normal',
             // letterSpacing: 0.13,
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
           }
         ]
     }

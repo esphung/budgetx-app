@@ -142,9 +142,24 @@ function UserNameEmailInput(props) {
     // event.preventDefault();
 
     if (!authCode) {
-      showMessage('Enter a code')
-      return
-    }
+      // showMessage('Enter a code')
+      showMessage({
+          message: 'Enter a code',
+          // duration: 550,
+          position: 'bottom',
+
+          // description: "My message description",
+          // type: 'success', // "success", "info", "warning", "danger"
+          // backgroundColor: colors.dark, // "purple", // background color
+          color: colors.pinkRed, // "#606060", // text color
+          opacity: 1,
+
+          textStyle: styles.textStyle,
+
+          // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+        });
+        return
+      }
 
     setIsConfirming(true);
 
@@ -665,7 +680,22 @@ function UserNameEmailInput(props) {
 
 
     if (isValidEmail(str) !== true) {
-      showMessage('Invalid Email');
+
+      showMessage({
+        message:'Invalid Email',
+        // duration: 550,
+        position: 'top',
+
+        // description: "My message description",
+        // type: 'success', // "success", "info", "warning", "danger"
+        // backgroundColor: colors.dark, // "purple", // background color
+        color: colors.pinkRed, // "#606060", // text color
+        // opacity: 1,
+
+        textStyle: styles.textStyle,
+
+        // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+      });
       return
       
     }
@@ -693,7 +723,7 @@ function UserNameEmailInput(props) {
       }
       style={{ flex: 1, flexDirection: 'column' }}
     >
-    <View style={
+{/*    <View style={
       {
         flex: 1,
         flexDirection: 'row',
@@ -705,7 +735,7 @@ function UserNameEmailInput(props) {
       }
     }
     >
-      {/* User uniqueId input */}
+
       <Text style={
        [
          styles.textStyle,
@@ -715,7 +745,7 @@ function UserNameEmailInput(props) {
        ]
       }
       >
-      {/* Id Icon */}
+
       <AntDesign name="idcard" size={styles.iconStyle.fontSize} color={colors.white} />
       {
         // idLabelText
@@ -786,7 +816,7 @@ function UserNameEmailInput(props) {
       </Text>
 
     </View>
-
+*/}
 
 
     {
@@ -800,7 +830,7 @@ function UserNameEmailInput(props) {
         // alignItems: 'center',
      }}
      >
-      <View style={line2} />
+      {/*<View style={line2} />*/}
     
 
      
@@ -828,9 +858,9 @@ function UserNameEmailInput(props) {
       }
       >
 
-      <Ionicons name="md-person" size={styles.iconStyle.fontSize} color={colors.white} />
+      {/*<Ionicons name="md-person" size={styles.iconStyle.fontSize} color={colors.white} />*/}
 
-      {/*Name*/}
+      Name
       </Text>
       <TextInput
 
@@ -918,9 +948,9 @@ function UserNameEmailInput(props) {
           ]
         }
         >
-        <Entypo name="email" size={styles.iconStyle.fontSize} color={colors.white} />
+        {/*<Entypo name="email" size={styles.iconStyle.fontSize} color={colors.white} />*/}
         {
-          // emailLabelText
+          emailLabelText
         }
         </Text>
         <TextInput

@@ -31,6 +31,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             05/02/2020 05:58 PM
             05/06/2020 02:26 PM | Cognito js
             05/09/2020 03:12 PM | after 4.8.5(failed release?)
+            05/29/2020 06:18 PM | Updated balance view style for android
 */
 
 import React,
@@ -145,6 +146,8 @@ import {
 } from '../guides/walkthroughs';
 
 import { isDeviceOnline } from '../../network-functions';
+
+import { getFakeTransactions } from '../functions/getFakeTransactions';
 
 const getAuthentication = async () => {
   global.authenticated = false;
@@ -458,17 +461,15 @@ export default function Home() {
     [slideViewBounceValue],
   );
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
-    // console.log('updatedTransaction: ', updatedTransaction);
     setIsUpdatingTransaction(true); // to show activity indicator
-
-    // console.log('updatedTransaction: ', updatedTransaction);
-    // saveUndoHistory(); // so user can undo changes later
 
     incrementVersion(updatedTransaction); // update transaction version
 
     const pos = transactions.indexOf(updatedTransaction); // get index transaction
 
     transactions[pos] = updatedTransaction;
+
+    // console.log('transactions[pos]: ', transactions[pos]);
 
     // save current transaction list to
     try {
@@ -481,39 +482,50 @@ export default function Home() {
       // throw new Error(err);
       console.log('error updating stored transaction in Home: ', err);
 
+      setIsUpdatingTransaction(false); // to show activity indicator
+
     }
 
      /* if online and logged in, update online transaction */
 
-    global.isConnected = await isDeviceOnline();
-    console.log('global.isConnected: ', global.isConnected);
-
-    global.authenticated = await getAuthentication();
     // console.log('transactions[pos]: ', transactions[pos]);
-    if (global.isConnected && global.authenticated) {
+    // if (await isDeviceOnline() && await getAuthentication()) {
       transactions[pos].category.owner = global.storageKey;
       transactions[pos].owner = global.storageKey
-      // transactions[pos].payee.owner = global.storageKey
+      transactions[pos].payee.owner = global.storageKey
 
-      updateOnlineCategory(transactions[pos].category);
-      updateOnlineTransaction(transactions[pos]);
-    }
+      // // updateOnlineCategory(transactions[pos].category);
+      // // console.log('transactions[pos]: ', transactions[pos]);
+      // // console.log('currentTransaction: ', currentTransaction);
+      // updateOnlineTransaction(transactions[pos]);
 
-    // showMessage({
-    //   message: 'Updated transaction',
-    //   // duration: 550,
-    //   // position: 'top',
+      removeStoredTransaction(transactions[pos])
 
-    //   // description: "My message description",
-    //   // type: 'success', // "success", "info", "warning", "danger"
-    //   // backgroundColor: colors.dark, // "purple", // background color
-    //   color: colors.shamrockGreen, // "#606060", // text color
-    //   opacity: 0.5,
+      
 
-    //   textStyle: styles.textStyle,
+      // saveTransaction(transactions[pos])
 
-    //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-    // });
+
+
+
+      setIsUpdatingTransaction(false);
+    // }
+
+    showMessage({
+      message: 'Updated transaction',
+      // duration: 550,
+      position: 'bottom',
+
+      // description: "My message description",
+      // type: 'success', // "success", "info", "warning", "danger"
+      // backgroundColor: colors.dark, // "purple", // background color
+      color: colors.shamrockGreen, // "#606060", // text color
+      // opacity: 0.5,
+
+      textStyle: styles.textStyle,
+
+      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+    });
 
     Analytics.record({ name: 'Updated a stored transaction' });
 
@@ -521,7 +533,7 @@ export default function Home() {
 
     // setCurrentTransaction(null);
 
-    setIsUpdatingTransaction(false);
+    
   };
 
   const updateTransactionCategory = async (category) => {
@@ -534,19 +546,31 @@ export default function Home() {
 
     let list = storageObj.transactions;
 
-    try {
-      const found = searchByID(currentTransaction.id, list);
-      // console.log('found: ', found);
+    if (global.authenticated !== true) {
+      setCurrentTransaction(null);
+      setIsUpdatingTransaction(false);
+      // return
+    }
 
+    currentTransaction.owner = global.storageKey
 
-      if (category.id === found.category.id || !found || !found.category.id) {
-        setIsUpdatingTransaction(false);
-        return;
-      }
+      let found = await searchByID(currentTransaction.id, list);
+      
+
+      
+
+      // console.log('global.storageKey: ', global.storageKey);
+
 
       found.category = category;
 
+      found.category.owner = global.storageKey
+
       found.type = category.type;
+
+      found.owner = global.storageKey
+
+
 
       // found.category.version++
 
@@ -554,16 +578,28 @@ export default function Home() {
       if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;
       if (found.type.toLowerCase() === 'expense' && found.amount >= 0) found.amount = found.amount * -1;
 
+      // console.log('found: ', found);
       updateStoredTransaction(list, found);
 
-      Analytics.record({ name: 'Successfully updated a transaction category' });
-    } catch (e) {
-      // throw new Error(e);
-      // category  = new Category(category.id, category.name,  category.color, category.type, currentOwner, 0)
-      // console.log('category: ', category);
+      if (category.id === found.category.id || !found || !found.category.id) {
+        setCurrentTransaction(null);
+        setIsUpdatingTransaction(false);
+        // return;
+      }
 
-      setIsUpdatingTransaction(false);
-    }
+      
+      // // found.category.version++
+
+      // // flip dollar amount to negative or positive
+      // if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;
+      // if (found.type.toLowerCase() === 'expense' && found.amount >= 0) found.amount = found.amount * -1;
+
+      
+
+      // // updateStoredTransaction(list, found);
+
+      // Analytics.record({ name: 'Successfully updated a transaction category' });
+
     setCurrentTransaction(null);
 
     setIsUpdatingTransaction(false);
@@ -1600,7 +1636,7 @@ export default function Home() {
             }
 
             if (found) {
-              updateTransaction(element)
+              // updateTransaction(element)
             }
 
           
@@ -1852,14 +1888,10 @@ export default function Home() {
       <View
         style={
             {
-            flex: 0.4,
-            alignItems: 'center',
-            justifyContent: 'center',
-            
-
-            
-            
-
+            marginTop: Platform.OS === 'ios' ? 50 : 120,
+            flex: 0.1,
+            // alignItems: 'center',
+            // justifyContent: 'center',
             // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'dotted',
@@ -1872,18 +1904,16 @@ export default function Home() {
        <WalkthroughElement id="balance-view">
         <View
           
-          style={[{
-            // flex: 1,
-            marginTop: 50,
-            
-            justifyContent: 'center',
-            alignItems: 'center',
+          style={[
+            {
+              justifyContent: 'center',
+              alignItems: 'center',
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'dotted',
-          },
-          // styles.balanceViewRectangle
+              // borderWidth: 1,
+              // borderColor: 'white',
+              // borderStyle: 'dotted',
+            },
+            styles.balanceViewRectangle
           ]}
         >
           <BalanceView
@@ -1896,29 +1926,20 @@ export default function Home() {
           />
           </View>
           </WalkthroughElement>
+
+
         
         
+      </View>
+                        {/* Device Syncing Text */}
         {
          isSyncing && displayIndicator
         }
 
-      </View>
-<View style={{ flex: 0.9, }}>
+        
+<View style={{ flex: 1, }}>
      { stickyTable }
     </View>
-
-
-{/*  <TouchableOpacity
-    style={styles.buttonStyle}
-    onPress={() => {
-      // goToWalkthroughElementWithId('start-button')
-      startWalkthrough(addTransactionWalkthrough)
-    }
-    }
-  >
-    <Text style={styles.buttonText}>{"Test Button"}</Text>
-  </TouchableOpacity>*/}
-
 
       {/* sticky table, scrolling pills, amount view,  keypad with transactions */}
 
@@ -1937,15 +1958,43 @@ export default function Home() {
         
           {/* Scrolling pills, amount view and keypad */}
 
-          <View style={{ flex: 1, }}>
+          {/*<View style={{ flex: 0.5, }}>*/}
+          <View style={{
+            position: 'absolute',
+            top: screenHeight/2,
+            // height: screenHeight/3,
+
+            // borderWidth: 1,
+            // borderColor: 'red',
+            // borderStyle: 'solid',
+
+            // backgroundColor: 'white',
+        }}>
           {
             /* Category picker tooltip */
             // <ToolTip message="Add a new transaction" />
           }
      
           { isSlideViewHidden && scrollingPills }
-            <View style={{ flex: 0, }}>{ isSlideViewHidden && scrollingPills && amountInput }</View>
-            <View style={{ flex: 1, }}>
+            <View style={{
+              // borderWidth: 1,
+              // borderColor: 'blue',
+              // borderStyle: 'solid',
+
+
+
+            }}>{ isSlideViewHidden && scrollingPills && amountInput }</View>
+            <View style={{
+              height: screenHeight/3,
+              top: 0,
+              right: 0,
+              left: 0,
+              // borderWidth: 1,
+              // borderColor: 'blue',
+              // borderStyle: 'solid', 
+
+              backgroundColor: colors.darkTwo,
+            }}>
               { isSlideViewHidden && amountInput && keypad }
             </View>
           </View>

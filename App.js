@@ -186,9 +186,9 @@ export default function App() {
                 {
                   // flex: 1,
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  // justifyContent: 'center',
                   backgroundColor: colors.dark,
-                  opacity: 0.5,
+                  // opacity: 0.5,
                   // borderWidth: 1,
                   // borderColor: 'white',
                   // borderStyle: 'solid',

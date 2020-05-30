@@ -35,8 +35,13 @@ export default function PizzaTranslator(props) {
   return (
     <View style={{  maxWidth: 135, flexGrow: 1, justifyContent: 'center',}}>
       <TextInput
-        style={styles.payeeInputText}
+        style={[
+          styles.payeeInputText,
+          {
+          // color: colors.offWhite,
+        }]}
         placeholder={transaction.note}
+        placeholderTextColor={colors.offWhite}
         onChangeText={text => setText(text)}
 
         onSubmitEditing={() => updateTransactionPayee(transaction, text)}

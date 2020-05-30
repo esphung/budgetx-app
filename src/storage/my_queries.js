@@ -403,24 +403,25 @@ export const saveTransaction = async (transaction) => {
     console.log('transaction successfully created:', input.id);
   } catch (err) {
     console.log('error creating transaction...', err);
-    updateTransaction(input)
+    // updateTransaction(input)
     // console.log('transaction: ', transaction);
   }
 }
 export const updateTransaction = async (updated) => {
-  // let input = formatTransactionInput(updated)
-  // console.log('input: ', input);
-  try {
-    await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
-    console.log('transaction successfully updated:', updated.id);
-  } catch (err) {
-    // transaction dne yet (most likely)
-    console.log('error updating transaction...', err);
-    removeTransaction(updated)
-    if (!err.data.updateCategory) {
-    saveTransaction(updated);
-  }
-  }
+  saveTransaction(updated);
+  // // let input = formatTransactionInput(updated)
+  // // console.log('input: ', input);
+  // try {
+  //   await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
+  //   console.log('transaction successfully updated:', updated.id);
+  // } catch (err) {
+  //   // transaction dne yet (most likely)
+  //   console.log('error updating transaction...', err);
+  // //   removeTransaction(updated)
+  // //   if (!err.data) {
+  // //   saveTransaction(updated);
+  // // }
+  // }
 };
 export const updateCategory = async (updated) => {
   try {

@@ -1350,7 +1350,10 @@ function Settings(props) {
     props.navigation.navigate('ChangePasswordScreen');
   }
 
-  function signOutBtnPressed () {
+  async function signOutBtnPressed () {
+    // if (await getAuthentication() !== true) {
+    //   return
+    // }
     props.navigation.navigate('SignOutScreen');
   }
 
@@ -1360,7 +1363,7 @@ function Settings(props) {
     props.navigation.navigate('SignIn');
     // props.navigation.popToTop();
   }
-    function signUpBtnPressed() {
+  function signUpBtnPressed() {
     // console.log(props.navigation);
     // AsyncStorage.removeItem('userToken')
     props.navigation.navigate('SignUp');
@@ -1416,9 +1419,9 @@ function Settings(props) {
     else if (name === 'Sign Out') {
       signOutBtnPressed();
     }
-    else if (name === 'Sign In/Sign Up') {
-      signInBtnPressed();
-    }
+    // else if (name === 'Sign In/Sign Up') {
+    //   signInBtnPressed();
+    // }
     else if (name === 'Sign In') {
       signInBtnPressed();
     }

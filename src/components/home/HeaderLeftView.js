@@ -224,12 +224,13 @@ function HeaderLeftView(props) {
         style={
           // styles.headerLeft,
           {
+            
             height: 50,
-        width:  (screenWidth)/(1.8),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingLeft: 10,
+            width: (screenWidth),
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingLeft: 10,
 
             // borderWidth: 1,
             // borderColor: 'white',

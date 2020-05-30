@@ -74,7 +74,7 @@ function TransactionItem(props, index) {
     name = category.name;
   }
 
-  let textColor = colors.offWhite; // 'rgba(255, 255, 255, 0.5)';
+  let textColor = colors.white; // 'rgba(255, 255, 255, 0.5)';
 
   if (currentTransaction === item) {
     textColor = `${category.color}`; // item.category.color + '0f';
@@ -85,25 +85,18 @@ function TransactionItem(props, index) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      // style={
-      //   {
-      //     // flex: 1,
-      //     // justifyContent: 'center',
-      //     // alignItems: 'center',
+      style={
+        {
+          justifyContent: 'center',
+          alignItems: 'center',
 
-      //     // borderWidth: 1,
-      //     // borderColor: '#ffffff',
-      //     // borderStyle: 'solid',
+          // borderWidth: 1,
+          // borderColor: '#ffffff',
+          // borderStyle: 'solid',
 
-      //     // marginHorizontal: 5,
-
-      //     // paddingVertical: 8,
-
-      //     // paddingHorizontal: 4,
-
-      //     // backgroundColor
-      //   }
-      // }
+          paddingLeft: 10,
+        }
+      }
     >
     {
       isUpdatingTransaction && currentTransaction && (currentTransaction.id === item.id) &&
@@ -122,18 +115,20 @@ function TransactionItem(props, index) {
     }
 
       <View style={{
-        // flex: 1,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
         flexDirection: 'row',
 
       }}
       >
 
         <View style={{
-          flex: 0.2,
+          // flex: 0.2,
           justifyContent: 'center',
           alignItems: 'center',
 
-          paddingBottom: 3,
+          paddingBottom: 4,
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -144,7 +139,7 @@ function TransactionItem(props, index) {
         </View>
 
         <View style={{
-          flex: 1,
+          // flex: 1,
           justifyContent: 'center',
           // alignItems: 'center',
 
@@ -165,9 +160,11 @@ function TransactionItem(props, index) {
         <View
           style={
             {
-              flex: 0.95, // 1
+              flex: 1,
               justifyContent: 'center',
               // alignItems: 'center',
+              alignSelf: 'flex-start',
+              paddingLeft: 4,
 
               // borderWidth: 1,
               // borderColor: 'white',
@@ -191,8 +188,12 @@ function TransactionItem(props, index) {
         <View
           style={
             {
-              flex: 0.82, // 1
+       
               justifyContent: 'center',
+              flexDirection: 'row-reverse',
+              justifyContent: 'flex-start',
+              
+
 
               // borderWidth: 1,
               // borderColor: 'white',
