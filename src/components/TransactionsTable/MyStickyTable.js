@@ -252,7 +252,7 @@ const MyStickyTable = (props) => {
             isSelected={false}
             onPress={() => onPress(item)} // {onPress} // console.log(tableData[index])
             currentTransaction={currentTransaction}
-            isNameInputEnabled={props.isNameInputEnabled}
+            // isNameInputEnabled={props.isNameInputEnabled}
             // handlePayeeNameChange={props.handlePayeeNameChange}
             updateStoredTransaction={updateStoredTransaction}
             updateTransactionPayee={updateTransactionPayee}

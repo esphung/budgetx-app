@@ -128,9 +128,9 @@ import {
   UpdateCategory,
   // removeTransaction,
   DeleteTransaction,
-  removePayee,
+  // removePayee, 
   // removeCategory,
-  savePayee,
+  // savePayee,
   SaveCategory,
   saveTransaction,
   // fetchStoredTransactions,
@@ -140,7 +140,7 @@ import {
 } from '../storage/my_queries';
 
 import {
-  addTransactionWalkthrough,
+  // addTransactionWalkthrough,
   addTransactionCategoryWalkthrough,
   addAmountWalkthrough,
   // pressAddBtnWalkthrough,
@@ -150,39 +150,35 @@ import { isDeviceOnline } from '../../network-functions';
 
 import { getFakeTransactions } from '../functions/getFakeTransactions';
 
-const LIMIT = 14
+const LIMIT = 14;
 
 const getAuthentication = async () => {
   global.authenticated = false;
   Auth.currentAuthenticatedUser()
-    .then(async (cognito) => {
+    .then(async () => {
       // console.log('user authenticated: ', cognito.attributes.sub);
       global.authenticated = true;
     }).catch((err) => {
-      // console.log('error getting user authentication in Home: ', err);
+      console.log('error getting user authentication: ', err);
     });
   return global.authenticated;
 };
-
-// const screenWidth = Dimensions.get("window").width;
-
-// const screenHeight = Dimensions.get("window").height;
 
 const compareListTransactions = async (local_transactions, online_transactions) => {
   const props = ['id', 'version'];
 
   const result = local_transactions.filter((o1) => {
-      // filter out (!) items in online_transactions
-      return online_transactions.some((o2) => {
-        return (o1.id === o2.id) && (o1.version < o2.version);
-      });
-  }).map(function(o){
-      // objects with only the required properties
-      // and map to apply this to the filtered array as a whole
-      return props.reduce((newo) => {
-          newo = o;
-          return newo;
-      }, {});
+    // filter out (!) items in online_transactions
+    return online_transactions.some((o2) => {
+      return (o1.id === o2.id) && (o1.version < o2.version);
+    });
+  }).map(function (o){
+    // objects with only the required properties
+    // and map to apply this to the filtered array as a whole
+    return props.reduce((newo) => {
+      newo = o;
+      return newo;
+    }, {});
   });
   return result;
 };
@@ -215,7 +211,7 @@ const incrementVersion = (transaction) => {
 
 const isUpperCase = (str) => {
   return str === str.toUpperCase();
-}
+};
 
 const findTransactionArrayDifferences = (otherArray) => {
   return (current) => {
@@ -275,17 +271,17 @@ const updateOnlineTransaction = async (transaction) => {
   UpdateTransaction(transaction);
 };
 
-const updateOnlineCategory = async (category) => {
-  const updated = {
-    id: category.id,
-    name: category.name,
-    color: category.color,
-    type: category.type,
-    owner: category.owner,
-    version: category.version + 1,
-  };
-  UpdateCategory(updated);
-};
+// const updateOnlineCategory = async (category) => {
+//   const updated = {
+//     id: category.id,
+//     name: category.name,
+//     color: category.color,
+//     type: category.type,
+//     owner: category.owner,
+//     version: category.version + 1,
+//   };
+//   UpdateCategory(updated);
+// };
 
 const updateStoredCategoryProperties = async (category) => {
   // console.log('updating category: ', category);
@@ -355,21 +351,21 @@ export default function Home() {
 
   const [currentVersion, setCurrentVersion] = useState(initialState.currentVersion);
 
-  const [currentPayee, setCurrentPayee] = useState('');
+  // const [currentPayee, setCurrentPayee] = useState('');
 
-  const [currentPayeeID, setCurrentPayeeID] = useState('');
+  // const [currentPayeeID, setCurrentPayeeID] = useState('');
 
-  const [currentPayeeName, setCurrentPayeeName] = useState('');
+  // const [currentPayeeName, setCurrentPayeeName] = useState('');
 
   const [currentNote, setCurrentNote] = useState(initialState.currentNote);
 
-  const [isStoringNewTransaction, setIsStoringNewTransaction] = useState(false);
+  // const [isStoringNewTransaction, setIsStoringNewTransaction] = useState(false);
 
-  const [isRemovingStoredTransaction, setIsRemovingStoredTransaction] = useState(false);
+  // const [isRemovingStoredTransaction, setIsRemovingStoredTransaction] = useState(false);
 
   const [
     slideViewBounceValue,
-    setSlideViewBounceValue,
+    // setSlideViewBounceValue,
   ] = useState(initialState.slideViewBounceValue);
 
   const [isSlideViewHidden, setIsSlideViewHidden] = useState(initialState.isSlideViewHidden);
@@ -380,7 +376,7 @@ export default function Home() {
 
   // const [shouldShowKeypad, setShouldShowKeypad] = useState(false);
 
-  const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
+  // const [isNameInputEnabled, setIsNameInputEnabled] = useState(false);
 
   const [isUpdatingTransaction, setIsUpdatingTransaction] = useState(false);
 
@@ -411,24 +407,6 @@ export default function Home() {
 
   const [currentTableHeight, setCurrentTableHeight] = useState(0)
 
-  // getTransactionCategoryPieChartData()
-
-  // const clearInputs = () => {
-  //   setCurrentPayee('')
-  //   setCurrentPayeeID('');
-  //   setCurrentPayeeName('');
-
-  //   setCurrentNote('');
-  //   setCurrentAmount(0);
-
-  //   setCurrentCategory('');
-  //   setCurrentCategoryID('');
-  //   setCurrentCategoryName('');
-  //   setCurrentCategoryColor('');
-
-  //   setCurrentType('');
-  // };
-
   const showCategoryToolTip = () => {
     // goToWalkthroughElementWithId('category-scroller')
     startWalkthrough(addTransactionWalkthrough)
@@ -449,7 +427,6 @@ export default function Home() {
     },
     [slideViewBounceValue],
   );
-
   const hideSlideView = useCallback(
     () => {
       // console.log('bye');
@@ -466,7 +443,6 @@ export default function Home() {
     [slideViewBounceValue],
   );
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
-
     setIsUpdatingTransaction(true); // to show activity indicator
 
     incrementVersion(updatedTransaction); // update transaction version
@@ -474,9 +450,6 @@ export default function Home() {
     const pos = transactions.indexOf(updatedTransaction); // get index transaction
 
     transactions[pos] = updatedTransaction;
-
-    // console.log('transactions[pos]: ', transactions[pos]);
-
     // save current transaction list to
     try {
       const storageObj = await loadSettingsStorage(global.storageKey); // get stored transactions
@@ -489,24 +462,16 @@ export default function Home() {
       console.log('error updating stored transaction in Home: ', err);
 
       setIsUpdatingTransaction(false); // to show activity indicator
-
     }
 
      /* if online and logged in, update online transaction */
-
-    // console.log('transactions[pos]: ', transactions[pos]);
     if (await isDeviceOnline() && await getAuthentication()) {
       transactions[pos].category.owner = global.storageKey;
-      transactions[pos].owner = global.storageKey
+      transactions[pos].owner = global.storageKey;
       
-      if (transactions[pos].payee) transactions[pos].payee.owner = global.storageKey
-
-      // // updateOnlineCategory(transactions[pos].category);
-      // // console.log('transactions[pos]: ', transactions[pos]);
-      // // console.log('currentTransaction: ', currentTransaction);
-      // updateOnlineTransaction(transactions[pos]);
-
-      // removeStoredTransaction(transactions[pos])
+      if (transactions[pos].payee) {
+        transactions[pos].payee.owner = global.storageKey;
+      }
 
       UpdateTransaction(transactions[pos])
 
@@ -528,14 +493,7 @@ export default function Home() {
 
       // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
     });
-
-    Analytics.record({ name: 'Updated a stored transaction' });
-
     retrieveUserStoredSettings();
-
-    // setCurrentTransaction(null);
-
-    
   };
 
   const updateTransactionCategory = async (category) => {
@@ -548,57 +506,38 @@ export default function Home() {
 
     let list = storageObj.transactions;
 
-    if (global.authenticated !== true) {
+    // if (global.authenticated !== true) {
+    //   setCurrentTransaction(null);
+    //   setIsUpdatingTransaction(false);
+    //   // return
+    // }
+
+    currentTransaction.owner = global.storageKey;
+
+    let found = await searchByID(currentTransaction.id, list);
+
+    if (!found) return;
+
+    found.category = category;
+
+    found.category.owner = global.storageKey;
+
+    found.type = category.type;
+
+    found.owner = global.storageKey;
+
+    // flip dollar amount to negative or positive
+    if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;
+    if (found.type.toLowerCase() === 'expense' && found.amount >= 0) found.amount = found.amount * -1;
+
+    // console.log('found: ', found);
+    updateStoredTransaction(list, found);
+
+    if (category.id === found.category.id || !found || !found.category.id) {
       setCurrentTransaction(null);
       setIsUpdatingTransaction(false);
-      // return
+      // return;
     }
-
-    currentTransaction.owner = global.storageKey
-
-      let found = await searchByID(currentTransaction.id, list);
-
-      if (!found) return;
-
-      // console.log('global.storageKey: ', global.storageKey);
-
-
-      found.category = category;
-
-      found.category.owner = global.storageKey
-
-      found.type = category.type;
-
-      found.owner = global.storageKey
-
-
-
-      // found.category.version++
-
-      // flip dollar amount to negative or positive
-      if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;
-      if (found.type.toLowerCase() === 'expense' && found.amount >= 0) found.amount = found.amount * -1;
-
-      // console.log('found: ', found);
-      updateStoredTransaction(list, found);
-
-      if (category.id === found.category.id || !found || !found.category.id) {
-        setCurrentTransaction(null);
-        setIsUpdatingTransaction(false);
-        // return;
-      }
-
-      // // found.category.version++
-
-      // // flip dollar amount to negative or positive
-      // if (found.type.toLowerCase() === 'income' && found.amount < 0) found.amount = found.amount * -1;
-      // if (found.type.toLowerCase() === 'expense' && found.amount >= 0) found.amount = found.amount * -1;
-
-      
-
-      // // updateStoredTransaction(list, found);
-
-      // Analytics.record({ name: 'Successfully updated a transaction category' });
 
     setCurrentTransaction(null);
 
@@ -608,21 +547,13 @@ export default function Home() {
   const updateTransactionNote = async (string) => {
     // load stored user transactions
     try {
-      // const storageObj = await loadSettingsStorage(global.storageKey);
-
-      // const list = storageObj.transactions;
-
-      // const found = await searchByID(currentTransaction.id, list);
-
       currentTransaction.note = string;
 
       updateStoredTransaction(currentTransactions, currentTransaction);
 
-      if (global.authenticated) save()
+      save();
 
       setCurrentTransaction(null);
-      
-
     } catch (e) {
       console.log('e: ', e);
     }
@@ -728,9 +659,7 @@ export default function Home() {
         userObject.transactions.forEach((transaction) => {
           transaction.owner = global.storageKey
           transaction.category.owner = global.storageKey
-        })
-
-
+        });
         setCurrentOwner(userObject.user.id);
 
         for (var i = userObject.categories.length - 1; i >= 0; i--) {
@@ -746,42 +675,27 @@ export default function Home() {
 
         // setIsUserLoggedIn(false);
       } catch(e) {
-        // statements
-        console.log(e);
-      }
-
-
-
-
-
-      setIsReady(true)
-    });
-
-    
-
-
-
-    
+          // statements
+          console.log(e);
+        }
+        setIsReady(true);
+      });
   }
-
   Home.reloadTransactions = () => {
     retrieveUserStoredSettings();
   };
-
   const storeNewTransaction = async (transaction) => {
     // setIsStoringNewTransaction(true);
 
     if (await isDeviceOnline()) {
-      Auth.currentAuthenticatedUser().then(async (cognito) => {
-         
-        SaveCategory(transaction.category);
-        // savePayee(transaction.payee);
-        saveTransaction(transaction);
-        // console.log('saved new transaction: ', cognito.attributes.sub);
+      Auth.currentAuthenticatedUser().then(() => {
+        global.authenticated = true;
 
-        /*  TESTING  */
-        // let cats = await listAllOnlineCategories()
-        // console.log('cats: ', cats);
+        global.isConnected = true
+
+        SaveCategory(transaction.category);
+
+        saveTransaction(transaction);
       }).catch((e) => console.log('e: ', e))
     }
 
@@ -789,7 +703,6 @@ export default function Home() {
     const userObject = await loadSettingsStorage(global.storageKey); // load user object
 
     // save to online storage, if online
-
     let list = [...userObject.transactions, transaction]
 
     // add to local storage
@@ -799,15 +712,6 @@ export default function Home() {
 
     setCurrentTransactions(userObject.transactions);
 
-    // clearInputs();
-
-    // setCurrentTransaction(transaction); // ???
-
-    // saveUndoHistory();
-
-    // setIsStoringNewTransaction(false);
-
-        // if ((!global.authenticated) && currentTransactions.length >= 5) {
     showMessage({
       message: 'Added transaction',
       // duration: 550,
@@ -823,67 +727,10 @@ export default function Home() {
 
       icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
     });
-      // return;
-    // }
-
-
-    Analytics.record({ name: 'Stored a transaction' });
+    // Analytics.record({ name: 'Stored a transaction' });
   };
-  async function clearState() {
-    // setIsReady(false);
-
-    // setIsStoringNewTransaction(false);
-
-    setIsUpdatingTransaction(false);
-
-    // add/remove transactions
-    // setCurrentTransactions([]);
-    setCurrentBalance(0.00);
-    setCurrentSpent(0.00);
-
-
-
-    setCurrentTransaction(initialState.currentTransaction);
-
-    setCurrentPayee({
-      id: uuidv4(),
-      name: 'None',
-      owner: global.storageKey,
-      version: 0,
-    });
-    setCurrentPayeeID(uuidv4());
-    setCurrentPayeeName('');
-
-    setCurrentNote('Add a note');
-    setCurrentType(initialState.currentType);
-    // setCurrentOwner(initialState.currentOwner);
-    setCurrentVersion(initialState.currentVersion);
-    setCurrentDate(initialState.currentDate);
-    setCurrentAmount(initialState.currentAmount);
-
-    setCurrentCategory(null);
-    setCurrentCategoryID('');
-    setCurrentCategoryName('');
-    setCurrentCategoryColor('');
-    setCurrentCategoryType('');
-    setCurrentCategoryOwner('');
-    setCurrentCategoryVersion('');
-
-    
-    setIsNameInputEnabled(true);
-
-    setSlideViewBounceValue(initialState.slideViewBounceValue); // (new Animated.Value(300));
-    setIsSlideViewHidden(initialState.isSlideViewHidden);
-
-    setIsCalculatingBalance(false);
-
-    setIsCalculatingSpent(false);
-
-    retrieveUserStoredSettings()
-  }
   async function removeStoredTransaction(transaction) {
-
-    let previous = transaction
+    const previous = transaction;
 
     /* remove transaction online in db */
     if (global.authenticated) {
@@ -892,45 +739,33 @@ export default function Home() {
       // Analytics.record({ name: 'Removed an online transaction' });
       DeleteTransaction(transaction);
     }
-
-    
     try {
 
       const userObject = await loadSettingsStorage(global.storageKey);
 
       // console.log('userObject.transactions.length: ', userObject.transactions.length);
 
-      let list = userObject.transactions;
+      const list = userObject.transactions;
 
       const found = await searchByID(transaction.id, list);
-
-      
 
       if (found) {
         // console.log('found: ', found);
         found.owner = global.storageKey;
 
-        found.category.owner =  global.storageKey
+        found.category.owner = global.storageKey;
 
         const pos = list.indexOf(found);
 
         list.splice(pos, 1);
 
-        // setCurrentTransactions(list);
-
-        // setCurrentTransaction(null);
-
         userObject.transactions = list;
 
-        // console.log('userObject.transactions.length: ', userObject.transactions.length);
-
         saveSettingsStorage(global.storageKey, userObject);
-
-
       }
       } catch(e) {
       // statements
-      console.log(e);
+      console.log('e:', e);
     }
     retrieveUserStoredSettings();
 
@@ -949,35 +784,18 @@ export default function Home() {
 
       icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
 
-      onPress: 
-        () => {
-          storeNewTransaction(previous)
-          // console.log('previous: ', previous);
-        },
-      
+      onPress: () => {
+        storeNewTransaction(previous);
+      },
     });
-
-
-    
-
-    // setIsRemovingStoredTransaction(false);
-
-
-
-    // Analytics.record({ name: 'Removed a local transaction' });
   }
   function handleChange(value) {
     if (currentTransaction) {
-      // currentTransaction.type = 'INCOME'
-         // Math.abs(num) => Always positive
-        // -Math.abs(num) => Always negative
-        // if (value < 0.00) return
-          
       // console.log('currentTransaction.amount: ', currentTransaction.amount);
-      if (currentTransaction.type === 'INCOME') currentTransaction.amount = Math.abs(value/100);
-      if (currentTransaction.type === 'EXPENSE') currentTransaction.amount =  -Math.abs(value/100);
+      if (currentTransaction.type === 'INCOME') currentTransaction.amount = Math.abs(value / 100);
+      if (currentTransaction.type === 'EXPENSE') currentTransaction.amount = -Math.abs(value / 100);
       // updateStoredTransaction(currentTransactions, currentTransaction);
-      save()
+      save();
     }
     if (String(value).length <= global.amountInputMaxLength) {
       setCurrentAmount(value);
@@ -991,28 +809,26 @@ export default function Home() {
   }
   const isUserInputValid = () => {
     let bool = true;
-    let invalid = '';
-    let message = 'Invalid Input'
 
     if (!currentDate || !currentAmount || !currentOwner || !currentCategory || !currentType) {
       // all inputs are filled
-      bool = false
+      bool = false;
     }
     if (!currentDate) {
       // invalid = 'Date'
     }
     else if (!currentAmount) {
       // invalid = 'Amount'
-      startWalkthrough(addAmountWalkthrough)
+      startWalkthrough(addAmountWalkthrough);
     }
     else if (!currentOwner) {
-      invalid = 'Owner'
+      invalid = 'Owner';
     }
     else if (!currentCategory) {
       invalid = 'Category';
       // alert('message?: DOMString')
       // showCategoryToolTip()
-      startWalkthrough(addTransactionCategoryWalkthrough)
+      startWalkthrough(addTransactionCategoryWalkthrough);
       // goToWalkthroughElementWithId('category-scroller')
     }
 
@@ -1064,7 +880,6 @@ export default function Home() {
 
     // setIsReady(false);
 
-
     // /* Create New Category */
     const category = new Category(
       currentCategoryID, // id
@@ -1079,9 +894,9 @@ export default function Home() {
     const payee = new Payee(uuidv4(), 'None', currentOwner, 0);
     // // console.log('payee: ', payee);
 
-    const amount = (category.type === 'EXPENSE') ? -Math.abs(currentAmount / (100)) : Math.abs(currentAmount / (100))
+    const amount = (category.type === 'EXPENSE') ? -Math.abs(currentAmount / (100)) : Math.abs(currentAmount / (100));
 
- 
+
     const transaction = new Transaction(
       uuidv4(), // id
       currentDate, // date
@@ -1101,86 +916,17 @@ export default function Home() {
     //   return;
     // }
 
-    setCurrentAmount(0)
-    setCurrentCategory(null)
-    setCurrentCategory(null)
-    setCurrentPayee(null)
-    setCurrentDate(new Date())
-    setCurrentType('')
-    setCurrentNote('')
-    setCurrentVersion(0)
-
-
-
+    setCurrentAmount(0);
+    setCurrentCategory(null);
+    setCurrentCategory(null);
+    // setCurrentPayee(null)
+    setCurrentDate(new Date());
+    setCurrentType('');
+    setCurrentNote('');
+    setCurrentVersion(0);
 
     storeNewTransaction(transaction); // store new transaction locally
-
-    
-
-    // global.isConnected = await isDeviceOnline();
-    // if (global.isConnected) {
-    //   global.authenticated = await getAuthentication();
-    
-
-      
-      // // if (await getAuthentication() && await isDeviceOnline()) {
-      //   SaveCategory(category);
-      //   savePayee(payee);
-      //   saveTransaction(transaction);
-      // }
-    // }
-      
-
-    // await saveTransaction(transaction); // store new transaction online
-
-  
-
-    // setIsReady(true);
-
-
-    // setIsBackedUp(false)
-  }
-
-  // const saveUndoHistory = async () => {
-  //   let success = false;
-  //   // const undo_storage_key = `${storageKey}_BACKUPSETTINGS`
-
-  //   let undo_storage_key = `${global.storageKey}_HISTORY`
-  //   // load stored settings
-  //   try {
-  //     const storageObj = await loadSettingsStorage(undo_storage_key);
-
-  //     let key = global.storageKey.replace('_HISTORY', '');
-
-  //     saveSettingsStorage(key, storageObj);
-
-  //     global.storageKey = key
-
-  //   } catch (e) {
-  //     // statements
-  //     console.log('e:', e);
-  //     // console.log(e);
-  //   }
-  // };
-  // const loadUndoHistory = async () => {
-  //   // let success = false;
-  //   try {
-  //     let undo_storage_key = `${global.storageKey}_HISTORY`; // history for REDOs
-  //     const undoObj = await loadSettingsStorage(undo_storage_key);
-
-  //     let key = global.storageKey.replace('_HISTORY', '');
-
-  //     saveSettingsStorage(key, undoObj)
-
-  //     global.storageKey = key
-  //   } catch (e) {
-  //     // statements
-  //     console.log('Could not save undo history:', e);
-  //     // console.log(e);
-  //   };
-
-  //   // setCurrentTransactions(undoObj.transactions);
-  // };
+  };
   function backspaceBtnPressed() {
     const strValue = String(currentAmount);
     // pop last char from string value
@@ -1200,41 +946,36 @@ export default function Home() {
     const spent = (calculateMonthSpent(currentTransactions));
     setCurrentSpent(spent);
     setIsCalculatingSpent(false);
-
-    // if (currentTransactions) {
-    //   setCurrentPieChartData(getTransactionCategories(currentTransactions))
-    // }
   }, [currentTransactions]);
 
   useEffect(() => {
     if (currentCategory) {
-      
       // check for version and owner properties
       if (!currentCategory.hasOwnProperty('owner') || !currentCategory.hasOwnProperty('version')) {
-        let category = new Category(currentCategory.id, currentCategory.name, currentCategory.color, currentCategory.type, currentOwner, 0)
+        const category = new Category(currentCategory.id, currentCategory.name, currentCategory.color, currentCategory.type, currentOwner, 0)
         // console.log('category props updated in side effect: ', category);
         updateStoredCategoryProperties(category); // re-store category in local db
       }
       // check if category type is uppercase
       if (!isUpperCase(currentCategory.type)) {
-        let category = new Category(currentCategory.id, currentCategory.name, currentCategory.color, currentCategory.type.toUpperCase(), currentOwner, 0)
+        const category = new Category(currentCategory.id, currentCategory.name, currentCategory.color, currentCategory.type.toUpperCase(), currentOwner, 0)
         updateStoredCategoryProperties(category); // re-store category in local db
         // console.log('category.type: ', category.type);
       }
 
-      setCurrentCategoryID(currentCategory.id)
-      setCurrentCategoryName(currentCategory.name)
-      setCurrentCategoryColor(currentCategory.color)
-      setCurrentCategoryType(currentCategory.type)
+      setCurrentCategoryID(currentCategory.id);
+      setCurrentCategoryName(currentCategory.name);
+      setCurrentCategoryColor(currentCategory.color);
+      setCurrentCategoryType(currentCategory.type);
 
       setCurrentCategoryOwner(currentOwner);
       setCurrentCategoryVersion(currentVersion);
       setCurrentType(currentCategory.type);
     } else {
-      setCurrentCategoryID('')
-      setCurrentCategoryName('')
-      setCurrentCategoryColor('')
-      setCurrentCategoryType('')
+      setCurrentCategoryID('');
+      setCurrentCategoryName('');
+      setCurrentCategoryColor('');
+      setCurrentCategoryType('');
       setCurrentCategoryOwner('');
       setCurrentCategoryVersion('');
 
@@ -1242,40 +983,11 @@ export default function Home() {
     }
   }, [currentCategory]);
 
-
-
-  // useEffect(() => {
-  //   if (!isSlideViewHidden) {
-  //     // Showing Slide View
-  //     setShouldShowScrollingPills(false);
-  //     setShouldShowAmountInput(false);
-  //     setShouldShowKeypad(false);
-  //   } else {
-  //     // Slide View is Hidden
-  //     setShouldShowScrollingPills(true);
-  //     setShouldShowAmountInput(true);
-  //     setShouldShowKeypad(true);
-  //   }
-  //   // Control Name Input Editable
-  //   if (currentTransaction && !isSlideViewHidden) {
-  //     setIsNameInputEnabled(false);
-  //   } else {
-  //     setIsNameInputEnabled(true);
-  //   }
-  // }, [isSlideViewHidden]);
-
   async function loadResources() {
     retrieveUserStoredSettings();
 
     global.isConnected = await isDeviceOnline();
-    
     global.authenticated = await getAuthentication();
-
-
-
-    // setCurrentPieChartData(getTransactionCategories(currentTransactions))
-
-
   }
 
   useEffect(() => {
@@ -1479,9 +1191,9 @@ export default function Home() {
       swipeEditBtnPressed={swipeEditBtnPressed}
 
       // isNameInputEnabled={isNameInputEnabled}
-      isNameInputEnabled={isNameInputEnabled}
+      // isNameInputEnabled={isNameInputEnabled}
 
-      currentPayeeName={currentPayeeName}
+      // currentPayeeName={currentPayeeName}
 
       updateTransactionPayee={updateTransactionPayee}
 

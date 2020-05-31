@@ -366,7 +366,7 @@ export const SaveCategory = async (category) => {
 
       let errorType = e.errors[0]['errorType'];
 
-      if (errorType  && errorType === 'DynamoDB:ConditionalCheckFailedException') {
+      if (errorType && errorType === 'DynamoDB:ConditionalCheckFailedException') {
         console.log(`trying to update category ${category.id} instead ...`);
         UpdateCategory(category);
       }
