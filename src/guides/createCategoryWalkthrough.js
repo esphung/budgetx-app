@@ -26,8 +26,8 @@
 
 // export default [
 //   {
-//     id: 'category-scroller',
-//     content: makeTooltipContent('pick a category'),
+//     id: 'add-new-category-button',
+//     content: makeTooltipContent('click here'),
 //   },
 //   // {
 //   //   id: 'profile-name',

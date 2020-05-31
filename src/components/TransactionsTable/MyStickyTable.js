@@ -162,13 +162,12 @@ const MyStickyTable = (props) => {
   }
 
   function Render_Empty_Component() {
-    // console.log('Rendering Empty Component');
+    // console.warn('Rendering Empty Component');
     const view = (
       <ScrollView
-      scrollEnabled={false}
+      // scrollEnabled={false}
         contentContainerStyle={{
-          flex: 1,
-
+          
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'dashed',

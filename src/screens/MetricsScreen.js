@@ -42,16 +42,99 @@ import {
   // retrieveLocalTransactions,
 } from '../storage/SettingsStorage';
 
+import {
+  calculateEachMonthTotalSpent,
+  calculateEachDayTotalSpent,
+  calculateEachMonthTotalEarned,
+} from '../functions/calculateEachMonthTotalSpent';
+
 // import { data } from './data';
 
 import colors from '../../colors';
 
 import styles from '../../styles';
 
+let monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+
+let shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function getBarChartEarnedData(data) {
+  // let dates = getDates(data)
+
+  let amounts = []
+
+  let months = monthNames[0,6].length
+
+  let spent = 0
+
+  let currentDate = new Date();
+
+  for (var i = 0; i < 12; i++) {
+    // months[i]
+    
+
+    let date = new Date(currentDate.getYear(), i, 1)
+    // console.log('date: ', date);
+
+    spent = calculateEachMonthTotalEarned(data, date);
+    // console.log('monthlySpentData: ', monthlySpent);
+
+    amounts.push(spent)
+  }
+  return {
+    // labels: dates,
+    labels: shortMonths,
+    datasets: [
+      {
+        data: amounts
+      }
+    ]
+  };
+}
+
+function getBarChartExpenseData(data) {
+  // let dates = getDates(data)
+
+  let amounts = []
+
+  let months = monthNames.length
+
+  let spent = 0
+
+  let currentDate = new Date();
+
+  for (var i = 0; i < 12; i++) {
+    // months[i]
+    
+
+    let date = new Date(currentDate.getYear(), i, 1)
+    // console.log('date: ', date);
+
+    spent = calculateEachMonthTotalSpent(data, date);
+    // console.log('monthlySpentData: ', monthlySpent);
+
+    amounts.push(spent)
+
+  }
+  return {
+    // labels: dates,
+    labels: shortMonths,
+    datasets: [
+      {
+        data: amounts
+      }
+    ]
+  };
+}
+
 
 
 export default function MetricsScreen() {
   const [data, setData] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(true)
+
+  // const [isChartsEnabled, setIsChartsEnabled] = useState(false)
 
   const pieChartPressed = () => {
     // console.log('Hello: ');
@@ -61,22 +144,29 @@ export default function MetricsScreen() {
     const storage = await loadSettingsStorage(global.storageKey);
     // console.log('storage.transactions.length: ', storage.transactions.length);
 
-    setData(storage.transactions)
+    setData(storage.transactions);
+
+    setIsLoading(false)
+
+    // if (storage.transactions &&  storage.transactions.length > 0) {
+    //   setIsChartsEnabled(true)
+    // }
   }
 
   useEffect(() => {
-    loadResources()
+    // setIsLoading(true)
+    loadResources();
     // return () => {
     //   // 
     // };
   }, []);
 
   return (
-    <SafeAreaView style={
+    <View style={
       [
-        // styles.container,
+        styles.container,
         {
-          alignItems: 'center',
+          // alignItems: 'center',
           // marginTop: 50,
 
         }
@@ -97,8 +187,16 @@ export default function MetricsScreen() {
         // onWillBlur={}
         // onDidBlur={retrieveUserStoredSettings}
       />*/}
-      <BarChartExample data={data} />
-    </SafeAreaView>
+      {
+        data && <BarChartExample
+          data={data}
+          isChartsEnabled={data.length > 0}
+          isLoading={isLoading}
+          getBarChartEarnedData={getBarChartEarnedData}
+          getBarChartExpenseData={getBarChartExpenseData}
+        />
+      }
+    </View>
   );
 }
 

@@ -187,7 +187,7 @@ export default function App() {
                   // flex: 1,
                   alignItems: 'center',
                   // justifyContent: 'center',
-                  backgroundColor: colors.dark,
+                  backgroundColor: colors.darkTwo,
                   // opacity: 0.5,
                   // borderWidth: 1,
                   // borderColor: 'white',

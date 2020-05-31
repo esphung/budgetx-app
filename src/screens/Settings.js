@@ -58,7 +58,7 @@ import {
 /* my custom queries */
 import {
   // updateTransaction,
-  removeTransaction,
+  DeleteTransaction,
   // removePayee,
   removeCategory,
   // savePayee,
@@ -426,7 +426,7 @@ function Settings(props) {
 
 
     //   /* REPLACE LESSER VERSIONS OF TRANSACTION LOCALLY */
-    //   // removeTransaction(transaction);
+    //   // DeleteTransaction(transaction);
     // });
 
     return result;
@@ -771,13 +771,14 @@ function Settings(props) {
   * > reset data from the app
   */
   const resetData = async () => {
-    setIsReady(false)
+    setIsReady(false);
+
     let backupKey = global.storageKey;
     let storage = await loadSettingsStorage(global.storageKey)
 
     for (var i = storage.transactions.length - 1; i >= 0; i--) {
       // console.log('transactions[i]: ', transactions[i]);
-      await removeTransaction(storage.transactions[i])
+      DeleteTransaction(storage.transactions[i])
     }
 
     let categories = storage.categories;

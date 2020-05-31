@@ -59,7 +59,7 @@ function HeaderRightView(props) {
     // console.log('navigation: ', navigation);
   };
 
-  const metricsBtnPressed  = () => {
+  const metricsBtnPressed = () => {
     navigation.navigate('MetricsScreen');
   };
 
@@ -156,7 +156,7 @@ function HeaderRightView(props) {
 
     <TouchableOpacity
       // onPress={searchBtnPressed}
-      disabled
+      // disabled={!global.authenticated}
       onPress={metricsBtnPressed}
       style={[
         // styles.searchBtnTouchableOpacity,
@@ -172,7 +172,7 @@ function HeaderRightView(props) {
         // borderStyle: 'solid',
       }]}
     >
-      {/*<Octicons name="graph" size={24} color={colors.white} />*/}
+      <Octicons name="graph" size={24} color={colors.white} />
 {/*
         <Image
           resizeMode="contain"

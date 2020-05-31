@@ -7,6 +7,11 @@ import { Ionicons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { AppLoading } from 'expo';
 
 import {
+  WalkthroughElement,
+  startWalkthrough,
+} from 'react-native-walkthrough';
+
+import {
   // StyleSheet,
   View,
   // ScrollView,
@@ -26,6 +31,7 @@ import {
   Platform,
   // BlurViewIOS,
   // BlurView,
+  AsyncStorage,
 } from 'react-native';
 
 import { Container, Header, Content, Text, ListItem, CheckBox, Body, Right } from 'native-base';
@@ -89,21 +95,32 @@ import uuidv4 from '../functions/uuidv4';
 
 /* my custom queries */
 import {
-  updateTransaction,
+  UpdateTransaction,
   // removeTransaction,
   // removePayee,
   removeCategory,
   // savePayee,
   saveCategory,
   // saveTransaction,
-  updateCategory,
+  UpdateCategory,
   getCategoryByID,
   // fetchStoredTransactions,
   // fetchStoredCategories,
   // getTransactionByID,
+  listAllOnlineCategories,
 } from '../storage/my_queries';
 
 import { crayola, getCrayolaColors } from '../data/crayola';
+
+import {
+  // addTransactionWalkthrough,
+  // addCategoryWalkthrough,
+  // addAmountWalkthrough,
+  // pressAddBtnWalkthrough,
+  createCategoryWalkthrough,
+} from '../guides/walkthroughs';
+
+// console.log('createCategoryWalkthrough: ', createCategoryWalkthrough);
 
 const MAX_NAME_LENGTH = 15;
 
@@ -172,7 +189,7 @@ const pushAllCategoriesToCloud = async () => {
         storage.categories[i].version + 1, // version
       );
 
-    updateCategory(category);
+    UpdateCategory(category);
 
     // saveCategory(categories)
       // console.log('storage.categories[i]: ', storage.categories[i]);
@@ -196,85 +213,11 @@ function CellItem({
   addCategory,
   authenticated,
 }) {
-  // const [text, setText] = useState(null);
-
-  // let isEditable = false;
-  // if (!name) {
-  //   isEditable = true;
-  // }
-  // const handleTextChange = (value) => {
-  //   // console.log(value);
-  //   setText(value);
-  // };
-
-  // const colorSelect = (colorId) => {
-  //   Alert.alert('Please Purchase Category Color Change');
-  //   // console.log(colorId);
-  // };
-
-
-
-  // async function retrieveCognitoUserKey() {
-  //   Auth.currentAuthenticatedUser()
-  //     .then((cognito) => {
-  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //       // console.log('username:', cognitoUser.username);
-  //       // setStorageKey(cognito.username);
-
-  //       // setEmail(cognito.attributes.email);
-  //       key = cognito.username;
-  //     })
-  //     .catch((err) => {
-  //       // console.log(err);
-  //       Alert.alert(err);
-  //     });
-  // }
-
-
-  // const handleTextSubmit = async (value) => {
-  //   Alert.alert('handling text submit', text)
-  //   // let key = retrieveCognitoUserKey();
-
-  //   // if (key) {
-  //   //   // load stored user settings
-  //   //   const userObject = await loadSettingsStorage(key);
-  //   // } else {
-  //   //   alert('error handling text submit')
-  //   // }
-
-    
-
-  //   // const previousObj = searchByName(value, userObject.categories);
-
-  //   // // const randomColor = randomKeyFrom(colors)
-
-  //   // if (!previousObj) {
-  //   //   //  create new payee
-  //   //   // addCategory(value, randomColor);
-  //   //   addCategory(value, colors.white);
-  //   // }
-  // };
-
-  // useEffect(() => {
-  //   retrieveCognitoUserKey();
-  //   return () => {
-  //     // effect
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   setText(name);
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [])
-
- 
 
   return (
     <TouchableOpacity
       // onPress={() => onSelect(id)}
-      onPress={() => console.log('category id: ', id)}
+      onPress={() => console.log('category.id: ', id)}
       activeOpacity={1.0}
       style={[
         styles.tableItemStyle,
@@ -400,6 +343,17 @@ export default function CustomizeCategoriesScreen() {
     setDialogVisible(true)
   }
 
+
+  const showCategoryToolTip = async () => {
+    let hasSeenCreateNewCategoryToolTip = await AsyncStorage.getItem('hasSeenCreateNewCategoryToolTip');
+    console.log('hasSeenCreateNewCategoryToolTip: ', hasSeenCreateNewCategoryToolTip);
+
+    if (!hasSeenCreateNewCategoryToolTip) {
+      startWalkthrough(createCategoryWalkthrough);
+      AsyncStorage.setItem('hasSeenCreateNewCategoryToolTip', JSON.stringify(true))
+    }
+  };
+
   const compareLists = async (a, b) => {
   // load online transactions
   // let online_transactions = await retrieveOnlineTransactions();
@@ -455,7 +409,7 @@ export default function CustomizeCategoriesScreen() {
     // //   if (og) {
     // //     element = og
     // //     element.owner = global.storageKey
-    // //     updateCategory(element)
+    // //     UpdateCategory(element)
     // //   } else {
     // //     deleteCategoryByID
     // //   }
@@ -521,7 +475,7 @@ export default function CustomizeCategoriesScreen() {
 
     //   //   // console.log('updated: ', updated);
 
-    //   //   // updateCategory(updated)
+    //   //   // UpdateCategory(updated)
 
     //   //   storageObj.categories[i] = updated
     //   // }
@@ -704,16 +658,12 @@ export default function CustomizeCategoriesScreen() {
 
     pushAllCategoriesToCloud()
 
-
-    
-
-
     setIsAddingCategory(false);
  
     return obj;
   };
 
-  // async function updateCategoryByName(name) {
+  // async function UpdateCategoryByName(name) {
   //   const userObject = await loadSettingsStorage(storageKey);
 
   //   const list = userObject.categories;
@@ -809,7 +759,7 @@ export default function CustomizeCategoriesScreen() {
 
         /* try to update online transactions */
         Auth.currentAuthenticatedUser().then((cognito) => {
-          updateTransaction(element)
+          UpdateTransaction(element)
         }).catch((err) => {
           // console.log('unauth user updating user transactions in CustomizeCategoriesScreen: ', err);
         })
@@ -833,20 +783,19 @@ export default function CustomizeCategoriesScreen() {
 
 
   const retrieveStoredCategories = async () => {
+    const storage = await loadSettingsStorage(global.storageKey);
     // setAuthenticated(await getAuthentication())
-    await Auth.currentAuthenticatedUser().then((user) =>  {
+    Auth.currentAuthenticatedUser().then(async (user) =>  {
       global.authenticated = true
-    }).catch(() => {
+      let list = await listAllOnlineCategories()
+      storage.categories = list
+    }).catch(async () => {
       global.authenticated = false
+      
+      
     })
-    const storage = await loadSettingsStorage(storageKey);
-    // console.log(storage)
-    try {
-      setData(storage.categories);
-    } catch(e) {
-      // statements
-      console.log('e: ', e);
-    }
+
+    setData(storage.categories);
   };
 
   const deleteBtnPressed = async (item) => {
@@ -1074,6 +1023,11 @@ export default function CustomizeCategoriesScreen() {
 
     setFlatlistData(getFlatListDataFromObject(colors).concat(getFlatListDataFromObject(getCrayolaColors())))
 
+
+    
+
+    // startWalkthrough(createCategoryWalkthrough)
+    showCategoryToolTip()
     
     return () => {
       // effect
@@ -1391,7 +1345,7 @@ export default function CustomizeCategoriesScreen() {
     );
   }
 
-  const updateCategoryColor = async (selectedColor) => {
+  const UpdateCategoryColor = async (selectedColor) => {
     // console.log('color: ', color);
 
     // alert(Object.keys(colors).includes(selectedColor.key.toLowerCase()))
@@ -1425,7 +1379,7 @@ export default function CustomizeCategoriesScreen() {
       
       updateUserTransactionCategories(storage.categories);
 
-      pushAllCategoriesToCloud()
+      // pushAllCategoriesToCloud()
 
       setIsLoading(false)
     } catch(e) {
@@ -1500,13 +1454,13 @@ export default function CustomizeCategoriesScreen() {
       
       <FlatList
         // data={getFlatListDataFromObject(colors)}
-        // renderItem={({ item }) => <Item item={item} onPress={() => updateCategoryColor(item.key, colors[item.key])} />}
+        // renderItem={({ item }) => <Item item={item} onPress={() => UpdateCategoryColor(item.key, colors[item.key])} />}
         // keyExtractor={(item) => item.key}
 
         // data={authenticated && getFlatListDataFromObject(crayolaData)  || getFlatListDataFromObject(colors)}
         data={flatlistData}
         renderItem={({ item }) => <ColorTableCell item={item} opacity={0.5} name={item.key} color={item.value} onPress={() => {
-          updateCategoryColor(item)
+          UpdateCategoryColor(item)
         }} />}
         keyExtractor={(item) => item.key}
       />
@@ -1629,7 +1583,10 @@ export default function CustomizeCategoriesScreen() {
         <HelpMessage message={helpMessage} />
         </View>
 
-                <View style={{
+        
+
+        <WalkthroughElement id="add-new-category-button">
+        <View style={{
           // flexDirection: 'column',
           // height: 50,
 
@@ -1645,18 +1602,21 @@ export default function CustomizeCategoriesScreen() {
           // borderStyle: 'solid',
         }}>
 
+       
+          <BlueButton
+            icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
+            title="Add New"
+            onPress={() => {
+              Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
+            }}
+          />
 
-        <BlueButton
-          icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-          title="Add New"
-          onPress={() => {
-            Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-          }}
-        />
-
+    
         </View>
+        </WalkthroughElement>
+        
 
-                <View style={{
+        <View style={{
           height: 10,
           width: '100%',
           margin: 2,

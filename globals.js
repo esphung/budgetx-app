@@ -31,7 +31,7 @@ global.isConnected = null;
 
 global.isConfirmSent = false;
 
-global.debugMode = true;
+global.debugMode = false;
 
 global.isUserLoggedIn = false;
 

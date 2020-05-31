@@ -163,6 +163,8 @@ function SignOutScreen({ navigation }) {
 
       AsyncStorage.removeItem('hasSeenIntro');
 
+      AsyncStorage.removeItem('hasSeenCreateNewCategoryToolTip')
+
 
       // global.storageKey = '';
 

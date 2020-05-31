@@ -14,16 +14,16 @@ export default function PizzaTranslator(props) {
 
   // console.log('transaction: ', transaction);
 
-  const [text, setText] = useState('');
+  // const [text, setText] = useState('');
 
-  if (!transaction.payee) {
-    transaction.payee = {
-      id: uuidv4(),
-      name: '',
-      owner: global.storageKey,
-      version: 0,
-    }
-  }
+  // if (!transaction.payee) {
+  //   transaction.payee = {
+  //     id: uuidv4(),
+  //     name: '',
+  //     owner: global.storageKey,
+  //     version: 0,
+  //   }
+  // }
 
   // useEffect(() => {
   //   // updateTransactionPayee(transaction, text);
@@ -33,40 +33,50 @@ export default function PizzaTranslator(props) {
   //   };
   // }, [text]);
   return (
-    <View style={{  maxWidth: 135, flexGrow: 1, justifyContent: 'center',}}>
-      <TextInput
+    <View style={{
+      maxWidth: screenWidth/2, // 200,
+      flex: 1,
+      justifyContent: 'center',
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
+    }}>
+      <Text
+      numberOfLines={1}
         style={[
-          styles.payeeInputText,
+          styles.textStyle,
           {
-          // color: colors.offWhite,
+          color: colors.offWhite,
         }]}
-        placeholder={transaction.note}
-        placeholderTextColor={colors.offWhite}
-        onChangeText={text => setText(text)}
+        // placeholder={transaction.note}
+        // placeholderTextColor={colors.offWhite}
+        // onChangeText={text => setText(text)}
 
-        onSubmitEditing={() => updateTransactionPayee(transaction, text)}
-        defaultValue=""
+        // onSubmitEditing={() => updateTransactionPayee(transaction, text)}
+        // defaultValue=""
 
-        keyboardAppearance="dark" // ios
+        // keyboardAppearance="dark" // ios
 
-        editable={false}
+        // editable={false}
 
-        returnKeyType="done"
+        // returnKeyType="done"
 
-        autoCorrect
+        // autoCorrect
 
-        autoCompleteType="name"
+        // autoCompleteType="name"
 
-        spellCheck
+        // spellCheck
 
-        autoCapitalize="words" // "words"
+        // autoCapitalize="words" // "words"
 
-        maxLength={24}
+        // maxLength={24}
 
-        clearButtonMode="while-editing"
+        // clearButtonMode="while-editing"
 
-        clearOnTextFocus
-      />
+        // clearOnTextFocus
+      >{
+        transaction.note
+      }</Text>
      {/* <Text style={{padding: 10, fontSize: 20}}>
         { text.split(' ').map((word) => word && '🍕').join(' ') }
       </Text>*/}

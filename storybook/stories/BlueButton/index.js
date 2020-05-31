@@ -6,6 +6,8 @@ import { View, Text } from 'react-native';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+// import { WalkthroughElement } from 'react-native-walkthrough';
+
 // import { Ionicons } from 'expo-vector-icons';
 
 // import PropTypes from 'prop-types';
@@ -18,6 +20,7 @@ import styles from '../../../styles';
 function BlueButton(props) {
   const { onPress, title, icon } = props;
   const view = (
+    
     <View
       style={
         {
@@ -35,6 +38,7 @@ function BlueButton(props) {
         }
       }
     >
+    
       <TouchableOpacity
         onPress={onPress}
         style={
@@ -48,6 +52,8 @@ function BlueButton(props) {
         }
       >
 
+      
+
         <Text
           style={styles.buttonText}
         >
@@ -57,6 +63,7 @@ function BlueButton(props) {
           { title }
         </Text>
       </TouchableOpacity>
+      
 
     </View>
   );

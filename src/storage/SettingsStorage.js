@@ -136,6 +136,7 @@ const getOnlineUserKey = async () => {
 }
 
 export const saveSettingsStorage = (key, settings) => {
+  if (global.debugMode) return
   AsyncStorage.setItem(key, JSON.stringify(settings));
 };
 

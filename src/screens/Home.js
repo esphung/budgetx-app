@@ -124,13 +124,14 @@ import getUniqueId from '../functions/getUniqueId';
 
 /* my custom queries */
 import {
-  updateTransaction,
-  updateCategory,
-  removeTransaction,
+  UpdateTransaction,
+  UpdateCategory,
+  // removeTransaction,
+  DeleteTransaction,
   removePayee,
   // removeCategory,
   savePayee,
-  saveCategory,
+  SaveCategory,
   saveTransaction,
   // fetchStoredTransactions,
   // fetchStoredCategories,
@@ -140,7 +141,7 @@ import {
 
 import {
   addTransactionWalkthrough,
-  addCategoryWalkthrough,
+  addTransactionCategoryWalkthrough,
   addAmountWalkthrough,
   // pressAddBtnWalkthrough,
 } from '../guides/walkthroughs';
@@ -149,14 +150,16 @@ import { isDeviceOnline } from '../../network-functions';
 
 import { getFakeTransactions } from '../functions/getFakeTransactions';
 
+const LIMIT = 14
+
 const getAuthentication = async () => {
   global.authenticated = false;
   Auth.currentAuthenticatedUser()
     .then(async (cognito) => {
-      console.log('user authenticated: ', cognito.attributes.sub);
+      // console.log('user authenticated: ', cognito.attributes.sub);
       global.authenticated = true;
     }).catch((err) => {
-      console.log('error getting user authentication in Home: ', err);
+      // console.log('error getting user authentication in Home: ', err);
     });
   return global.authenticated;
 };
@@ -269,7 +272,7 @@ const updateOnlineTransaction = async (transaction) => {
   //   note: transaction.note,
   //   type: transaction.type,
   // };
-  updateTransaction(transaction);
+  UpdateTransaction(transaction);
 };
 
 const updateOnlineCategory = async (category) => {
@@ -281,7 +284,7 @@ const updateOnlineCategory = async (category) => {
     owner: category.owner,
     version: category.version + 1,
   };
-  updateCategory(updated);
+  UpdateCategory(updated);
 };
 
 const updateStoredCategoryProperties = async (category) => {
@@ -310,8 +313,8 @@ const updateStoredCategoryProperties = async (category) => {
 
     // try to save category online
     Auth.currentAuthenticatedUser().then((cognito) => {
-      saveCategory(category);
-      console.log(`auth user ${cognito.attributes.sub} saved category ${category.id} in Home`);
+      SaveCategory(category);
+      // console.log(`auth user ${cognito.attributes.sub} saved category ${category.id} in Home`);
     }).catch((err) => console.log('error saving category in Home: ', err));
   }
 
@@ -406,6 +409,8 @@ export default function Home() {
 
   const [isSyncing, setIsSyncing] = useState(false);
 
+  const [currentTableHeight, setCurrentTableHeight] = useState(0)
+
   // getTransactionCategoryPieChartData()
 
   // const clearInputs = () => {
@@ -461,6 +466,7 @@ export default function Home() {
     [slideViewBounceValue],
   );
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
+
     setIsUpdatingTransaction(true); // to show activity indicator
 
     incrementVersion(updatedTransaction); // update transaction version
@@ -489,27 +495,23 @@ export default function Home() {
      /* if online and logged in, update online transaction */
 
     // console.log('transactions[pos]: ', transactions[pos]);
-    // if (await isDeviceOnline() && await getAuthentication()) {
+    if (await isDeviceOnline() && await getAuthentication()) {
       transactions[pos].category.owner = global.storageKey;
       transactions[pos].owner = global.storageKey
-      transactions[pos].payee.owner = global.storageKey
+      
+      if (transactions[pos].payee) transactions[pos].payee.owner = global.storageKey
 
       // // updateOnlineCategory(transactions[pos].category);
       // // console.log('transactions[pos]: ', transactions[pos]);
       // // console.log('currentTransaction: ', currentTransaction);
       // updateOnlineTransaction(transactions[pos]);
 
-      removeStoredTransaction(transactions[pos])
+      // removeStoredTransaction(transactions[pos])
 
-      
-
-      // saveTransaction(transactions[pos])
-
-
-
+      UpdateTransaction(transactions[pos])
 
       setIsUpdatingTransaction(false);
-    // }
+    }
 
     showMessage({
       message: 'Updated transaction',
@@ -524,7 +526,7 @@ export default function Home() {
 
       textStyle: styles.textStyle,
 
-      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+      // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
     });
 
     Analytics.record({ name: 'Updated a stored transaction' });
@@ -555,9 +557,8 @@ export default function Home() {
     currentTransaction.owner = global.storageKey
 
       let found = await searchByID(currentTransaction.id, list);
-      
 
-      
+      if (!found) return;
 
       // console.log('global.storageKey: ', global.storageKey);
 
@@ -587,7 +588,6 @@ export default function Home() {
         // return;
       }
 
-      
       // // found.category.version++
 
       // // flip dollar amount to negative or positive
@@ -630,8 +630,6 @@ export default function Home() {
   };
 
   async function retrieveUserStoredSettings() {
-
-
     global.isConnected = await isDeviceOnline();
     // console.log('global.isConnected: ', global.isConnected);
     
@@ -644,8 +642,6 @@ export default function Home() {
 
         global.email = cognito.attributes.email;
 
-
-
         crossDeviceSync();
 
         const storage = await loadSettingsStorage(global.storageKey);
@@ -655,9 +651,14 @@ export default function Home() {
 
         storage.user.email = cognito.attributes.email
 
-        // for (var i = storage.categories.length - 1; i >= 0; i--) {
-        //   console.log('storage.categories[i]: ', storage.categories[i]);
-        // }
+        storage.transactions.forEach((transaction) => {
+          transaction.owner = global.storageKey
+          transaction.category.owner = global.storageKey
+
+          UpdateTransaction(transaction)
+        })
+
+        // console.log('storage.transactions: ', storage.transactions);
 
         // /* Replace duplicates???? */
         // for (var i = storage.transactions.length - 1; i >= 0; i--) {
@@ -683,20 +684,52 @@ export default function Home() {
 
         setCurrentOwner(global.storageKey);
 
-
-
-        
-
     })
     .catch(async () => {
       try {
-
-        
         const userObject = await loadSettingsStorage(global.storageKey); // load user object
         // console.log(userObject);
         // console.log('storageKey: ', storageKey);
 
         global.storageKey = userObject.user.id
+
+        /* USER TRANSACTIONS DEBUG TESTING */
+        // global.debugMode = true;
+        if (global.debugMode === true) {
+          // setIsReady(false)
+
+          let limit = LIMIT;
+          /* FAKE USER TRANSACIONS */
+          let fakeTransactions = getFakeTransactions(limit);
+          userObject.transactions = fakeTransactions
+          // setCurrentTransactions(fakeTransactions);
+
+          /* FAKE USER CATEGORIES */
+
+          // saveSettingsStorage(global.storageKey, userObject);
+
+          // setCurrentTransactions(userObject.transactions)
+
+          showMessage({
+            message: 'Debug Mode',
+            description: `${fakeTransactions.length} ${' transactions'}`,
+            position: 'bottom',
+            color: colors.shamrockGreen, // "#606060", // text color
+
+            textStyle: styles.textStyle,
+          });
+
+
+          // setIsReady(true);
+
+          // return
+        }
+
+        userObject.transactions.forEach((transaction) => {
+          transaction.owner = global.storageKey
+          transaction.category.owner = global.storageKey
+        })
+
 
         setCurrentOwner(userObject.user.id);
 
@@ -706,6 +739,7 @@ export default function Home() {
 
         setCategories(userObject.categories);
 
+      
         setCurrentTransactions(userObject.transactions);
 
         global.authenticated = false
@@ -716,37 +750,18 @@ export default function Home() {
         console.log(e);
       }
 
+
+
+
+
       setIsReady(true)
     });
-    // saveUndoHistory();
-
-
-    
 
     
 
 
 
-    // /* Calculate transaction balances */
-    // setIsCalculatingBalance(true);
-    // const balance = (calculateBalance(currentTransactions));
-    // setCurrentBalance(balance);
-    // setIsCalculatingBalance(false);
-
-    // // setIsCalculatingBalance(false);
-
-    // // calculate spent
-    // setIsCalculatingSpent(true);
-    // const spent = (calculateMonthSpent(currentTransactions));
-    // setCurrentSpent(spent);
-    // setIsCalculatingSpent(false);
-
-    // setIsReady(true);
-
-
-    // global.showGlobalValues();
-
-    // setIsReady(true)
+    
   }
 
   Home.reloadTransactions = () => {
@@ -756,35 +771,21 @@ export default function Home() {
   const storeNewTransaction = async (transaction) => {
     // setIsStoringNewTransaction(true);
 
-    // check for maximum unauthorized user transactions
-    // if ((!global.authenticated) && currentTransactions.length >= 5) {
-    //   showMessage({
-    //     description: 'Sign up for more',
+    if (await isDeviceOnline()) {
+      Auth.currentAuthenticatedUser().then(async (cognito) => {
+         
+        SaveCategory(transaction.category);
+        // savePayee(transaction.payee);
+        saveTransaction(transaction);
+        // console.log('saved new transaction: ', cognito.attributes.sub);
 
-    //     message: 'Maximum transactions',
+        /*  TESTING  */
+        // let cats = await listAllOnlineCategories()
+        // console.log('cats: ', cats);
+      }).catch((e) => console.log('e: ', e))
+    }
 
-    //     textStyle: styles.textStyle,
-
-    //     type: 'warning',
-
-    //     // position: 'top',
-
-    //     icon: {
-    //       icon: 'auto',
-    //       position: 'right',
-    //     },
-
-    //     onPress:
-    //       () => {
-    //         props.navigation.navigate('SignUp');
-    //       },
-    //   });
-    //   return;
-    // }
-
-    // user is authorized
-
-    // load local transactions
+    /* store in local transactions */
     const userObject = await loadSettingsStorage(global.storageKey); // load user object
 
     // save to online storage, if online
@@ -805,6 +806,26 @@ export default function Home() {
     // saveUndoHistory();
 
     // setIsStoringNewTransaction(false);
+
+        // if ((!global.authenticated) && currentTransactions.length >= 5) {
+    showMessage({
+      message: 'Added transaction',
+      // duration: 550,
+      position: 'bottom',
+
+      // description: "My message description",
+      // type: 'success', // "success", "info", "warning", "danger"
+      // backgroundColor: colors.dark, // "purple", // background color
+      color: colors.shamrockGreen, // "#606060", // text color
+      // opacity: 0.5,
+
+      textStyle: styles.textStyle,
+
+      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+    });
+      // return;
+    // }
+
 
     Analytics.record({ name: 'Stored a transaction' });
   };
@@ -861,43 +882,87 @@ export default function Home() {
     retrieveUserStoredSettings()
   }
   async function removeStoredTransaction(transaction) {
-    const userObject = await loadSettingsStorage(global.storageKey);
 
-    let list = userObject.transactions;
+    let previous = transaction
+
+    /* remove transaction online in db */
+    if (global.authenticated) {
+      // removeTransaction(transaction)
+      // removePayee(transaction.payee)
+      // Analytics.record({ name: 'Removed an online transaction' });
+      DeleteTransaction(transaction);
+    }
+
+    
     try {
-      const found = searchByID(transaction.id, list);
 
-      // console.log('found: ', found);
+      const userObject = await loadSettingsStorage(global.storageKey);
+
+      // console.log('userObject.transactions.length: ', userObject.transactions.length);
+
+      let list = userObject.transactions;
+
+      const found = await searchByID(transaction.id, list);
+
+      
 
       if (found) {
+        // console.log('found: ', found);
+        found.owner = global.storageKey;
+
+        found.category.owner =  global.storageKey
+
         const pos = list.indexOf(found);
 
         list.splice(pos, 1);
 
-        setCurrentTransactions(list);
+        // setCurrentTransactions(list);
 
-        setCurrentTransaction(null);
+        // setCurrentTransaction(null);
 
         userObject.transactions = list;
 
+        // console.log('userObject.transactions.length: ', userObject.transactions.length);
+
         saveSettingsStorage(global.storageKey, userObject);
 
-        /* remove transaction online in db */
-        if (global.authenticated && await isDeviceOnline()) {
-          removeTransaction(transaction)
-          removePayee(transaction.payee)
-          // Analytics.record({ name: 'Removed an online transaction' });
-        }
+
       }
       } catch(e) {
       // statements
       console.log(e);
     }
-    // retrieveUserStoredSettings();
+    retrieveUserStoredSettings();
+
+    showMessage({
+      message: 'Undo remove transaction',
+      duration: 2250,
+      position: 'bottom',
+
+      // description: "Press to undo",
+      // type: 'success', // "success", "info", "warning", "danger"
+      // backgroundColor: colors.dark, // "purple", // background color
+      color: colors.shamrockGreen, // "#606060", // text color
+      // opacity: 0.5,
+
+      textStyle: styles.textStyle,
+
+      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+
+      onPress: 
+        () => {
+          storeNewTransaction(previous)
+          // console.log('previous: ', previous);
+        },
+      
+    });
+
 
     
 
     // setIsRemovingStoredTransaction(false);
+
+
 
     // Analytics.record({ name: 'Removed a local transaction' });
   }
@@ -947,7 +1012,7 @@ export default function Home() {
       invalid = 'Category';
       // alert('message?: DOMString')
       // showCategoryToolTip()
-      startWalkthrough(addCategoryWalkthrough)
+      startWalkthrough(addTransactionCategoryWalkthrough)
       // goToWalkthroughElementWithId('category-scroller')
     }
 
@@ -1055,23 +1120,11 @@ export default function Home() {
     // global.isConnected = await isDeviceOnline();
     // if (global.isConnected) {
     //   global.authenticated = await getAuthentication();
-    if (await isDeviceOnline()) {
-      Auth.currentAuthenticatedUser().then(async (cognito) => {
-         
-        saveCategory(transaction.category);
-        savePayee(transaction.payee);
-        saveTransaction(transaction);
-        console.log('saved new transaction: ', cognito.attributes.sub);
-
-        /*  TESTING  */
-        // let cats = await listAllOnlineCategories()
-        // console.log('cats: ', cats);
-      }).catch((e) => console.log('e: ', e))
-    }
+    
 
       
       // // if (await getAuthentication() && await isDeviceOnline()) {
-      //   saveCategory(category);
+      //   SaveCategory(category);
       //   savePayee(payee);
       //   saveTransaction(transaction);
       // }
@@ -1155,6 +1208,7 @@ export default function Home() {
 
   useEffect(() => {
     if (currentCategory) {
+      
       // check for version and owner properties
       if (!currentCategory.hasOwnProperty('owner') || !currentCategory.hasOwnProperty('version')) {
         let category = new Category(currentCategory.id, currentCategory.name, currentCategory.color, currentCategory.type, currentOwner, 0)
@@ -1254,13 +1308,22 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    // console.log('screenHeight/2.5: ', screenHeight/2.55);
     if (currentTransaction) {
-      // setCurrentAmount(currentTransaction.amount *  100)
-      // showSlideView();
-      // console.log('currentTransaction: ', currentTransaction);
-    } else {
+      setCurrentTableHeight(screenHeight/2.55)
+      setAmountLabelText('');
+      setCurrentAmount(currentTransaction.amount * 100)
+      showSlideView();
+    } else if (!currentTransaction) {
+      setCurrentTableHeight(screenHeight/2.8)
+      setAmountLabelText('Amount Spent:');
       hideSlideView();
-      setCurrentAmount(0)
+
+      if (global.authenticated) {
+        save();
+      }
+      // setCurrentTransaction(null)
+      setCurrentAmount(0.00)
       // console.log('\n');
     }
   }, [currentTransaction]);
@@ -1271,27 +1334,14 @@ export default function Home() {
     saveSettingsStorage(global.storageKey, storage)
   }
 
-  useEffect(() => {
-    if (currentTransaction) {
-      setAmountLabelText('');
-      setCurrentAmount(currentTransaction.amount *  100)
-      showSlideView();
-      // console.log('currentTransaction: ', currentTransaction);
-    } else {
-      setAmountLabelText('Amount Spent:');
-      hideSlideView();
-
-     if (global.authenticated) save()
-     setCurrentTransaction(null)
-    }
-  }, [currentTransaction]);
   const transactionBtnPressed = (transaction) => {
     showNewTransactionSlide(transaction);
   };
-  const deleteBtnPressed = async (transaction) => {
-    setIsRemovingStoredTransaction(true);
+  const deleteBtnPressed =(transaction) => {
+
+    // setIsRemovingStoredTransaction(true);
     removeStoredTransaction(transaction);
-    setIsRemovingStoredTransaction(false);
+    // setIsRemovingStoredTransaction(false);
   };
 
   const categoryBtnPressed = (category) => {
@@ -1337,7 +1387,7 @@ export default function Home() {
     if (!storage.payees) {
       storage.payees = [];
       // console.log('storage.payees: ', storage.payees);
-      await saveSettingsStorage(global.storageKey, storage)
+      saveSettingsStorage(global.storageKey, storage)
     }
 
     let list = storage.payees; // previous saved payee
@@ -1382,7 +1432,8 @@ export default function Home() {
       left: 0,
       right: 0,
       bottom: 0,
-      // height: 500,
+      // height: 250,
+      height: currentTableHeight,
       position: 'absolute',
 
       // borderWidth: 1,
@@ -1417,8 +1468,8 @@ export default function Home() {
       currentTransaction={currentTransaction}
       key={currentTransactions}
 
-      tableTop="25.5%"
-      tableHeight="32%"
+      // tableTop="25.5%"
+      // tableHeight="32%"
       // tablePosition="absolute"
 
       onPress={(transaction) => transactionBtnPressed(transaction)}
@@ -1533,7 +1584,7 @@ export default function Home() {
     // body... 
        /* Sync Categories */
     // compare both category lists
-    let online_categories = []; // online trans
+    let online_categories = await listAllOnlineCategories(); // online trans
     let local_categories = [];  // local trans in device storage
 
     try {
@@ -1564,6 +1615,38 @@ export default function Home() {
       // throw new Error('Error performing crossDeviceSync:', e);
       console.log('categorySync: ', categorySync);
     }
+  }
+
+  const addNewCategory = async (category) => {
+    const userObject = await loadSettingsStorage(storageKey);
+    // console.log(userObject.user.categories);
+
+    const list = userObject.categories;
+    // console.log(list)
+    // console.log(list.length);
+
+    let found = await searchByID(category.id, list);
+
+    if (!found) {
+      // category doesn't exist yet
+      
+      found = searchByName(category.name, list);
+
+      if (!found) list.unshift(category);
+    }
+    else if (found) {
+      const pos = list.indexOf(found);
+      list[pos] = category;
+    }
+
+
+    userObject.categories = list;
+
+    // console.log(userObject)
+
+    // await saveUserObject(userObject);
+    saveSettingsStorage(storageKey, userObject);
+
   }
 
   const crossDeviceSync = async () => {
@@ -1621,40 +1704,54 @@ export default function Home() {
       // /* 1st save any new categories from online transactions */
       online_transactions.forEach(async (element, index) => {
         if (!element.category) {
-          // console.log('element.category is missing: ', element.category);
-          return
-        } else {
-           try {
+          // console.warn('element does not have a category');
+          // console.log('element: ', element);
+          // storage.transactions = local_transactions.push(searchByID(element.id, storage.transactions));
+          // console.log('searchByID(element.id, storage.transactions): ', searchByID(element.id, storage.transactions));
+
+          SaveCategory(searchByID(element.id, storage.transactions).category);
+          UpdateTransaction(searchByID(element.id, storage.transactions).category);
+        }
+
+        // else if (!element.payee) {
+        //   console.warn('element does not have a payee');
+        //   console.log('element: ', element);
+
+
+        // }
+
+
+        else {
+          try {
             let found = await searchByID(element.category.id, storage.categories);
+            console.log('found category in storage by id:', found.id);
 
             if (!found) {
+              // category dne in user storage
               found = await searchByName(element.category.name, storage.categories);
-
-              
-             
-              
+              console.log('found category in storage by name:', found.name);
             }
-
-            if (found) {
-              // updateTransaction(element)
+            if ((element.category.name || element.category.id) && !found) {
+              // if category has id or name and exists but isnt in storage, yet
+              console.log('Category Not on Device Yet!:', element.category.name);
+              storage.categories.unshift(element.category);
+              saveSettingsStorage(global.storageKey, storage);
             }
+            // return
+          } catch(e) {
+            console.log('new category from an online transaction that is not saved to the current device!\n... crossDeviceSync => Sync Transactions', element)
 
-          
-        } catch(e) {
-          // statements
-          if (element.category.name) {
-            storage.categories.unshift(element.category)
-            saveSettingsStorage(global.storageKey, storage)
+            let category = element.category
+
+            addNewCategory(element.category);
+
+            UpdateCategory(category)
           }
-          // throw new Error('Category Not on This Device Yet!')
-
-          // console.log('Not Found!', element.category)
         }
-      }
        
       });
 
-      // check for local transactions that dont exist in online transactions yet
+      // check for local transactions that dont exist online yet
       // ie: offline-mode transactions
       const onlyInLocal = local_transactions.filter(findTransactionArrayDifferences(online_transactions));
       const onlyInOnline = online_transactions.filter(findTransactionArrayDifferences(local_transactions));
@@ -1662,8 +1759,17 @@ export default function Home() {
       // only upload new local transactions; not all of them
       if (onlyInLocal.length > 0) {
         for (var i = onlyInLocal.length - 1; i >= 0; i--) {
-          // console.log('onlyInLocal[i]: ', onlyInLocal[i]);
-          updateTransaction(onlyInLocal[i]);
+          /* if the transaction is missing an owner, use the current user's id */
+          if (onlyInLocal[i].owner === '' || !(onlyInLocal[i].owner)) {
+            onlyInLocal[i].owner = global.storageKey;
+          }
+          /* if transaction's category is missing an owner, use the current user's id */
+          if (onlyInLocal[i].category.owner === '' || !(onlyInLocal[i].category.owner)) {
+            onlyInLocal[i].category.owner = global.storageKey;
+          }
+
+          console.log('onlyInLocal[i]: ', onlyInLocal[i]);
+          UpdateTransaction(onlyInLocal[i]);
 
         }
       }
@@ -1679,9 +1785,9 @@ export default function Home() {
       setCurrentTransactions(storage.transactions)
 
       setIsReady(true)
-    } catch(crossDeviceSyncError) {
+    } catch(err) {
       // throw new Error('Error performing crossDeviceSync:', e);
-      console.log('crossDeviceSyncError: ', crossDeviceSyncError);
+      console.log('crossDeviceSyncError: ', err);
     }
 
 
@@ -1736,7 +1842,7 @@ export default function Home() {
 
 
         // for (var i = storage.transactions.length - 1; i >= 0; i--) {
-        //   updateTransaction(storage.transactions[i])
+        //   UpdateTransaction(storage.transactions[i])
         // }
 
     }
@@ -1961,7 +2067,7 @@ export default function Home() {
           {/*<View style={{ flex: 0.5, }}>*/}
           <View style={{
             position: 'absolute',
-            top: screenHeight/2,
+            top: screenHeight/1.8,
             // height: screenHeight/3,
 
             // borderWidth: 1,
@@ -1985,7 +2091,7 @@ export default function Home() {
 
             }}>{ isSlideViewHidden && scrollingPills && amountInput }</View>
             <View style={{
-              height: screenHeight/3,
+              height: screenHeight/3.5,
               top: 0,
               right: 0,
               left: 0,

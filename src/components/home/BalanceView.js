@@ -57,7 +57,7 @@ function BalanceView(props) {
             </Text>
             <Text style={styles.currentBalanceValue}>
               <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentBalanceValue)}`}</Text>
-              <Text>{`${Math.abs(currentBalanceValue).toFixed(2)}`}</Text>
+              <Text>{` ${Math.abs(currentBalanceValue).toFixed(2)}`}</Text>
             </Text>
           </View>
         ) ||
@@ -104,7 +104,7 @@ function BalanceView(props) {
           </Text>
           <Text style={styles.currentSpentValue}>
             <Text style={{ color: colors.offWhite }}>{`${getCurrencySymbol(currentSpentValue)}`}</Text>
-            <Text>{ `${Math.abs(currentSpentValue).toFixed(2)}` }</Text>
+            <Text>{ ` ${Math.abs(currentSpentValue).toFixed(2)}` }</Text>
           </Text>
 
         </View>

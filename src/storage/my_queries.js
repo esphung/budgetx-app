@@ -21,7 +21,7 @@ import uuidv4 from '../functions/uuidv4';
 
 import searchByID from '../functions/searchByID';
 
-
+// import getUniqueId from '../functions/getUniqueId';
 
 /* fetch cloud resources functions */
 export const fetchStoredCategories = async () => {
@@ -46,20 +46,33 @@ export const fetchStoredTransactions = async () => {
   return list;
 };
 
+const listCategorysGQL = gql`
+query ListCategorys {
+  listCategorys (limit: 1000000000) {
+    items {
+      id
+      name
+      color
+      type
+      owner
+      version
+      # transactions {
+      #   nextToken
+      # }
+    }
+    # nextToken
+  }
+}
+`;
+
 export const listAllOnlineCategories = async () => {
  let list = [];
   try {
-    const graphqldata = await API.graphql(graphqlOperation(listTransactions));
+    const graphqldata = await API.graphql(graphqlOperation(listCategorysGQL));
     // console.log('graphqldata: ', graphqldata);
-    let transactions = graphqldata.data.listTransactions.items
+    list = graphqldata.data.listCategorys.items
 
-    transactions.forEach((transaction) => {
-      if (!transaction.category) return
-      if (!(searchByID(transaction.category.id, list) )) {
-        list.push(transaction.category)
-      }
-    })
-    // console.log('list.length: ', list.length);
+    // console.log('online categories list.length: ', list.length);
   } catch (err) {
     console.log('error fetching user categories from online transactions: ', err);
   }
@@ -69,7 +82,18 @@ export const listAllOnlineCategories = async () => {
 /* static querys */
 export const listTransactions = gql`
 query ListTransactions {
-  listTransactions (limit: 1000000) {
+  # listTransactions (limit: 1000000) {
+  listTransactions (
+    limit: 1000000000,
+    # filter: {
+    #   # owner: {
+    #   #   contains: "3fb13ac4-a22c-4799-a7f8-a4b4d0115023"
+    #   # }
+    #   type: {
+    #     contains: "EXPENSE"
+    #   }
+    # }
+  ) {
     items {
       id
       date
@@ -85,60 +109,30 @@ query ListTransactions {
       }
       payee {
         id
-        name
-        owner
-        version
+    #     name
+    #     owner
+    #     version
       }
       type
       note
-      version
+    #   version
     }
-    # nextToken
+    # # nextToken
   }
 }
 `;
-// export const listCategorys = gql`
-// query ListCategorys {
-//   listCategorys {
-//     items {
-//       id
-//       name
-//       color
-//       type
-//       owner
-//       version
-//     }
-//     # nextToken
-//   }
-// }
-// `;
+
 /* custom GQLs query return functions */
 export const CreateCategoryGQL = (category) => {
-//   const query = gql`
-// mutation CreateCategory {
-//   createCategory(input: {
-//  id: ${'"'+category.id+'"'}
-//     name: ${'"'+category.name+'"'}
-//     color: ${'"'+category.color+'"'}
-//     type: ${'"'+category.type+'"'}
-//     # owner: "81d12192-d55f-452c-be43-7f508638e438"
-//   }) {
-//     id
-//     name
-//     type
-//     owner
-//   }
-// }`
-
   const query = gql`
-mutation createCategory {
-  createCategory (input: {
-    id: ${'"'+category.id+'"'}
+mutation CreateCategory {
+  createCategory(input: {
+  id: ${'"'+category.id+'"'}
     name: ${'"'+category.name+'"'}
     color: ${'"'+category.color+'"'}
     type: ${'"'+category.type+'"'}
-    # owner: ${'"'+category.owner+'"'}
-    version: ${category.version}
+    owner: ${'"'+global.storageKey+'"'}
+    version: 0
   }) {
     id
     name
@@ -167,9 +161,10 @@ mutation CreatePayee {
 `;
   return query;
 };
+// id, date, amount, owner, payee, category, type, note, version
 export const CreateTransactionGQL = (transaction) => {
   const query = gql`
-mutation createTransaction {
+mutation CreateTransaction {
   createTransaction(input: {
     id: ${'"'+transaction.id+'"'}
     date: ${'"'+transaction.date+'"'}
@@ -201,42 +196,77 @@ mutation createTransaction {
 `;
   return query;
 };
-export const UpdateTransactionGQL = (updated) => {
-  // console.log('updated: ', updated);
+
+// User Pool Web Client Id 
+// 794chgh604h4tsi3l10j5tmd3
+
+export const UpdateTransactionGQL = (transaction) => {
+  console.log('updated: ', transaction);
   const graphql_query = gql`
-mutation updateTransaction {
+
+mutation UpdateTransaction {
   updateTransaction(input: {
-    id: ${'"'+updated.id+'"'}
-    date: ${'"'+updated.date+'"'}
-    amount: ${updated.amount}
-    # owner: ${'"'+updated.owner+'"'}
-    # payee: ${updated.payee}
-    version: ${(updated.version + 1)}
-    note: ${'"'+updated.note+'"'}
-    type: ${'"'+updated.type+'"'}
-
-    # transactionPayeeId: ${'"'+updated.payee.id+'"'}
-    transactionCategoryId: ${'"'+updated.category.id+'"'}
-
+    id: ${'"'+transaction.id+'"'}
+    date: ${'"'+transaction.date+'"'}
+    amount: ${transaction.amount}
+    owner: ${'"'+global.storageKey+'"'}
+    version: ${(transaction.version + 1)}
+    note: ${'"'+transaction.note+'"'}
+    type: ${'"'+transaction.type+'"'}
+    transactionCategoryId: ${'"'+transaction.category.id+'"'}
+    
   }) {
     id
+    date
     amount
+    owner
     version
+    note
+    type
+    category {
+      id
+      name
+      type
+      color
+      owner
+      version
+    }
   }
-}`;
+}
+
+
+`;
   return graphql_query
 };
 
-export const UpdateCategoryGQL = (updated) => {
+// mutation UpdateCategory {
+//   updateCategory(input: {
+//     id: "6789"
+//     name: "Updated Hello"
+//     color: "#fffff"
+//     type: "INCOME"
+//     # owner: "81d12192-d55f-452c-be43-7f508638e438"
+//     version: 1
+//   }) {
+//     id
+//     name
+//     color
+//     type
+//     owner
+//     version
+//   }
+// }
+
+export const UpdateCategoryGQL = (category) => {
   const graphql_query = gql`
-mutation updateCategory {
+mutation UpdateCategory {
   updateCategory(input: {
-    id: ${'"'+updated.id+'"'}
-    name: ${'"'+updated.name+'"'}
-    color: ${'"'+updated.color+'"'}
-    type: ${'"'+updated.type+'"'}
-    # owner: ${'"'+updated.owner+'"'}
-    version: ${(updated.version + 1)}
+    id: ${'"'+category.id+'"'}
+    name: ${'"'+category.name+'"'}
+    color: ${'"'+category.color+'"'}
+    type: ${'"'+category.type+'"'}
+    owner: ${'"'+global.storageKey+'"'}
+    version: ${(category.version + 1)}
   }) {
     id
     name
@@ -298,7 +328,7 @@ export const removePayee = async (payee) => {
     console.log('error deleting payee...', err);
   }
 };
-export const removeTransaction = async (transaction) => {
+export const DeleteTransaction = async (transaction) => {
   try {
     await API.graphql(graphqlOperation(deleteTransaction, { input: { id: transaction.id } }));
     console.log('transaction successfully deleted.');
@@ -317,24 +347,30 @@ export const savePayee = async (payee) => {
     console.log('error creating payee...', err);
   }
 }
-export const saveCategory = async (category) => {
+export const SaveCategory = async (category) => {
 
   // try {
   //   // try to update existing onine cat first
-  //   // updateCategory(category);
+  //   // UpdateCategory(category);
   // } catch(e) {
   //   // statements
   //   console.log('error updating category from savveCategory():', e.errors);
 
     try {
-      const categoryMutation = await graphqlOperation(CreateCategoryGQL(category)) // push new category
+      const categoryMutation = graphqlOperation(CreateCategoryGQL(category)) // push new category
       await API.graphql(categoryMutation);
       console.log('category successfully created:', category.id);
     } catch (e) {
-      console.log('error saving category:', e);
-      // console.log('save category error:', category);
-      console.log(`trying to update ccategory ${category.id} instead ...`);
-      updateCategory(category);
+      // console.log('error saving category in SaveCategory:', e);
+      console.log('save category error:', e.errors[0]['errorType']);
+
+      let errorType = e.errors[0]['errorType'];
+
+      if (errorType  && errorType === 'DynamoDB:ConditionalCheckFailedException') {
+        console.log(`trying to update category ${category.id} instead ...`);
+        UpdateCategory(category);
+      }
+      
     }
   // }
 
@@ -365,79 +401,89 @@ export const formatTransactionInput = (item) => {
   return obj
 }
 
-export const formatCategoryInput = (item) => {
-  let obj = {};
-  Object.keys(item).forEach((key) => {
-    if (key) {
-      obj.key = key
-      // checking for nulls
-      if ((item[key] === null || !item[key]) && item[key] !== 0) {
-        // console.log('item[key]: ', item[key]);
-        // if (key === 'note') obj[key] = 'Add note';
+// export const formatCategoryInput = (item) => {
+//   let obj = {};
+//   Object.keys(item).forEach((key) => {
+//     if (key) {
+//       obj.key = key
+//       // checking for nulls
+//       if ((item[key] === null || !item[key]) && item[key] !== 0) {
+//         // console.log('item[key]: ', item[key]);
+//         // if (key === 'note') obj[key] = 'Add note';
 
-        // if (key === 'payee') obj[key] = {
-        //   id: uuidv4(),
-        //   name: 'None',
-        //   owner: item.owner,
-        //   version: 0,
-        // }
+//         // if (key === 'payee') obj[key] = {
+//         //   id: uuidv4(),
+//         //   name: 'None',
+//         //   owner: item.owner,
+//         //   version: 0,
+//         // }
 
-      }
-      else {
-        obj[key] = item[key]
-      }
-    }
-  });
-  return obj
-}
+//       }
+//       else {
+//         obj[key] = item[key]
+//       }
+//     }
+//   });
+//   return obj
+// }
 
 
 export const saveTransaction = async (transaction) => {
-  // validate trans properties, check for null/empty and fix it
-  let input = formatTransactionInput(transaction)
-  // console.log('input: ', input);
   try {
-    const mutation = await graphqlOperation(CreateTransactionGQL(input)); // store transaction in cloud
-    saveCategory(input.category)
-    await API.graphql(mutation);
-    console.log('transaction successfully created:', input.id);
+    const mutation = await graphqlOperation(CreateTransactionGQL(transaction)); // store transaction in cloud
+    // SaveCategory(transaction.category)
+    API.graphql(mutation);
+    console.log('transaction successfully created:', transaction.id);
   } catch (err) {
     console.log('error creating transaction...', err);
-    // updateTransaction(input)
+    UpdateTransaction(transaction)
     // console.log('transaction: ', transaction);
   }
 }
-export const updateTransaction = async (updated) => {
-  saveTransaction(updated);
-  // // let input = formatTransactionInput(updated)
-  // // console.log('input: ', input);
-  // try {
-  //   await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
-  //   console.log('transaction successfully updated:', updated.id);
-  // } catch (err) {
-  //   // transaction dne yet (most likely)
-  //   console.log('error updating transaction...', err);
-  // //   removeTransaction(updated)
-  // //   if (!err.data) {
-  // //   saveTransaction(updated);
-  // // }
-  // }
-};
-export const updateCategory = async (updated) => {
+export const UpdateTransaction = async (updated) => {
   try {
-    let response = await API.graphql(graphqlOperation(UpdateCategoryGQL(updated)));
-    console.log('category successfully updated...', response.data.updateCategory);
+    await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
+    console.log('transaction successfully updated:', updated.id);
+  } catch (err) {
+    // transaction dne yet (most likely)
+    if (!(err.errors[0]['errorType'])) return
+    console.log('error updating transaction...',  err.errors[0]['errorType']);
+    let errorType = err.errors[0]['errorType']
 
+    if (errorType === 'DynamoDB:ConditionalCheckFailedException') {
+      // transaction dne online
+      saveTransaction(updated)
+    }
+
+  }
+};
+export const UpdateCategory = async (category) => {
+  try {
+    // console.log('category.version: ', category.version);
+    // category.version = category.version + 1
+
+    // console.log('category.version: ', category.version);
+
+    let response = await API.graphql(graphqlOperation(UpdateCategoryGQL(category)));
+    console.log(`${'category successfully updated...'} ${JSON.stringify(response.data.updateCategory, null, 2)}`);
+    console.log('category.version: ', category.version);
 
   } catch (err) {
-    // console.log('error updating category...', err); // err
-    // err.data.updateCategory
-    // saveCategory(updated);
-    removeCategory(updated)
-    if (!err.data.updateCategory) {
-      // category doesnt exist yet
-      saveCategory(updated)
+    console.log('error updating category in UpdateCategory...', err); // err
+
+    if (!(err.errors[0]['errorType'])) return
+
+    let errorType = err.errors[0]['errorType']
+
+    if (errorType === 'DynamoDB:ConditionalCheckFailedException') {
+      // transaction dne online
+      SaveCategory(category)
     }
+
+    // if (!err.data.updateCategory) {
+    //   // category doesnt exist yet
+    //   SaveCategory(updated)
+    // }
   }
 };
 export const getTransactionByID = async (id) => {
