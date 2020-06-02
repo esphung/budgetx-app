@@ -13,12 +13,6 @@ import React from 'react';
 
 import { MaterialCommunityIcons, EvilIcons, FontAwesome5, Entypo, Octicons } from '@expo/vector-icons';
 
-// import {
-//   WalkthroughElement,
-//   startWalkthrough,
-//   // dispatchWalkthroughEvent
-// } from 'react-native-walkthrough';
-
 import PropTypes from 'prop-types';
 
 import colors from '../../../colors';
@@ -41,11 +35,6 @@ import {
 
 import { withNavigation } from 'react-navigation';
 
-// import ToolTip from '../../components/ToolTip';
-
-// import addTransactionWalkthrough from '../../guides/addTransactionWalkthrough';
-
-
 function HeaderRightView(props) {
   const { navigation } = props;
 
@@ -54,8 +43,6 @@ function HeaderRightView(props) {
   // }
 
   const helpBtnPressed = () => {
-    // global.showToolTip = true
-    // startWalkthrough(addTransactionWalkthrough)
     // console.log('navigation: ', navigation);
   };
 
@@ -136,10 +123,7 @@ function HeaderRightView(props) {
           // borderStyle: 'solid',
         }]}
       >
-      {
-            /* Category picker tooltip */
-            // <ToolTip message="Add a new transaction" />
-          }
+
       {/*<Entypo style={{
         opacity: 0.5
       }} name="help" size={24} color={colors.white} />*/}

@@ -15,9 +15,11 @@ UPDATED:    11/27/2019 12:40 AM
 //   return str.slice(0, num)
 // }
 
+import React from 'react';
+
 import { createStackNavigator } from 'react-navigation-stack';
 
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer, NavigationContainer } from 'react-navigation';
 
 // import Login from './src/screens/Login';
 import Home from './src/screens/Home';
@@ -74,6 +76,10 @@ const StackNavigator = createStackNavigator({
   },
   ChangePasswordScreen: {
     screen: ChangePasswordScreen,
+    navigationOptions: () => ({
+      title: '',
+      headerBackTitle: null,
+    }),
   },
   CustomizeCategoriesScreen: {
     screen: CustomizeCategoriesScreen, // ApolloProviderHOC(CustomizeCategoriesScreen),
@@ -93,19 +99,22 @@ const StackNavigator = createStackNavigator({
     screen: SignInScreen,
     navigationOptions: () => ({
       // title: 'Log in to your account',
+      title: '',
+      headerBackTitle: null,
       // headerBackTitle: null,
     }),
   },
   SignOutScreen: {
     screen: SignOutScreen,
-    // navigationOptions: () => ({
-    //   title: '',
-      headerBackTitle: '',
-    // }),
+     navigationOptions: () => ({
+      title: '',
+      headerBackTitle: null,
+    }),
   },
   WelcomeScreen: {
     screen: WelcomeScreen,
     navigationOptions: () => ({
+      title: '',
       // title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
       headerBackTitle: null,
     }),
@@ -113,7 +122,8 @@ const StackNavigator = createStackNavigator({
   ForgetPassword: {
     screen: ForgetPasswordScreen,
     navigationOptions: () => ({
-      title: 'Create a New Password',
+      // title: 'Create a New Password',
+      title: '',
       headerBackTitle: null,
     }),
   },
@@ -136,6 +146,7 @@ const StackNavigator = createStackNavigator({
     navigationOptions: () => ({
       // title: `${global.appName}`, // ScreenName, // for the header screen // `Welcome to this App`
       // headerBackTitle: '',
+      title: '',
 
       // headerStyle: {
       //   backgroundColor: 'transparent'
@@ -147,16 +158,34 @@ const StackNavigator = createStackNavigator({
   },
 },
 {
-  headerMode: 'screen', 
-  cardStyle: {
-    backgroundColor: colors.darkTwo,
-  },
+  // initialRouteName: 'Calendar',
+  defaultNavigationOptions: {
+    headerMode: 'screen',
+    cardStyle: {
+      backgroundColor: colors.darkTwo,
+      // opacity: 1,
+    },
 
-  // Search: {
-  //   screen: Search,
-  // },
-  // initialRouteName: 'MyAppIntroSlider',
-});
+    // headerStyle: {
+    //     backgroundColor: '#28F1A6',
+    //     elevation: 0,
+    //     shadowOpacity: 0
+    // },
+      // headerTintColor: '#333333',
+      // headerTitleStyle: {
+      //     fontWeight: 'bold',
+      //     color: '#ffffff'
+      // }
+  }
+
+},
+// {
+//   mode: 'modal',
+//     headerMode: 'none',
+// }
+
+
+);
 
 const AppContainer = createAppContainer(StackNavigator);
 

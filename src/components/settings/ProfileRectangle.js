@@ -53,7 +53,7 @@ function ProfileRectangle(props) {
               width: 58,
               height: 58,
 
-            }} isUserLoggedIn={props.isUserLoggedIn} />
+            }} isUserLoggedIn={global.authenticated} />
         </View>
       </View>
 

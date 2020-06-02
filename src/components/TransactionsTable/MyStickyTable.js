@@ -316,7 +316,14 @@ const MyStickyTable = (props) => {
 
   /* Working  ios vversion of table */
   const ios_table = (
-    <FlatList
+     <SafeAreaView style={{
+          flex: 1,
+
+          // borderWidth: 1,
+          // borderColor: 'white',
+          // borderStyle: 'solid',
+        }}><SwipeListView
+
   
       data={tableData}
       // extraData={setTableData}
@@ -329,7 +336,7 @@ const MyStickyTable = (props) => {
       // leftOpenValue={55}
       // rightOpenValue={-75}
       // // disableRightSwipe={false}
-      // //  disableLeftSwipe
+       disableLeftSwipe
 
       // ItemSeparatorComponent={this.FlatListItemSeparator}
       // ListHeaderComponent={this.Render_FlatList_Sticky_header}
@@ -343,12 +350,13 @@ const MyStickyTable = (props) => {
       // removeClippedSubviews={true}
       // maxToRenderPerBatch={2}
     />
+    </SafeAreaView>
   );
 
   /* android table */
 
   const android_table = (
-        <SafeAreaView style={{
+        <View style={{
           // // flex: 1,
 
           // borderWidth: 1,
@@ -400,20 +408,10 @@ const MyStickyTable = (props) => {
   //     // removeClippedSubviews={true}
   //     // maxToRenderPerBatch={2}
       />
-        </SafeAreaView>
+        </View>
   );
 
-  // view = (
-  //   <View>
-  //   {
-  //     // transactions &&
-  //     // tableData &&
-  //     // table
 
-  //     Platform.OS === 'ios' && ios_table
-  //   }
-  //   </View>
-  // )
 
   if (!transactions || transactions.length <= 0) {
     return Render_Empty_Component();
@@ -422,6 +420,9 @@ const MyStickyTable = (props) => {
   } else {
     return android_table;
   }
+
+
+  // return null
 };
 
 MyStickyTable.propTypes = {
@@ -431,49 +432,6 @@ MyStickyTable.propTypes = {
   // transactions: PropTypes.array.isRequired,
   // isCurrentTransaction: PropTypes.bool.isRequired,
   swipeEditBtnPressed: PropTypes.func.isRequired,
-  isNameInputEnabled: PropTypes.bool.isRequired,
-
 };
 
 export default MyStickyTable;
-
-// FlatListItemSeparator() {
-//   return (
-//     <View
-//       style={{
-//         height: 1,
-//         width: '100%',
-//         backgroundColor: '#607D8B',
-//       }}
-//     />
-//   );
-// }
-
-// Render_FlatList_Sticky_header() {
-//   const { tableData } = this.state;
-//   let title =
-// (tableData.length === 1) ? `${ tableData.length } Transaction` : `${ tableData.length } Transactions`;
-
-//   var Sticky_header_View = (
-//   <View style={styles.headerBody}>
-
-//   //     <Text style={
-//   //       {
-//   //         textAlign: 'center',
-//   //         // color: '#fff',
-//   //         fontSize: 15
-//   //       }
-//   //     }> { title } </Text>
-
-//   //   </View>
-//   //   );
-//   //   return Sticky_header_View;
-//   // }
-
-//   // Render_Empty_Component() {
-//   //   return <EmptyListView />
-//   // }
-
-//   onPress(item) {
-//     alert(item)
-//   }

@@ -13,6 +13,8 @@ import {
 
 import app from './app.json';
 
+// global.isDeviceSyncOn = false;
+
 global.appIconImage243x260 = require('./assets/appIconImage243x260.png');
 
 /* testing and debug variables */
@@ -47,7 +49,7 @@ global.facebookAppId = app.expo.facebookAppId;
 
 // global.isBackedUp = false;
 
-// global.isDeviceSyncOn = false;
+global.isDeviceSyncOn = false;
 
 // global.isDeviceSynced = false;
 
@@ -151,11 +153,11 @@ global.clearGlobalValues = async () => {
 };
 
 /* Methods */
-export const setIsDeviceSyncOn = (bool) => {
-  // Saves to storage as a JSON-string
-  AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(bool));
-  global.isDeviceSyncOn = bool;
-};
+// export const setIsDeviceSyncOn = (bool) => {
+//   // Saves to storage as a JSON-string
+//   AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(bool));
+//   global.isDeviceSyncOn = bool;
+// };
 
 export const getIsDeviceSyncOn = async () => {
   // Retrieves from storage as boolean

@@ -67,7 +67,7 @@ import OfflineScreen from './OfflineScreen';
 
 import SpinnerMask from '../components/SpinnerMask';
 
-import HelpMessage from '../../storybook/stories/HelpMessage';
+import HelpMessage from '../components/HelpMessage';
 
 import countries from '../data/countries';
 
@@ -1046,13 +1046,14 @@ function SignUpScreen(props) {
 
   const offline = <OfflineScreen />;
 
-  const view = (
-    <NetworkConsumer>
-      {
-        ({ isConnected }) => (isConnected ? signup : offline)
-      }
-    </NetworkConsumer>
-  );
+  // const view = (
+  //   <NetworkConsumer>
+  //     {
+  //       ({ isConnected }) => (isConnected ? signup : offline)
+  //     }
+  //   </NetworkConsumer>
+  // );
+  const view = isConnected ? signup : offline;
 
   // return view;
 

@@ -11,7 +11,7 @@ import colors from '../../colors';
 
 import styles from '../../styles';
 
-import BlueButton from '../../storybook/stories/BlueButton';
+import BlueButton from './BlueButton';
 
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 

@@ -66,10 +66,10 @@ import { NavigationEvents } from 'react-navigation';
 
 import { showMessage } from 'react-native-flash-message';
 
-import {
-  WalkthroughElement,
-  startWalkthrough,
-} from 'react-native-walkthrough';
+// import {
+//   WalkthroughElement,
+//   startWalkthrough,
+// } from 'react-native-walkthrough';
 
 // ui colors
 import colors from '../../colors';
@@ -139,18 +139,18 @@ import {
   listAllOnlineCategories,
 } from '../storage/my_queries';
 
-import {
-  // addTransactionWalkthrough,
-  addTransactionCategoryWalkthrough,
-  addAmountWalkthrough,
-  // pressAddBtnWalkthrough,
-} from '../guides/walkthroughs';
+// import {
+//   // addTransactionWalkthrough,
+//   addTransactionCategoryWalkthrough,
+//   addAmountWalkthrough,
+//   // pressAddBtnWalkthrough,
+// } from '../guides/walkthroughs';
 
 import { isDeviceOnline } from '../../network-functions';
 
 import { getFakeTransactions } from '../functions/getFakeTransactions';
 
-const LIMIT = 14;
+const LIMIT = 140;
 
 const getAuthentication = async () => {
   global.authenticated = false;
@@ -407,10 +407,10 @@ export default function Home() {
 
   const [currentTableHeight, setCurrentTableHeight] = useState(0)
 
-  const showCategoryToolTip = () => {
-    // goToWalkthroughElementWithId('category-scroller')
-    startWalkthrough(addTransactionWalkthrough)
-  };
+  // const showCategoryToolTip = () => {
+  //   // goToWalkthroughElementWithId('category-scroller')
+  //   startWalkthrough(addTransactionWalkthrough)
+  // };
 
   const showSlideView = useCallback(
     () => {
@@ -443,7 +443,7 @@ export default function Home() {
     [slideViewBounceValue],
   );
   const updateStoredTransaction = async (transactions, updatedTransaction) => {
-    setIsUpdatingTransaction(true); // to show activity indicator
+    // setIsUpdatingTransaction(true); // to show activity indicator
 
     incrementVersion(updatedTransaction); // update transaction version
 
@@ -457,15 +457,20 @@ export default function Home() {
       storageObj.transactions = transactions;
 
       saveSettingsStorage(global.storageKey, storageObj);
+
+       // setIsUpdatingTransaction(false);
     } catch (err) {
       // throw new Error(err);
       console.log('error updating stored transaction in Home: ', err);
 
       setIsUpdatingTransaction(false); // to show activity indicator
+
+      setIsReady(true)
     }
 
      /* if online and logged in, update online transaction */
     if (await isDeviceOnline() && await getAuthentication()) {
+      if (global.debugMode) return
       transactions[pos].category.owner = global.storageKey;
       transactions[pos].owner = global.storageKey;
       
@@ -475,25 +480,28 @@ export default function Home() {
 
       UpdateTransaction(transactions[pos])
 
-      setIsUpdatingTransaction(false);
+      // setIsUpdatingTransaction(false);
     }
 
-    showMessage({
-      message: 'Updated transaction',
-      // duration: 550,
-      position: 'bottom',
+    // showMessage({
+    //   message: 'Updated transaction',
+    //   // duration: 550,
+    //   position: 'bottom',
 
-      // description: "My message description",
-      // type: 'success', // "success", "info", "warning", "danger"
-      // backgroundColor: colors.dark, // "purple", // background color
-      color: colors.shamrockGreen, // "#606060", // text color
-      // opacity: 0.5,
+    //   // description: "My message description",
+    //   // type: 'success', // "success", "info", "warning", "danger"
+    //   // backgroundColor: colors.dark, // "purple", // background color
+    //   color: colors.shamrockGreen, // "#606060", // text color
+    //   // opacity: 0.5,
 
-      textStyle: styles.textStyle,
+    //   textStyle: styles.textStyle,
 
-      // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-    });
-    retrieveUserStoredSettings();
+    //   // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+    // });
+    // setIsUpdatingTransaction(false);
+
+    // retrieveUserStoredSettings();
+    loadResources()
   };
 
   const updateTransactionCategory = async (category) => {
@@ -561,6 +569,7 @@ export default function Home() {
   };
 
   async function retrieveUserStoredSettings() {
+ 
     global.isConnected = await isDeviceOnline();
     // console.log('global.isConnected: ', global.isConnected);
     
@@ -586,14 +595,15 @@ export default function Home() {
           transaction.owner = global.storageKey
           transaction.category.owner = global.storageKey
 
-          UpdateTransaction(transaction)
+          UpdateTransaction(transaction);
+
         })
 
-        // console.log('storage.transactions: ', storage.transactions);
+        // // console.log('storage.transactions: ', storage.transactions);
 
-        // /* Replace duplicates???? */
-        // for (var i = storage.transactions.length - 1; i >= 0; i--) {
-        //   storage.transactions[i].owner = cognito.attributes.sub;
+        // // /* Replace duplicates???? */
+        // // for (var i = storage.transactions.length - 1; i >= 0; i--) {
+        // //   storage.transactions[i].owner = cognito.attributes.sub;
 
         //   if (searchByID(storage.transactions[i].category.id, storage.categories) === null) {
         //     storage.transactions[i].category = searchByName(storage.transactions[i].category.name, storage.categories)
@@ -603,7 +613,7 @@ export default function Home() {
 
         //     console.log('storage.transactions[i].category: ', storage.transactions[i].category);
         //   }
-        // }
+        // // }
 
         setCategories(storage.categories);
 
@@ -612,6 +622,7 @@ export default function Home() {
         saveSettingsStorage(global.storageKey, storage)
 
         global.authenticated = true;
+
 
         setCurrentOwner(global.storageKey);
 
@@ -624,37 +635,7 @@ export default function Home() {
 
         global.storageKey = userObject.user.id
 
-        /* USER TRANSACTIONS DEBUG TESTING */
-        // global.debugMode = true;
-        if (global.debugMode === true) {
-          // setIsReady(false)
-
-          let limit = LIMIT;
-          /* FAKE USER TRANSACIONS */
-          let fakeTransactions = getFakeTransactions(limit);
-          userObject.transactions = fakeTransactions
-          // setCurrentTransactions(fakeTransactions);
-
-          /* FAKE USER CATEGORIES */
-
-          // saveSettingsStorage(global.storageKey, userObject);
-
-          // setCurrentTransactions(userObject.transactions)
-
-          showMessage({
-            message: 'Debug Mode',
-            description: `${fakeTransactions.length} ${' transactions'}`,
-            position: 'bottom',
-            color: colors.shamrockGreen, // "#606060", // text color
-
-            textStyle: styles.textStyle,
-          });
-
-
-          // setIsReady(true);
-
-          // return
-        }
+      
 
         userObject.transactions.forEach((transaction) => {
           transaction.owner = global.storageKey
@@ -680,9 +661,48 @@ export default function Home() {
         }
         setIsReady(true);
       });
+
+      /* USER TRANSACTIONS DEBUG TESTING */
+
+    //      if (global.debugMode) {
+
+
+    //       let limit = LIMIT;
+    //       /* FAKE USER TRANSACIONS */
+    //       let fakeTransactions = getFakeTransactions(limit);
+    //       // userObject.transactions = fakeTransactions
+    //       // setCurrentTransactions(fakeTransactions);
+
+    //       /* FAKE USER CATEGORIES */
+
+    //       // saveSettingsStorage(global.storageKey, userObject);
+
+    //       setCurrentTransactions(fakeTransactions)
+
+    //       // showMessage({
+    //       //   message: 'Debug Mode',
+    //       //   description: `${fakeTransactions.length} ${' transactions'}`,
+    //       //   position: 'bottom',
+    //       //   color: colors.shamrockGreen, // "#606060", // text color
+
+    //       //   textStyle: styles.textStyle,
+    //       // });
+
+
+    //       // setIsReady(true);
+
+    //       // return
+
+
+
+
+    // }
+
+
   }
   Home.reloadTransactions = () => {
-    retrieveUserStoredSettings();
+    // retrieveUserStoredSettings();
+    loadResources()
   };
   const storeNewTransaction = async (transaction) => {
     // setIsStoringNewTransaction(true);
@@ -712,21 +732,21 @@ export default function Home() {
 
     setCurrentTransactions(userObject.transactions);
 
-    showMessage({
-      message: 'Added transaction',
-      // duration: 550,
-      position: 'bottom',
+    // showMessage({
+    //   message: 'Added transaction',
+    //   // duration: 550,
+    //   position: 'bottom',
 
-      // description: "My message description",
-      // type: 'success', // "success", "info", "warning", "danger"
-      // backgroundColor: colors.dark, // "purple", // background color
-      color: colors.shamrockGreen, // "#606060", // text color
-      // opacity: 0.5,
+    //   // description: "My message description",
+    //   // type: 'success', // "success", "info", "warning", "danger"
+    //   // backgroundColor: colors.dark, // "purple", // background color
+    //   color: colors.shamrockGreen, // "#606060", // text color
+    //   // opacity: 0.5,
 
-      textStyle: styles.textStyle,
+    //   textStyle: styles.textStyle,
 
-      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-    });
+    //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+    // });
     // Analytics.record({ name: 'Stored a transaction' });
   };
   async function removeStoredTransaction(transaction) {
@@ -767,27 +787,30 @@ export default function Home() {
       // statements
       console.log('e:', e);
     }
-    retrieveUserStoredSettings();
+    loadResources()
 
-    showMessage({
-      message: 'Undo remove transaction',
-      duration: 2250,
-      position: 'bottom',
+    setCurrentTransaction(null)
+    // retrieveUserStoredSettings();
 
-      // description: "Press to undo",
-      // type: 'success', // "success", "info", "warning", "danger"
-      // backgroundColor: colors.dark, // "purple", // background color
-      color: colors.shamrockGreen, // "#606060", // text color
-      // opacity: 0.5,
+    // showMessage({
+    //   message: 'Undo remove transaction',
+    //   duration: 2250,
+    //   position: 'bottom',
 
-      textStyle: styles.textStyle,
+    //   // description: "Press to undo",
+    //   // type: 'success', // "success", "info", "warning", "danger"
+    //   // backgroundColor: colors.dark, // "purple", // background color
+    //   color: colors.shamrockGreen, // "#606060", // text color
+    //   // opacity: 0.5,
 
-      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+    //   textStyle: styles.textStyle,
 
-      onPress: () => {
-        storeNewTransaction(previous);
-      },
-    });
+    //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+
+    //   onPress: () => {
+    //     storeNewTransaction(previous);
+    //   },
+    // });
   }
   function handleChange(value) {
     if (currentTransaction) {
@@ -814,23 +837,23 @@ export default function Home() {
       // all inputs are filled
       bool = false;
     }
-    if (!currentDate) {
-      // invalid = 'Date'
-    }
-    else if (!currentAmount) {
-      // invalid = 'Amount'
-      startWalkthrough(addAmountWalkthrough);
-    }
-    else if (!currentOwner) {
-      invalid = 'Owner';
-    }
-    else if (!currentCategory) {
-      invalid = 'Category';
-      // alert('message?: DOMString')
-      // showCategoryToolTip()
-      startWalkthrough(addTransactionCategoryWalkthrough);
-      // goToWalkthroughElementWithId('category-scroller')
-    }
+    // if (!currentDate) {
+    //   // invalid = 'Date'
+    // }
+    // else if (!currentAmount) {
+    //   // invalid = 'Amount'
+    //   // startWalkthrough(addAmountWalkthrough);
+    // }
+    // else if (!currentOwner) {
+    //   invalid = 'Owner';
+    // }
+    // else if (!currentCategory) {
+    //   invalid = 'Category';
+    //   // alert('message?: DOMString')
+    //   // showCategoryToolTip()
+    //   // startWalkthrough(addTransactionCategoryWalkthrough);
+    //   // goToWalkthroughElementWithId('category-scroller')
+    // }
 
     // let a = 'a';
     // if (invalid === 'Amount') a = 'an'
@@ -993,9 +1016,9 @@ export default function Home() {
   useEffect(() => {
     // console.log('Mounted');
     // Set Defaults
-    // setCurrentTransactions([]);
+    setCurrentTransactions([]);
 
-    // setCategories(defaultCategories);
+    setCategories([]);
 
     // clearState()
 
@@ -1014,7 +1037,7 @@ export default function Home() {
     return () => {
       setCurrentTransaction(null)
       setCurrentCategory(null)
-      setCurrentAmount(0)
+      setCurrentAmount(0);
     }
     
   }, []);
@@ -1040,7 +1063,17 @@ export default function Home() {
     }
   }, [currentTransaction]);
 
+  useEffect(() => {
+    if (global.debugMode) {
+      alert('message?: DOMString')
+    }
+    return () => {
+      // effect
+    };
+  }, [global.debugMode])
+
   async function save () {
+    if (global.debugMode) {return}
     let storage = await loadSettingsStorage(global.storageKey);
     storage.transactions = currentTransactions;
     saveSettingsStorage(global.storageKey, storage)
@@ -1207,14 +1240,14 @@ export default function Home() {
 
   );
   let scrollingPills = (
-    <WalkthroughElement id="category-scroller">
+
     <ScrollingPillCategoriesView
       onPress={categoryBtnPressed}
       categories={categories}
       isSelected={isCurrentCategory}
       // currentCategory={currentCategory}
     />
-    </WalkthroughElement>
+
   );
   let amountInput = (
     <AmountInputView
@@ -1225,13 +1258,13 @@ export default function Home() {
     />
   );
   let keypad = (
-    <WalkthroughElement id="keypad-amount">
+
     <KeypadView
       handlePress={numberBtnPressed}
       addBtnPressed={addBtnPressed}
       backspaceBtnPressed={backspaceBtnPressed}
     />
-    </WalkthroughElement>
+
   );
 
   // if (!shouldShowScrollingPills) {
@@ -1263,6 +1296,8 @@ export default function Home() {
     // setCurrentTransactions([]);
 
     setCurrentTransaction(null);
+
+
 
     // clearState();
 
@@ -1341,10 +1376,15 @@ export default function Home() {
 
     if (!found) {
       // category doesn't exist yet
-      
       found = searchByName(category.name, list);
 
-      if (!found) list.unshift(category);
+      if (!found) {
+
+        list.unshift(category);
+      } else {
+        category.id = found.id
+        list.unshift(category);
+      }
     }
     else if (found) {
       const pos = list.indexOf(found);
@@ -1352,7 +1392,7 @@ export default function Home() {
     }
 
 
-    userObject.categories = list;
+    userObject.categories = getUniqueId(list);
 
     // console.log(userObject)
 
@@ -1364,9 +1404,12 @@ export default function Home() {
   const crossDeviceSync = async () => {
     // if (!global.authenticated) return
     // check if user is online
+    if (global.debugMode) {
+      return
+    }
     let bool = await isDeviceOnline();
     if (bool !== true) {
-      showMessage('Device Currently Offline');
+      // showMessage('Device Currently Offline');
       return;
     }
 
@@ -1438,6 +1481,8 @@ export default function Home() {
             let found = await searchByID(element.category.id, storage.categories);
             console.log('found category in storage by id:', found.id);
 
+            transaction.category = found
+
             if (!found) {
               // category dne in user storage
               found = await searchByName(element.category.name, storage.categories);
@@ -1451,13 +1496,17 @@ export default function Home() {
             }
             // return
           } catch(e) {
-            console.log('new category from an online transaction that is not saved to the current device!\n... crossDeviceSync => Sync Transactions', element)
+            // console.log('new category from an online transaction that is not saved to the current device!\n... crossDeviceSync => Sync Transactions', element)
+
+            // updateStoredTransaction(currentTransactions, element)
 
             let category = element.category
 
             addNewCategory(element.category);
 
             UpdateCategory(category)
+
+
           }
         }
        
@@ -1481,14 +1530,18 @@ export default function Home() {
           }
 
           console.log('onlyInLocal[i]: ', onlyInLocal[i]);
-          UpdateTransaction(onlyInLocal[i]);
+          saveTransaction(onlyInLocal[i]);
+
+          updateStoredTransaction(currentTransactions, onlyInLocal[i]);
 
         }
       }
 
       // add new online transactions to local transactions  on to user's device
       // storage.transactions = await retrieveOnlineTransactions();
-      storage.transactions = local_transactions.concat(onlyInOnline);
+      storage.transactions = local_transactions.concat(online_transactions);
+       let list = getUniqueId(storage.transactions)
+       storage.transactions = list
       // console.log('storage.transactions.length: ', storage.transactions.length);
 
       // save storage transactions to device storage
@@ -1550,13 +1603,18 @@ export default function Home() {
 
 
 
-          // let storage = await loadSettingsStorage(global.storageKey);
+        for (var i = storage.transactions.length - 1; i >= 0; i--) {
+          try {
+            let found = searchByID(storage.transactions.category.id, categories)
+            if (!found) {
+              storage.categories.push(storage.transactions[i].category)
+            }
+          } catch(e) {
+            // statements
+            console.log(e);
+          }
 
-
-        // for (var i = storage.transactions.length - 1; i >= 0; i--) {
-        //   UpdateTransaction(storage.transactions[i])
-        // }
-
+        }
     }
 
 
@@ -1649,12 +1707,15 @@ export default function Home() {
   const displayIndicator = (
     <View style={{
         // flex: 1,
+        // top: 150,
+        // position: 'absolute',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         // borderWidth: 1,
         // borderColor: 'white',
         width: '100%',
+        height: 30,
         // borderStyle: 'solid',
       }}>
       <Text style={[styles.textStyle,{
@@ -1691,7 +1752,7 @@ export default function Home() {
         // onDidFocus={() => startWalkthrough(addTransactionWalkthrough)}
         onWillBlur={async () =>
           {
-            // setIsUpdatingTransaction(false)
+            setIsUpdatingTransaction(false)
             setCurrentTransaction(null);
             // hideSlideView();
 
@@ -1719,7 +1780,7 @@ export default function Home() {
 
 
         {/* Balance View */}
-       <WalkthroughElement id="balance-view">
+
         <View
           
           style={[
@@ -1743,7 +1804,7 @@ export default function Home() {
             // isPieChartVisible={true}
           />
           </View>
-          </WalkthroughElement>
+
 
 
         
@@ -1880,18 +1941,14 @@ export default function Home() {
     </SafeAreaView>
   );
   return view;
-  // return barChartExample
-  
 }
 
 Home.navigationOptions = () => {
   // get user name and email from passed props
   const header = {
     headerTransparent: {},
-    headerLeft: (
-      <HeaderLeftView />
-    ),
-    headerRight: <HeaderRightView />,
+    headerLeft: () => {return <HeaderLeftView />},
+    headerRight: () => {return <HeaderRightView />},
   };
   return header;
 };

@@ -50,14 +50,14 @@ function SlideUpView(props) {
 
   const keyboardAvoidingView = (
     <KeyboardAvoidingView
-      // behavior={Platform.OS === 'ios' ? 'padding' : null}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
       // behavior={Platform.OS === 'ios' ? 'position' : null}
       behavior="position"
       // enabled={isKeyboardAvoidEnabled}
-      // enabled
+      enabled
       style={{
         width: '100%',
-        top: -140,
+        top: -150,
         // borderWidth: 1,
         // borderColor: 'white',
         // // borderStyle: 'dashed',
@@ -68,7 +68,7 @@ function SlideUpView(props) {
       <SafeAreaView
         style={
           {
-            flex: Platform.OS === 'ios' ? 1: 0,
+            // flex: Platform.OS === 'ios' ? 1: 0,
           }
         }
       >

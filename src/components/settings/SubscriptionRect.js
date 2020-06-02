@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   View,
   Text,
   Image,
+  Switch,
 } from 'react-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -14,6 +15,8 @@ import { TouchableOpacity, } from 'react-native-gesture-handler';
 
 // ui colors
 import colors from '../../../colors';
+
+import styles from '../../../styles';
 
 // import InfoBox from '../../../storybook/stories/InfoBox';
 
@@ -36,47 +39,37 @@ const copy3 = {
   paddingHorizontal: 6,
 };
 
-// oval bank icon
-const oval2 = {
-  justifyContent: 'center',
-  // width: '100%',
-  height: '100%',
-};
 
-// view rectangle
-const mask = {
-  // flex: 1,
-  flexDirection: 'row',
-  width: '93%',
-  // height: '100%',
-  borderRadius: 9,
-  backgroundColor: colors.dark,
-  shadowColor: '#0f1725',
-  shadowOffset: {
-    width: 5,
-    height: 5,
-  },
-  shadowRadius: 16,
-  shadowOpacity: 1,
-
-  // borderWidth: 1,
-  // borderColor: 'white',
-  // borderStyle: 'solid',
-};
 
 // const message = `Thank you for using ${global.appName} version ${global.appVersion}!`;
 
 function SubscriptionRect(props) {
   const { onPress, isUserLoggedIn, isUserOnline } = props;
 
+  const [value, setValue] = useState(isUserLoggedIn);
+
+  const toggleSwitch = (
+     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Switch
+        value={value}
+        disabled
+        onValueChange={v => {
+          setValue(v);
+        }}
+      />
+    </View>
+  );
+
+  const bankIcon = <MaterialCommunityIcons name="bank-outline" size={36} color={colors.white} />;
+
   let text = `Download us on any device and sync it to access your account :D`;
 
   if (global.authenticated) {
-    text = 'Device sync is enabled. Access your data anywhere from any device'
+    text = `Device sync is ${(value) ? 'enabled' : 'disabled'}`
   }
 
   else if (!global.authenticated) {
-    text = `Tap here to sign up and access more cool features like cross-device sync and cloud data :D`;
+    text = `Tap here to sign up`;
     // return <InfoBox title='Tap here to sign up and access features.' />
   }
   // else {
@@ -94,8 +87,30 @@ function SubscriptionRect(props) {
     >
       <TouchableOpacity
         disabled={global.authenticated}
-        onPress={onPress} style={mask}>
-        <View style={{
+        onPress={onPress} style={{
+          flex: 1,
+          flexDirection: 'row',
+          width: '93%',
+          // height: '100%',
+          borderRadius: 9,
+          backgroundColor: colors.dark,
+          shadowColor: '#0f1725',
+          shadowOffset: {
+            width: 5,
+            height: 5,
+          },
+          shadowRadius: 16,
+          shadowOpacity: 1,
+
+        }}>
+
+
+
+        
+
+        {/* Toggle Switch or Icon */}
+        <View
+        style={{
           flex: 0.2,
           alignItems: 'center',
           justifyContent: 'center',
@@ -103,21 +118,13 @@ function SubscriptionRect(props) {
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'solid',
-        }}>
-          <View style={oval2}>
+        }}
+        >
+      {
+        isUserLoggedIn && toggleSwitch || bankIcon
+      }
+    </View>
 
-          <MaterialCommunityIcons name="bank-outline" size={36} color={colors.white} />
-
-{/*            <Image
-              resizeMode="contain"
-              style={{
-                height: 33,
-                width: 33,
-              }}
-              source={global.walletIcon}
-            />*/}
-          </View>
-        </View>
         <View style={
           {
             flex: 0.8,
@@ -131,7 +138,18 @@ function SubscriptionRect(props) {
 
         }
         >
-          <Text numberOfLines={3} style={copy3}>{ text }</Text>
+          <Text numberOfLines={3} style={[
+            styles.infoBoxGreenTextStyle,
+            {
+
+            }
+          ]}>{ text }</Text>
+                    <Text numberOfLines={1} style={[
+            styles.infoBoxGreenTextStyle,
+            {
+              color: colors.offWhite
+            }
+          ]}>Access your data from anywhere</Text>
         </View>
       </TouchableOpacity>
 

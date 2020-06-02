@@ -309,8 +309,8 @@ export default function MyAppIntroSlider({ navigation }) {
         // onSkip={_onDone}
         renderPagination={false}
 
-        // skipLabel="Skip"
-        // showSkipButton
+        skipLabel="Skip"
+        showSkipButton
         // bottomButton
       />
     );
@@ -321,7 +321,7 @@ MyAppIntroSlider.navigationOptions = () => {
   const navbar = {
     headerTransparent: {},
     headerTintColor: colors.white,
-    headerLeft: null,
+    headerLeft: () => {},
   };
   return navbar;
 };

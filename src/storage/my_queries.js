@@ -7,7 +7,7 @@ import {
   deleteTransaction,
   deleteCategory,
   deletePayee,
-  createCategory,
+  // createCategory,
 } from '../graphql/mutations';
 
 import {
@@ -19,7 +19,7 @@ import {
 import uuidv4 from '../functions/uuidv4';
 
 
-import searchByID from '../functions/searchByID';
+// import searchByID from '../functions/searchByID';
 
 // import getUniqueId from '../functions/getUniqueId';
 
@@ -66,11 +66,11 @@ query ListCategorys {
 `;
 
 export const listAllOnlineCategories = async () => {
- let list = [];
+  let list = [];
   try {
     const graphqldata = await API.graphql(graphqlOperation(listCategorysGQL));
     // console.log('graphqldata: ', graphqldata);
-    list = graphqldata.data.listCategorys.items
+    list = graphqldata.data.listCategorys.items;
 
     // console.log('online categories list.length: ', list.length);
   } catch (err) {
@@ -143,7 +143,7 @@ mutation CreateCategory {
   }
 }
 `;
-  return query
+  return query;
 };
 export const CreatePayeeGQL = (payee) => {
   const query = gql`
@@ -197,13 +197,12 @@ mutation CreateTransaction {
   return query;
 };
 
-// User Pool Web Client Id 
+// User Pool Web Client Id
 // 794chgh604h4tsi3l10j5tmd3
 
 export const UpdateTransactionGQL = (transaction) => {
-  console.log('updated: ', transaction);
+  // console.log('updated: ', transaction);
   const graphql_query = gql`
-
 mutation UpdateTransaction {
   updateTransaction(input: {
     id: ${'"'+transaction.id+'"'}
@@ -236,7 +235,7 @@ mutation UpdateTransaction {
 
 
 `;
-  return graphql_query
+  return graphql_query;
 };
 
 // mutation UpdateCategory {
@@ -276,40 +275,8 @@ mutation UpdateCategory {
     version
   }
 }`;
-  return graphql_query
+  return graphql_query;
 };
-
-// export const GetCategoryByIDGQL = (id) => {
-//   const graphql_query = gql`
-// query GetCategory {
-//   getCategory(id: ${'"'+id+'"'}) {
-//     id
-//     name
-//     type
-//     owner
-//     version
-//   }
-// }
-//   `
-//   return graphql_query
-// }
-
-
-
-// export const GetTransactionByIDGQL = (id) => {
-//   const graphql_query = gql`
-// query getTransaction {
-//   getTransaction(input: {
-//     id: ${id}
-//   }) {
-//     id
-//     amount
-//     version
-//   }
-// }`;
-//   return graphql_query
-// };
-
 
 /* API calls */
 export const removeCategory = async (category) => {
@@ -320,6 +287,16 @@ export const removeCategory = async (category) => {
     console.log('error deleting category...', err);
   }
 };
+
+export const DeleteCategory = async (category) => {
+  try {
+    await API.graphql(graphqlOperation(deleteCategory, { input: { id: category.id } }));
+    console.log('category successfully deleted.', category.id);
+  } catch (err) {
+    console.log('error deleting category...', err);
+  }
+};
+
 export const removePayee = async (payee) => {
   try {
     await API.graphql(graphqlOperation(deletePayee, { input: { id: payee.id } }));
@@ -346,41 +323,27 @@ export const savePayee = async (payee) => {
     // failed to upload transaction
     console.log('error creating payee...', err);
   }
-}
+};
 export const SaveCategory = async (category) => {
+  try {
+    const categoryMutation = graphqlOperation(CreateCategoryGQL(category)); // push new category
+    await API.graphql(categoryMutation);
+    console.log('category successfully created:', category.id);
+  } catch (e) {
+    console.log('save category error:', e.errors[0]['errorType']);
+    const errorType = e.errors[0].errorType;
 
-  // try {
-  //   // try to update existing onine cat first
-  //   // UpdateCategory(category);
-  // } catch(e) {
-  //   // statements
-  //   console.log('error updating category from savveCategory():', e.errors);
-
-    try {
-      const categoryMutation = graphqlOperation(CreateCategoryGQL(category)) // push new category
-      await API.graphql(categoryMutation);
-      console.log('category successfully created:', category.id);
-    } catch (e) {
-      // console.log('error saving category in SaveCategory:', e);
-      console.log('save category error:', e.errors[0]['errorType']);
-
-      let errorType = e.errors[0]['errorType'];
-
-      if (errorType && errorType === 'DynamoDB:ConditionalCheckFailedException') {
-        console.log(`trying to update category ${category.id} instead ...`);
-        UpdateCategory(category);
-      }
-      
+    if (errorType && errorType === 'DynamoDB:ConditionalCheckFailedException') {
+      // console.log(`trying to update category ${category.id} instead ...`);
+      UpdateCategory(category);
     }
-  // }
-
-  
+  }
 };
 export const formatTransactionInput = (item) => {
-  let obj = {};
+  const obj = {};
   Object.keys(item).forEach((key) => {
     if (key) {
-      obj.key = key
+      obj.key = key;
       // checking for nulls
       if ((item[key] === null || !item[key]) && item[key] !== 0) {
         if (key === 'note') obj[key] = 'Add note';
@@ -390,43 +353,15 @@ export const formatTransactionInput = (item) => {
           name: 'None',
           owner: global.storageKey,
           version: 0,
-        }
-
+        };
       }
       else {
-        obj[key] = item[key]
+        obj[key] = item[key];
       }
     }
   });
-  return obj
-}
-
-// export const formatCategoryInput = (item) => {
-//   let obj = {};
-//   Object.keys(item).forEach((key) => {
-//     if (key) {
-//       obj.key = key
-//       // checking for nulls
-//       if ((item[key] === null || !item[key]) && item[key] !== 0) {
-//         // console.log('item[key]: ', item[key]);
-//         // if (key === 'note') obj[key] = 'Add note';
-
-//         // if (key === 'payee') obj[key] = {
-//         //   id: uuidv4(),
-//         //   name: 'None',
-//         //   owner: item.owner,
-//         //   version: 0,
-//         // }
-
-//       }
-//       else {
-//         obj[key] = item[key]
-//       }
-//     }
-//   });
-//   return obj
-// }
-
+  return obj;
+};
 
 export const saveTransaction = async (transaction) => {
   try {
@@ -439,21 +374,23 @@ export const saveTransaction = async (transaction) => {
     UpdateTransaction(transaction)
     // console.log('transaction: ', transaction);
   }
-}
+};
 export const UpdateTransaction = async (updated) => {
   try {
     await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
-    console.log('transaction successfully updated:', updated.id);
+    // console.log('transaction successfully updated:', updated.id);
   } catch (err) {
+    // throw new Error(err);
     // transaction dne yet (most likely)
-    if (!(err.errors[0]['errorType'])) return
-    console.log('error updating transaction...',  err.errors[0]['errorType']);
-    let errorType = err.errors[0]['errorType']
+    // if (!(err.errors[0]['errorType'])) return
+    // console.log('error updating transaction...',  err.errors[0]['errorType']);
+    // let errorType = err.errors[0]['errorType']
+    // if (errorType !== 'DynamoDB:ConditionalCheckFailedException') throw new Error(err);
 
-    if (errorType === 'DynamoDB:ConditionalCheckFailedException') {
-      // transaction dne online
-      saveTransaction(updated)
-    }
+    // if (errorType === 'DynamoDB:ConditionalCheckFailedException') {
+    //   // transaction dne online
+    //   saveTransaction(updated)
+    // }
 
   }
 };
@@ -464,21 +401,21 @@ export const UpdateCategory = async (category) => {
 
     // console.log('category.version: ', category.version);
 
-    let response = await API.graphql(graphqlOperation(UpdateCategoryGQL(category)));
+    const response = await API.graphql(graphqlOperation(UpdateCategoryGQL(category)));
     console.log(`${'category successfully updated...'} ${JSON.stringify(response.data.updateCategory, null, 2)}`);
     console.log('category.version: ', category.version);
 
   } catch (err) {
     console.log('error updating category in UpdateCategory...', err); // err
 
-    if (!(err.errors[0]['errorType'])) return
+    // if (!(err.errors[0]['errorType'])) return
 
-    let errorType = err.errors[0]['errorType']
+    // let errorType = err.errors[0]['errorType']
 
-    if (errorType === 'DynamoDB:ConditionalCheckFailedException') {
-      // transaction dne online
-      SaveCategory(category)
-    }
+    // if (errorType === 'DynamoDB:ConditionalCheckFailedException') {
+    //   // transaction dne online
+    //   SaveCategory(category)
+    // }
 
     // if (!err.data.updateCategory) {
     //   // category doesnt exist yet
@@ -489,7 +426,7 @@ export const UpdateCategory = async (category) => {
 export const getTransactionByID = async (id) => {
   let obj;
   try {
-    let stored = await API.graphql(graphqlOperation(getTransaction, { id: id }))
+    const stored = await API.graphql(graphqlOperation(getTransaction, { id: id }));
     obj = stored.data.getTransaction;
     // console.log('obj: ', obj);
   } catch (err) {
@@ -497,19 +434,3 @@ export const getTransactionByID = async (id) => {
   }
   return obj;
 };
-// export const getCategoryByID = async (id) => {
-//   // let obj;
-//   // try {
-//   //   let stored = await API.graphql(graphqlOperation(getCategory, { id: id }))
-//   //   obj = stored.data.getCategory;
-//   //   return obj;
-//   // } catch (err) {
-//   //   throw new Error(err.message)
-//   //   console.log('error getting category by id...', err);
-//   // }
-//   // return obj;
-// };
-
-
-
-

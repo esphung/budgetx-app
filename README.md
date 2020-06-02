@@ -18,3 +18,7 @@ Financely is a new mobile app for organizing and managing your personal expenses
 - Customize categories by name and color
 - Export your transaction data
 - Enjoy am Ad-free experience!
+
+Latest Commits:
+
+06/02/2020 04:35 PM builded 5.9 in production release channel

@@ -16,7 +16,7 @@ import colors from '../../colors';
 
 import styles from '../../styles';
 
-import InfoBox from '../../storybook/stories/InfoBox';
+import InfoBox from '../components/InfoBox';
 
 const OfflineScreen = () => {
   const page = (

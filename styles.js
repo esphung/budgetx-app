@@ -301,7 +301,7 @@ export default StyleSheet.create({
     shadowColor: '#0c1422',
     shadowOffset: {
       width: 0,
-      height: 1
+      height: 1,
     },
     shadowRadius: 0,
     shadowOpacity: 1,
@@ -321,7 +321,7 @@ export default StyleSheet.create({
     shadowColor: '#0c1422',
     shadowOffset: {
       width: 0,
-      height: 1
+      height: 1,
     },
     shadowRadius: 0,
     shadowOpacity: 1,
@@ -452,9 +452,6 @@ export default StyleSheet.create({
     marginLeft: 25,
     marginRight: 10,
     // marginTop: 2,
-
-
-
     // borderWidth: 1,
     // borderColor: 'pink',
     // borderStyle: 'solid',
@@ -646,8 +643,6 @@ export default StyleSheet.create({
     // borderWidth: 3,
     // borderColor: 'white',
     // borderStyle: 'dashed',
-
-
 
     backgroundColor: colors.darkTwo,
     // backgroundColor: 'transparent',

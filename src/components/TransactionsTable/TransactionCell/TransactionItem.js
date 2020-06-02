@@ -5,13 +5,13 @@ import {
   View,
   // Text,
   // ScrollView,
-  TouchableOpacity, // better for not opening slide view
+  // TouchableOpacity, // better for not opening slide view
   ActivityIndicator
 } from 'react-native';
 
-// import {
-//   TouchableOpacity,
-// } from 'react-native-gesture-handler';
+import {
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 
 // import CustomSwipeCell from './CustomSwipeCell';
 
@@ -20,7 +20,7 @@ import colors from '../../../../colors';
 
 import styles from '../../../../styles';
 
-import CategoryLabel from '../../../../storybook/stories/CategoryLabel';
+import CategoryLabel from './CategoryLabel';
 
 import ItemSymbol from './ItemSymbol';
 

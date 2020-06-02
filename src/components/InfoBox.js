@@ -8,7 +8,7 @@ import {
 
 // import colors from '../../../colors';
 
-import styles from '../../../styles';
+import styles from '../../styles';
 
 
 const InfoBox = (props) => {

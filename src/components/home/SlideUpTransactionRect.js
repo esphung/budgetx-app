@@ -34,9 +34,9 @@ import styles from '../../../styles';
 
 // import MyDateTimePicker from '../../../storybook/stories/MyDateTimePicker';
 
-import MyCalendarPicker from '../../../storybook/stories/MyCalendarPicker';
+import MyCalendarPicker from '../MyCalendarPicker';
 
-import TouchableText from '../../../storybook/stories/TouchableText';
+import TouchableText from '../TouchableText';
 
 import getFormattedDateString from '../../functions/getFormattedDateString';
 
@@ -470,7 +470,7 @@ function SlideUpTransactionRect(props) {
               isEditable={true}
               value={value}
               handleChange={handleChange} />
-{/*
+  {/*
               <Text style={[amountLabel, {
                 // fontSize: 19,
               }] }>
@@ -496,7 +496,7 @@ function SlideUpTransactionRect(props) {
 
             padding: 2,
 
-            // backgroundColor: colors.darkTwo,
+            backgroundColor: colors.darkTwo,
           }}
         >
          {

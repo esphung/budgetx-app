@@ -29,13 +29,13 @@ import colors from '../../colors';
 
 import styles from '../../styles';
 
-import Button from '../../storybook/stories/Button';
+import MyButton from '../components/MyButton';
 
-import TouchableText from '../../storybook/stories/TouchableText';
+import TouchableText from '../components/TouchableText';
 
 import FacebookLogin from '../components/FacebookLoginButton';
 
-import HelpMessage from '../../storybook/stories/HelpMessage';
+import HelpMessage from '../components/HelpMessage';
 
 import uuidv4 from '../functions/uuidv4';
 
@@ -272,9 +272,9 @@ function WelcomeScreen(props) {
               
       <View style={styles.container}>
 
-        <Button title="Sign Up" onPress={() => handleRoute('SignUp')} />
+        <MyButton title="Sign Up" onPress={() => handleRoute('SignUp')} />
 
-        <Button title="Sign In" onPress={() => {
+        <MyButton title="Sign In" onPress={() => {
           // if (global.isFederated) {
           //   handleRoute('AuthLoading')
           // } else {

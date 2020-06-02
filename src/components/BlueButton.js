@@ -13,9 +13,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 // import PropTypes from 'prop-types';
 
 // ui colors
-import colors from '../../../colors';
+import colors from '../../colors';
 
-import styles from '../../../styles';
+import styles from '../../styles';
 
 function BlueButton(props) {
   const { onPress, title, icon } = props;

@@ -161,9 +161,9 @@ function SignOutScreen({ navigation }) {
       // // AsyncStorage.removeItem('isUserAuthenticated');
       AsyncStorage.removeItem('authenticated');
 
-      AsyncStorage.removeItem('hasSeenIntro');
+      // AsyncStorage.removeItem('hasSeenIntro');
 
-      AsyncStorage.removeItem('hasSeenCreateNewCategoryToolTip')
+      // AsyncStorage.removeItem('hasSeenCreateNewCategoryToolTip')
 
 
       // global.storageKey = '';

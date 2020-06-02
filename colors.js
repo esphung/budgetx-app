@@ -6,7 +6,7 @@ DATE:       Fri Nov  1 12:08:40 2019
             11/11/2019 10:03 AM
 */
 
-// Financcely UI Colors
+// Financely UI Colors
 const colors = {
   darkGreyBlue: '#314054',
   pinkRed: '#ff004b',

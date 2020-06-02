@@ -162,11 +162,17 @@ export default function AuthLoadingScreen(props) {
 
     /* Play App Intro Slider */
     let hasSeenIntro = await AsyncStorage.getItem('hasSeenIntro');
-    console.log('hasSeenIntro: ', hasSeenIntro);
+    // console.log('hasSeenIntro: ', hasSeenIntro);
+
+    /* get whether signed up user wants to sync device or not */
+    global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
+    console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
 
     // console.log('props.navigation: ', props.navigation);
 
-    if (!hasSeenIntro) props.navigation.navigate('MyAppIntroSlider');
+    if (!hasSeenIntro) {
+      props.navigation.navigate('MyAppIntroSlider');
+    };
 
 
     // global.showGlobalValues()

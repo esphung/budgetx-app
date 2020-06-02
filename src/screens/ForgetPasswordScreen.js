@@ -8,7 +8,7 @@ import { AppLoading } from 'expo';
 
 import { Ionicons } from '@expo/vector-icons';
 
-import { NetworkConsumer } from 'react-native-offline';
+// import { NetworkConsumer } from 'react-native-offline';
 
 import * as MailComposer from 'expo-mail-composer';
 
@@ -16,11 +16,11 @@ import OfflineScreen from '../screens/OfflineScreen';
 
 import SpinnerMask from '../../src/components/SpinnerMask';
 
-import HelpMessage from '../../storybook/stories/HelpMessage';
+import HelpMessage from '../components/HelpMessage';
 
 import { showMessage } from 'react-native-flash-message';
 
-import TouchableText from '../../storybook/stories/TouchableText';
+import TouchableText from '../components/TouchableText';
 
 import {
   TouchableOpacity,
@@ -409,13 +409,13 @@ function ForgotPasswordScreen(props) {
 
   const offline = <OfflineScreen />;
 
-  const view = (
-    <NetworkConsumer>
-      {
-        ({ isConnected }) => (isConnected ? forgot : offline)
-      }
-    </NetworkConsumer>
-  );
+  // const view = (
+  //   <NetworkConsumer>
+  //     {
+  //       ({ isConnected }) => (isConnected ? forgot : offline)
+  //     }
+  //   </NetworkConsumer>
+  // );
 
   // if (!isLoading) {
   //   return view;
@@ -434,13 +434,14 @@ function ForgotPasswordScreen(props) {
   //   );
   // }
 
-  return view
+  // return view
+  return forgot;
 }
 
 
 ForgotPasswordScreen.navigationOptions = () => {
   const navbar = {
-    headerTransparent: {},
+    headerTransparent: true,
     headerTintColor: colors.white,
   };
   return navbar;

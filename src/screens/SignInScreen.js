@@ -23,7 +23,7 @@ Amplify.configure(config);
 
 import SpinnerMask from '../../src/components/SpinnerMask';
 
-import HelpMessage from '../../storybook/stories/HelpMessage';
+import HelpMessage from '../components/HelpMessage';
 
 import {
   // StyleSheet,
@@ -908,14 +908,21 @@ function SignInScreen(props) {
 }
 
   const view = (
-    <NetworkConsumer>
-      {
-        // ({ isConnected }) => ((isConnected && !global.isConfirmSent) ? signin : confirm)
-        ({ isConnected }) => ((isConnected) ? ((isConfirmVisible) ? confirm : signin) : offline)
-
-      }
-    </NetworkConsumer>
+  
+    isConfirmVisible && confirm || signin
+  
   );
+
+
+  // const view = (
+  //   <NetworkConsumer>
+  //     {
+  //       // ({ isConnected }) => ((isConnected && !global.isConfirmSent) ? signin : confirm)
+  //       ({ isConnected }) => ((isConnected) ? ((isConfirmVisible) ? confirm : signin) : offline)
+
+  //     }
+  //   </NetworkConsumer>
+  // );
 
   // if (isDialogVisible) {
   //   return confirmationDialog;

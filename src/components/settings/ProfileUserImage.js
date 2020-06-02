@@ -15,9 +15,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationEvents } from 'react-navigation';
 
 import * as ImagePicker from 'expo-image-picker';
-
 import Constants from 'expo-constants';
-
 import * as Permissions from 'expo-permissions';
 
 // import { NetworkConsumer } from 'react-native-offline';
@@ -49,8 +47,6 @@ import config from '../../../aws-exports';
 // });
 
 import SpinnerMask from '../SpinnerMask';
-
-import DisplayImageExample from '../../../DisplayImageExample';
 
 // ui colors
 import colors from '../../../colors';
@@ -435,7 +431,7 @@ function ProfileUserImage(props) {
     const options = {
       noData: true,
     }
-    ImagePicker.launchImageLibrary(options, response => {
+    ImagePicker(options, response => {
       if (response.uri) {
         // this.setState({ image: response })
         setImage(response)

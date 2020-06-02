@@ -46,10 +46,10 @@ import {
   // ScrollView,
   // Button,
   // TouchableOpacity,
-  // Text,
+  Text,
   // Image,
   // TextInput,
-  // SafeAreaView,
+  SafeAreaView,
   AsyncStorage,
   Alert,
   Share,
@@ -64,7 +64,7 @@ import {
   // savePayee,
   // saveCategory,
   // saveTransaction,
-  updateCategory,
+  UpdateCategory,
   // fetchStoredTransactions,
   // fetchStoredCategories,
   // getTransactionByID,
@@ -89,20 +89,14 @@ import SubscriptionRect from '../components/settings/SubscriptionRect';
 
 import UserOptions from '../components/settings/UserOptions';
 
-import BlueButton from '../../storybook/stories/BlueButton';
+import BlueButton from '../components/BlueButton';
 
-import DeveloperCredit from '../components/settings/DeveloperCredit';
-
-import DesignerCredit from '../components/settings/DesignerCredit';
-
-import VersionCredit from '../components/settings/VersionCredit';
-
-import {
-  getObjectKeysHTML,
-  getHTMLObjectRows,
-  htmlTop,
-  htmlBottom,
-} from '../components/settings/exportHTML';
+// import {
+//   getObjectKeysHTML,
+//   getHTMLObjectRows,
+//   htmlTop,
+//   htmlBottom,
+// } from '../components/settings/exportHTML';
 
 // import {
 //   loadUserObject,
@@ -339,7 +333,7 @@ function Settings(props) {
           storage.categories[i].version, // version
         );
 
-        updateCategory(category);
+        UpdateCategory(category);
 
       // saveCategory(storage.categories[i])
         // console.log('storage.transactions[i]: ', storage.transactions[i]);
@@ -505,7 +499,10 @@ function Settings(props) {
 
   async function retrieveStoredSettings() {
     // global.isDeviceSyncOn = await getIsDeviceSyncOn()
-    setIsReady(false)
+    setIsReady(false);
+
+    global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
+    console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
 
     const storage = await loadSettingsStorage(global.storageKey);
 
@@ -1528,7 +1525,7 @@ function Settings(props) {
   // };
 
   const view = (
-    <View
+    <SafeAreaView
       style={styles.container}
     >
     {
@@ -1660,9 +1657,40 @@ function Settings(props) {
                 }
               }
             >
-              <DeveloperCredit />
+              <Text
+      style={
+        {
+          opacity: 0.5,
+          fontFamily: 'SFProDisplay-Regular',
+          fontSize: 17,
+          fontWeight: 'normal',
+          fontStyle: 'normal',
+          letterSpacing: 0.13,
+          textAlign: 'center',
+          color: colors.white,
+        }
+      }
+    >
+      {`Developed by ${global.appDeveloper}`}
+    </Text>
 
-              <DesignerCredit />
+              <Text
+            style={
+              {
+                // height: 40,
+                opacity: 0.5,
+                fontFamily: 'SFProDisplay-Regular',
+                fontSize: 17,
+                fontWeight: 'normal',
+                fontStyle: 'normal',
+                letterSpacing: 0.13,
+                textAlign: 'center',
+                color: colors.white,
+              }
+            }
+          >
+
+          {`Designed by ${global.appDesigner}`}</Text>
 
             </View>
 
@@ -1692,7 +1720,22 @@ function Settings(props) {
             flex: 1,
           }}
           >
-            <VersionCredit />
+             <Text
+      style={
+        {
+          opacity: 0.5,
+          fontFamily: 'SFProDisplay-Regular',
+          fontSize: 15,
+          fontWeight: 'normal',
+          fontStyle: 'normal',
+          letterSpacing: 0.1,
+          textAlign: 'center',
+          color: colors.white, // '#ffffff'
+        }
+    }
+    >
+      { `Version ${global.appVersion}` }
+    </Text>
           </View>
         </View>
         {
@@ -1708,7 +1751,7 @@ function Settings(props) {
         {
           !isReady && spinner
         }
-    </View>
+    </SafeAreaView>
   );
 
   return view

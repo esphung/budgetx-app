@@ -1,5 +1,4 @@
 {
-
   "expo": {
     "scheme": "expoamplifytest",
     "githubUrl": "https://github.com/esphung/budgetx-app",
@@ -20,7 +19,7 @@
     },
     "android": {
       "package": "com.ericphung.financely",
-      "versionCode": 30
+      "versionCode": 35
     },
     "name": "Financely",
     "orientation": "portrait",
@@ -41,12 +40,10 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "5.1.4",
-
+    "version": "5.9.0",
     "facebookScheme": "fb582566462305004",
-
     "facebookAppId": "582566462305004",
-
-    "facebookDisplayName": "Financely App"
+    "facebookDisplayName": "Financely App",
+    "description": ""
   }
 }

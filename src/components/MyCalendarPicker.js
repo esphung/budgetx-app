@@ -10,9 +10,9 @@ import {
 import CalendarPicker from 'react-native-calendar-picker';
 
 // ui colors
-import colors from '../../../colors';
+import colors from '../../colors';
 
-import styles from '../../../styles';
+import styles from '../../styles';
 
 export default function MyCalendarPicker(props) {
   const { initialDate, updateTransactionDate, isUpdatingTransaction } = props;
@@ -152,7 +152,8 @@ export default function MyCalendarPicker(props) {
     }
 
     {
-      isUpdatingTransaction && updatingTransactionIndicator
+      // isUpdatingTransaction &&
+      updatingTransactionIndicator
     }
 
     </View>

@@ -6,7 +6,7 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 
 import Dialog from 'react-native-dialog';
 
-import HelpMessage from '../../storybook/stories/HelpMessage';
+import HelpMessage from '../components/HelpMessage';
 
 import {
   setHasRatedUs,
@@ -44,9 +44,6 @@ import colors from '../../colors';
 import styles from '../../styles';
 
 import getButtonStyle from '../../src/functions/getButtonStyle';
-
-  
-
 
 
 function ChangePasswordScreen(props) {
