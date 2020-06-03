@@ -317,7 +317,13 @@ const MyStickyTable = (props) => {
   /* Working  ios vversion of table */
   const ios_table = (
      <SafeAreaView style={{
-          flex: 1,
+          // flex: 1,
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: -20,
+
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -358,6 +364,12 @@ const MyStickyTable = (props) => {
   const android_table = (
         <View style={{
           // // flex: 1,
+                    position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 40,
+          bottom: -20,
+
 
           // borderWidth: 1,
           // borderColor: 'white',

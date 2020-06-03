@@ -153,7 +153,7 @@ export default function MyCalendarPicker(props) {
 
     {
       // isUpdatingTransaction &&
-      updatingTransactionIndicator
+      // updatingTransactionIndicator
     }
 
     </View>

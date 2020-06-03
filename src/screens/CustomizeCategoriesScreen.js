@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
 
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 import { showMessage } from 'react-native-flash-message';
 
@@ -84,7 +84,7 @@ import {
 
 import SwipeDelete from '../components/SwipeDelete';
 
-// import SwipeEdit from '../components/SwipeEdit';
+import SwipeEdit from '../components/SwipeEdit';
 
 // import { Auth } from 'aws-amplify';
 
@@ -323,43 +323,45 @@ export default function CustomizeCategoriesScreen() {
     }
     removeCategory(category);
 
-    saveSettingsStorage(global.storageKey, storage);
+    
 
     setData(storage.categories);
 
-    showMessage({
-      message: 'Undo remove category',
-      duration: 2250,
-      position: 'bottom',
-      color: colors.shamrockGreen, // "#606060", // text color
-      // opacity: 0.5,
+    saveSettingsStorage(global.storageKey, storage);
 
-      textStyle: styles.textStyle,
+    // showMessage({
+    //   message: 'Undo remove category',
+    //   duration: 2250,
+    //   position: 'bottom',
+    //   color: colors.shamrockGreen, // "#606060", // text color
+    //   // opacity: 0.5,
 
-      onPress: async () => {
-        // addCategory()
-        setIsAddingCategory(true);
-        // const list = await loadUserCategories();
-        const userObject = await loadSettingsStorage(global.storageKey);
-        // console.log(userObject.user.categories);
+    //   textStyle: styles.textStyle,
 
-        const list = userObject.categories;
+    //   onPress: async () => {
+    //     // addCategory()
+    //     setIsAddingCategory(true);
+    //     // const list = await loadUserCategories();
+    //     const userObject = await loadSettingsStorage(global.storageKey);
+    //     // console.log(userObject.user.categories);
 
-        list.unshift(previous);
+    //     const list = userObject.categories;
 
-        setData(list);
+    //     list.unshift(previous);
 
-        userObject.categories = list;
-        // await saveUserObject(userObject);
-        saveSettingsStorage(global.storageKey, userObject);
-        if (await isDeviceOnline()) {
-          if (await getAuthentication()) {
-            SaveCategory(previous);
-          }
-        }
-        setIsAddingCategory(false);
-      },
-    });
+    //     setData(list);
+
+    //     userObject.categories = list;
+    //     // await saveUserObject(userObject);
+    //     saveSettingsStorage(global.storageKey, userObject);
+    //     if (await isDeviceOnline()) {
+    //       if (await getAuthentication()) {
+    //         SaveCategory(previous);
+    //       }
+    //     }
+    //     setIsAddingCategory(false);
+    //   },
+    // });
   };
   const addCategory = async (name, color, type) => {
     setIsAddingCategory(true);
@@ -405,6 +407,8 @@ export default function CustomizeCategoriesScreen() {
       setData(list);
     }
     setIsAddingCategory(false);
+
+    clearState()
 
     return obj;
   };
@@ -475,6 +479,7 @@ export default function CustomizeCategoriesScreen() {
     saveSettingsStorage(storageKey, storage);
   };
   const retrieveStoredCategories = async () => {
+
     const storage = await loadSettingsStorage(global.storageKey);
     // setAuthenticated(await getAuthentication())
     Auth.currentAuthenticatedUser().then(async (user) =>  {
@@ -484,6 +489,7 @@ export default function CustomizeCategoriesScreen() {
     }).catch(async () => {
       global.authenticated = false;
     })
+    clearState()
     setData(storage.categories);
   };
   const deleteBtnPressed = async (item) => {
@@ -493,6 +499,7 @@ export default function CustomizeCategoriesScreen() {
       // statements
       console.log('e: ', e);
     }
+    clearState()
     // await removeCategoryByName(item.name);
   };
 
@@ -557,10 +564,20 @@ export default function CustomizeCategoriesScreen() {
   function renderHiddenItem({ item }) {
     const hidden = (
       <View style={styles.rowBack}>
+      <View style={styles.rowBackLeft}>
+          <SwipeEdit
+          disabled
+            keyExtractor={item.id}
+            onEditBtnPress={() => {}}
+          />
+        </View>
         <View style={styles.rowBackRight}>
           <SwipeDelete
+     
             keyExtractor={item.id}
-            onDeleteBtnPress={() => deleteBtnPressed(item)}
+            onDeleteBtnPress={() => {
+              if (!shouldShowColorBox) return
+              deleteBtnPressed(item)}}
           />
         </View>
       </View>
@@ -568,13 +585,20 @@ export default function CustomizeCategoriesScreen() {
     return hidden;
   }
   async function clearState() {
-    setIsReady(false);
+    // setIsReady(false);
+    setCurrentColor(null)
+
+    setSelected(new Map())
+
+    onSelect(null)
 
     setShowDialogBox(false);
 
     setCurrentCategory(null);
 
     setIsAddingCategory(false);
+
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -718,17 +742,31 @@ export default function CustomizeCategoriesScreen() {
     return (
       <ListItem
       style={{
-        // alignItems: 'center',
-        // justifyContent: 'center',s
+        flex: 1,
         // borderWidth: 1,
         // borderColor: 'white',
         // borderStyle: 'solid',
 
-        borderBottomWidth: 0,
+        // width: '100%',
+
+        // marginRight:screenWidth/2,
+
+        // borderBottomWidth: 0,
         opacity: (Object.keys(colors).includes(name) || global.authenticated) ? 1.0 : 0.4
       }}>
+
+{/*      <View style={{
+        // flexDirection: 'row',
+            // height: 1,
+    // height: '70%',
+    width: 50,
+    marginVertical: 10,
+    marginRight: 6,
+    backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
+    opacity: 0.1,
+      }} />
         
-        
+        */}
         <TouchableOpacity
         onPress={onPress}
         disabled={(Object.keys(colors).includes(name) !== true && !global.authenticated)}
@@ -736,28 +774,12 @@ export default function CustomizeCategoriesScreen() {
         style={[
           // styles.buttonStyle,
           {
-          //   flex: 1,
-          //   minWidth: '100%',
-          //   // flex: 1,
-          // flexDirection: 'row',
-          // // alignItems: 'center',
-          // // justifyContent: 'center',
-
-          // height: 50,
-
-          // paddingHorizontal: 8,
-          // // padding: 4,
-
-          // // borderRadius: 24,
-          // borderWidth: 0.5,
-          // borderStyle: 'solid',
-
-          width: 256,
-          height: 37,
-          // maxHeight: 37,
-
-          alignItems: 'center',
-          justifyContent: 'center',
+                maxHeight: MAX_PILL_HEIGHT,
+                            minWidth:MIN_PILL_WIDTH ,
+                            maxWidth: MAX_PILL_WIDTH + 100,
+  
+          // alignItems: 'center',
+          // justifyContent: 'center',
 
           // marginHorizontal: 4,
           // marginVertical: 10,
@@ -774,11 +796,12 @@ export default function CustomizeCategoriesScreen() {
           // borderStyle: 'solid',
         }]}
       >
+
        <Text style={[
           styles.listItemTitleStyle,
             {
             // color: currentColor === color ? colors.offWhite : colors.white,
-            color: currentColor === color ? color : colors.white,
+            color: currentColor === color ? colors.offWhite : color,
             
           }
           ]}
@@ -832,27 +855,31 @@ export default function CustomizeCategoriesScreen() {
 
       setIsLoading(false);
 
-      showMessage({
-        message: 'Updated category type',
-        // duration: 550,
-        position: 'bottom',
+      // showMessage({
+      //   message: 'Updated category type',
+      //   // duration: 550,
+      //   position: 'bottom',
 
-        // description: "My message description",
-        // type: 'success', // "success", "info", "warning", "danger"
-        // backgroundColor: colors.dark, // "purple", // background color
-        color: colors.shamrockGreen, // "#606060", // text color
-        // opacity: 0.5,
+      //   // description: "My message description",
+      //   // type: 'success', // "success", "info", "warning", "danger"
+      //   // backgroundColor: colors.dark, // "purple", // background color
+      //   color: colors.shamrockGreen, // "#606060", // text color
+      //   // opacity: 0.5,
 
-        textStyle: styles.textStyle,
+      //   textStyle: styles.textStyle,
 
-        // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-      });
+      //   // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+      // });
 
       // setShouldShowColorBox(false);
+
+      clearState()
     } catch(e) {
       // statements
       console.log('error updating category type:', e);
-      setIsLoading(false);
+      // setIsLoading(false);
+
+      clearState()
 
       // setShouldShowColorBox(false);
     }
@@ -891,23 +918,23 @@ export default function CustomizeCategoriesScreen() {
       
       updateUserTransactionCategories(storage.categories);
 
-      setIsLoading(false);
+      // setIsLoading(false);
 
-      showMessage({
-        message: 'Updated category color',
-        // duration: 550,
-        position: 'bottom',
+      // showMessage({
+      //   message: 'Updated category color',
+      //   // duration: 550,
+      //   position: 'bottom',
 
-        // description: "My message description",
-        // type: 'success', // "success", "info", "warning", "danger"
-        // backgroundColor: colors.dark, // "purple", // background color
-        color: colors.shamrockGreen, // "#606060", // text color
-        // opacity: 0.5,
+      //   // description: "My message description",
+      //   // type: 'success', // "success", "info", "warning", "danger"
+      //   // backgroundColor: colors.dark, // "purple", // background color
+      //   color: colors.shamrockGreen, // "#606060", // text color
+      //   // opacity: 0.5,
 
-        textStyle: styles.textStyle,
+      //   textStyle: styles.textStyle,
 
-        // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-      });
+      //   // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+      // });
 
       /* Move  current  color to the top of the list */
       var first = selectedColor
@@ -927,12 +954,16 @@ export default function CustomizeCategoriesScreen() {
 
       // setShouldShowColorBox(false);
 
+      clearState()
+
 
 
     } catch(e) {
       // statements
       console.log('error updating category color:', e);
-      setIsLoading(false);
+      // setIsLoading(false);
+
+      clearState()
 
       // setShouldShowColorBox(false);
     }
@@ -942,8 +973,17 @@ export default function CustomizeCategoriesScreen() {
       styles.container,
       {
         // paddingTop: 12,
-        alignItems: 'center',
+        // alignItems: 'center',
 
+        flex: 1,
+
+        bottom: 0,
+        left:  0,
+
+        right: 0,
+        top: 0,
+
+backgroundColor: colors.dark, // 'rgba(0,0,0,0.5)',
 
       }
     ]}
@@ -951,14 +991,27 @@ export default function CustomizeCategoriesScreen() {
       <FlatList
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={(item) => (
+    <View style={[
+      // styles.separator,
+      {
+    //         width: 50,
+    // // height: '70%',
+    // height: 1,
+    // marginHorizontal: 10,
+    // backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
+    // opacity: 0.1,
+  },
+      item && {marginLeft: 0}]} />
+  )}
         // data={getFlatListDataFromObject(colors)}
         // renderItem={({ item }) => <Item item={item} onPress={() => UpdateCategoryColor(item.key, colors[item.key])} />}
         // keyExtractor={(item) => item.key}
 
         // data={authenticated && getFlatListDataFromObject(crayolaData) || getFlatListDataFromObject(colors)}
         data={flatlistData}
-        extraData={selected}
-        renderItem={({ item }) => <ColorTableCell currentColor={currentColor} item={item} opacity={0.5} name={item.key} color={item.value} onPress={() => {
+        // extraData={selected}
+        renderItem={({ item }) => <ColorTableCell currentColor={currentColor} item={item} opacity={1} name={item.key} color={item.value} onPress={() => {
           UpdateCategoryColor(item);
         }} />}
         keyExtractor={(item) => item.key}
@@ -1003,7 +1056,7 @@ const MAX_PILL_HEIGHT = 32;
   const editBox = (
     <SafeAreaView
       style={[
-        // styles.container,
+        styles.container,
         {
           // position: 'absolute',
 
@@ -1016,7 +1069,9 @@ const MAX_PILL_HEIGHT = 32;
 
           zIndex: 1,
 
-          // backgroundColor: colors.dark,
+          backgroundColor: colors.darkTwo,
+
+          borderTopWidth: 1,
 
           shadowColor: Platform.OS === 'ios' ? '#0a101b' : '',
           shadowOffset: Platform.OS === 'ios' ? {
@@ -1026,7 +1081,8 @@ const MAX_PILL_HEIGHT = 32;
           shadowRadius: Platform.OS === 'ios' ? 26 : 0,
           shadowOpacity: Platform.OS === 'ios' ? 1 : 0,
 
-          marginHorizontal: 10,
+          // marginHorizontal: 10,
+          padding: 4,
 
           // borderWidth: 1,
           // borderColor: 'white',
@@ -1037,19 +1093,19 @@ const MAX_PILL_HEIGHT = 32;
       ]}
     >
           <View style={{
-            flexDirection: 'row',
-            // flex: 1,
-            width: screenWidth,
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
+            // flexDirection: 'row',
+            // // flex: 1,
+            // width: screenWidth,
+            // // borderWidth: 1,
+            // // borderColor: 'white',
+            // // borderStyle: 'solid',
 
-            // backgroundColor: colors.darkTwo,
+            // // backgroundColor: colors.darkTwo,
 
-            height: 60,
+            // height: 60,
 
-            alignItems: 'center',
-            justifyContent: 'flex-start',
+            // alignItems: 'center',
+            // justifyContent: 'flex-start',
           }}>
 
         
@@ -1106,26 +1162,58 @@ const MAX_PILL_HEIGHT = 32;
           // shouldShowTypeButtons &&
 
            (
+            <View style={{
+           flexDirection: 'row',
+            // flex: 1,
+            width: screenWidth,
+            // borderWidth: 1,
+            // borderColor: 'white',
+            // borderStyle: 'solid',
+
+            // backgroundColor: colors.darkTwo,
+
+            height: 60,
+
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            }}>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
                    flexDirection: 'row',
-                   alignSelf: 'center',
-                   // flex: 1,
+                   // alignSelf: 'center',
+                   flex: 1,
                    width: '100%',
                    // borderWidth: 1,
                    // borderColor: 'white',
                    // borderStyle: 'solid',
 
+                   // backgroundColor: colors.white,
+
+                   borderTopWidth: 1,
+                   borderTopColor: colors.dark,
+
+                     shadowColor: '#0a101b',
+                    shadowOffset: {
+                      width: 1,
+                      height: 1,
+                    },
+                    shadowRadius: 26,
+                    shadowOpacity: 1,
+                                         
+
 
        
-                   // height: 60,
+                   height: 60,
        
                    alignItems: 'center',
                    justifyContent: 'center',
                  }}>
-       
+
+
+
+
                    
            
                   <TouchableOpacity
@@ -1143,23 +1231,16 @@ const MAX_PILL_HEIGHT = 32;
                      marginHorizontal: 4,
                      marginVertical: 10,
 
-            // backgroundColor: colors.darkTwo,
+            // backgroundColor: colors.white,
 
-                  shadowColor: '#0a101b',
-                    shadowOffset: {
-                      width: 1,
-                      height: 1,
-                    },
-                    shadowRadius: 26,
-                    shadowOpacity: 1,
-                                             
+                    
            
                      borderRadius: 17,
                      borderWidth: 1,
                      // borderStyle: 'solid',
                      borderColor: currentType === 'INCOME' ? 'transparent' : colors.shamrockGreen,
            
-                     marginHorizontal: 6,
+                     // marginHorizontal: 6,
            
                      backgroundColor: currentType === 'INCOME' ? colors.shamrockGreen : 'transparent'
            
@@ -1169,11 +1250,12 @@ const MAX_PILL_HEIGHT = 32;
                        // title="Expense"
                        onPress={() => {
                          UpdateCategoryType('INCOME')
+                         clearState()
                          // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
                        }}
                      >
                      <Text style={[styles.pillItemText, {
-                       color: currentType === 'INCOME' ? colors.dark : colors.shamrockGreen
+                       color: currentType === 'INCOME' ? colors.white : colors.shamrockGreen
                      }]}>Income</Text></TouchableOpacity>
                      
            
@@ -1206,34 +1288,39 @@ const MAX_PILL_HEIGHT = 32;
                        // title="Income"
                        onPress={() => {
                          UpdateCategoryType('EXPENSE');
+                         clearState()
                          // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
                        }}
                      >  
                      <Text style={[styles.pillItemText, {
-                       color: (currentType === 'EXPENSE' ? colors.dark : colors.pinkRed),
+                       color: (currentType === 'EXPENSE' ? colors.white : colors.pinkRed),
                      }]}>Expense</Text>
                      </TouchableOpacity>
 
-   {/*                                      <TouchableOpacity
+
+
+                     <View style={styles.separator} />
+
+                                                         <TouchableOpacity
                         style={[
                           // styles.buttonStyle,
                           {
                             maxHeight: MAX_PILL_HEIGHT,
-                            minWidth: MIN_PILL_WIDTH,
+                            minWidth:MIN_PILL_WIDTH,
                             maxWidth: MAX_PILL_WIDTH,
                             height: '60%', // 37,
                             maxHeight: 50,
               
-                            // alignItems: 'center',
+                            alignItems: 'center',
                             justifyContent: 'center',
               
-                            marginHorizontal: 4,
+                            // marginHorizontal: 4,
                             marginVertical: 10,
               
                             borderRadius: 17,
                             borderWidth: 1,
                             // borderStyle: 'solid',
-                            borderColor: colors.white,
+                            borderColor: colors.azure,
               
                             marginHorizontal: 6,
               
@@ -1242,15 +1329,64 @@ const MAX_PILL_HEIGHT = 32;
                           // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
                           // title="Income"
                           onPress={() => {
-                            setShouldShowColorBox(!shouldShowColorBox)
+                            // deleteBtnPressed(currentCategory)
+                             // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
+                             clearState()
+
+                            // setShouldShowColorBox(!shouldShowColorBox)
                             // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
                           }}
                         >
                         <Text style={[styles.pillItemText, {
-                          color: colors.offWhite,
-                        }]}>Choose Color</Text>
+                          color: colors.azure,
+                        }]}>Cancel
+                        {/*<Ionicons name="ios-create" size={17} color={colors.white} />*/}
+                        </Text>
                         </TouchableOpacity>
-   */}
+       
+
+
+                                    <TouchableOpacity
+                        style={[
+                          // styles.buttonStyle,
+                          {
+                            maxHeight: MAX_PILL_HEIGHT,
+                            minWidth:MIN_PILL_WIDTH,
+                            maxWidth: MAX_PILL_WIDTH,
+                            height: '60%', // 37,
+                            maxHeight: 50,
+              
+                            alignItems: 'center',
+                            justifyContent: 'center',
+              
+                            // marginHorizontal: 4,
+                            marginVertical: 10,
+              
+                            borderRadius: 17,
+                            borderWidth: 1,
+                            // borderStyle: 'solid',
+                            borderColor: colors.offWhite,
+              
+                            marginHorizontal: 6,
+              
+                            backgroundColor: 'transparent',
+                        }]}
+                          // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
+                          // title="Income"
+                          onPress={() => {
+                            deleteBtnPressed(currentCategory)
+
+                            // setShouldShowColorBox(!shouldShowColorBox)
+                            // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
+                          }}
+                        >
+                        <Text style={[styles.pillItemText, {
+                          color: colors.white,
+                        }]}>Delete <FontAwesome name="trash-o" size={17} color={colors.offWhite} /></Text>
+                        </TouchableOpacity>
+
+
+
 
                      {/*<TouchableText title="Choose Color" onPress={() => setShouldShowColorBox(!shouldShowColorBox)} />*/}
            
@@ -1298,6 +1434,10 @@ const MAX_PILL_HEIGHT = 32;
                  
            
                      </ScrollView>
+
+
+
+                     </View>
                     )
         }
 
@@ -1358,6 +1498,9 @@ const MAX_PILL_HEIGHT = 32;
 
 
 
+
+
+
     </SafeAreaView>
   );
 
@@ -1372,9 +1515,9 @@ const MAX_PILL_HEIGHT = 32;
       <View style={{
         flex: 1,
       }}>
-      <SwipeListView
+      <FlatList
 
-        // style={styles.table}
+        style={styles.table}
         data={data}
         renderItem={(item) => renderItem(item)}
         // renderItem={({ item }) => (
@@ -1388,10 +1531,10 @@ const MAX_PILL_HEIGHT = 32;
         keyExtractor={(item) => String(item.id)}
         extraData={selected}
         ItemSeparatorComponent={(item) => renderSeparator(item)}
-        renderHiddenItem={(item) => renderHiddenItem(item)}
+        // renderHiddenItem={(item) => renderHiddenItem(item)}
 
-        leftOpenValue={75}
-        rightOpenValue={-75}
+        // leftOpenValue={75}
+        // rightOpenValue={-75}
       />
       </View>
 
@@ -1505,11 +1648,11 @@ const MAX_PILL_HEIGHT = 32;
     }><ActivityIndicator /></View>
       }
       </View>
-      {
-        isAddingCategory &&
+{/*      {
+        // !isReady &&
         // true &&
         <ActivityIndicator color={colors.offWhite} size="small" />
-      }
+      }*/}
       {
         resetDialog
       }
@@ -1517,9 +1660,9 @@ const MAX_PILL_HEIGHT = 32;
     </SafeAreaView>
   );
 
-  if (shouldShowDialog) {
-    return dialogBox;
-  }
+  // if (shouldShowDialog) {
+  //   return dialogBox;
+  // }
 
   // if (shouldShowColorBox) {
   //   return colorBox;

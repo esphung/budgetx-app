@@ -312,7 +312,7 @@ function UserOptions(props) {
             width: '100%',
             height: 46,
             // width: 370,
-            // height: rowHeight, // 46,
+            height: rowHeight, // 46,
             backgroundColor, // colors.dark,
 
             opacity

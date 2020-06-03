@@ -1768,7 +1768,9 @@ export default function Home() {
         style={
             {
             marginTop: Platform.OS === 'ios' ? 50 : 120,
-            flex: 0.1,
+            // flex: 0.1,
+            
+
             // alignItems: 'center',
             // justifyContent: 'center',
             // borderWidth: 1,
@@ -1841,7 +1843,7 @@ export default function Home() {
           <View style={{
             position: 'absolute',
             top: screenHeight/1.8,
-            // height: screenHeight/3,
+            height: screenHeight/2,
 
             // borderWidth: 1,
             // borderColor: 'red',
@@ -1856,18 +1858,22 @@ export default function Home() {
      
           { isSlideViewHidden && scrollingPills }
             <View style={{
+              flex: 0.4,
               // borderWidth: 1,
               // borderColor: 'blue',
               // borderStyle: 'solid',
 
 
 
-            }}>{ isSlideViewHidden && scrollingPills && amountInput }</View>
+            }}>{ isSlideViewHidden
+              // && scrollingPills
+              && amountInput }</View>
             <View style={{
               height: screenHeight/3.5,
               top: 0,
               right: 0,
               left: 0,
+              width: screenWidth,
               // borderWidth: 1,
               // borderColor: 'blue',
               // borderStyle: 'solid', 
