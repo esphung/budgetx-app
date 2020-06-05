@@ -52,6 +52,7 @@ import {
   Dimensions,
   // Button,
   // TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 
 // import Constants from 'expo-constants';
@@ -139,7 +140,7 @@ import { isDeviceOnline } from '../../network-functions';
 
 import { getFakeTransactions } from '../functions/getFakeTransactions';
 
-const LIMIT = 14;
+const LIMIT = 10;
 
 const getAuthentication = async () => {
   global.authenticated = false;
@@ -685,8 +686,14 @@ export default function Home() {
 
 };
 
-
   async function retrieveUserStoredSettings() {
+
+    /* get whether signed up user wants to sync device or not */
+   // global.isDeviceSyncOn = await getIsDeviceSyncOn()
+    // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
+
+    
+    console.log('JSON.parse(await AsyncStorage.getItem(\'someBoolean\')): ', JSON.parse(await AsyncStorage.getItem('someBoolean')));
  
     global.isConnected = await isDeviceOnline();
     // console.log('global.isConnected: ', global.isConnected);
@@ -700,41 +707,44 @@ export default function Home() {
 
         global.email = cognito.attributes.email;
 
-        await crossDeviceSync().then(async (transactions) => {
+        await crossDeviceSync()
+        .then(async (transactions) => {
+
           // console.log('transactions.length: ', transactions.length);
            const storage = await loadSettingsStorage(global.storageKey);
-        // console.log('storage: ', storage);
+          // console.log('storage: ', storage);
 
-        storage.user.id = cognito.attributes.sub;
+          storage.user.id = cognito.attributes.sub;
 
-        storage.user.email = cognito.attributes.email
+          storage.user.email = cognito.attributes.email;
 
-        storage.transactions.forEach(async (transaction) => {
-          // transaction.owner = global.storageKey
-          Auth.currentAuthenticatedUser().then((cognito) => {
-            transaction.category.owner = global.storageKey
-          })
-          
-          // console.log('transaction: ', transaction);
-
-          try {
-            UpdateTransaction(transaction);
-          } catch(e) {
-            // statements
-            console.log('Error in retrieveUserStoredSettings',e);
-          }
-
-          if (transaction.category === null) {
-            // console.log('await getTransactionByID(transaction.id): ', await getTransactionByID(transaction.id));
-            transaction = await GetTransaction(transaction)
-
-            //  // storage.categories.push(transaction.category)
-
-             console.log('transaction: ', transaction);
+          storage.transactions.forEach(async (transaction) => {
+            transaction.owner = global.storageKey
+            // await Auth.currentAuthenticatedUser().then((cognito) => {
+              // console.log('transaction: ', transaction);
+              transaction.category.owner = global.storageKey
+            // })
             
-          } else {
-            UpdateTransaction(transaction)
-          }
+            // console.log('transaction: ', transaction);
+
+            try {
+              UpdateTransaction(transaction);
+            } catch(e) {
+              // statements
+              console.log('Error in retrieveUserStoredSettings',e);
+            }
+
+            if (transaction.category === null) {
+              // console.log('await getTransactionByID(transaction.id): ', await getTransactionByID(transaction.id));
+              transaction = await GetTransaction(transaction)
+
+              //  // storage.categories.push(transaction.category)
+
+               console.log('transaction: ', transaction);
+              
+            } else {
+              UpdateTransaction(transaction)
+            }
         })
 
         setCurrentCategories(storage.categories);
@@ -746,7 +756,7 @@ export default function Home() {
         global.authenticated = true;
 
 
-        setCurrentOwner(global.storageKey);
+        // setCurrentOwner(global.storageKey);
 
 
         })
@@ -770,6 +780,7 @@ export default function Home() {
         userObject.transactions.forEach((transaction) => {
           transaction.owner = global.storageKey
           transaction.category.owner = global.storageKey
+          // console.log('transaction: ', transaction);
         });
         setCurrentOwner(userObject.user.id);
 
@@ -970,7 +981,7 @@ export default function Home() {
   const isUserInputValid = () => {
     let bool = true;
 
-    if (!currentDate || !currentAmount || !currentOwner || !currentCategory || !currentType) {
+    if (!currentDate || !currentAmount || !global.storageKey || !currentCategory || !currentType) {
       // all inputs are filled
       bool = false;
     }
@@ -1051,7 +1062,7 @@ export default function Home() {
     );
 
     // /* Create New Payee */
-    const payee = new Payee(uuidv4(), 'None', currentOwner, 0);
+    const payee = new Payee(); // new Payee(uuidv4(), 'None', global.storageKey, 0);
     // // console.log('payee: ', payee);
 
     const amount = (category.type === 'EXPENSE') ? -Math.abs(currentAmount / (100)) : Math.abs(currentAmount / (100));
@@ -1133,7 +1144,7 @@ export default function Home() {
       setCurrentCategoryColor(currentCategory.color);
       setCurrentCategoryType(currentCategory.type);
 
-      setCurrentCategoryOwner(currentOwner);
+      setCurrentCategoryOwner(global.storageKey);
       setCurrentCategoryVersion(currentVersion);
       setCurrentType(currentCategory.type);
     } else {
@@ -1196,7 +1207,7 @@ export default function Home() {
   useEffect(() => {
     // console.log('screenHeight/2.5: ', screenHeight/2.55);
     if (currentTransaction) {
-      setCurrentTableHeight(screenHeight/2.55)
+      setCurrentTableHeight(screenHeight * 0.7)
       setAmountLabelText('');
       setCurrentAmount(currentTransaction.amount * 100)
       showSlideView();
@@ -1328,10 +1339,11 @@ export default function Home() {
       height: Platform.OS  === 'android' ? currentTableHeight - 20 : currentTableHeight,
       position: 'absolute',
 
-      borderWidth: global.debugMode ? 1 : 0,
-      borderColor: 'white',
-      borderStyle: 'solid',
-      zIndex: -1,
+      // borderWidth: global.debugMode ? 1 : 0,
+      // borderWidth: 1,
+      // borderColor: 'white',
+      // borderStyle: 'solid',
+      zIndex: 2,
       }
     }>
     <MyStickyTable
@@ -1590,6 +1602,7 @@ export default function Home() {
     saveSettingsStorage(global.storageKey, userObject);
   }
   const crossDeviceSync = async () => {
+    if (JSON.parse(await AsyncStorage.getItem('someBoolean')) !== true) return
     setCurrentCategory(null)
     setCurrentTransaction(null)
 

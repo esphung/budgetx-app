@@ -498,6 +498,10 @@ function Settings(props) {
   // }, [isDeviceSyncOn]);
 
   async function retrieveStoredSettings() {
+    /* get whether signed up user wants to sync device or not */
+    // global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
+    // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
+
     // global.isDeviceSyncOn = await getIsDeviceSyncOn()
     setIsReady(false);
 
@@ -1603,8 +1607,8 @@ function Settings(props) {
               //   directToAppStoreDownload()
               // }
             }}
-            isUserLoggedIn={isUserLoggedIn}
-            isUserOnline={async () => await isDeviceOnline()}
+            // isUserLoggedIn={isUserLoggedIn}
+            // isUserOnline={async () => await isDeviceOnline()}
           />
           }
         </View>

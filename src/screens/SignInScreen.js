@@ -696,7 +696,7 @@ function SignInScreen(props) {
               <View style={styles.container}>
               {/* Facebook Login */}
             {
-              (!global.isFederated && !global.isAopleSignedIn && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
+              // (!global.isFederated && !global.isAopleSignedIn && !global.authenticated) && <FacebookLogin handleFacebookSignIn={handleFacebookSignIn} handleFacebookSignOut={handleFacebookSignOut} />
             }
             {
               // (!global.isFederated && !global.isAppleSignedIn && !global.authenticated) && <AppleSignInButton appleSignInCallback={appleSignInCallback} />

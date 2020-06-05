@@ -263,7 +263,7 @@ function HeaderLeftView(props) {
 
             editable={!global.authenticated}
 
-            placeholder="Enter your email"
+            placeholder={getNormalMessage}
             placeholderTextColor={colors.white}
             style={styles.normalMessage}
             // editable={false}
@@ -296,20 +296,20 @@ function HeaderLeftView(props) {
                     // console.log('input: ', input);
                     global.emailAddressInput = '';
 
-                    showMessage({
-                      message: 'Enter valid email address',
-                      duration: 1150,
-                      position: 'top',
+                    // showMessage({
+                    //   message: 'Enter valid email address',
+                    //   duration: 1150,
+                    //   position: 'top',
 
-                      // description: "My message description",
-                      type: 'danger', // "success", "info", "warning", "danger"
-                      backgroundColor: colors.dark, // "purple", // background color
-                      color: colors.white, // "#606060", // text color
+                    //   // description: "My message description",
+                    //   type: 'danger', // "success", "info", "warning", "danger"
+                    //   backgroundColor: colors.dark, // "purple", // background color
+                    //   color: colors.white, // "#606060", // text color
 
-                      textStyle: styles.textStyle,
+                    //   textStyle: styles.textStyle,
 
-                      icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-                    });
+                    //   icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+                    // });
 
                     clearEmailInput();
                   }

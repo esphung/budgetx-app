@@ -383,12 +383,13 @@ export const SaveCategory = async (category) => {
     await API.graphql(categoryMutation);
     console.log('category successfully created:', category.id);
   } catch (e) {
-    console.log('save category error:', e);
+    // console.log('category: ', category);
+    // console.log('save category error:', e);
     // const errorType = e.errors[0].errorType;
 
     // if (errorType && errorType === 'DynamoDB:ConditionalCheckFailedException') {
     //   // console.log(`trying to update category ${category.id} instead ...`);
-    //   UpdateCategory(category);
+      UpdateCategory(category);
     // }
   }
 };

@@ -17,6 +17,10 @@ UPDATED:    11/27/2019 12:40 AM
 
 import React from 'react';
 
+import {
+  Image,
+} from 'react-native'
+
 import { createStackNavigator } from 'react-navigation-stack';
 
 import { createAppContainer, NavigationContainer } from 'react-navigation';
@@ -64,35 +68,35 @@ const StackNavigator = createStackNavigator({
     screen: Home, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
       title: '',
-      headerBackTitle: null,
+      // headerBackTitle: '',
     }),
   },
   Settings: {
     screen: Settings, // ApolloProviderHOC(Settings),
     navigationOptions: () => ({
       title: 'Settings',
-      headerBackTitle: null,
+      // headerBackTitle: '',
     }),
   },
   ChangePasswordScreen: {
     screen: ChangePasswordScreen,
     navigationOptions: () => ({
       title: '',
-      headerBackTitle: null,
+      // headerBackTitle: null,
     }),
   },
   CustomizeCategoriesScreen: {
     screen: CustomizeCategoriesScreen, // ApolloProviderHOC(CustomizeCategoriesScreen),
     navigationOptions: () => ({
       title: 'Customize Categories',
-      headerBackTitle: '',
+      // headerBackTitle: '',
     }),
   },
   SignUp: {
     screen: SignUpScreen,
     navigationOptions: () => ({
       title: '',
-      headerBackTitle: null,
+      // headerBackTitle: null,
     }),
   },
   SignIn: {
@@ -100,7 +104,7 @@ const StackNavigator = createStackNavigator({
     navigationOptions: () => ({
       // title: 'Log in to your account',
       title: '',
-      headerBackTitle: null,
+      // headerBackTitle: null,
       // headerBackTitle: null,
     }),
   },
@@ -108,7 +112,7 @@ const StackNavigator = createStackNavigator({
     screen: SignOutScreen,
      navigationOptions: () => ({
       title: '',
-      headerBackTitle: null,
+      // headerBackTitle: null,
     }),
   },
   WelcomeScreen: {
@@ -116,7 +120,7 @@ const StackNavigator = createStackNavigator({
     navigationOptions: () => ({
       title: '',
       // title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
-      headerBackTitle: null,
+      // headerBackTitle: null,
     }),
   },
   ForgetPassword: {
@@ -124,7 +128,7 @@ const StackNavigator = createStackNavigator({
     navigationOptions: () => ({
       // title: 'Create a New Password',
       title: '',
-      headerBackTitle: null,
+      // headerBackTitle: null,
     }),
   },
   // ExampleScreen: {
@@ -137,8 +141,8 @@ const StackNavigator = createStackNavigator({
   MetricsScreen: {
     screen: MetricsScreen, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
-      title: 'Metrics',
-      headerBackTitle: null,
+      title: '',
+      // headerBackTitle: null,
     }),
   },
   MyAppIntroSlider: {
@@ -160,11 +164,15 @@ const StackNavigator = createStackNavigator({
 {
   // initialRouteName: 'Calendar',
   defaultNavigationOptions: {
-    headerMode: 'screen',
+    // headerMode: 'screen',
     cardStyle: {
       backgroundColor: colors.darkTwo,
       // opacity: 1,
     },
+    // headerBackImage: () => {return <Image />},
+    headerBackTitleVisible: false,
+
+
 
     // headerStyle: {
     //     backgroundColor: '#28F1A6',

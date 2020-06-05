@@ -57,10 +57,21 @@ function SlideUpView(props) {
       enabled
       style={{
         width: '100%',
-        top: -150,
+        top: (shouldShowCalendarPicker) ? -150 : 0,
         // borderWidth: 1,
         // borderColor: 'white',
-        // // borderStyle: 'dashed',
+        // borderStyle: 'dashed',
+
+        borderRadius: 9,
+        // backgroundColor: colors.dark,
+        shadowColor: '#0f1725',
+        shadowOffset: {
+          width: 5,
+          height: 5,
+        },
+        shadowRadius: 16,
+        shadowOpacity: 1,
+
 
         // zIndex: 1,
       }}

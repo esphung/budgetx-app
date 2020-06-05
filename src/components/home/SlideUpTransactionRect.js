@@ -55,13 +55,13 @@ import {
 
 // test label
 const dateLabel = {
-  // width: 242,
-  // height: 28,
+  width: 242,
+  height: 28,
 
   // flex: 1,
 
 
-  width: '100%',
+  // width: '100%',
   // height: '30%',
   fontFamily: 'SFProDisplay-Regular',
   fontSize: 16,
@@ -397,10 +397,10 @@ function SlideUpTransactionRect(props) {
   const updatingTransactionIndicator = (
     <View style={
       {
-        left: 0,
-        right: 0,
-        top: 200,
-        bottom: 0,
+        // left: 0,
+        // right: 0,
+        // top: 200,
+        // bottom: 0,
         // justifyContent: 'center',
         // backgroundColor: colors.dark,
         // position: 'absolute',
@@ -448,8 +448,23 @@ function SlideUpTransactionRect(props) {
           // onWillBlur={clearState} // console.log('will blur',payload)}
           // onDidBlur={payload => console.log('did blur',payload)}
         />
-      
-      <View style={{ alignItems: 'center', }}>
+      {/* TOP OF SLIE UP VIEW IS HERE FOR STYLING!!! */}
+      <View style={{
+        alignItems: 'center',
+        backgroundColor: colors.darkTwo,
+        // borderTopWidth: 0.5,
+        // borderColor: 'colors.dark',
+        // borderStyle: 'solid',
+
+        shadowColor: '#0f1725',
+        shadowOffset: {
+          width: 5,
+          height: 5,
+        },
+        shadowRadius: 16,
+        shadowOpacity: 1,
+
+     }}>
         <SlideViewSeparator />
 
         {/* date label */}

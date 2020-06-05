@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   View,
   Text,
   Image,
   Switch,
+  AsyncStorage,
 } from 'react-native';
+
+import ToggleSwitch from 'toggle-switch-react-native'
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -39,26 +42,80 @@ const copy3 = {
   paddingHorizontal: 6,
 };
 
+const getIsDeviceSyncOn = async () => {
+  JSON.parse(await AsyncStorage.getItem('someBoolean'))
+
+}
+
+
 
 
 // const message = `Thank you for using ${global.appName} version ${global.appVersion}!`;
 
 function SubscriptionRect(props) {
-  const { onPress, isUserLoggedIn, isUserOnline } = props;
+  const { onPress } = props;
 
-  const [value, setValue] = useState(isUserLoggedIn);
+  // console.log('switchValue: ', switchValue);
 
-  const toggleSwitch = (
-     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Switch
-        value={value}
-        disabled
-        onValueChange={v => {
-          setValue(v);
-        }}
-      />
-    </View>
-  );
+  // console.log('switchValue: ', switchValue);
+
+  async function loadValue () {
+    // body... 
+    setValue(JSON.parse(await AsyncStorage.getItem('someBoolean')))
+    // console.log('(JSON.parse(await AsyncStorage.getItem(\'someBoolean\'))): ', (JSON.parse(await AsyncStorage.getItem('someBoolean'))));
+
+  }
+
+  const [value, setValue] = useState(false);
+
+  useEffect(() => {
+
+    loadValue()
+    // console.log('global.someBoolean: ', global.someBoolean);
+    return () => {
+      // effect
+    };
+  }, [])
+
+
+  
+
+  // const toggleSwitch = (
+  //    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //     <Switch
+  //       value={value}
+  //       // disabled={switchValue}
+  //       onValueChange={v => {
+  //         AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(switchValue));
+  //         global.isDeviceSyncOn = v
+
+  //         setValue(v);
+  //       }}
+  //     />
+  //   </View>
+  // );
+
+  const toggleSwitch = 
+  <ToggleSwitch
+    isOn={value}
+    onColor={colors.shamrockGreen}
+    offColor={colors.darkTwo}
+    // label="Example label"
+    // labelStyle={{ color: colors.white, fontWeight: "300" }}
+    size="medium"
+    onToggle={async (v)  => {
+      // global.isDeviceSyncOn = v
+      // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
+      // AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(v))
+      // Saves to storage as a JSON-string
+      // Saves to storage as a JSON-string
+      AsyncStorage.setItem('someBoolean', JSON.stringify(v))
+
+      
+      setValue(v)
+    }
+    }
+  />
 
   const bankIcon = <MaterialCommunityIcons name="bank-outline" size={36} color={colors.white} />;
 
@@ -68,7 +125,7 @@ function SubscriptionRect(props) {
     text = `Device sync is ${(value) ? 'enabled' : 'disabled'}`
   }
 
-  else if (!global.authenticated) {
+  if (!global.authenticated) {
     text = `Tap here to sign up`;
     // return <InfoBox title='Tap here to sign up and access features.' />
   }
@@ -79,30 +136,55 @@ function SubscriptionRect(props) {
   const view = (
     <View
       style={{
-        // flex: 1,
-        paddingVertical: 14,
-        alignItems: 'center',
+        flex: 1,
+        marginVertical: 10,
+        alignSelf: 'center',
+        // justifyContent: 'space-between',
+        
+        paddingLeft: 4,
+        // paddingHorizontal: 4,
+
+
+        // alignItems: 'center',
         justifyContent: 'center',
+
+        borderRadius: 9,
+        backgroundColor: colors.dark,
+        shadowColor: '#0f1725',
+        shadowOffset: {
+          width: 5,
+          height: 5,
+        },
+        shadowRadius: 16,
+        shadowOpacity: 1,
+
+
+        width: global.screenWidth * 0.95,
+
+        height: global.screenHeight / 12,
+
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
       }}
     >
-      <TouchableOpacity
-        disabled={global.authenticated}
-        onPress={onPress} style={{
-          flex: 1,
+      <View
+        style={{
+          // flex: 1,
           flexDirection: 'row',
-          width: '93%',
+          // width: '100%', // global.screenWidth * 0.9,
+          
           // height: '100%',
-          borderRadius: 9,
-          backgroundColor: colors.dark,
-          shadowColor: '#0f1725',
-          shadowOffset: {
-            width: 5,
-            height: 5,
-          },
-          shadowRadius: 16,
-          shadowOpacity: 1,
 
-        }}>
+          alignItems: 'center',
+          // justifyContent: 'center',
+        
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
+
+        }}
+        >
 
 
 
@@ -111,25 +193,44 @@ function SubscriptionRect(props) {
         {/* Toggle Switch or Icon */}
         <View
         style={{
-          flex: 0.2,
-          alignItems: 'center',
+          // flex: 1,
+          // alignItems: 'center',
           justifyContent: 'center',
-          flexDirection: 'column',
+          // flexDirection: 'column',
           // borderWidth: 1,
           // borderColor: 'white',
           // borderStyle: 'solid',
+
+
         }}
         >
+        <View style={{
+    // flex: 1,
+    // width: 50,
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    marginLeft: 14,
+
+  }}>
       {
-        isUserLoggedIn && toggleSwitch || bankIcon
+        global.authenticated && toggleSwitch || bankIcon
       }
     </View>
 
-        <View style={
+
+      </View>
+
+       <TouchableOpacity
+        onPress={onPress}
+        disabled={global.authenticated}
+        style={
           {
-            flex: 0.8,
+            // flex: 1,
+            // width: '100%',
             // alignItems: 'center',
-            justifyContent: 'center',
+            // justifyContent: 'center',
+            paddingLeft:30,
 
             // borderWidth: 1,
             // borderColor: 'white',
@@ -141,7 +242,7 @@ function SubscriptionRect(props) {
           <Text numberOfLines={3} style={[
             styles.infoBoxGreenTextStyle,
             {
-
+              marginRight: 12
             }
           ]}>{ text }</Text>
                     <Text numberOfLines={1} style={[
@@ -150,9 +251,9 @@ function SubscriptionRect(props) {
               color: colors.offWhite
             }
           ]}>Access your data from anywhere</Text>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
+    </View>
     </View>
   );
   return view;

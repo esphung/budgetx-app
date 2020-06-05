@@ -49,7 +49,7 @@ global.facebookAppId = app.expo.facebookAppId;
 
 // global.isBackedUp = false;
 
-global.isDeviceSyncOn = false;
+// global.isDeviceSyncOn = false;
 
 // global.isDeviceSynced = false;
 
@@ -159,13 +159,13 @@ global.clearGlobalValues = async () => {
 //   global.isDeviceSyncOn = bool;
 // };
 
-export const getIsDeviceSyncOn = async () => {
-  // Retrieves from storage as boolean
-  const value = await AsyncStorage.getItem('isDeviceSyncOn');
+// export const getIsDeviceSyncOn = async () => {
+//   // Retrieves from storage as boolean
+//   const value = await AsyncStorage.getItem('isDeviceSyncOn');
 
-  global.isDeviceSyncOn = value;
-  return value; // boolean false
-};
+//   global.isDeviceSyncOn = value;
+//   return value; // boolean false
+// };
 
 export const setIsBackedUp = (bool) => {
   // Saves to storage as a JSON-string

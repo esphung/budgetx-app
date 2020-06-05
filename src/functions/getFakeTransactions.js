@@ -49,7 +49,7 @@ export function getFakeTransactions(limit) {
 
     let amount = Number(randomAmount());
 
-    let date = randomDate(new Date(2020, 0, 5), new Date(2020, new Date().getMonth(), 30));
+    let date = randomDate(new Date(2020, 4, 5), new Date(2020, new Date().getMonth(), 30));
 
     let color = colorsArray[(Math.random(0, colorsArray.length) * 10).toFixed(0)]
 

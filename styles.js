@@ -619,7 +619,7 @@ export default StyleSheet.create({
   slideUpTransactionRect: {
     // flex: 1,
     // height: '100%',
-    height: 210,
+    height: 250,
     // width: 'auto',
     // width: 1000,
 
@@ -631,7 +631,7 @@ export default StyleSheet.create({
 
     // borderTopWidth: 1,
     // borderTopColor: colors.dark,
-    // // borderTopColor: 'transparent',
+    // borderTopColor: 'transparent',
 
     // borderLeftWidth: 1,
     // borderLeftColor: colors.dark,

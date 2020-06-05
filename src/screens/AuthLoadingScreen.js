@@ -42,6 +42,24 @@ import SpinnerMask from '../../src/components/SpinnerMask';
 import uuidv4 from '../functions/uuidv4';
 
 
+const getIsDeviceSyncOn = async () => {
+  
+  // Retrieves from storage as boolean
+  let bool = await AsyncStorage.getItem('isDeviceSyncOn', (err, value) => {
+      if (err) {
+          console.log(err);
+          bool =  false
+      } else {
+        console.log('JSON.parse(value): ', JSON.parse(value));
+        bool = JSON.parse(value) // boolean false
+
+      }
+  })
+  return bool
+}
+
+
+
 export default function AuthLoadingScreen(props) {
   /*
   * > hooks
@@ -165,8 +183,8 @@ export default function AuthLoadingScreen(props) {
     // console.log('hasSeenIntro: ', hasSeenIntro);
 
     /* get whether signed up user wants to sync device or not */
-    // global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
-    // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
+    let bool = await getIsDeviceSyncOn()
+    console.log('isDeviceSyncOn: ', bool);
 
     // console.log('props.navigation: ', props.navigation);
 

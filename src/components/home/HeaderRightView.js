@@ -140,7 +140,7 @@ function HeaderRightView(props) {
 
     <TouchableOpacity
       // onPress={searchBtnPressed}
-      // disabled={!global.authenticated}
+      disabled // ={!global.authenticated}
       onPress={metricsBtnPressed}
       style={[
         // styles.searchBtnTouchableOpacity,
@@ -156,7 +156,7 @@ function HeaderRightView(props) {
         // borderStyle: 'solid',
       }]}
     >
-      <Octicons name="graph" size={24} color={colors.white} />
+      {/*<Octicons name="graph" size={24} color={colors.white} />*/}
 {/*
         <Image
           resizeMode="contain"
