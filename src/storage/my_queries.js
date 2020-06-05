@@ -14,6 +14,7 @@ import {
   getTransaction,
   getCategory,
   listCategorys,
+  listPayees,
 } from '../graphql/queries';
 
 import uuidv4 from '../functions/uuidv4';
@@ -46,6 +47,20 @@ export const fetchStoredTransactions = async () => {
   return list;
 };
 
+export const listAllOnlinePayees = async () => {
+  let list = [];
+  try {
+    const graphqldata = await API.graphql(graphqlOperation(listPayees));
+    list = graphqldata.data.listPayees.items;
+    console.log('payees list.length: ', list.length);
+  } catch (err) {
+    console.log('err: ', err);
+  }
+  return list;
+};
+
+
+
 const listCategorysGQL = gql`
 query ListCategorys {
   listCategorys (limit: 1000000000) {
@@ -56,9 +71,9 @@ query ListCategorys {
       type
       owner
       version
-      # transactions {
-      #   nextToken
-      # }
+      transactions {
+        nextToken
+      }
     }
     # nextToken
   }
@@ -350,7 +365,7 @@ export const removePayee = async (payee) => {
   if (global.debugMode === true) return
   try {
     await API.graphql(graphqlOperation(deletePayee, { input: { id: payee.id } }));
-    // console.log('payee successfully deleted.', payee.id);
+    console.log('payee successfully deleted.', payee.id);
   } catch (err) {
     console.log('error deleting payee...', err);
   }
@@ -460,16 +475,16 @@ export const UpdateCategory = async (category) => {
     // console.log(`${'category successfully updated...'} ${JSON.stringify(response.data.updateCategory, null, 2)}`);
     // console.log('category successfully  updated: ', category.id);
   } catch (err) {
-    console.log('error updating category in UpdateCategory...', err); // err
+    console.log('error updating category in UpdateCategory...', category); // err
 
     // if (!(err.errors[0]['errorType'])) return
 
-    // let errorType = err.errors[0]['errorType']
+    let errorType = err.errors[0]['errorType']
 
-    // if (errorType === 'DynamoDB:ConditionalCheckFailedException') {
-    //   // transaction dne online
-    //   SaveCategory(category)
-    // }
+    if (errorType === 'DynamoDB:ConditionalCheckFailedException' && category !== null) {
+      // transaction dne online
+      SaveCategory(category);
+    }
 
     // if (!err.data.updateCategory) {
     //   // category doesnt exist yet

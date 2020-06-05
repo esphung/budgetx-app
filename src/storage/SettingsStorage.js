@@ -81,6 +81,8 @@ const retrieveAuthenticatedStorageKey = async () => {
 
 export const saveSettingsStorage =  async (key, settings) => {
   if (global.debugMode === true) return;
+  settings.version++;
+  // console.log('settings.version: ', settings.version);
   await AsyncStorage.setItem(key, JSON.stringify(settings));
 };
 

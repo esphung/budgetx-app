@@ -86,7 +86,12 @@ function HeaderLeftView(props) {
 
   const emailInputRef = useRef(null);
 
+  const [placeholder, setPlaceholder] = useState('Enter your email');
+
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(global.authenticated)
+
   useEffect(() => {
+
     clearState();
     // return () => {
     //   // effect
@@ -141,9 +146,12 @@ function HeaderLeftView(props) {
 
       // }
 
+      setIsUserLoggedIn(true);
+
 
     }).catch((err) => {
       // console.log('err: ', err);
+      setIsUserLoggedIn(false);
       // setNormalMessage(`${global.appName} ${global.appVersion}`);
       // setNormalMessage('Enter your email');
     });
@@ -154,8 +162,7 @@ function HeaderLeftView(props) {
     try {
       const storageObj = await loadSettingsStorage(key);
 
-      // console.log('storageObj: ', storageObj);
-      if (storageObj.user.name  && storageObj.user.name !== '' && storageObj.user.email) {
+      if (storageObj.user.name && storageObj.user.name !== '' && storageObj.user.email) {
         setNormalMessage(storageObj.user.name);
       }
 
@@ -164,14 +171,6 @@ function HeaderLeftView(props) {
         setNormalMessage(storageObj.user.email);
       }
 
-      // set stored user image
-      // if (storageObj.image_url) {
-      //   // console.log('stored user settings image:', storageObj.image);
-      //   if (storageObj.image_url) {
-      //     // found stored image
-      //     setImage(storageObj.image_url);
-      //   }
-      // }
       if (storageObj.avatar) global.avatar = storageObj.avatar
     } catch (e) {
       // statements
@@ -200,7 +199,7 @@ function HeaderLeftView(props) {
   // </TouchableOpacity>
   // );
 
-  const imageView = <ProfileUserImage isUserLoggedIn={global.authenticated} />
+  const imageView = <ProfileUserImage isUserLoggedIn={isUserLoggedIn} />
 
   function clearEmailInput() {
     // console.log('emailInputRef.current._root.focus(): ', emailInputRef.current._root.focus());
@@ -263,7 +262,7 @@ function HeaderLeftView(props) {
 
             editable={!global.authenticated}
 
-            placeholder={getNormalMessage}
+            placeholder={((isUserLoggedIn) ? normalMessage : placeholder)}
             placeholderTextColor={colors.white}
             style={styles.normalMessage}
             // editable={false}

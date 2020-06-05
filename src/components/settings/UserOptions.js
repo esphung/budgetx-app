@@ -73,15 +73,17 @@ import styles from '../../../styles';
 
 function UserOptions(props) {
   // const [rowHeight, setRowHeight] = useState(46);
-  const { isSyncBtnEnabled, onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled } = props;
+  const { onPress, isBackupDisabled, currentSettingsVersion, isRestoreDisabled, isUserLoggedIn, isExportTransactionsDisabled } = props;
 
   // let isDisabled;
 
   // const [isDisabled, setIsDisabled] = useState(false);
 
-  let opacity = (1.0)
+  // let opacity = (1.0)
 
   function renderSeparator(item) {
+    // console.log('item: ', item);
+    if ((item.leadingItem.key  === '') || (item.leadingItem.key  === 'Customize Categories') || (item.leadingItem.key  === 'Contact Support')) return null
     const view = (
         <View
           style={{
@@ -91,7 +93,7 @@ function UserOptions(props) {
             alignItems: 'center',
             // borderWidth: 0.5,
 
-            // borderColor: colors.dark,
+            borderColor: colors.dark,
             // borderStyle: 'solid',
           }}
         >
@@ -99,8 +101,8 @@ function UserOptions(props) {
             style={
               {
                 width: screenWidth * 0.9, // 346,
-                // alignSelf: 'center',
-                // height: 0.25,
+                alignSelf: 'center',
+                height: 0.25,
 
                 borderWidth: 0.5,
                 borderColor: colors.darkTwo,
@@ -128,11 +130,11 @@ function UserOptions(props) {
     let disabled = Boolean(isDisabled)
     // console.log('disabled: ', disabled);
 
-    if (key.includes('Device Sync')) {
-      // caret = null;
-      caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
-      // disabled = true
-    }
+    // if (key.includes('Device Sync')) {
+    //   // caret = null;
+    //   caret = <MaterialIcons name="keyboard-arrow-right" size={styles.iconStyle.fontSize} color={colors.white} />
+    //   // disabled = true
+    // }
 
 
 
@@ -406,7 +408,7 @@ function UserOptions(props) {
       data={[
         // { key: 'Sign In/Sign Up', isDisabled: global.authenticated },
         { key: 'Sign In', isDisabled: isUserLoggedIn },
-        { key: 'Device Sync' + ' ' + ((global.authenticated) ? 'Enabled' : 'Disabled'), isDisabled: true }, // !global.authenticated },
+        // { key: 'Device Sync' + ' ' + ((global.authenticated) ? 'Enabled' : 'Disabled'), isDisabled: true }, // !global.authenticated },
         { key: 'Customize Categories', isDisabled: false },
         // { key: 'Backup Data', isDisabled: isBackupDisabled },
         // { key: 'Passcode', isDisabled: false },

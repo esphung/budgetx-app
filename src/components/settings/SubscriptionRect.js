@@ -42,10 +42,10 @@ const copy3 = {
   paddingHorizontal: 6,
 };
 
-const getIsDeviceSyncOn = async () => {
-  JSON.parse(await AsyncStorage.getItem('someBoolean'))
+// const getIsDeviceSyncOn = async () => {
+//   JSON.parse(await AsyncStorage.getItem('someBoolean'))
 
-}
+// }
 
 
 
@@ -55,21 +55,17 @@ const getIsDeviceSyncOn = async () => {
 function SubscriptionRect(props) {
   const { onPress } = props;
 
-  // console.log('switchValue: ', switchValue);
-
-  // console.log('switchValue: ', switchValue);
-
-  async function loadValue () {
-    // body... 
-    setValue(JSON.parse(await AsyncStorage.getItem('someBoolean')))
-    // console.log('(JSON.parse(await AsyncStorage.getItem(\'someBoolean\'))): ', (JSON.parse(await AsyncStorage.getItem('someBoolean'))));
-
-  }
-
   const [value, setValue] = useState(false);
 
-  useEffect(() => {
+  async function loadValue () {
+    if (JSON.parse(await AsyncStorage.getItem('someBoolean'))) setValue(JSON.parse(await AsyncStorage.getItem('someBoolean')));
+    else setValue(false);
+    // console.log('(JSON.parse(await AsyncStorage.getItem(\'someBoolean\'))): ', (JSON.parse(await AsyncStorage.getItem('someBoolean'))));
+  }
 
+  
+
+  useEffect(() => {
     loadValue()
     // console.log('global.someBoolean: ', global.someBoolean);
     return () => {

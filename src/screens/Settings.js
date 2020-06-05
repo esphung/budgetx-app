@@ -59,15 +59,15 @@ import {
 import {
   // updateTransaction,
   DeleteTransaction,
-  // removePayee,
+  removePayee,
   removeCategory,
   // savePayee,
   // saveCategory,
   // saveTransaction,
   UpdateCategory,
-  // fetchStoredTransactions,
-  // fetchStoredCategories,
-  // getTransactionByID,
+  getCategoryByID,
+  listAllOnlineCategories,
+  listAllOnlinePayees,
 } from '../storage/my_queries';
 
 import defaultCategories from '../data/categories';
@@ -301,9 +301,10 @@ function Settings(props) {
           position: 'absolute',
           alignItems: 'center',
           justifyContent: 'center',
-          // backgroundColor: '#ddd',
-          opacity: 0.1,
+          backgroundColor: '#ddd',
+          opacity:  0.05, // 0.1,
 
+          height: global.screenHeight,
         }
       }
     >
@@ -348,7 +349,7 @@ function Settings(props) {
   const compareListTransactions = async () => {
     // load online transactions
     let online_transactions = await retrieveOnlineTransactions();
-    console.log('online_transactions.length: ', online_transactions.length);
+    // console.log('online_transactions.length: ', online_transactions.length);
 
 
     // load local transactions
@@ -373,7 +374,7 @@ function Settings(props) {
         }, {});
     });
 
-    console.log('result: ', result);
+    // console.log('result: ', result);
 
     /* Filter Out Updated Trans then replace in local db */
     // result.forEach(async (element) => {
@@ -684,18 +685,18 @@ function Settings(props) {
   //   }
   // };
 
-  const backupDataAlert = async () => {
-    await Alert.prompt(
-      'Backup Data',
-      'Are you sure you want to backup all data from the app?',
-      [
-        { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-        // Calling resetData
-        { text: 'OK', onPress: async () => await backupStoredSettings() },
-      ],
-      { cancelable: false },
-    );
-  };
+  // const backupDataAlert = async () => {
+  //   await Alert.prompt(
+  //     'Backup Data',
+  //     'Are you sure you want to backup all data from the app?',
+  //     [
+  //       { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
+  //       // Calling resetData
+  //       { text: 'OK', onPress: backupStoredSettings },
+  //     ],
+  //     { cancelable: false },
+  //   );
+  // };
 
   function showResetCompleteAlert() {
     // Alert.alert(
@@ -771,35 +772,92 @@ function Settings(props) {
   /*
   * > reset data from the app
   */
+  // console.log('global.storageKey: ', global.storageKey);
   const resetData = async () => {
     setIsReady(false);
+    // setIsResetingData(true);
 
     let backupKey = global.storageKey;
+
+    /* LOCAL DEVICE STORAGE */
     let storage = await loadSettingsStorage(global.storageKey)
 
-    for (var i = storage.transactions.length - 1; i >= 0; i--) {
-      // console.log('transactions[i]: ', transactions[i]);
-      DeleteTransaction(storage.transactions[i])
+    storage.categories = defaultCategories(); // reset local categories
+    // console.log('storage.categories: ', storage.categories);
+
+    storage.transactions = []; // reset local transactions;
+
+    storage.payees = []; // reset payees
+
+
+    // for (const property in storage) {
+    //   console.log(`${property}: ${storage[property]}`);
+    // }
+
+    // console.log('categories.length: ', categories.length);
+    // let { categories } = storage;
+    // categories.forEach((element, index) => {
+    //   // statements
+    //   categories.splice(element, 1);
+    // });
+    // console.log('categories: ', categories);
+
+
+    /* ONLINE STUFF! */
+    if (await isDeviceOnline() && (JSON.parse(await AsyncStorage.getItem('someBoolean')) ===  true)) {
+      /* if device sync on, remove all categories found online */
+      let onlineCategories = await listAllOnlineCategories();
+      // console.log('onlineCategories: ', onlineCategories);
+
+      let onlineTransactions = await retrieveOnlineTransactions();
+      // console.log('onlineTransactions: ', onlineTransactions);
+
+      let onlinePayees = await listAllOnlinePayees();
+      // console.log('onlinePayees: ', onlinePayees);
+
+      // CATEGORIES
+      // for (var i = onlineCategories.length - 1; i >= 0; i--) {
+      //   // console.log('categories[i]: ', onlineCategories[i]);
+      //   removeCategory(onlineCategories[i])
+      // }
+      onlineCategories.forEach((element, index) => {
+        // statements
+        removeCategory(element);
+      });
+
+      // TRANSACTIONS
+      // for (var i = onlineTransactions.length - 1; i >= 0; i--) {
+      //   // console.log('transactions[i]: ', transactions[i]);
+      //   DeleteTransaction(onlineTransactions[i])
+      // }
+
+      onlineTransactions.forEach((element, index) => {
+        // statements
+        DeleteTransaction(element)
+      });
+
+      onlinePayees.forEach((element, index) => {
+        // statements
+        removePayee(element);
+      });
     }
 
-    let categories = storage.categories;
 
-    for (var i = categories.length - 1; i >= 0; i--) {
-      // console.log('categories[i]: ', categories[i]);
-      removeCategory(categories[i])
-    }
+
+
+
 
     // let storage = await loadSettingsStorage(global.storageKey)
 
     // storage.categories = defaultCategories;
 
-    // let  storage = await loadSettingsStorage(global.storageKey)
-    Object.keys(storage).forEach( function(element, index) {
-      // console.log('element: ', element);
-      if (element !== 'user' && element !== 'image_url') {
-        storage[element] = '';
-      }
-    });
+    // // let  storage = await loadSettingsStorage(global.storageKey)
+    // Object.keys(storage).forEach( function(element, index) {
+    //   // console.log('element: ', element);
+    //   if (element !== 'user' && element !== 'image_url') {
+    //     storage[element] = '';
+    //   }
+    // });
 
     // storage = null;
 
@@ -846,8 +904,8 @@ function Settings(props) {
 
           if (store[i][0] === (global.storageKey)) {
             // remove items with username key
-            // console.log({ [store[i][0]]: store[i][1] });
-            await AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
+            console.log({ [store[i][0]]: store[i][1] });
+            AsyncStorage.removeItem(store[i][0]) // Remove Settings Storage
 
             // if (store[i].includes('hasRatedUs')) {
             //   // remove items with username key
@@ -858,29 +916,33 @@ function Settings(props) {
 
           else if (store[i][0] === (global.storageKey + '_BACKUP_SETTINGS')) {
             // remove backups with username key
-            await AsyncStorage.removeItem(store[i][0]) // Remove Backups
+            AsyncStorage.removeItem(store[i][0]) // Remove Backups
           }
           else if (store[i][0] === (global.storageKey + '_HISTORY')) {
             // remove backups with username key
-            await AsyncStorage.removeItem(store[i][0]) // Remove Backups
+            AsyncStorage.removeItem(store[i][0]) // Remove Backups
           }
         });
       });
-    });
+    }).then(()  => {
+      setIsReady(true)
 
-    let settings = await loadSettingsStorage(backupKey);
+      navigation.navigate('Home');
+    })
 
-    global.storageKey = settings.user.id;
+    // let settings = await loadSettingsStorage(backupKey);
 
-    global.email = settings.user.email;
+    // global.storageKey = settings.user.id;
 
-    global.displayName = settings.user.full_name;
+    // global.email = settings.user.email;
 
-    global.username = settings.user.username;
+    // global.displayName = settings.user.full_name;
 
-    setIsReady(true)
+    // global.username = settings.user.username;
 
-    navigation.navigate('AuthLoading');
+
+
+    // navigation.navigate('AuthLoading');
   };
 
   const resetDataDialogBox = (
@@ -948,8 +1010,8 @@ function Settings(props) {
           ]
         }
         >
-          
-        Please type DELETE'
+        
+        Please type DELETE
         </Dialog.Description>
         <Dialog.Input
           style=
@@ -1007,23 +1069,19 @@ function Settings(props) {
   );
 
   // Reset Data Alert
-  const resetDataAlertPrompt = () => {
+  const resetDataAlertPrompt = async () => {
     // RESET DATA PROMPT
-    
-
     if (Platform.OS === 'ios') {
       // user on ios
       Alert.prompt(
-        'Remove all data?',
-        'Please type DELETE',
+        `Remove all device data ${(JSON.parse(await AsyncStorage.getItem("someBoolean")) ? 'and online' : '')}?`,
+        'This will only remove online data if device sync is enabled\nPlease type DELETE to confirm',
         [
           { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
           {
             text: 'OK',
             onPress: (input)=> {
-              if (input === 'DELETE') {
-                resetData();
-              }
+              if (input === 'DELETE') resetData();
             }
           },
         ],
@@ -1071,7 +1129,7 @@ function Settings(props) {
       });
     } catch(err) {
       // could not send to Mail
-      console.log('err: ', err.message);
+      // console.log('err: ', err.message);
       showMailSenderFailedAlert(err.message);
     }
   };
@@ -1089,7 +1147,7 @@ function Settings(props) {
           });
       } catch(err) {
         // could not send to Mail
-        console.log('err: ', err.message);
+        // console.log('err: ', err.message);
         showMailSenderFailedAlert(err.message);
       }
 
@@ -1313,19 +1371,36 @@ function Settings(props) {
   }
 
   const rateUsBtnPressed = async () => {
-    // store review
-    StoreReview.isAvailableAsync().then(() => {
+    const bool = await StoreReview.isAvailableAsync();
+
+    const url = StoreReview.storeUrl();
+    // console.log('url: ', url);
+
+    if (url && bool)
       try {
-        StoreReview.requestReview().catch((e) => {
-          console.log('e: ', e);
-        })
-        AsyncStorage.setItem('hasRatedUs',JSON.stringify(true));
+        StoreReview.requestReview();
+        // statements
       } catch(e) {
         // statements
-        Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602')
+        Linking.openURL(url)
         console.log(e);
       }
-    }).catch((err) => console.log('Store Review Error:', err))
+
+    // return
+    // store review
+    // StoreReview.isAvailableAsync().then(() => {
+    //   try {
+    //     StoreReview.requestReview()
+    //     .catch((e) => {
+    //       console.log('e: ', e);
+    //     })
+    //     AsyncStorage.setItem('hasRatedUs',JSON.stringify(true));
+    //   } catch(e) {
+    //     // statements
+    //     Linking.openURL('https://apps.apple.com/us/app/financely/id1491309602')
+    //     console.log(e);
+    //   }
+    // }).catch((err) => console.log('Store review err:', err))
   };
 
   function contactSupportBtnPressed() {
@@ -1372,9 +1447,9 @@ function Settings(props) {
     // props.navigation.popToTop();
   }
 
-  const backupDataBtnPressed = async () => {
-    backupDataAlert();
-  }
+  // const backupDataBtnPressed = async () => {
+  //   backupDataAlert();
+  // }
 
   const restoreBackupDataBtnPressed = async () => {
     restoreDataAlert();
