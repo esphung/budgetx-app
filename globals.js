@@ -13,6 +13,8 @@ import {
 
 import app from './app.json';
 
+// global.debugMode = true;
+
 // global.isDeviceSyncOn = false;
 
 global.appIconImage243x260 = require('./assets/appIconImage243x260.png');
@@ -32,8 +34,6 @@ global.isConnected = null;
 /* Variables */
 
 global.isConfirmSent = false;
-
-global.debugMode = false;
 
 global.isUserLoggedIn = false;
 

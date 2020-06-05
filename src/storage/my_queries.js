@@ -12,7 +12,7 @@ import {
 
 import {
   getTransaction,
-  // getCategory,
+  getCategory,
   listCategorys,
 } from '../graphql/queries';
 
@@ -41,7 +41,7 @@ export const fetchStoredTransactions = async () => {
     const graphqldata = await API.graphql(graphqlOperation(listTransactions));
     list = graphqldata.data.listTransactions.items;
   } catch (err) {
-    console.log('error: ', err);
+    console.log('err: ', err);
   }
   return list;
 };
@@ -71,7 +71,6 @@ export const listAllOnlineCategories = async () => {
     const graphqldata = await API.graphql(graphqlOperation(listCategorysGQL));
     // console.log('graphqldata: ', graphqldata);
     list = graphqldata.data.listCategorys.items;
-
     // console.log('online categories list.length: ', list.length);
   } catch (err) {
     console.log('error fetching user categories from online transactions: ', err);
@@ -109,13 +108,13 @@ query ListTransactions {
       }
       payee {
         id
-    #     name
-    #     owner
-    #     version
+        name
+        owner
+        version
       }
       type
       note
-    #   version
+      version
     }
     # # nextToken
   }
@@ -127,7 +126,7 @@ export const CreateCategoryGQL = (category) => {
   const query = gql`
 mutation CreateCategory {
   createCategory(input: {
-  id: ${'"'+category.id+'"'}
+    id: ${'"'+category.id+'"'}
     name: ${'"'+category.name+'"'}
     color: ${'"'+category.color+'"'}
     type: ${'"'+category.type+'"'}
@@ -151,11 +150,13 @@ mutation CreatePayee {
   createPayee(input: {
     id: ${'"'+payee.id+'"'}
     name: ${'"'+payee.name+'"'}
-    owner: ${'"'+payee.owner+'"'}
+    owner: ${'"'+global.storageKey+'"'}
     version: ${payee.version}
   }) {
     id
     name
+    owner
+    version
   }
 }
 `;
@@ -163,18 +164,20 @@ mutation CreatePayee {
 };
 // id, date, amount, owner, payee, category, type, note, version
 export const CreateTransactionGQL = (transaction) => {
+  console.log('transaction: ', transaction);
   const query = gql`
 mutation CreateTransaction {
   createTransaction(input: {
     id: ${'"'+transaction.id+'"'}
     date: ${'"'+transaction.date+'"'}
     amount: ${transaction.amount}
-    owner: ${'"'+transaction.owner+'"'}
+    owner: ${'"'+global.storageKey+'"'}
     transactionPayeeId: ${'"'+transaction.payee.id+'"'}
     version: ${transaction.version}
     note: ${'"'+transaction.note+'"'}
     transactionCategoryId: ${'"'+transaction.category.id+'"'}
     type: ${'"'+transaction.type+'"'}
+
   }) {
     id
     amount
@@ -190,6 +193,8 @@ mutation CreateTransaction {
     payee {
       id
       name
+      owner
+      version
     }
   }
 }
@@ -278,8 +283,51 @@ mutation UpdateCategory {
   return graphql_query;
 };
 
+export const getTransactionGQL = (transaction) => {
+  const graphql_query = gql`
+  query GetTransaction($id: ID!) {
+    getTransaction(id: id: ${'"'+transaction.id+'"'}) {
+      id
+      date
+      amount
+      owner
+      payee {
+        id
+        name
+        owner
+        version
+        transaction {
+          id
+          date
+          amount
+          owner
+          type
+          note
+          version
+        }
+      }
+      category {
+        id
+        name
+        color
+        type
+        owner
+        version
+        transactions {
+          nextToken
+        }
+      }
+      type
+      note
+      version
+    }
+  }
+`;
+}
+
 /* API calls */
 export const removeCategory = async (category) => {
+  if (global.debugMode === true) return
   try {
     await API.graphql(graphqlOperation(deleteCategory, { input: { id: category.id } }));
     console.log('category successfully deleted.', category.id);
@@ -289,6 +337,7 @@ export const removeCategory = async (category) => {
 };
 
 export const DeleteCategory = async (category) => {
+  if (global.debugMode === true) return
   try {
     await API.graphql(graphqlOperation(deleteCategory, { input: { id: category.id } }));
     console.log('category successfully deleted.', category.id);
@@ -298,6 +347,7 @@ export const DeleteCategory = async (category) => {
 };
 
 export const removePayee = async (payee) => {
+  if (global.debugMode === true) return
   try {
     await API.graphql(graphqlOperation(deletePayee, { input: { id: payee.id } }));
     // console.log('payee successfully deleted.', payee.id);
@@ -306,15 +356,17 @@ export const removePayee = async (payee) => {
   }
 };
 export const DeleteTransaction = async (transaction) => {
+  if (global.debugMode === true) return
   try {
     await API.graphql(graphqlOperation(deleteTransaction, { input: { id: transaction.id } }));
-    console.log('transaction successfully deleted.');
+    console.log('transaction successfully deleted.', transaction.id);
   } catch (err) {
     console.log('error deleting transaction...', err);
   }
 };
 
 export const savePayee = async (payee) => {
+  if (global.debugMode === true) return
   // push new payee to cloud
   try {
     const mutation = await graphqlOperation(CreatePayeeGQL(payee)); // store transaction in cloud
@@ -325,21 +377,23 @@ export const savePayee = async (payee) => {
   }
 };
 export const SaveCategory = async (category) => {
+  if (global.debugMode === true) return
   try {
     const categoryMutation = graphqlOperation(CreateCategoryGQL(category)); // push new category
     await API.graphql(categoryMutation);
     console.log('category successfully created:', category.id);
   } catch (e) {
-    console.log('save category error:', e.errors[0]['errorType']);
-    const errorType = e.errors[0].errorType;
+    console.log('save category error:', e);
+    // const errorType = e.errors[0].errorType;
 
-    if (errorType && errorType === 'DynamoDB:ConditionalCheckFailedException') {
-      // console.log(`trying to update category ${category.id} instead ...`);
-      UpdateCategory(category);
-    }
+    // if (errorType && errorType === 'DynamoDB:ConditionalCheckFailedException') {
+    //   // console.log(`trying to update category ${category.id} instead ...`);
+    //   UpdateCategory(category);
+    // }
   }
 };
 export const formatTransactionInput = (item) => {
+  if (global.debugMode === true) return
   const obj = {};
   Object.keys(item).forEach((key) => {
     if (key) {
@@ -364,9 +418,11 @@ export const formatTransactionInput = (item) => {
 };
 
 export const saveTransaction = async (transaction) => {
+  console.log('transaction.category: ', transaction.category);
+  if (global.debugMode === true) return
   try {
     const mutation = await graphqlOperation(CreateTransactionGQL(transaction)); // store transaction in cloud
-    // SaveCategory(transaction.category)
+    
     API.graphql(mutation);
     console.log('transaction successfully created:', transaction.id);
   } catch (err) {
@@ -376,6 +432,7 @@ export const saveTransaction = async (transaction) => {
   }
 };
 export const UpdateTransaction = async (updated) => {
+  if (global.debugMode === true) return
   try {
     await API.graphql(graphqlOperation(UpdateTransactionGQL(updated)));
     // console.log('transaction successfully updated:', updated.id);
@@ -395,16 +452,12 @@ export const UpdateTransaction = async (updated) => {
   }
 };
 export const UpdateCategory = async (category) => {
+  // console.log('category before update: ', category);
+  if (global.debugMode === true) return
   try {
-    // console.log('category.version: ', category.version);
-    // category.version = category.version + 1
-
-    // console.log('category.version: ', category.version);
-
     const response = await API.graphql(graphqlOperation(UpdateCategoryGQL(category)));
-    console.log(`${'category successfully updated...'} ${JSON.stringify(response.data.updateCategory, null, 2)}`);
-    console.log('category.version: ', category.version);
-
+    // console.log(`${'category successfully updated...'} ${JSON.stringify(response.data.updateCategory, null, 2)}`);
+    // console.log('category successfully  updated: ', category.id);
   } catch (err) {
     console.log('error updating category in UpdateCategory...', err); // err
 
@@ -423,14 +476,45 @@ export const UpdateCategory = async (category) => {
     // }
   }
 };
+
+export const GetTransaction = async (transaction) => {
+  let obj;
+  try {
+    const response = await API.graphql(graphqlOperation(UpdateTransactionGQL(category)));
+    // obj = response.data.getTransaction;
+    // console.log('obj: ', obj);
+    console.log('response: ', response);
+    // console.log('retrieved transaction by id: ', transaction);
+  } catch (err) {
+    console.log('error getting transaction...', err);
+  }
+  return obj;
+};
 export const getTransactionByID = async (id) => {
+  // console.log('retrieved transaction by id: ', id);
   let obj;
   try {
     const stored = await API.graphql(graphqlOperation(getTransaction, { id: id }));
     obj = stored.data.getTransaction;
-    // console.log('obj: ', obj);
+    console.log('obj: ', obj);
   } catch (err) {
-    console.log('error getting transaction by id...', err);
+    // console.log('error getting transaction by id...', err);
   }
   return obj;
 };
+
+export const getCategoryByID = async (id) => {
+  let obj;
+  try {
+    const stored = await API.graphql(graphqlOperation(getCategory, { id: id }));
+    obj = stored.data.getCategory;
+    console.log('obj: ', obj);
+  } catch (err) {
+    // console.log('error getting category by id...', err);
+    throw new Error(err)
+
+  }
+  return obj;
+};
+
+

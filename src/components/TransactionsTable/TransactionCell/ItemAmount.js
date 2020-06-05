@@ -27,6 +27,7 @@ function ItemAmount(props) {
     <Text  style={
       {
         paddingRight: 10,
+        paddingTop: 4,
 
         
 

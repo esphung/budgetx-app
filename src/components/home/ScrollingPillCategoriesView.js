@@ -195,10 +195,15 @@ const ScrollingPillCategoriesView = (props) => {
       style={
         {
           alignItems: 'center',
-          height: 50,
-          // borderWidth: 1,
+          height: global.screenHeight/15, // 50,
+          borderWidth: global.debugMode ? 1 : 0,
           // borderColor: 'white',
           // borderStyle: 'solid',
+
+
+
+          borderTopWidth: Platform.OS === 'android' ? 1 : 0,
+          borderTopColor: Platform.OS === 'android' ? colors.dark : null,
 
           backgroundColor: colors.darkTwo,
 

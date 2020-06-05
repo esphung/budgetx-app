@@ -80,7 +80,7 @@ const retrieveAuthenticatedStorageKey = async () => {
 // };
 
 export const saveSettingsStorage =  async (key, settings) => {
-  if (global.debugMode) return;
+  if (global.debugMode === true) return;
   await AsyncStorage.setItem(key, JSON.stringify(settings));
 };
 
@@ -97,7 +97,7 @@ export const Settings = (key) => {
     id: uuidv4(),
     user: new User(key),
     transactions: [],
-    categories: defaultCategories,
+    categories: defaultCategories(),
     payees: [],
     // avatar: global.defaultAvatar,
     owner: key,

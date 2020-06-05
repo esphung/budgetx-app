@@ -8,14 +8,16 @@ UPDATED:    12/11/2019 10:09 PM
             03/28/2020 02:18 PM | GraphQL Model/Schema
 */
 
+import uuidv4 from '../functions/uuidv4';
+
 function Category(id, name, color, type, owner, version) {
   const obj = {
-    id,
-    name,
-    color,
-    type,
-    owner,
-    version
+    id: (id) ? id : uuidv4(),
+    name: (name) ? name : 'None',
+    color:  (color) ? color : '#ffffff',
+    type: (type) ? type : 'EXPENSE',
+    owner: (owner)  ? owner : global.storageKey,
+    version: (version) ? version : 0,
   };
   return obj;
 }

@@ -27,6 +27,13 @@ let colorsArray = Object.values(colors);
 
 // console.log('Math.random(0,10).toFixed(0): ', Math.random(0,10).toFixed(0))
 
+/*
+FILENAME:   getFakeTransactions.js
+PURPOSE:    UI transaction table testing for Financely
+AUTHOR:     Eric Phung
+CREATED:    06/03/2020 08:47 PM
+*/
+
 import { crayola, getCrayolaColors } from '../data/crayola';
 // console.log('Object.values(getCrayolaColors()): ', Object.values(getCrayolaColors()));
 const crayolaColorsArray = Object.values(getCrayolaColors());
@@ -42,7 +49,7 @@ export function getFakeTransactions(limit) {
 
     let amount = Number(randomAmount());
 
-    let date = randomDate(new Date(2012, 0, 1), new Date());
+    let date = randomDate(new Date(2020, 0, 5), new Date(2020, new Date().getMonth(), 30));
 
     let color = colorsArray[(Math.random(0, colorsArray.length) * 10).toFixed(0)]
 

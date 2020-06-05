@@ -129,7 +129,7 @@ const MyStickyTable = (props) => {
     isUpdatingTransaction,
     updateStoredTransaction,
     currentPayeeName,
-    updateTransactionPayee
+    // updateTransactionPayee
   } = props;
 
   const [tableData, setTableData] = useState(null);
@@ -167,10 +167,10 @@ const MyStickyTable = (props) => {
       <ScrollView
       // scrollEnabled={false}
         contentContainerStyle={{
-          
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'dashed',
+          // top: Platform.OS === 'android' ? 50 : 0,
+          borderWidth: global.debugMode ? 1 : 0,
+          borderColor: 'white',
+          borderStyle: 'dashed',
         }}
       >
         <View style={styles.rowFront}>
@@ -255,9 +255,9 @@ const MyStickyTable = (props) => {
             // isNameInputEnabled={props.isNameInputEnabled}
             // handlePayeeNameChange={props.handlePayeeNameChange}
             updateStoredTransaction={updateStoredTransaction}
-            updateTransactionPayee={updateTransactionPayee}
-            currentPayeeName={currentPayeeName}
-            updateTransactionPayee={updateTransactionPayee}
+            // updateTransactionPayee={updateTransactionPayee}
+            // currentPayeeName={currentPayeeName}
+            // updateTransactionPayee={updateTransactionPayee}
           />
         </View>
       </SwipeRow>
@@ -322,12 +322,11 @@ const MyStickyTable = (props) => {
           left: 0,
           right: 0,
           top: 0,
-          bottom: -20,
+          bottom: 0,
 
-
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
+          borderWidth: global.debugMode ? 1 : 0,
+          borderColor: 'white',
+          borderStyle: 'solid',
         }}><SwipeListView
 
   
@@ -342,7 +341,7 @@ const MyStickyTable = (props) => {
       // leftOpenValue={55}
       // rightOpenValue={-75}
       // // disableRightSwipe={false}
-       disableLeftSwipe
+       // disableLeftSwipe
 
       // ItemSeparatorComponent={this.FlatListItemSeparator}
       // ListHeaderComponent={this.Render_FlatList_Sticky_header}
@@ -362,18 +361,18 @@ const MyStickyTable = (props) => {
   /* android table */
 
   const android_table = (
-        <View style={{
+        <SafeAreaView style={{
           // // flex: 1,
-                    position: 'absolute',
+          position: 'absolute',
           left: 0,
           right: 0,
-          top: 40,
-          bottom: -20,
+          top: 0,
+          bottom: 0,
 
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
+          borderWidth: global.debugMode ? 1 : 0,
+          borderColor: 'white',
+          borderStyle: 'solid',
         }}>
       <SwipeListView
         scrollEnabled
@@ -390,9 +389,9 @@ const MyStickyTable = (props) => {
         // extraData={selected}
 
       data={tableData}
-      extraData={selected}
+      // extraData={selected}
       renderItem={renderItem}
-      keyExtractor={item => item.id}
+      keyExtractor={(item, index) => String(index)}
       // stickyHeaderIndices={stickyHeaderIndices}
       showsVerticalScrollIndicator={false}
 
@@ -420,14 +419,16 @@ const MyStickyTable = (props) => {
   //     // removeClippedSubviews={true}
   //     // maxToRenderPerBatch={2}
       />
-        </View>
+        </SafeAreaView>
   );
 
 
 
   if (!transactions || transactions.length <= 0) {
     return Render_Empty_Component();
-  } else if (Platform.OS === 'ios') {
+  }
+
+  if (Platform.OS === 'ios') {
     return ios_table;
   } else {
     return android_table;

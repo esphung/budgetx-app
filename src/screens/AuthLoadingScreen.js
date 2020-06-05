@@ -165,8 +165,8 @@ export default function AuthLoadingScreen(props) {
     // console.log('hasSeenIntro: ', hasSeenIntro);
 
     /* get whether signed up user wants to sync device or not */
-    global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
-    console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
+    // global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
+    // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
 
     // console.log('props.navigation: ', props.navigation);
 

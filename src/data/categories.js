@@ -9,7 +9,8 @@ import uuidv4 from '../functions/uuidv4';
 
 
 
-const categories = [
+const categories = () => {
+  return [
   // {
   //   id: 0,
   //   name: 'Income',
@@ -67,6 +68,7 @@ const categories = [
   // },
   new Category(uuidv4(), 'Other Income', '#94e100', 'INCOME', global.storageKey, 0)
 ];
+}
 
 
 export default categories;

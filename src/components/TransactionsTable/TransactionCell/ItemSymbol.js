@@ -25,15 +25,12 @@ function ItemSymbol(props) {
         [
           styles.itemSymbolStyle,
           {
+            // flex: 1,
+            paddingTop: 2,
             color: color,
-            // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-            // fontSize: 17,
-            // fontWeight: 'normal',
-            // fontStyle: 'normal',
-            // letterSpacing: 0.13,
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
+            borderWidth: global.debugMode ? 1 : 0,
+            borderColor: 'white',
+            borderStyle: 'solid',
           }
         ]
     }

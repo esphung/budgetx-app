@@ -1,0 +1,1 @@
+export default isUpperCase = (str) => (str === str.toUpperCase());

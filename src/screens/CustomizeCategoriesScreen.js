@@ -241,31 +241,24 @@ export default function CustomizeCategoriesScreen() {
   const [currentColor, setCurrentColor] = useState(colors.offWhite);
 
   const resetCategories = async () => {
+    await deleteAllOnlineCategories().then(async () => {
+      let list = defaultCategories();
 
-    deleteAllOnlineCategories();
+      try {
+        const storage = await loadSettingsStorage(global.storageKey);
 
+        storage.categories = list;
 
-    const storageObj = await loadSettingsStorage(global.storageKey);
-    let j = storageObj.categories.length - 1;
-    let i = defaultCategories.length - 1;
+        saveSettingsStorage(global.storageKey, storage);
 
-    for (j; j >= 0; j--) {
-      removeCategory(storageObj.categories[j]);
-    }
-    storageObj.categories = defaultCategories;
+        setData(list)
+      } catch(e) {
+        // statements
+        console.log(e);
+      }
+    })
 
-    for (i; i >= 0; i--) {
-      defaultCategories[i].owner = global.storageKey;
-    }
-
-    setData(defaultCategories)
-    saveSettingsStorage(global.storageKey, storageObj);
-
-    
-    // pushAllCategoriesToCloud();
   };
-
-
   const showCategoryEditing = () => {
     setShowCreateCategoryButton(false);
   };
@@ -321,9 +314,16 @@ export default function CustomizeCategoriesScreen() {
         storage.categories.splice(i, 1);
       }
     }
+    for (var j = storage.transactions.length - 1; j >= 0; j--) {
+      if (storage.transactions[j].category.id === category.id) {
+
+        storage.categories.splice(j, 1);
+        removeTransaction(storage.transactions[j])
+      }
+    }
     removeCategory(category);
 
-    
+
 
     setData(storage.categories);
 
@@ -606,8 +606,9 @@ export default function CustomizeCategoriesScreen() {
     
     return () => {
       // effect
-      // clearState()
+      clearState()
       // setIsReady(true);
+
     };
   }, [])
 
@@ -623,9 +624,13 @@ export default function CustomizeCategoriesScreen() {
       setCurrentType('EXPENSE');
       hideCategoryEditing()
     }
-    return () => {
-      // effect
-    };
+    // return () => {
+    //   // effect
+    //   setIsReady(true)
+    //   setIsLoading(false)
+    //   setIsAddingCategory(false)
+    //   setShowDialogBox(false)
+    // };
   }, [currentCategory])
 
   const cancelBtnPressed = () => {

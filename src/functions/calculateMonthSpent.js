@@ -3,16 +3,25 @@ import { dates } from './dates';
 import checkIfLeapYear from './checkIfLeapYear';
 
 Date.prototype.addDays = (days) => {
-  if (this) {
-    const date = new Date(this.valueOf());
+  const date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
-  }
-  
 };
 
-export default function calculateMonthSpent(array) {
-  let balance = 0.00;
+// var date = new Date();
+
+// alert(date.addDays(5));
+
+// console.log('new Date().addDays(30): ', new Date().addDays(30));
+
+// // Returns if a value is really a number
+// function isNumber (value) {
+//   return typeof value === 'number' && isFinite(value);
+// }
+
+export default async function calculateMonthSpent(array) {
+  // console.log('array: ', array);
+  let balance = 0;
   if (array) {
     //  get last 30 days
     const currentDate = new Date(); // TESTING: new Date(2018, 11, 24); // new Date();
@@ -26,7 +35,7 @@ export default function calculateMonthSpent(array) {
 
     // first date of current month
     const firstDate = currentDate;
-    // console.log('First Date:',firstDate);
+    // console.log('First Date:', firstDate);
 
     // feb 28 days
 
@@ -42,33 +51,36 @@ export default function calculateMonthSpent(array) {
     if (checkIfLeapYear(currentYear)) {
       daysInMonth = 29;
     }
-
     // set days in month (if not feb or leap year)
     if (months31days.includes(currentMonth)) {
       daysInMonth = 31;
     } else if (months30days.includes(currentMonth)) {
       daysInMonth = 29;
     }
+    try {
+      const lastDate = await firstDate.addDays(daysInMonth);
 
-    const lastDate = firstDate.addDays(daysInMonth);
-    // console.log('Last Date:',lastDate);
-
-    // console.log('First Date:',firstDate);
-    // console.log('Last Date:',lastDate);
-
-    // const currentMonthDates = getDates(firstDate, lastDate);
-    // console.log(currentMonthDates);
-
-    // calculate expense for current month (days)
-    let i = array.length - 1;
-    for (i; i >= 0; i -= 1) {
-      if (dates.compare(array[i].date, firstDate) >= 0) {
-        // console.log(dates.compare(array[i].date, lastDate));
-        if (array[i].amount <= 0.00) {
-          // console.log(array[i].amount);
-          balance += Math.abs(array[i].amount);
-        }
+      if (!lastDate) {
+        balance = Number(0).toFixed(2);
+        return balance;
       }
+      // console.log('Last Date:', lastDate);
+
+      array.forEach((element) => {
+        // statements
+        if (dates.compare(element.date, firstDate) >= 0) {
+          // console.log(dates.compare(element.date, lastDate));
+          if ((element.type) === 'EXPENSE') {
+            // console.log(element.amount);
+            // console.log('element.amount: ', Number(element.amount).toFixed(2));
+            balance += Math.abs(element.amount);
+          }
+        }
+      });
+    } catch (e) {
+      // statements
+      // console.log(e);
+      console.log('Error calculating month\'s spent balance:', e);
     }
   }
   // return balance.toFixed(2);

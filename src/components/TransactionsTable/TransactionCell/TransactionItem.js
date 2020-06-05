@@ -24,9 +24,8 @@ import CategoryLabel from './CategoryLabel';
 
 import ItemSymbol from './ItemSymbol';
 
-// import ItemPayee from './ItemPayee';
-import ItemNameInput from './ItemNameInput';
-// import ItemDate from './ItemDate';
+import ItemNote from './ItemNote';
+
 import ItemAmount from './ItemAmount';
 
 import uuidv4 from '../../../functions/uuidv4';
@@ -39,14 +38,7 @@ function TransactionItem(props, index) {
     isNameInputEnabled,
     isUpdatingTransaction,
     updateStoredTransaction,
-    currentPayeeName,
-    setCurrentPayeeName,
-    updateTransactionPayee
   } = props;
-
-
-
-  // console.log('item.category: ', item.category);
 
   if (item.category === null) {
     // console.log('item.category: ', item.category);
@@ -87,18 +79,14 @@ function TransactionItem(props, index) {
       onPress={onPress}
       style={
         {
-          justifyContent: 'center',
-          alignItems: 'center',
-
-          // borderWidth: 1,
-          // borderColor: '#ffffff',
-          // borderStyle: 'solid',
-
           paddingLeft: 10,
+
+          borderWidth: global.debugMode ? 1 : 0,
+          borderColor: global.debugMode ? 'red' : null,
         }
       }
     >
-    {
+{/*    {
       isUpdatingTransaction && currentTransaction && (currentTransaction.id === item.id) &&
       <View style={
         [
@@ -112,12 +100,10 @@ function TransactionItem(props, index) {
       >
         <ActivityIndicator size='small' />
       </View>
-    }
+    }*/}
 
       <View style={{
-        flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
         flexDirection: 'row',
 
       }}
@@ -125,8 +111,8 @@ function TransactionItem(props, index) {
 
         <View style={{
           // flex: 0.2,
-          justifyContent: 'center',
-          alignItems: 'center',
+          // justifyContent: 'center',
+          // alignItems: 'center',
 
           paddingBottom: 4,
 
@@ -140,12 +126,12 @@ function TransactionItem(props, index) {
 
         <View style={{
           // flex: 1,
-          justifyContent: 'center',
+          // justifyContent: 'center',
           // alignItems: 'center',
 
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
+          borderWidth: global.debugMode ? 1 : 0,
+          borderColor: 'white',
+          borderStyle: 'solid',
         }}
         >
           <CategoryLabel
@@ -163,45 +149,41 @@ function TransactionItem(props, index) {
               flex: 1,
               justifyContent: 'center',
               // alignItems: 'center',
-              alignSelf: 'flex-start',
+              // alignSelf: 'flex-start',
               paddingLeft: 4,
 
-              // borderWidth: 1,
-              // borderColor: 'white',
+              borderWidth: global.debugMode ? 1 : 0,
+              borderColor: 'white',
               // borderStyle: 'solid',
             }
           }
         >
-         <ItemNameInput
-            currentPayeeName={currentPayeeName}
-            updateTransactionPayee={updateTransactionPayee}
-            updateStoredTransaction={updateStoredTransaction}
-            isNameInputEnabled={isNameInputEnabled}
-            transaction={item}
-            handlePayeeNameChange={props.handlePayeeNameChange}
-            updateTransactionPayee={updateTransactionPayee}
-            />
+         <ItemNote note={item.note} />
         </View>
 
         {/* <ItemDate item={item} /> */}
 
-        <View
+       <View  style={
+        {
+          justifyContent: 'center',
+        }
+       }>
+       <View
           style={
             {
-       
-              justifyContent: 'center',
+              
+              flex: 1,
               flexDirection: 'row-reverse',
               justifyContent: 'flex-start',
               
-
-
-              // borderWidth: 1,
-              // borderColor: 'white',
+              borderWidth: global.debugMode ? 1 : 0,
+              borderColor: 'white',
               // borderStyle: 'solid',
             }
           }
         >
           <ItemAmount item={item} />
+        </View>
         </View>
       </View>
     </TouchableOpacity>

@@ -501,8 +501,8 @@ function Settings(props) {
     // global.isDeviceSyncOn = await getIsDeviceSyncOn()
     setIsReady(false);
 
-    global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
-    console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
+    // global.isDeviceSyncOn = await AsyncStorage.getItem('isDeviceSyncOn');
+    // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
 
     const storage = await loadSettingsStorage(global.storageKey);
 
