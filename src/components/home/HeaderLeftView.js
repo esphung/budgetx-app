@@ -25,6 +25,7 @@ import {
   SafeAreaView,
   Alert,
   TextInput,
+  AsyncStorage,
 } from 'react-native';
 
 import {
@@ -127,7 +128,7 @@ function HeaderLeftView(props) {
       }
 
       try {
-        setBoldMessage((storage.user.name) ? storage.user.name : 'Cross-device sync enabled') // : global.displayName);
+        setBoldMessage((storage.user.name) ? storage.user.name : `Cross-device sync ${JSON.parse(await AsyncStorage.getItem('someBoolean')) ? 'enabled' : 'disabled'}`) // : global.displayName);
         
         setNormalMessage(storage.user.email);
       } catch(e) {
@@ -250,11 +251,14 @@ function HeaderLeftView(props) {
         }
 
         <View style={[styles.userMessageView,{}]}>
-          <Input editable={false} style={styles.boldMessage}>
+          
+          <Input
+            editable={false} style={styles.boldMessage}>
             {
               boldMessage
             }
           </Input>
+       
         
           <Input
 

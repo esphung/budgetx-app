@@ -1,3 +1,11 @@
+/*
+Edits:
+06/05/2020 06:00 PM | commented out
+                      AsyncStorage.setItem('authenticated', 'false');
+                      global.isFederated
+                      global.isApple.....
+*/
+
 import React, { useEffect, useState } from 'react';
 
 // import { PropTypes } from 'prop-types';
@@ -17,7 +25,6 @@ import {
 
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
-
 
 // // import the Analytics category
 // import Analytics from '@aws-amplify/analytics'
@@ -40,23 +47,6 @@ import SpinnerMask from '../../src/components/SpinnerMask';
 // console.warn("Warning message");
 
 import uuidv4 from '../functions/uuidv4';
-
-
-const getIsDeviceSyncOn = async () => {
-  
-  // Retrieves from storage as boolean
-  let bool = await AsyncStorage.getItem('isDeviceSyncOn', (err, value) => {
-      if (err) {
-          console.log(err);
-          bool =  false
-      } else {
-        console.log('JSON.parse(value): ', JSON.parse(value));
-        bool = JSON.parse(value) // boolean false
-
-      }
-  })
-  return bool
-}
 
 
 
@@ -85,10 +75,9 @@ export default function AuthLoadingScreen(props) {
 
     global.authenticated = await AsyncStorage.getItem('authenticated');
 
-        global.isFederated = await AsyncStorage.getItem('isFederated');
+    // global.isFederated = await AsyncStorage.getItem('isFederated');
 
-        global.isAppleSignedIn = await AsyncStorage.getItem('isAppleSignedIn')
-        // console.log('isAppleSignedIn: ', isAppleSignedIn);
+    // global.isAppleSignedIn = await AsyncStorage.getItem('isAppleSignedIn');
     if (userToken) {
       // console.log('Local Storage userToken: ', userToken);
       global.storageKey = await AsyncStorage.getItem('storageKey');
@@ -96,12 +85,11 @@ export default function AuthLoadingScreen(props) {
 
     } else {
       // get current authenticated user
-      await Auth.currentAuthenticatedUser()
+      Auth.currentAuthenticatedUser()
         .then(async (cognito) => {
-          await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
+          AsyncStorage.setItem('storageKey', cognito.attributes.sub);
           // alert(global.storageKey)
           // global.showGlobalValues()
-
 
           // console.log('cognito: ', cognito);
           // console.log('\nAuthenticated User =>')
@@ -117,8 +105,7 @@ export default function AuthLoadingScreen(props) {
 
         })
         .catch((err) => {
-          console.log('err: ', err);
-          
+          console.log('err setting auth storageKey: ', err);
         });
 
       userToken = await AsyncStorage.getItem('userToken');
@@ -128,92 +115,57 @@ export default function AuthLoadingScreen(props) {
 
   // Get the logged in users and remember them
   async function loadApp() {
-
-
-
-
     // try offline stored useruserToken first
     let userToken = await retrieveCognitoUserToken();
-
 
     if (!userToken) {
       // global.showGlobalValues()
       userToken = global.storageKey + '@session' + uuidv4();
 
       // console.log('userToken: ', userToken);
-      await AsyncStorage.setItem('userToken', userToken); // save user token
+      AsyncStorage.setItem('userToken', userToken); // save user token
       
-      await AsyncStorage.setItem('authenticated', 'false');
+      // AsyncStorage.setItem('authenticated', 'false');
       global.authenticated = await AsyncStorage.getItem('authenticated');
-
-      
-      
 
       if (global.authenticated === true) {
         // console.log('authenticated: ', authenticated);
         // console.log('User Locally Authenticated');
         global.storageKey = await AsyncStorage.getItem('storageKey');
       }
-      else {
-
-        console.log('User Not Locally Authenticated');
+      else {   
         global.storageKey = uuidv4();
-        await AsyncStorage.setItem('storageKey', global.storageKey)
+        AsyncStorage.setItem('storageKey', global.storageKey)
       }
     }
 
     // props.navigation.navigate('App');
     
     // console.log('userToken: ', userToken);
-    
 
     global.authenticated = await getAuthentication();
     // console.log('global.authenticated: ', global.authenticated);
 
-    global.isFederated = await AsyncStorage.getItem('isFederated');
+    // global.isFederated = await AsyncStorage.getItem('isFederated');
 
-    global.isAppleSignedIn = await AsyncStorage.getItem('isAppleSignedIn')
+    // global.isAppleSignedIn = await AsyncStorage.getItem('isAppleSignedIn')
 
     // await AsyncStorage.setItem('storageKey', cognito.attributes.sub);
     // alert(global.storageKey);
-
 
     /* Play App Intro Slider */
     let hasSeenIntro = await AsyncStorage.getItem('hasSeenIntro');
     // console.log('hasSeenIntro: ', hasSeenIntro);
 
-    /* get whether signed up user wants to sync device or not */
-    let bool = await getIsDeviceSyncOn()
-    console.log('isDeviceSyncOn: ', bool);
-
-    // console.log('props.navigation: ', props.navigation);
-
     if (!hasSeenIntro) {
       props.navigation.navigate('MyAppIntroSlider');
     };
-
-
     // global.showGlobalValues()
     props.navigation.navigate(userToken ? 'App' : 'Auth');
   }
 
-
-
-
-  // useEffect(() => {
-  //   // console.log('Mount');
-  //   loadApp();
-  //   // return () => {
-  //   //   console.log('Clean up');
-  //   // }
-  // }, []);
-
   useEffect(() => {
-
     loadApp();
-    return () => {
-      // effect
-    };
   }, []);
 
   // useEffect(() => {

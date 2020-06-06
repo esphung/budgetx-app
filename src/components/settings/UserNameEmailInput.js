@@ -44,6 +44,8 @@ import {
 
 import isValidEmail from '../../functions/isValidEmail';
 
+import { isDeviceOnline } from '../../../network-functions';
+
 const spinnerView = (
   <View
     style={
@@ -99,6 +101,8 @@ function UserNameEmailInput(props) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const authCodeInputRef = useRef(null);
+
+  const [isReady, setIsReady] = useState(false);
 
   function submitNewEmailAddress (email) {
     // body...
@@ -470,37 +474,34 @@ function UserNameEmailInput(props) {
     // setEmailPlaceholder(text);
   }
 
-  const submitName = async ()  => {
-    let storage = await loadSettingsStorage(global.storageKey);
-
-    storage.user.full_name = name;
-
-    storage.user.name = name
+  const submitName = async () => {
+    const storage = await loadSettingsStorage(global.storageKey);
 
     // saveSettingsStorage(global.storageKey, storage);
-
-    try {
-      const user = await Auth.currentAuthenticatedUser();
-      console.log('user.attributes: ', user.attributes);
-      await Auth.updateUserAttributes(user, { 'name': name });
-      await Auth.updateUserAttributes(user, { 'custom:name': storage.user.full_name });
-
-      console.log('user: ', user);
-
-      // storage.user.full_name = name
-
-
-      
-      showMessage('Updated name');
-    } catch (error) {
-      // onError(error);
-      console.log('error updating full name: ', error);
+    if (await isDeviceOnline()) {
+      try {
+        await Auth.currentAuthenticatedUser()
+          .then(async (user) => {
+            // console.log('user.attributes: ', user.attributes);
+            await Auth.updateUserAttributes(user, { 'name': name }).then(async () => {
+              Auth.updateUserAttributes(user, { 'custom:name': name });
+              // .then(() => {
+              //   // console.log('succ: ', succ);
+              //   // console.log('storage.user: ', storage.user);
+              //   // console.log('user.attributes: ', user.attributes);
+              // }).catch((e) => console.warn(e))
+            });
+          }).catch((e) => console.warn(e));
+      } catch (error) {
+        console.log('error updating name: ', error);
+      }
     }
+    storage.user.full_name = name;
+
+    storage.user.name = name;
 
     saveSettingsStorage(global.storageKey, storage);
-
-    
-  }
+  };
 
   const handleFullNameChange = async (text) => {
     // let storage = await loadSettingsStorage(global.storageKey)
@@ -509,213 +510,55 @@ function UserNameEmailInput(props) {
 
     // saveSettingsStorage(global.storageKey, storage)
     setName(text);
-  }
-  // function submitEmailPressed(text) {
-  //   console.log('Submit:', text);
-  //   if (isValidName(uniqueId) && isValidEmail(email)) {
-  //     setIsLoginEnabled(true);
-  //   }
-  // }
-
-  // async function loadCognitoUser() {
-  //   await Auth.currentAuthenticatedUser()
-  //     .then((cognitoUser) => {
-  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //       // console.log('username:', cognitoUser.username);
-
-  //       setUser(cognitoUser);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }
-
-
-  // useEffect(() => {
-  //   if (isValidEmail(email)) {
-  //     // console.log(email);
-  //     console.log('email: ', email);
-  //   }
-  // }, [email]);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     // console.log(user);
-  //     setUniqueId(user.username);
-  //     setEmail(user.attributes.email);
-  //   }
-  //   return () => {
-  //     // effect
-  //   };
-  // }, [user]);
-
-  // useEffect(() => {
-  //   // check for stored user
-  //   // retrieveStoredUserData();
-
-  //   // loadCognitoUser();
-
-  //   // // enable input
-  //   // setIsInputEnabled(true);
-  // }, [])
-
-  async function loadResources () {
+  };
+  async function loadResources() {
     const storage = await loadSettingsStorage(global.storageKey);
 
-    setUniqueId(storage.user.id)
+    setUniqueId(storage.user.id);
 
     if (!storage.user.full_name) {
-      setName(storage.user.name)
+      setName(storage.user.name);
     } else {
-      setName(storage.user.full_name)
+      setName(storage.user.full_name);
     }
 
-    setEmail(storage.user.email)
+    setEmail(storage.user.email);
 
-    Auth.currentAuthenticatedUser().then(async (cognito) => {
-      // console.log(cognito.attributes);
-      // alert(cognito.attributes.email)
+    await Auth.currentAuthenticatedUser().then(async (cognito) => {
       setEmail(cognito.attributes.email);
-      setCurrentID(cognito.attributes.sub);
+      // setName(cognito.attributes['custom:name'])
 
-      
-
-      // global.storageKey = cognito.attributes.sub
-
-      // // setEmailLabelText('Email Address')
-      // // setNameLabelText('User ID');
-
-      // // setIsLoginEnabled(false)
-
-     
-
-      // if (storage.user.full_name) {
-      //   // setEmail(storage.user.name);
-      //   // setCurrentID(storage.user.id);
-        
-      //   // setEmailLabelText('Name')
-
-      //  // || storage.user.id);
-      // }
-      // // console.log('storage.user: ', storage.user);
-      // if (storage.user.email) {
-      //   setEmail(storage.user.email)
-      // } else if (storage.user.name) {
-      //   setEmail(storage.user.name)
-        
-      // }
-      // else {
-      //   setEmail('No email address')
-      //   // setEmailLabelText('Email Address')
-        
-      // }
-      // if (storage.user.username) {
-      //   setUniqueId(storage.user.username)
-      // } else if (storage.user.id) {
-      //   setUniqueId(storage.user.id)
-      // }
-
-      // AsyncStorage.setItem('isLoginEnabled', 'false');
-      // global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled');
-      // console.log('isLoginEnabled: ', isLoginEnabled);
-
-      // setIsSignUpDisabled(true);
+      setIsReady(true);
+    }).catch(() => {
+      setIsReady(true);
     })
-    .catch(async (err) => {
-      // console.log('err: ', eZsrr);
-      // const storage = await loadSettingsStorage(global.storageKey);
 
-      // if (storage.user.name) {
-      //   setEmail(storage.user.name);
-      //  // || storage.user.id);
-      // }
-      // // else {
-      // //   setName(storage.user.full_name)
-      // // }
-
-      // // console.log('storage.user: ', storage.user);
-      // if (storage.user.email) {
-      //   setEmail(storage.user.email)
-      // } else {
-      //   setEmail('No email address')
-        
-      // }
-      
-      // if (storage.user.username) {
-      //   setUniqueId(storage.user.username)
-      // } else if (storage.user.id) {
-      //   setUniqueId(storage.user.id)
-      // }
-
-      // setIsLoginEnabled(true)
-      // AsyncStorage.setItem('isLoginEnabled', 'true')
-      // global.isLoginEnabled = await AsyncStorage.getItem('isLoginEnabled')
-      // console.log('isLoginEnabled: ', isLoginEnabled);
-
-      setIsSignUpDisabled(false);
-
-    })
+    
   }
 
   useEffect(() => {
     loadResources();
     return () => {
       // effect
-      setEmail('')
-      global.emailAddressInput = ''
-      global.email = ''
+      setEmail('');
+      global.emailAddressInput = '';
+      global.email = '';
     };
   }, []);
 
   async function onSubmitEditingEmailInput() {
-    if (global.authenticated) return
+    if (global.authenticated) return;
 
-    let str = email.trim();
-
-  // if (global.isFederated) {
-  //   let settings = await loadSettingsStorage(global.storageKey);
-
-  //   settings.user.email = str;
-
-  //   saveSettingsStorage(global.storageKey, settings);
-  // }
-
-
+    const str = email.trim();
     if (isValidEmail(str) !== true) {
-
-      showMessage({
-        message:'Invalid Email',
-        // duration: 550,
-        position: 'top',
-
-        // description: "My message description",
-        // type: 'success', // "success", "info", "warning", "danger"
-        // backgroundColor: colors.dark, // "purple", // background color
-        color: colors.pinkRed, // "#606060", // text color
-        // opacity: 1,
-
-        textStyle: styles.textStyle,
-
-        // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-      });
       return
-      
     }
-
-    
-
-
-    
     if (!global.authenticated) {
-      global.emailAddressInput = str
+      global.emailAddressInput = str;
       submitNewEmailAddress(str);
     }
-
-    // global.emailAddressInput = ''
-  
-
-      
-    
   }
-  let view = (
+  const view = (
     <TouchableOpacity
       disabled // ={isSignUpDisabled}
       onPress={
@@ -723,104 +566,9 @@ function UserNameEmailInput(props) {
       }
       style={{ flex: 1, flexDirection: 'column' }}
     >
-{/*    <View style={
-      {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-      }
-    }
-    >
-
-      <Text style={
-       [
-         styles.textStyle,
-         {
-          marginLeft: 10,
-         }
-       ]
-      }
-      >
-
-      <AntDesign name="idcard" size={styles.iconStyle.fontSize} color={colors.white} />
-      {
-        // idLabelText
-      }
-      </Text>
-      <Text
-
-        style={[
-          styles.textStyle,
-          {
-            flex: 1,
-
-            textAlign: 'right',
-            color: colors.offWhite, // '#ffffff7f.8',
-
-            marginRight: 10,
-            // marginBottom: 4,
-
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-          }
-          ]
-        }
-        // placeholder={'Enter username'}
-
-        // clearButtonMode="while-editing"
-
-        // placeholderTextColor={colors.offWhite}
-
-        // keyboardAppearance="dark" // ios
-
-        // textContentType="username" // ios
-
-        // // keyboardType="uniqueId-phone-pad"
-
-        // returnKeyType="done"
-
-        // // autoCorrect={true}
-
-        // autoCapitalize="none" // "words"
-
-        // maxLength={14}
-
-        // onSubmitEditing={() => submit('id', uniqueId)}
-
-        // onChangeText={handleTextChange}
-
-        // value={uniqueId}
-
-        // // autoFocus={shouldNameAutofocus}
-
-        // autoCompleteType="username" // android
-
-        // // enablesReturnKeyAutomatically={true}
-
-        // // editable={isNameInputEnabled}
-        // editable={false}
-
-        // // clearButtonMode="always"
-
-        // clearTextOnFocus={shouldClearNameInput}
-
-      >
-      {
-        uniqueId.substring(0, (global.maxUsernameLength - 1))
-      }
-      </Text>
-
-    </View>
-*/}
-
 
     {
-      isConfirming && spinnerView
+      (isConfirming || !isReady) && spinnerView
     }
     <View style={{
       flex: 1,
@@ -1017,7 +765,7 @@ function UserNameEmailInput(props) {
       }
     </TouchableOpacity>
     );
-  return codeSent && confirmationInput || view
+  return codeSent && confirmationInput || view;
 }
 
 const line2 = {

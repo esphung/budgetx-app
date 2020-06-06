@@ -1828,7 +1828,7 @@ function Settings(props) {
           // isSyncing && spinner
         }
         {
-          !isReady && spinner
+          // !isReady && spinner
         }
     </SafeAreaView>
   );

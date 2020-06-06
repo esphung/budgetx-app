@@ -135,13 +135,13 @@ function SubscriptionRect(props) {
         flex: 1,
         marginVertical: 10,
         alignSelf: 'center',
-        // justifyContent: 'space-between',
+        justifyContent: 'space-between',
         
         paddingLeft: 4,
-        // paddingHorizontal: 4,
+        paddingHorizontal: 4,
 
 
-        // alignItems: 'center',
+        alignItems: 'center',
         justifyContent: 'center',
 
         borderRadius: 9,
@@ -168,12 +168,14 @@ function SubscriptionRect(props) {
         style={{
           // flex: 1,
           flexDirection: 'row',
+          alignItems: 'flex-end',
+          padding: 20,
           // width: '100%', // global.screenWidth * 0.9,
           
           // height: '100%',
 
           alignItems: 'center',
-          // justifyContent: 'center',
+          justifyContent: 'center',
         
         // borderWidth: 1,
         // borderColor: 'white',
@@ -190,7 +192,7 @@ function SubscriptionRect(props) {
         <View
         style={{
           // flex: 1,
-          // alignItems: 'center',
+          alignItems: 'center',
           justifyContent: 'center',
           // flexDirection: 'column',
           // borderWidth: 1,
@@ -231,14 +233,16 @@ function SubscriptionRect(props) {
             // borderWidth: 1,
             // borderColor: 'white',
             // borderStyle: 'solid',
+            marginRight: 16,
           }
 
         }
         >
           <Text numberOfLines={3} style={[
-            styles.infoBoxGreenTextStyle,
+            // styles.infoBoxGreenTextStyle,
+            copy3,
             {
-              marginRight: 12
+              
             }
           ]}>{ text }</Text>
                     <Text numberOfLines={1} style={[

@@ -499,7 +499,7 @@ export const GetTransaction = async (transaction) => {
     const response = await API.graphql(graphqlOperation(UpdateTransactionGQL(category)));
     // obj = response.data.getTransaction;
     // console.log('obj: ', obj);
-    console.log('response: ', response);
+    // console.log('response: ', response);
     // console.log('retrieved transaction by id: ', transaction);
   } catch (err) {
     console.log('error getting transaction...', err);
@@ -512,7 +512,7 @@ export const getTransactionByID = async (id) => {
   try {
     const stored = await API.graphql(graphqlOperation(getTransaction, { id: id }));
     obj = stored.data.getTransaction;
-    console.log('obj: ', obj);
+    // console.log('obj: ', obj);
   } catch (err) {
     // console.log('error getting transaction by id...', err);
   }
@@ -524,7 +524,7 @@ export const getCategoryByID = async (id) => {
   try {
     const stored = await API.graphql(graphqlOperation(getCategory, { id: id }));
     obj = stored.data.getCategory;
-    console.log('obj: ', obj);
+    // console.log('obj: ', obj);
   } catch (err) {
     // console.log('error getting category by id...', err);
     throw new Error(err)
