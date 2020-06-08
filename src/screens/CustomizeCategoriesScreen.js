@@ -26,7 +26,7 @@ import {
   Platform,
   // BlurViewIOS,
   // BlurView,
-  // AsyncStorage,
+  AsyncStorage,
 } from 'react-native';
 
 import {
@@ -82,6 +82,8 @@ import {
 
 // import CustomSwipeCell from '../components/CustomSwipeCell';
 
+import ColorTableCell from '../components/table/ColorTableCell';
+
 import SwipeDelete from '../components/SwipeDelete';
 
 import SwipeEdit from '../components/SwipeEdit';
@@ -108,6 +110,7 @@ import searchByName from '../functions/searchByName';
 import {
   UpdateTransaction,
   // removeTransaction,
+  DeleteTransaction,
   // removePayee,
   removeCategory,
   // savePayee,
@@ -146,34 +149,42 @@ const getAuthentication = async () => {
 };
 
 const deleteAllOnlineCategories = async () => {
-  Auth.currentAuthenticatedUser().then(async () => {
+  // if (await isDeviceOnline() !== true) return;
+
+  // alert(await isDeviceOnline() && getAuthentication() && JSON.parse(await AsyncStorage.getItem('someBoolean')))
+  // Auth.currentAuthenticatedUser().then(async () => {
     try {
       const storage = await loadSettingsStorage(global.storageKey);
 
-      const { categories } = storage;
-      categories.forEach((category) => {
-        removeCategory(category);
-      });
-      if (await isDeviceOnline()) {
+      let { categories } = storage;
+
+
+
+      // categories.forEach((category) => {
+      //   removeCategory(category);
+      // });
+
+      if (await isDeviceOnline() && getAuthentication() && JSON.parse(await AsyncStorage.getItem('someBoolean'))) {
         const onlineCategories = await listAllOnlineCategories();
-        onlineCategories.forEach((item) => {
+        categories.forEach((item) => {
           removeCategory(item);
         });
       }
-      showMessage({
-        message: 'All categories deleted',
-        // duration: 550,
-        position: 'bottom',
-        color: colors.shamrockGreen, // "#606060", // text color
-        // opacity: 0.5,
-        textStyle: styles.textStyle,
-        // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-      });
+      // showMessage({
+      //   message: 'All categories deleted',
+      //   // duration: 550,
+      //   position: 'bottom',
+      //   color: colors.shamrockGreen, // "#606060", // text color
+      //   // opacity: 0.5,
+      //   textStyle: styles.textStyle,
+      //   // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+      // });
+
     } catch (e) {
       // statements
-      // console.log(e);
+      console.log(e);
     }
-  });
+  // });
   // .catch((err) => console.log('err: ', err));
 };
 
@@ -190,7 +201,7 @@ const pushAllCategoriesToCloud = async () => {
         });
       } catch (e) {
         // statements
-        // console.log(e);
+        console.log(e);
       }
     });
 };
@@ -210,11 +221,33 @@ function getFlatListDataFromObject(obj) {
   return data;
 }
 
+// arbitrary size limits
+const MAX_PILL_WIDTH = 176;
+const MIN_PILL_WIDTH = 54;
+const MAX_PILL_HEIGHT = 32;
+
+const optionsPillStyle = {
+  maxHeight: MAX_PILL_HEIGHT,
+  minWidth:MIN_PILL_WIDTH,
+  maxWidth: MAX_PILL_WIDTH,
+  height: '60%', // 37,
+  maxHeight: 50,
+
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  // marginHorizontal: 4,
+  marginVertical: 10,
+
+  borderRadius: 17,
+  borderWidth: 1,
+  marginHorizontal: 6,
+};
 
 export default function CustomizeCategoriesScreen() {
   const [selected, setSelected] = useState(new Map());
 
-  const [isReady, setIsReady] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   const [data, setData] = useState([]);
 
@@ -241,7 +274,8 @@ export default function CustomizeCategoriesScreen() {
   const [currentColor, setCurrentColor] = useState(colors.offWhite);
 
   const resetCategories = async () => {
-    await deleteAllOnlineCategories().then(async () => {
+    deleteAllOnlineCategories()
+    // .then(async () => {
       let list = defaultCategories();
 
       try {
@@ -251,12 +285,14 @@ export default function CustomizeCategoriesScreen() {
 
         saveSettingsStorage(global.storageKey, storage);
 
-        setData(list)
+        // setData(list);
+
+        reloadCategories();
       } catch(e) {
         // statements
         console.log(e);
       }
-    })
+    // })
 
   };
   const showCategoryEditing = () => {
@@ -289,79 +325,56 @@ export default function CustomizeCategoriesScreen() {
         label="Delete"
         onPress={
           () => {
+            setDialogVisible(false)
             resetCategories();
-            setDialogVisible(false);
+            
           }
         }
       />
     </Dialog.Container>
   );
-
   CustomizeCategoriesScreen.showDialog = () => {
     setDialogVisible(true);
   };
+  const reloadCategories = async () => {
+    // setIsLoading(true);
+    try {
+      const storage = await loadSettingsStorage(global.storageKey);
+      const { categories } = storage;
 
-
-  const deleteCategoryByID = async (item) => {
-    const previous = item; // for user redo purposes
+      setData(categories);
+    } catch(e) {
+      // statements
+      console.log(e);
+    }
+    // setIsLoading(false);
+  };
+  const deleteStoredCategory = async (item) => {
+    // console.log('global.storageKey: ', global.storageKey);
+    // const previous = item; // for user redo purposes
     const storage = await loadSettingsStorage(global.storageKey);
 
-    const category = searchByID(item.id, storage.categories);
+    const arr = storage.categories;
 
-    let i = 0;
-    for (i; i < storage.categories.length; i += 1) {
-      if (storage.categories[i].id === category.id) {
-        storage.categories.splice(i, 1);
-      }
+    // console.log('storage.categories.length: ', storage.categories.length);
+
+    const found = arr.find((element) => element.id === item.id);
+
+    const pos = arr.indexOf(found, arr);
+
+    arr.splice(pos, 1);
+
+    // let blankCategory = new Category();
+
+    // UpdateCategory(blankCategory);
+
+    if (await isDeviceOnline() && getAuthentication() && JSON.parse(await AsyncStorage.getItem('someBoolean'))) {
+      removeCategory(found);
     }
-    for (var j = storage.transactions.length - 1; j >= 0; j--) {
-      if (storage.transactions[j].category.id === category.id) {
-
-        storage.categories.splice(j, 1);
-        removeTransaction(storage.transactions[j])
-      }
-    }
-    removeCategory(category);
-
-
-
-    setData(storage.categories);
-
+    
     saveSettingsStorage(global.storageKey, storage);
 
-    // showMessage({
-    //   message: 'Undo remove category',
-    //   duration: 2250,
-    //   position: 'bottom',
-    //   color: colors.shamrockGreen, // "#606060", // text color
-    //   // opacity: 0.5,
-
-    //   textStyle: styles.textStyle,
-
-    //   onPress: async () => {
-    //     // addCategory()
-    //     setIsAddingCategory(true);
-    //     // const list = await loadUserCategories();
-    //     const userObject = await loadSettingsStorage(global.storageKey);
-    //     // console.log(userObject.user.categories);
-
-    //     const list = userObject.categories;
-
-    //     list.unshift(previous);
-
-    //     setData(list);
-
-    //     userObject.categories = list;
-    //     // await saveUserObject(userObject);
-    //     saveSettingsStorage(global.storageKey, userObject);
-    //     if (await isDeviceOnline()) {
-    //       if (await getAuthentication()) {
-    //         SaveCategory(previous);
-    //       }
-    //     }
-    //     setIsAddingCategory(false);
-    //   },
-    // });
+    clearState().then(reloadCategories);
   };
   const addCategory = async (name, color, type) => {
     setIsAddingCategory(true);
@@ -374,7 +387,7 @@ export default function CustomizeCategoriesScreen() {
     let obj = searchByName(name, list);
     if (obj) {
       if (obj.type === type) {
-        Alert.alert('Category already exists');
+        // Alert.alert('Category already exists');
       } else {
         // create same name obj of diff type
         obj = new Category(uuidv4(), name, color, type, global.storageKey, 0);
@@ -388,7 +401,7 @@ export default function CustomizeCategoriesScreen() {
         setData(list);
       }
 
-      Auth.currentAuthenticatedUser().then(() => {
+      await Auth.currentAuthenticatedUser().then(() => {
         SaveCategory(obj);
       });
     }
@@ -433,7 +446,7 @@ export default function CustomizeCategoriesScreen() {
     // update all of the user's transactions 'categories
     storage.categories = list;
 
-    setData(list);
+    // setData(list);
 
     storage.transactions.forEach(async (transaction) => {
       /* Upddate transaction category */
@@ -467,10 +480,10 @@ export default function CustomizeCategoriesScreen() {
         } else {
           found = searchByName(transaction.category.name, online_categories);
           transaction.category = found
-          // UpdateCategory(transaction.category);
+          UpdateCategory(transaction.category);
         }
 
-        // UpdateTransaction(transaction);
+        UpdateTransaction(transaction);
 
       }).catch((err) => {
         console.log('error authenticating user for customized category update: ', err);
@@ -478,28 +491,118 @@ export default function CustomizeCategoriesScreen() {
     });
     saveSettingsStorage(storageKey, storage);
   };
+
+  const filterCategories = (local, online) => {
+  let items = local.concat(online);
+  // let keys = ['id', 'name','version'];
+  let list = [];
+  for (var i in items) {
+    var filter = {
+      id: items[i].id,
+      name: items[i].name,
+      type: items[i].type,
+    };
+    var filteredById = items.filter((item) => {
+     for (var key in filter) {
+      if ((item['name'] !== filter['name']) || (item['type'] !== filter['type']))
+        return false
+     }
+      return true;
+    });
+
+    // testing
+    // find all with same id
+    // if (filteredById) {
+      // find highest version of same id
+
+      // console.log(filteredById);
+      // return item with highest value version
+      let highestVersion = Math.max.apply(Math, 
+        filteredById.map((o) => {
+          return o.version
+        }))
+
+      let result = filteredById.filter(obj => {
+        return obj.version === highestVersion
+      })
+    // console.log(result);
+    list.push(result[0])
+    // }
+    
+  } // end for loop
+  // return list;
+
+  let arr = list;
+
+   const unique = arr
+       .map((e) => {
+         if (!e) {
+          return
+         }
+         return e['id']
+       })
+  // store the keys of
+  // the unique objects
+  .map((e, i, final) => 
+       {
+  return final.indexOf(e) === i && i})
+  
+  // eliminate the dead keys
+  // & store unique objects
+  .filter(e => {
+    return arr[e]
+  })
+  .map(e => arr[e]);
+
+  return unique;
+};
   const retrieveStoredCategories = async () => {
 
     const storage = await loadSettingsStorage(global.storageKey);
     // setAuthenticated(await getAuthentication())
-    Auth.currentAuthenticatedUser().then(async (user) =>  {
+    await Auth.currentAuthenticatedUser().then(async (user) =>  {
+      setIsLoading(true)
       global.authenticated = true;
-      let list = await listAllOnlineCategories()
-      storage.categories = list;
+      if (await isDeviceOnline() && JSON.parse(await AsyncStorage.getItem('someBoolean'))) {
+        let online_categories = await listAllOnlineCategories()
+        // storage.categories = list;
+
+        let local_categories = storage.categories;
+
+        let merged = filterCategories(local_categories, online_categories)
+
+        setData(merged);
+
+        storage.categories = merged
+
+
+      } else {
+        setData(storage.categories);
+      }
+
+      saveSettingsStorage(global.storageKey, storage)
+
+      setIsLoading(false)
     }).catch(async () => {
       global.authenticated = false;
+
+      let local_categories = storage.categories;
+
+      // let merged = filterCategories(local_categories, online_categories)
+
+      setData(local_categories);
+
+      
+
+      // saveSettingsStorage(global.storageKey, storage)
     })
-    clearState()
-    setData(storage.categories);
+    // clearState()
+    
   };
-  const deleteBtnPressed = async (item) => {
-    try {
-      deleteCategoryByID(item);
-    } catch(e) {
-      // statements
-      console.log('e: ', e);
-    }
-    clearState()
+  const deleteBtnPressed = async () => {
+    deleteStoredCategory(currentCategory)
+    
+    
     // await removeCategoryByName(item.name);
   };
 
@@ -711,126 +814,104 @@ export default function CustomizeCategoriesScreen() {
       </Dialog.Container>
     </View>
   );
-  function capitalizeFLetter(string) {
-    return string.replace(/^./, string[0].toUpperCase()); 
-  }
 
+  // function ColorTableCell({ item, onPress, name, color, opacity }) {
 
-  function ColorTableCell({ item, onPress, name, color, opacity }) {
+  //   // console.log('item: ', item);
+  //   /* remove colors that are too dark or dont work with the UI */
+  //   if (
+  //     name.toLowerCase() === 'darkgreyblue' ||
+  //     name.toLowerCase() === 'dark' ||
+  //     name.toLowerCase() === 'offwhite' ||
+  //     name.toLowerCase() === 'black' ||
+  //     name.toLowerCase() === 'darktwo' ||
+  //     name.toLowerCase() === 'white'
+  //   ) {
+  //     return null;
+  //   }
+  //   /* Clean up diplayed title */
+  //   let title = capitalizeFLetter(name);
+  //   title = title.split(' ')
 
-    // console.log('item: ', item);
-    if (
-      name.toLowerCase() === 'darkgreyblue' ||
-      name.toLowerCase() === 'dark' ||
-      name.toLowerCase() === 'offwhite' ||
-      name.toLowerCase() === 'black' ||
-      name.toLowerCase() === 'darktwo' ||
-      name.toLowerCase() === 'white'
-    ) {
-      return null;
-    }
-    let title = capitalizeFLetter(name);
-    title = title.split(' ')
+  //   let suffix = ''
+  //   if (title[1]) {
+  //     // title = title[0] + ' ' + title[1]
+  //     title[1] = capitalizeFLetter(title[1]);
+  //   }
 
-    let suffix = ''
-    if (title[1]) {
-      // title = title[0] + ' ' + title[1]
-      title[1] = capitalizeFLetter(title[1])
-    }
+  //   title = title[0] + ' ' + title[1];
+  //   title = title.replace(' undefined', '');
 
-    title = title[0] + ' ' + title[1]
+  //   /* Scrolling color pills */
+  //   return (
+  //     <View
+  //       style={{
+  //         borderWidth: 1,
+  //         borderColor: 'white',
+  //         borderStyle: 'solid',
+  //         alignItems: 'center',
+  //         justifyContent: 'center',
+  //         paddingTop: 2,
+  //       }}
+  //     >
+  //       <TouchableOpacity
+  //         onPress={onPress}
+  //         disabled={(Object.keys(colors).includes(name) !== true && !global.authenticated)}
+  //         style={
+  //           [
+  //             {
+  //               maxHeight: MAX_PILL_HEIGHT,
+  //               minWidth: MIN_PILL_WIDTH,
+  //               maxWidth: MAX_PILL_WIDTH,
+  //               height: '60%', // 37,
+  //               maxHeight: 50,
 
-    title = title.replace(' undefined', '');
+  //               marginHorizontal: 4,
+  //               marginVertical: 10,
+  //               paddingHorizontal: 10,
+  //               paddingTop: 2,
+  //               borderRadius: 17,
+  //               borderWidth: 1,
+  //               borderColor: color,
+  //               backgroundColor: currentColor === color ? currentColor : 'transparent',
+  //               opacity: (Object.keys(colors).includes(name) || global.authenticated) ? 1.0 : 0.4,
+  //               // borderWidth: 1,
+  //               // borderColor: 'white',
+  //               // borderStyle: 'solid',
+  //             }
+  //           ]
+  //         }
+  //       >
 
-
-
-    return (
-      <ListItem
-      style={{
-        flex: 1,
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-
-        // width: '100%',
-
-        // marginRight:screenWidth/2,
-
-        // borderBottomWidth: 0,
-        opacity: (Object.keys(colors).includes(name) || global.authenticated) ? 1.0 : 0.4
-      }}>
-
-{/*      <View style={{
-        // flexDirection: 'row',
-            // height: 1,
-    // height: '70%',
-    width: 50,
-    marginVertical: 10,
-    marginRight: 6,
-    backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
-    opacity: 0.1,
-      }} />
-        
-        */}
-        <TouchableOpacity
-        onPress={onPress}
-        disabled={(Object.keys(colors).includes(name) !== true && !global.authenticated)}
-        // style={styles.buttonStyle}
-        style={[
-          // styles.buttonStyle,
-          {
-                maxHeight: MAX_PILL_HEIGHT,
-                            minWidth:MIN_PILL_WIDTH ,
-                            maxWidth: MAX_PILL_WIDTH + 100,
-  
-          // alignItems: 'center',
-          // justifyContent: 'center',
-
-          // marginHorizontal: 4,
-          // marginVertical: 10,
-
-          borderRadius: 17,
-          borderWidth: 1,
-
-
-          borderColor: item.value,
-
-          backgroundColor: currentColor === color ? currentColor : 'transparent',
-          // borderWidth: 1,
-          // borderColor: 'white',
-          // borderStyle: 'solid',
-        }]}
-      >
-
-       <Text style={[
-          styles.listItemTitleStyle,
-            {
-            // color: currentColor === color ? colors.offWhite : colors.white,
-            color: currentColor === color ? colors.offWhite : color,
+  //      <Text style={[
+  //         styles.listItemTitleStyle,
+  //           {
+  //           // color: currentColor === color ? colors.offWhite : colors.white,
+  //           color: currentColor === color ? colors.offWhite : color,
             
-          }
-          ]}
-        >
-        {   
-         title
-        }
-        <Text style={[
-            styles.listItemTitleStyle,
-            {
-            color: currentColor === color ? colors.white  : colors.offWhite,
-            textAlign: 'right',
-            // alignItems: 'flex-end',
+  //         }
+  //         ]}
+  //       >
+  //       {   
+  //        title
+  //       }
+  //       <Text style={[
+  //           styles.listItemTitleStyle,
+  //           {
+  //           color: currentColor === color ? colors.white  : colors.offWhite,
+  //           textAlign: 'right',
+  //           // alignItems: 'flex-end',
 
-          }]}>
-            {
-              ` ${color}`
-            }
-          </Text>
-        </Text>
-      </TouchableOpacity>
-      </ListItem>
-    );
-  }
+  //         }]}>
+  //           {
+  //             ` ${color}`
+  //           }
+  //         </Text>
+  //       </Text>
+  //     </TouchableOpacity>
+  //     </View>
+  //   );
+  // }
 
   const UpdateCategoryType = async (type) => {
     if (!currentCategory) return;
@@ -856,50 +937,20 @@ export default function CustomizeCategoriesScreen() {
 
       storeUserCategories(storage.categories);
       
+      reloadCategories();
+
       updateUserTransactionCategories(storage.categories);
 
       setIsLoading(false);
 
-      // showMessage({
-      //   message: 'Updated category type',
-      //   // duration: 550,
-      //   position: 'bottom',
-
-      //   // description: "My message description",
-      //   // type: 'success', // "success", "info", "warning", "danger"
-      //   // backgroundColor: colors.dark, // "purple", // background color
-      //   color: colors.shamrockGreen, // "#606060", // text color
-      //   // opacity: 0.5,
-
-      //   textStyle: styles.textStyle,
-
-      //   // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-      // });
-
-      // setShouldShowColorBox(false);
-
-      clearState()
+      clearState();
     } catch(e) {
       // statements
       console.log('error updating category type:', e);
-      // setIsLoading(false);
+      setIsLoading(false);
 
-      clearState()
-
-      // setShouldShowColorBox(false);
+      clearState();
     }
-
-    // onSelect(currentCategory.id);
-
-    // setCurrentCategory(null);
-
-      // const userObject = await loadSettingsStorage(global.storageKey)
-      // userObject.categories = list;
-      // // await saveUserObject(userObject);
-      // saveSettingsStorage(storageKey, userObject);
-
-      // setData(list);
-
   }
   const UpdateCategoryColor = async (selectedColor) => {
     if (!currentCategory || !currentColor) return;
@@ -922,6 +973,8 @@ export default function CustomizeCategoriesScreen() {
       storeUserCategories(storage.categories);
       
       updateUserTransactionCategories(storage.categories);
+
+      reloadCategories();
 
       // setIsLoading(false);
 
@@ -973,56 +1026,53 @@ export default function CustomizeCategoriesScreen() {
       // setShouldShowColorBox(false);
     }
   }
+
   const colorBox = (
-    <SafeAreaView style={[
-      styles.container,
-      {
-        // paddingTop: 12,
-        // alignItems: 'center',
-
-        flex: 1,
-
-        bottom: 0,
-        left:  0,
-
-        right: 0,
-        top: 0,
-
-backgroundColor: colors.dark, // 'rgba(0,0,0,0.5)',
-
-      }
-    ]}
-    > 
+    <View> 
       <FlatList
+        style={styles.table}
+        contentContainerStyle={{
+          // flex: 1,
+          height: global.screenHeight/15,
+          alignItems: 'center',
+          justifyContent: 'center',
+          bottom: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+
+          // backgroundColor: colors.dark,
+
+          // borderWidth: 1,
+          // borderColor: 'red',
+          // borderStyle: 'solid',
+        }}
+        horizontal
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={(item) => (
-    <View style={[
-      // styles.separator,
-      {
-    //         width: 50,
-    // // height: '70%',
-    // height: 1,
-    // marginHorizontal: 10,
-    // backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
-    // opacity: 0.1,
-  },
-      item && {marginLeft: 0}]} />
-  )}
         // data={getFlatListDataFromObject(colors)}
         // renderItem={({ item }) => <Item item={item} onPress={() => UpdateCategoryColor(item.key, colors[item.key])} />}
-        // keyExtractor={(item) => item.key}
+        keyExtractor={(item) => item.key}
 
-        // data={authenticated && getFlatListDataFromObject(crayolaData) || getFlatListDataFromObject(colors)}
         data={flatlistData}
         // extraData={selected}
-        renderItem={({ item }) => <ColorTableCell currentColor={currentColor} item={item} opacity={1} name={item.key} color={item.value} onPress={() => {
-          UpdateCategoryColor(item);
-        }} />}
+        renderItem={({ item }) =>
+          <ColorTableCell
+            currentColor={currentColor}
+            item={item}
+            opacity={1}
+            name={item.key}
+            color={item.value}
+            onPress={() => {
+              UpdateCategoryColor(item);
+            }}
+          />
+        }
         keyExtractor={(item) => item.key}
       />
 
-      <View
+      {/* Seperator Line */}
+     <View
         style={{
           position: 'absolute',
           top: 0,
@@ -1033,480 +1083,209 @@ backgroundColor: colors.dark, // 'rgba(0,0,0,0.5)',
           borderWidth: 1,
           // borderColor: 'white',
           borderColor: colors.dark,
-          borderStyle: 'solid',
-         }} />
-
-        
-      {
-        isLoading && <View style={
-          {
-            // flex: 1,
-            position: 'absolute',
-            left: 0,
-            right:  0,
-            // bottom: 50,
-          }
-        }>
-        <ActivityIndicator size="large" />
-        </View>
-      }
-    </SafeAreaView>
-  );
-
-// arbitrary size limits
-const MAX_PILL_WIDTH = 176;
-const MIN_PILL_WIDTH = 54;
-const MAX_PILL_HEIGHT = 32;
-
-  const editBox = (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          // position: 'absolute',
-
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0, // 0,
-
-          height: 350,
-
-          zIndex: 1,
-
-          backgroundColor: colors.darkTwo,
-
-          borderTopWidth: 1,
-
-          shadowColor: Platform.OS === 'ios' ? '#0a101b' : '',
-          shadowOffset: Platform.OS === 'ios' ? {
-            width: 1,
-            height: 1,
-          } : {},
-          shadowRadius: Platform.OS === 'ios' ? 26 : 0,
-          shadowOpacity: Platform.OS === 'ios' ? 1 : 0,
-
-          // marginHorizontal: 10,
-          padding: 4,
-
-          // borderWidth: 1,
-          // borderColor: 'white',
           // borderStyle: 'solid',
-
-          // borderRadius: 23,
-        }
-      ]}
-    >
-          <View style={{
-            // flexDirection: 'row',
-            // // flex: 1,
-            // width: screenWidth,
-            // // borderWidth: 1,
-            // // borderColor: 'white',
-            // // borderStyle: 'solid',
-
-            // // backgroundColor: colors.darkTwo,
-
-            // height: 60,
-
-            // alignItems: 'center',
-            // justifyContent: 'flex-start',
-          }}>
-
-        
-
-{/*         <View
-          style={[
-            // styles.buttonStyle,
-            {
-              maxHeight: MAX_PILL_HEIGHT,
-              minWidth: MIN_PILL_WIDTH,
-              maxWidth: MAX_PILL_WIDTH,
-              height: '60%', // 37,
-              maxHeight: 37,
-
-              // alignItems: 'center',
-              justifyContent: 'center',
-
-              // marginHorizontal: 4,
-              // marginVertical: 10,
-
-              borderRadius: 17,
-              borderWidth: 1,
-              // borderStyle: 'solid',
-              borderColor: colors.offWhite,
-
-              marginHorizontal: 6,
-
-              backgroundColor: colors.dark, // shouldShowColorBox ? currentColor : 'transparent',
-          }]}
-            // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-            // title="Income"
-            // onPress={() => {
-            //   UpdateCategoryType('EXPENSE');
-            //   // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-            // }}
-
-                     // onPress={() => {
-          //   setShouldShowTypeButtons(!shouldShowTypeButtons)
-          //   // setShouldShowColorBox(!shouldShowColorBox)
-
-          // }}
-          >
-
-
-
-          <Text style={[styles.pillItemText]}>Edit Category
- 
-          </Text>
-
-          </View>
-*/}
-
+         }} />
+    </View>
+  );
+  const deleteBtn = (
+    <TouchableOpacity
+      style={
+        [
+          optionsPillStyle,
           {
-          // shouldShowTypeButtons &&
+            borderColor: colors.offWhite,
+            backgroundColor: 'transparent',
+          }
+        ]
+      }
+        // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
+        // title="Income"
+        onPress={deleteBtnPressed}
+      >
+      <Text style={[styles.pillItemText, {
+        color: colors.white,
+      }]}>Delete <FontAwesome name="trash-o" size={17} color={colors.offWhite} /></Text>
+      </TouchableOpacity>
+  );
+  const editBox = (
+    <View>
+      {/* scroll view with option pills */}
+      <View style={{
+        // flexDirection: 'row',
+        // flex: 1,
+        // width: screenWidth,
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // borderStyle: 'solid',
 
-           (
-            <View style={{
-           flexDirection: 'row',
-            // flex: 1,
-            width: screenWidth,
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-
-            // backgroundColor: colors.darkTwo,
-
-            height: 60,
-
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            }}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                   flexDirection: 'row',
-                   // alignSelf: 'center',
-                   flex: 1,
-                   width: '100%',
-                   // borderWidth: 1,
-                   // borderColor: 'white',
-                   // borderStyle: 'solid',
-
-                   // backgroundColor: colors.white,
-
-                   borderTopWidth: 1,
-                   borderTopColor: colors.dark,
-
-                     shadowColor: '#0a101b',
-                    shadowOffset: {
-                      width: 1,
-                      height: 1,
-                    },
-                    shadowRadius: 26,
-                    shadowOpacity: 1,
-                                         
-
-
-       
-                   height: 60,
-       
-                   alignItems: 'center',
-                   justifyContent: 'center',
-                 }}>
+        // backgroundColor: colors.darkTwo,
 
 
 
+        // height: 60,
 
-                   
-           
-                  <TouchableOpacity
-                      style={
-                   {
-                     maxHeight: MAX_PILL_HEIGHT,
-                     minWidth: MIN_PILL_WIDTH,
-                     maxWidth: MAX_PILL_WIDTH,
-                     height: '60%', // 37,
-                     maxHeight: 50,
-           
-                     // alignItems: 'center',
-                     justifyContent: 'center',
-           
-                     marginHorizontal: 4,
-                     marginVertical: 10,
-
-            // backgroundColor: colors.white,
-
-                    
-           
-                     borderRadius: 17,
-                     borderWidth: 1,
-                     // borderStyle: 'solid',
-                     borderColor: currentType === 'INCOME' ? 'transparent' : colors.shamrockGreen,
-           
-                     // marginHorizontal: 6,
-           
-                     backgroundColor: currentType === 'INCOME' ? colors.shamrockGreen : 'transparent'
-           
-                   }
-                 }
-                       // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-                       // title="Expense"
-                       onPress={() => {
-                         UpdateCategoryType('INCOME')
-                         clearState()
-                         // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-                       }}
-                     >
-                     <Text style={[styles.pillItemText, {
-                       color: currentType === 'INCOME' ? colors.white : colors.shamrockGreen
-                     }]}>Income</Text></TouchableOpacity>
-                     
-           
-                    <TouchableOpacity
-                     style={[
-                       // styles.buttonStyle,
-                       {
-                         maxHeight: MAX_PILL_HEIGHT,
-                         minWidth: MIN_PILL_WIDTH,
-                         maxWidth: MAX_PILL_WIDTH,
-                         height: '60%', // 37,
-                         maxHeight: 50,
-           
-                         // alignItems: 'center',
-                         justifyContent: 'center',
-           
-                         marginHorizontal: 4,
-                         marginVertical: 10,
-           
-                         borderRadius: 17,
-                         borderWidth: 1,
-                         // borderStyle: 'solid',
-                         borderColor: currentType === 'EXPENSE' ? 'transparent' : colors.pinkRed,
-           
-                         marginHorizontal: 6,
-           
-                         backgroundColor: currentType === 'EXPENSE' ? colors.pinkRed : 'transparent',
-                     }]}
-                       // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-                       // title="Income"
-                       onPress={() => {
-                         UpdateCategoryType('EXPENSE');
-                         clearState()
-                         // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-                       }}
-                     >  
-                     <Text style={[styles.pillItemText, {
-                       color: (currentType === 'EXPENSE' ? colors.white : colors.pinkRed),
-                     }]}>Expense</Text>
-                     </TouchableOpacity>
+        // alignItems: 'center',
+        // justifyContent: 'flex-start',
+        }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+               flexDirection: 'row',
+               // alignSelf: 'center',
+               flex: 1,
+               // width: '100%',
+               // borderWidth: 1,
+               // borderColor: 'orange',
+               // borderStyle: 'solid',
 
 
 
-                     <View style={styles.separator} />
+               backgroundColor: colors.darkTwo,
 
-                                                         <TouchableOpacity
-                        style={[
-                          // styles.buttonStyle,
-                          {
-                            maxHeight: MAX_PILL_HEIGHT,
-                            minWidth:MIN_PILL_WIDTH,
-                            maxWidth: MAX_PILL_WIDTH,
-                            height: '60%', // 37,
-                            maxHeight: 50,
-              
-                            alignItems: 'center',
-                            justifyContent: 'center',
-              
-                            // marginHorizontal: 4,
-                            marginVertical: 10,
-              
-                            borderRadius: 17,
-                            borderWidth: 1,
-                            // borderStyle: 'solid',
-                            borderColor: colors.azure,
-              
-                            marginHorizontal: 6,
-              
-                            backgroundColor: 'transparent',
-                        }]}
-                          // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-                          // title="Income"
-                          onPress={() => {
-                            // deleteBtnPressed(currentCategory)
-                             // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-                             clearState()
-
-                            // setShouldShowColorBox(!shouldShowColorBox)
-                            // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-                          }}
-                        >
-                        <Text style={[styles.pillItemText, {
-                          color: colors.azure,
-                        }]}>Cancel
-                        {/*<Ionicons name="ios-create" size={17} color={colors.white} />*/}
-                        </Text>
-                        </TouchableOpacity>
-       
-
-
-                                    <TouchableOpacity
-                        style={[
-                          // styles.buttonStyle,
-                          {
-                            maxHeight: MAX_PILL_HEIGHT,
-                            minWidth:MIN_PILL_WIDTH,
-                            maxWidth: MAX_PILL_WIDTH,
-                            height: '60%', // 37,
-                            maxHeight: 50,
-              
-                            alignItems: 'center',
-                            justifyContent: 'center',
-              
-                            // marginHorizontal: 4,
-                            marginVertical: 10,
-              
-                            borderRadius: 17,
-                            borderWidth: 1,
-                            // borderStyle: 'solid',
-                            borderColor: colors.offWhite,
-              
-                            marginHorizontal: 6,
-              
-                            backgroundColor: 'transparent',
-                        }]}
-                          // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-                          // title="Income"
-                          onPress={() => {
-                            deleteBtnPressed(currentCategory)
-
-                            // setShouldShowColorBox(!shouldShowColorBox)
-                            // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-                          }}
-                        >
-                        <Text style={[styles.pillItemText, {
-                          color: colors.white,
-                        }]}>Delete <FontAwesome name="trash-o" size={17} color={colors.offWhite} /></Text>
-                        </TouchableOpacity>
+               // borderTopWidth: 1,
+               // borderTopColor: colors.dark,
 
 
 
 
-                     {/*<TouchableText title="Choose Color" onPress={() => setShouldShowColorBox(!shouldShowColorBox)} />*/}
-           
-                       
-{/*                    <TouchableOpacity
-                                             style={[
-                                               // styles.buttonStyle,
-                                               {
-                                                 maxHeight: MAX_PILL_HEIGHT,
-                                                 minWidth: MIN_PILL_WIDTH,
-                                                 maxWidth: MAX_PILL_WIDTH,
-                                                 height: '60%', // 37,
-                                                 maxHeight: 50,
-                                   
-                                                 // alignItems: 'center',
-                                                 justifyContent: 'center',
-                                   
-                                                 marginHorizontal: 4,
-                                                 marginVertical: 10,
-                                   
-                                                 borderRadius: 17,
-                                                 borderWidth: 1,
-                                                 // borderStyle: 'solid',
-                                                 borderColor: colors.azure,
-                                   
-                                                 marginHorizontal: 6,
-                                   
-                                                 backgroundColor: 'transparent', // colors.azure
-                                             }]}
-                                               // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-                                               // title="Income"
-                                               onPress={() => {
-                                                onSelect(currentCategory.id)
-                                                setCurrentCategory(null);
-                        
-                                                 // UpdateCategoryType('EXPENSE');
-                                                 // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-                                               }}
-                                             >
-                                             <Text style={[styles.pillItemText, {
-                                               color: colors.offWhite,
-                                             }]}>Done</Text></TouchableOpacity>
-                                   */
-                                              }                        
-                 
-           
-                     </ScrollView>
-
-
-
-                     </View>
-                    )
-        }
-
-
-{/*        <BlueButton title="Cancel" onPress={() => {
-          setCurrentCategory(null)
-        }} />*/}
-
-{/*         <View
-          style={[
-            // styles.buttonStyle,
-            {
-              maxHeight: MAX_PILL_HEIGHT,
-              minWidth: MIN_PILL_WIDTH,
-              maxWidth: MAX_PILL_WIDTH,
-              height: '60%', // 37,
-              maxHeight: 37,
-
-              // alignItems: 'center',
-              justifyContent: 'center',
-
-              // marginHorizontal: 4,
-              // marginVertical: 10,
-
-              borderRadius: 17,
-              borderWidth: 1,
-              // borderStyle: 'solid',
-              // borderColor: shouldShowColorBox ? 'transparent' : currentColor,
-              borderColor: colors.offWhite,
-
-              marginHorizontal: 6,
-
-              backgroundColor: colors.dark, // shouldShowColorBox ? currentColor : 'transparent',
-          }]}
-            // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
-            // title="Income"
-            // onPress={() => {
-            //   UpdateCategoryType('EXPENSE');
-            //   // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
-            // }}
+   
+               height: global.screenHeight/15, // 60,
+   
+               alignItems: 'center',
+               justifyContent: 'center',
+             }
+           }
           >
-          <TouchableText style={[styles.pillItemText]} title="Color" onPress={() => setShouldShowColorBox(!shouldShowColorBox)}/>
-          </View>
-*/}
 
 
 
 
-          </View>
+                     
+             
+                    <TouchableOpacity
+                    style={
+                     {
+                       maxHeight: MAX_PILL_HEIGHT,
+                       minWidth: MIN_PILL_WIDTH,
+                       maxWidth: MAX_PILL_WIDTH,
+                       height: '60%', // 37,
+                       maxHeight: 50,
+             
+                       // alignItems: 'center',
+                       justifyContent: 'center',
+             
+                       marginHorizontal: 4,
+                       marginVertical: 10,
 
-        
+             
+                       borderRadius: 17,
+                       borderWidth: 1,
+                       // borderStyle: 'solid',
+                       borderColor: currentType === 'INCOME' ? 'transparent' : colors.shamrockGreen,
+             
+                       // marginHorizontal: 6,
+             
+                       backgroundColor: currentType === 'INCOME' ? colors.shamrockGreen : 'transparent'
+             
+                     }
+                   }
+                         // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
+                         // title="Expense"
+                         onPress={() => {
+                           UpdateCategoryType('INCOME')
+                           clearState()
+                           // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
+                         }}
+                       >
+                       <Text style={[styles.pillItemText, {
+                         color: currentType === 'INCOME' ? colors.white : colors.shamrockGreen
+                       }]}>Income</Text></TouchableOpacity>
+                       
+             
+                      <TouchableOpacity
+                       style={[
+                         // styles.buttonStyle,
+                         optionsPillStyle,
+                         {
+                           // maxHeight: MAX_PILL_HEIGHT,
+                           // minWidth: MIN_PILL_WIDTH,
+                           // maxWidth: MAX_PILL_WIDTH,
+                           // height: '60%', // 37,
+                           // maxHeight: 50,
+             
+                           // // alignItems: 'center',
+                           // justifyContent: 'center',
+             
+                           // marginHorizontal: 4,
+                           // marginVertical: 10,
+             
+                           // borderRadius: 17,
+                           // borderWidth: 1,
+                           // borderStyle: 'solid',
+                           borderColor: currentType === 'EXPENSE' ? 'transparent' : colors.pinkRed,
+             
+                           marginHorizontal: 6,
+             
+                           backgroundColor: currentType === 'EXPENSE' ? colors.pinkRed : 'transparent',
+                       }
+                       ]}
+                         // icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
+                         // title="Income"
+                         onPress={() => {
+                           UpdateCategoryType('EXPENSE');
+                           clearState()
+                           // Platform.OS === 'ios' ? promptUserForCategoryName() : setShowDialogBox(true)
+                         }}
+                       >  
+                       <Text style={[styles.pillItemText, {
+                         color: (currentType === 'EXPENSE' ? colors.white : colors.pinkRed),
+                       }]}>Expense</Text>
+                       </TouchableOpacity>
 
-
+        <View style={styles.separator} />
 
         {
-          shouldShowColorBox && colorBox
+          deleteBtn
         }
 
 
 
+      </ScrollView>
 
 
 
-    </SafeAreaView>
+       </View>
+
+{/*       <View style={{
+        alignSelf: 'center',
+         width: global.screenWidth * 0.9,
+    // height: '70%',
+    height: 1,
+    marginVertical: 10,
+    backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
+    opacity: 0.1,
+       }} />*/}
+
+        <View
+          style={
+            [
+              // styles.container,
+              {
+                // flexDirection: 'row',
+                // borderWidth: 1,
+                // borderColor: 'white',
+                // borderStyle: 'solid',
+              }
+            ]
+          }
+        >
+        {
+          colorBox
+        }
+        </View>
+
+    </View>
   );
 
   let view = (
@@ -1543,9 +1322,18 @@ const MAX_PILL_HEIGHT = 32;
       />
       </View>
 
-      {
+      <View style={{
+                shadowColor: Platform.OS === 'ios' ? '#0a101b' : '',
+        shadowOffset: Platform.OS === 'ios' ? {
+          width: 1,
+          height: 1,
+        } : {},
+        shadowRadius: Platform.OS === 'ios' ? 26 : 0,
+        shadowOpacity: Platform.OS === 'ios' ? 1 : 0,
+      }}>{
         currentCategory && editBox
       }
+      </View>
 
       {/* <Button title="Add New" onPress={() => addCategory('')} /> */}
       <View
@@ -1557,7 +1345,7 @@ const MAX_PILL_HEIGHT = 32;
 
 
             // marginVertical: '2%',
-            // paddingBottom: 14,
+            padding: 14,
 
             // padding: 14,
 
@@ -1636,21 +1424,24 @@ const MAX_PILL_HEIGHT = 32;
         }} />
       </View>
       {
-        !isReady && <View style={
+        isLoading && <View style={
       {
-        // flex: 1,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
-        top: 500,
+        top: 0,
         bottom: 0,
         left: 0,
         right:  0,
+        opacity: 0.5,
 
-        // backgroundColor: colors.dark,
+        zIndex:  1,
+
+        backgroundColor: colors.dark,
 
       }
-    }><ActivityIndicator /></View>
+    }><ActivityIndicator size="large" color={colors.white} /></View>
       }
       </View>
 {/*      {
@@ -1699,80 +1490,10 @@ const MAX_PILL_HEIGHT = 32;
   return view;
 };
 
-// // static methods
-// CustomizeCategoriesScreen.resetCategories = async () => {
-//   const storageObj = await loadSettingsStorage(storageKey);
-//   storageObj.categories = defaultCategories;
-//   // console.log(storageObj.categories.length);
-//   saveSettingsStorage(storageKey, storageObj);
-
-//   setData(storageObject.categories);
-
-//   // navigation.goBack();
-//   // promptUserForCategoryReset();
-// };
-
-
 CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
-  // const [categories, setCategories] = useState(null);
-
-  // const [storageKey, setStorageKey] = useState(null);
-
-
-
-  // let categories = null;
-
-  // let key = retrieveCognitoUserKey();
-
-
-
-  // async function retrieveCognitoUserKey() {
-  //   Auth.currentAuthenticatedUser()
-  //     .then((cognito) => {
-  //       // setUserToken(user.signInUserSession.accessToken.jwtToken);
-  //       // console.log('username:', cognitoUser.username);
-  //       // setStorageKey(cognito.username);
-
-  //       // setEmail(cognito.attributes.email);
-  //       key = cognito.username;
-  //     })
-  //     .catch((err) => {
-  //       // console.log(err);
-  //       Alert.alert(err);
-  //     });
-  // }
-
   const promptUserForCategoryReset = async () => {
     CustomizeCategoriesScreen.showDialog()
-    // return  <Dialog.Container visible={dialogVisible}>
-    //       <Dialog.Title>Account delete</Dialog.Title>
-    //       <Dialog.Description>
-    //         Do you want to delete this account? You cannot undo this action.
-    //       </Dialog.Description>
-    //       <Dialog.Button label="Cancel" onPress={this.handleCancel} />
-    //       <Dialog.Button label="Delete" onPress={this.handleDelete} />
-    //     </Dialog.Container>
-
-
-    // await new Promise(() => {
-    //   const title = 'Are You Sure?';
-    //   const message = 'This cannot be undone.';
-    //   const buttons = [
-    //     { text: 'Cancel', type: 'cancel' },
-    //     {
-    //       text: 'Reset All of My Categories',
-    //       onPress: CustomizeCategoriesScreen.reloadCategories
-
-    
-    //     }
-    //   ];
-    //   Alert.alert(title, message, buttons);
-
-    // });
-
-
   };
-
   const navbar = {
     // headerTransparent: {},
     headerStyle: {
@@ -1813,4 +1534,3 @@ CellItem.propTypes = {
 };
 
 // export default CustomizeCategoriesScreen;
-

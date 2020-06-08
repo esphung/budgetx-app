@@ -246,6 +246,8 @@ function Settings(props) {
 
   const [isReady, setIsReady] = useState(false);
 
+  const [isResetingData, setIsResetingData] = useState(false)
+
   const [isBackupDisabled, setIsBackupDisabled] = useState(false);
 
   const [isRestoreDisabled, setIsRestoreDisabled] = useState(false);
@@ -774,7 +776,7 @@ function Settings(props) {
   */
   // console.log('global.storageKey: ', global.storageKey);
   const resetData = async () => {
-    setIsReady(false);
+    setIsResetingData(true);
     // setIsResetingData(true);
 
     let backupKey = global.storageKey;
@@ -925,7 +927,7 @@ function Settings(props) {
         });
       });
     }).then(()  => {
-      setIsReady(true)
+      setIsResetingData(false)
 
       navigation.navigate('Home');
     })
@@ -1828,7 +1830,7 @@ function Settings(props) {
           // isSyncing && spinner
         }
         {
-          // !isReady && spinner
+          isResetingData && spinner
         }
     </SafeAreaView>
   );

@@ -479,16 +479,25 @@ export const UpdateCategory = async (category) => {
 
     // if (!(err.errors[0]['errorType'])) return
 
-    let errorType = err.errors[0]['errorType']
+    try {
+      let errorType = err.errors[0]['errorType']
 
-    if (errorType === 'DynamoDB:ConditionalCheckFailedException' && category !== null) {
-      // transaction dne online
-      SaveCategory(category);
+      if (errorType === 'DynamoDB:ConditionalCheckFailedException' && category !== null) {
+        // transaction dne online
+        SaveCategory(category);
+        console.log('category: ', category);
+      }
+    } catch(e) {
+      // statements
+      console.log(e);
     }
+
 
     // if (!err.data.updateCategory) {
     //   // category doesnt exist yet
-    //   SaveCategory(updated)
+    //   SaveCategory(category)
+    // } else {
+    //   return
     // }
   }
 };

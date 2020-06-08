@@ -1490,7 +1490,9 @@ export default function Home() {
        /* Sync Categories */
     // compare both category lists
     let online_categories = []; // online trans
+
     let storage = await loadSettingsStorage(global.storageKey);
+
     let local_categories = storage.categories;
 
     // console.log('storage.categories: ', storage.categories);
@@ -1522,16 +1524,16 @@ export default function Home() {
 
       // storage.categories = merged;
 
-      let merged = filterCategories(local_categories, online_categories)
-      // console.log('merged.length: ', merged.length);
+      // let merged = filterCategories(local_categories, online_categories)
+      // // console.log('merged.length: ', merged.length);
 
-      setCurrentCategories(merged);
+      // setCurrentCategories(merged);
 
-      // storage.categories = merged;
+      // // storage.categories = merged;
 
-      storeUserCategories(merged)
+      // storeUserCategories(merged)
 
-      pushAllCategoriesToCloud(merged);
+      // pushAllCategoriesToCloud(merged);
 
 
 
@@ -1561,32 +1563,51 @@ export default function Home() {
       console.log('err: ', err);
     }
 
+          let merged = filterCategories(local_categories, online_categories)
+      // console.log('merged.length: ', merged.length);
+
+      setCurrentCategories(merged);
+
+      // storage.categories = merged;
+
+      storeUserCategories(merged)
+
+      pushAllCategoriesToCloud(merged);
+
     
   }
-  const addNewCategory = async (category) => {
-    const userObject = await loadSettingsStorage(storageKey);
-    const list = userObject.categories;
-    let found = await searchByID(category.id, list);
+  // const addNewCategory = async (category) => {
+  //   const userObject = await loadSettingsStorage(global.storageKey);
 
-    if (!found) {
-      // category doesn't exist yet
-      found = searchByName(category.name, list);
-      if (!found) {
-        category = new Category();
+  //   const list = userObject.categories;
 
-        list.unshift(category);
-      } else {
-        category.id = found.id
-        list.unshift(category);
-      }
-    }
-    else if (found) {
-      const pos = list.indexOf(found);
-      list[pos] = category;
-    }
-    userObject.categories = getUniqueId(list);
-    saveSettingsStorage(global.storageKey, userObject);
-  }
+  //   let found = list.find((item) => category.id === item.id);
+
+  //   alert(found.id)
+
+
+
+  //   // let found = await searchByID(category.id, list);
+
+  //   if (!found) {
+  //     // category doesn't exist yet
+  //     found = searchByName(category.name, list);
+  //     if (!found) {
+  //       category = new Category();
+
+  //       list.unshift(category);
+  //     } else {
+  //       category.id = found.id
+  //       list.unshift(category);
+  //     }
+  //   }
+  //   else if (found) {
+  //     const pos = list.indexOf(found);
+  //     list[pos] = category;
+  //   }
+  //   userObject.categories = getUniqueId(list);
+  //   saveSettingsStorage(global.storageKey, userObject);
+  // }
   const crossDeviceSync = async () => {
 
     if (JSON.parse(await AsyncStorage.getItem('someBoolean')) !== true) return
@@ -1607,10 +1628,6 @@ export default function Home() {
     if (await getAuthentication() !== true) return
 
     setIsSyncing(true);
-
-    // pushAllCategoriesToCloud().then(() => {
-    
-    // })
 
     
 
