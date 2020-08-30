@@ -8,28 +8,13 @@ UPDATED:    11/27/2019 12:40 AM
             12/11/2019 05:34 PM | added Customize Categories Screen
 */
 
-// function truncateString(str, num) {
-//   if (str.length <= num) {
-//     return str
-//   }
-//   return str.slice(0, num)
-// }
-
-import React from 'react';
-
-import {
-  Image,
-} from 'react-native'
-
 import { createStackNavigator } from 'react-navigation-stack';
 
-import { createAppContainer, NavigationContainer } from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
 
-// import Login from './src/screens/Login';
 import Home from './src/screens/Home';
+
 import Settings from './src/screens/Settings';
-// import Search from './src/screens/Search';
-// import Terms from './src/screens/Terms';
 
 import CustomizeCategoriesScreen from './src/screens/CustomizeCategoriesScreen';
 
@@ -45,25 +30,13 @@ import SignOutScreen from './src/screens/SignOutScreen';
 
 import ForgetPasswordScreen from './src/screens/ForgetPasswordScreen';
 
-// import ExampleScreen from './src/screens/ExampleScreen';
-
 import MetricsScreen from './src/screens/MetricsScreen';
-
-// import OnboardingPages from './src/screens/OnboardingPages';
 
 import MyAppIntroSlider from './src/screens/MyAppIntroSlider';
 
 import colors from './colors';
 
 const StackNavigator = createStackNavigator({
-  // OnboardingPages: {
-  //   screen: OnboardingPages,
-  //   navigationOptions: () => ({
-  //     title: `${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
-  //     headerBackTitle: null,
-  //   }),
-  // },
-
   Home: {
     screen: Home, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
@@ -110,7 +83,7 @@ const StackNavigator = createStackNavigator({
   },
   SignOutScreen: {
     screen: SignOutScreen,
-     navigationOptions: () => ({
+    navigationOptions: () => ({
       title: '',
       // headerBackTitle: null,
     }),
@@ -119,7 +92,6 @@ const StackNavigator = createStackNavigator({
     screen: WelcomeScreen,
     navigationOptions: () => ({
       title: '',
-      // title: `Welcome to ${global.appName} ${global.appVersion}`, // ScreenName, // for the header screen // `Welcome to this App`
       // headerBackTitle: null,
     }),
   },
@@ -131,13 +103,6 @@ const StackNavigator = createStackNavigator({
       // headerBackTitle: null,
     }),
   },
-  // ExampleScreen: {
-  //   screen: ExampleScreen, // ApolloProviderHOC(Home),
-  //   navigationOptions: () => ({
-  //     title: '',
-  //     headerBackTitle: null,
-  //   }),
-  // },
   MetricsScreen: {
     screen: MetricsScreen, // ApolloProviderHOC(Home),
     navigationOptions: () => ({
@@ -148,52 +113,18 @@ const StackNavigator = createStackNavigator({
   MyAppIntroSlider: {
     screen: MyAppIntroSlider,
     navigationOptions: () => ({
-      // title: `${global.appName}`, // ScreenName, // for the header screen // `Welcome to this App`
-      // headerBackTitle: '',
       title: '',
-
-      // headerStyle: {
-      //   backgroundColor: 'transparent'
-      // },
-      // headerLeft: null,
-
-      // headerTransparent: {}
     }),
   },
 },
 {
-  // initialRouteName: 'Calendar',
   defaultNavigationOptions: {
-    // headerMode: 'screen',
     cardStyle: {
       backgroundColor: colors.darkTwo,
-      // opacity: 1,
     },
-    // headerBackImage: () => {return <Image />},
     headerBackTitleVisible: false,
-
-
-
-    // headerStyle: {
-    //     backgroundColor: '#28F1A6',
-    //     elevation: 0,
-    //     shadowOpacity: 0
-    // },
-      // headerTintColor: '#333333',
-      // headerTitleStyle: {
-      //     fontWeight: 'bold',
-      //     color: '#ffffff'
-      // }
-  }
-
-},
-// {
-//   mode: 'modal',
-//     headerMode: 'none',
-// }
-
-
-);
+  },
+});
 
 const AppContainer = createAppContainer(StackNavigator);
 

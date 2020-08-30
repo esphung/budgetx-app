@@ -11,6 +11,7 @@ import {
   // ScrollView,
   // Alert,
   ActivityIndicator,
+  Button,
 } from 'react-native';
 
 import { NavigationEvents } from 'react-navigation';
@@ -55,25 +56,23 @@ import {
 
 // test label
 const dateLabel = {
-  width: 242,
-  height: 28,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontSize: 17,
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    letterSpacing: 0.13,
+    color: colors.tangerine, // '#ffffff',
 
-  // flex: 1,
+    // paddingLeft: 5,
 
+    // paddingHorizontal: 2,
 
-  // width: '100%',
-  // height: '30%',
-  fontFamily: 'SFProDisplay-Regular',
-  fontSize: 16,
-  // fontWeight: 'normal',
-  // fontStyle: 'normal',
-  // letterSpacing: 0.13,
-  textAlign: 'center',
-  color: colors.tangerine,
-
-  // borderWidth: 1,
-  // borderColor: 'white',
-  // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
 };
 
 // amountlabel style
@@ -86,7 +85,7 @@ const amountLabel = {
 
   // width: '90%',
   height: '50%',
-  fontFamily: 'SFProDisplay-Regular',
+  fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
   fontSize: 25,
   // fontWeight: 'normal',
   // fontStyle: 'normal',
@@ -394,26 +393,26 @@ function SlideUpTransactionRect(props) {
     />
   );
 
-  const updatingTransactionIndicator = (
-    <View style={
-      {
-        // left: 0,
-        // right: 0,
-        // top: 200,
-        // bottom: 0,
-        // justifyContent: 'center',
-        // backgroundColor: colors.dark,
-        // position: 'absolute',
-        // opacity: 0.1,
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // borderStyle: 'solid',
-        // zIndex: 0,
-      }
-    }>
-      <ActivityIndicator size="large" color={colors.offWhite} />
-    </View>
-  );
+  // const updatingTransactionIndicator = (
+  //   <View style={
+  //     {
+  //       // left: 0,
+  //       // right: 0,
+  //       // top: 200,
+  //       // bottom: 0,
+  //       // justifyContent: 'center',
+  //       // backgroundColor: colors.dark,
+  //       // position: 'absolute',
+  //       // opacity: 0.1,
+  //       // borderWidth: 1,
+  //       // borderColor: 'white',
+  //       // borderStyle: 'solid',
+  //       // zIndex: 0,
+  //     }
+  //   }>
+  //     <ActivityIndicator size="large" color={colors.offWhite} />
+  //   </View>
+  // );
 
   // if (isReady && dataIsLoaded && transaction) {
   let view = (
@@ -426,7 +425,6 @@ function SlideUpTransactionRect(props) {
               // borderWidth: 1,
               // borderColor: 'white',
               // borderStyle: 'solid',
-              // zIndex: -1,
             }
           ]
         }
@@ -464,21 +462,26 @@ function SlideUpTransactionRect(props) {
         shadowRadius: 16,
         shadowOpacity: 1,
 
+        // zIndex: 1,
+
      }}>
         <SlideViewSeparator />
 
         {/* date label */}
         {
-          isReady &&
+          // isReady &&
 
           (
             <View style={[
               styles.dateAmountRectangle,
               {
 
+                // borderWidth: 1,
+                // borderColor: 'white',
+                // borderStyle: 'solid',
               }
               ]}>
-         { 
+              { 
                 touchableText
               }
               <AmountInputView
@@ -509,7 +512,7 @@ function SlideUpTransactionRect(props) {
             // borderColor: 'red',
             // borderStyle: 'solid',
 
-            padding: 2,
+            // padding: 2,
 
             backgroundColor: colors.darkTwo,
           }}
@@ -521,7 +524,7 @@ function SlideUpTransactionRect(props) {
                   // position: 'absolute',
                   // left: 0,
                   // right: 0,
-                  top: -75,
+                  // top: -75,
                 }
               }>
               {
@@ -546,6 +549,12 @@ function SlideUpTransactionRect(props) {
               )
             }
 
+
+             <View style={{
+                // borderWidth: 1,
+                // borderColor: 'green',
+                // borderStyle: 'solid',
+             }}>
              <FlatList
                 contentContainerStyle={{
                   alignItems: 'center',
@@ -553,6 +562,8 @@ function SlideUpTransactionRect(props) {
                   paddingVertical: 6,
 
                   // marginVertical: 3,
+
+                  
 
                 }}
                 horizontal
@@ -565,6 +576,7 @@ function SlideUpTransactionRect(props) {
                 keyExtractor={(item) => item.key}
               />
 
+              </View>
 
               {
                 // !isUpdatingTransaction &&
@@ -575,7 +587,7 @@ function SlideUpTransactionRect(props) {
                 alignItems: 'center',
                 alignSelf: 'center',
                 height: 100,
-                width: '90%',
+                width: '100%',
                 // borderWidth: 1,
                 // borderColor: 'white',
                 // borderStyle: 'solid',

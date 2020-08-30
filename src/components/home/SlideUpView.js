@@ -50,11 +50,11 @@ function SlideUpView(props) {
 
   const keyboardAvoidingView = (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      behavior={Platform.OS === 'ios' ? 'position' : null}
       // behavior={Platform.OS === 'ios' ? 'position' : null}
-      behavior="position"
+      // behavior="position"
       // enabled={isKeyboardAvoidEnabled}
-      enabled
+      // enabled
       style={{
         width: '100%',
         top: (shouldShowCalendarPicker) ? -150 : 0,

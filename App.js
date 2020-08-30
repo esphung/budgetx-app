@@ -31,35 +31,12 @@ UPDATED:    Fri Nov  1 13:20:51 2019
             04/04/2020 05:48 PM | facebook app developer integration
             04/28/2020 08:11 PM | starting version 4.1.x
             04/30/2020 07:42 PM | Added working email change with AWS
+            07/02/2020 05:35 PM | Android UI fixes
 */
-
-
-// import DisplayImageExample from './DisplayImageExample';
 
 import './globals'; // global values
 
-// import {
-//   getIsBackedUp,
-//   getIsDeviceSynced,
-//   getHasRatedUs,
-//   getIsDeviceSyncOn,
-//   setIsDeviceSynced,
-//   getAuthenticated,
-// } from './globals';
-
 import React, { useState } from 'react';
-
-// import {
-//   // View,
-//   // Platform,
-//   // StyleSheet,
-//   // AsyncStorage
-// } from 'react-native';
-
-// import the Analytics category
-// import Analytics from '@aws-amplify/analytics';
-
-// import Auth from '@aws-amplify/auth';
 
 import * as Font from 'expo-font';
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 
-import { showMessage, hideMessage } from "react-native-flash-message";
+// import { showMessage, hideMessage } from "react-native-flash-message";
 
 import Dialog from 'react-native-dialog';
 
@@ -84,15 +84,18 @@ function ChangePasswordScreen(props) {
       })
       .then((data) => {
         // console.log('Password changed successfully', data);
-        Alert.alert('Password changed successfully');
+        // Alert.alert('Password changed successfully');
+        // showMessage('Password changed successfully')
+
+        navigation.goBack()
       })
       .catch((err) => {
         if (!err.message) {
-          // console.log('Error changing password: ', err);
-          Alert.alert('Error changing password: ', err);
+          console.log('Error changing password: ', err);
+          // Alert.alert('Error changing password: ', err);
         } else {
-          // console.log('Error changing password: ', err.message);
-          Alert.alert('Error changing password: ', err.message);
+          console.log('Error changing password: ', err.message);
+          // Alert.alert('Error changing password: ', err.message);
         }
       });
   };
@@ -212,6 +215,7 @@ function ChangePasswordScreen(props) {
 
   useEffect(() => {
     if (newPassword && oldPassword) {
+      setIsSubmitBtnEnabled(true);
       if (newPassword === oldPassword) {
         setIcon( <AntDesign onPress={() => toggleShowPasswords()}
                     name="unlock"
@@ -219,7 +223,7 @@ function ChangePasswordScreen(props) {
                     // color={styles.iconStyle.color}
                     style={styles.iconStyle}
                     />)
-        setIsSubmitBtnEnabled(true);
+        
         setHelpMessage('')
         
       } else {
@@ -229,10 +233,11 @@ function ChangePasswordScreen(props) {
                     // color={styles.iconStyle.color}
                     style={styles.iconStyle}
                     />)
-        setIsSubmitBtnEnabled(false);
-        setHelpMessage('password don\'t match')
+        // setIsSubmitBtnEnabled(false);
+        // setHelpMessage('password don\'t match')
       }
     } else {
+      setIsSubmitBtnEnabled(false);
       // set help message
       setHelpMessage('enter the old password\nand the new password you want')
     }

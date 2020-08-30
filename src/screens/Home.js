@@ -35,6 +35,7 @@ CREATED:    Thu Oct 31 23:17:49 2019
             06/03/2020 04:23 PM
             06/05/2020 05:54 PM | crossDeviceSync almost perfect
             06/06/2020 08:44 PM | added category filters
+            07/02/2020 05:39 PM | Android UI fixes
 
 */
 
@@ -50,7 +51,7 @@ import {
   Animated,
   SafeAreaView,
   ActivityIndicator,
-  // Platform,
+  Platform,
   Text,
   // Dimensions,
   // Button,
@@ -802,6 +803,8 @@ export default function Home() {
         for (var i = userObject.categories.length - 1; i >= 0; i--) {
           userObject.categories[i].owner = global.storageKey
         }
+
+        // console.log(userObject.categories);
 
         setCurrentCategories(userObject.categories);
 
@@ -1563,8 +1566,9 @@ export default function Home() {
       console.log('err: ', err);
     }
 
-          let merged = filterCategories(local_categories, online_categories)
+      let merged = filterCategories(local_categories, online_categories)
       // console.log('merged.length: ', merged.length);
+      // console.log(currentCategories)
 
       setCurrentCategories(merged);
 
@@ -1924,9 +1928,12 @@ export default function Home() {
   //   </View>
   // );
 
+  
+
   const displayIndicator = (
     <View style={{
         // flex: 1,
+        top: Platform.OS === 'android' ? 40 : 0,
         // top: 150,
         // position: 'absolute',
         flexDirection: 'row',
@@ -1987,7 +1994,7 @@ export default function Home() {
       <View
         style={
             {
-            marginTop: Platform.OS === 'ios' ? 50 : 120,
+            marginTop: Platform.OS === 'ios' ? 50 : 110,
             // flex: 0.1,
             
 
@@ -2025,7 +2032,13 @@ export default function Home() {
       }
 
         
-<View style={{ flex: 1, }}>
+<View style={{
+  flex: 1,
+  zIndex: -1,
+  // borderWidth: 3,
+  // borderColor: 'purple',
+  // borderStyle: 'solid',
+}}>
      { isReady && stickyTable }
     </View>
 

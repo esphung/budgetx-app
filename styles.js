@@ -658,15 +658,16 @@ export default StyleSheet.create({
   dateAmountRectangle: {
     // position: 'absolute',
 
-    // alignSelf: 'center',
+    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     // width: 346,
     width: '95%',
     height: 74,
 
-    // marginBottom: 6,
-    // marginHorizontal: 6,
+
+    marginBottom: 6,
+    marginHorizontal: 6,
 
     borderRadius: 9,
     backgroundColor: colors.dark,
@@ -681,6 +682,7 @@ export default StyleSheet.create({
     // borderWidth: 2,
     // borderColor: 'white',
     // borderStyle: 'dashed',
+    padding: 3,
   },
   helpMessageText: {
     // fontWeight: '600',

@@ -99,17 +99,18 @@ function SubscriptionRect(props) {
     // label="Example label"
     // labelStyle={{ color: colors.white, fontWeight: "300" }}
     size="medium"
-    onToggle={async (v)  => {
-      // global.isDeviceSyncOn = v
-      // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
-      // AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(v))
-      // Saves to storage as a JSON-string
-      // Saves to storage as a JSON-string
-      AsyncStorage.setItem('someBoolean', JSON.stringify(v))
+    onToggle={
+      async (v)  => {
+        // global.isDeviceSyncOn = v
+        // console.log('global.isDeviceSyncOn: ', global.isDeviceSyncOn);
+        // AsyncStorage.setItem('isDeviceSyncOn', JSON.stringify(v))
+        // Saves to storage as a JSON-string
+        // Saves to storage as a JSON-string
+        AsyncStorage.setItem('someBoolean', JSON.stringify(v))
 
-      
-      setValue(v)
-    }
+        
+        setValue(v)
+      }
     }
   />
 

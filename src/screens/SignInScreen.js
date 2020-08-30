@@ -689,7 +689,10 @@ function SignInScreen(props) {
   const signin = (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+      <KeyboardAvoidingView style={styles.container}
+        behavior="padding"
+        enabled={false}
+        >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
             <Container style={styles.infoContainer}>

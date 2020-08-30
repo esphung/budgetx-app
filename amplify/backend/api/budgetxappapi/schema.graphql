@@ -8,7 +8,7 @@ type Transaction @model
 		    # # Authorize the update mutation and both queries. Use `queries: null` to disable auth for queries.
 		    # { allow: owner, ownerField: "editors", operations: [update] }
   		]) {
-  		id: ID!
+  	id: ID!
 		date: String!
 		amount: Float! # amount: String!
 		owner: String!
