@@ -12,30 +12,27 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
-  AsyncStorage,
+  // AsyncStorage,
 } from 'react-native';
+
+import AsyncStorage from '@react-native-community/async-storage';
 
 import {
   loadSettingsStorage,
   saveSettingsStorage,
 } from '../storage/SettingsStorage'
 
-import {
-  setHasRatedUs,
-  setIsBackedUp,
-} from '../../globals'
-
-import colors from '../../colors';
+import colors from 'src/colors';
 
 import styles from '../../styles';
 
-import MyButton from '../components/MyButton';
+import MyButton from 'components/MyButton';
 
-import TouchableText from '../components/TouchableText';
+import TouchableText from 'components/TouchableText';
 
-import FacebookLogin from '../components/FacebookLoginButton';
+import FacebookLogin from 'components/FacebookLoginButton';
 
-import HelpMessage from '../components/HelpMessage';
+import HelpMessage from 'components/HelpMessage';
 
 import uuidv4 from '../functions/uuidv4';
 
@@ -43,15 +40,17 @@ import uuidv4 from '../functions/uuidv4';
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 // Auth.federatedSignIn
 
-const getAuthentication = async () => {
-  await Auth.currentAuthenticatedUser()
-  .then((cognito) => {
-    console.log('cognito: ', cognito);
-    return cognito;
-  }).catch((err) => {
-    console.log('err: ', err);
-  })
-};
+// const getAuthentication = async () => {
+//   await Auth.currentAuthenticatedUser()
+//   .then((cognito) => {
+//     console.log('cognito: ', cognito);
+//     return cognito;
+//   }).catch((err) => {
+//     console.log('err: ', err);
+//   })
+// };
+
+import { getAuthentication } from '../controllers/Network';
 
 function WelcomeScreen(props) {
   // const [userData, setUserData] = useState(null);

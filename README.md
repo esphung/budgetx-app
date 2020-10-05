@@ -1,15 +1,49 @@
 # Financely | Budget X #
-### React Native App  ###
-<img src="assets/icon.png" alt="512x512 App Icon" width="100" />
+[App Store Download Link](https://apps.apple.com/us/app/financely/id1491309602)
 
-[App Store](https://apps.apple.com/us/app/financely/id1491309602)
+[Google Play Download Link](https://play.google.com/store/apps/details?id=com.ericphung.financely)
 
-[Google Play](https://play.google.com/store/apps/details?id=com.ericphung.financely)
+#### Fresh Install Packages ####
+```shell
+yarn add react-native-flash-message
+
+# navigation
+yarn add @react-navigation/native
+
+expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+
+yarn add react-navigation react-navigation-stack
+
+yarn add @react-native-community/async-storage @react-native-community/netinfo
+
+yarn add aws-amplify
+
+yarn add native-base react-native-dialog
+
+yarn add react-native-offline
+
+yarn add graphql-tag
+
+yarn add react-native-swipe-list-view react-native-app-intro-slider toggle-switch-react-native
+
+expo install expo-apple-authentication expo-image-picker expo-facebook expo-store-review expo-mail-composer expo-blur
+
+# <!-- CALENDAR PICKER -->
+yarn add react-native-calendar-picker
+
+yarn add moment
+
+# <!-- Aliases -->
+yarn add -D eslint-import-resolver-babel-module eslint-plugin-import babel-plugin-module-resolver
+
+# <!-- Slide  View Swiping -->
+yarn add react-native-swipe-gestures
+
+#  Start Expo Application
+expo start -c
+```
 
 #### App Description ####
 Financely is a new mobile app for organizing and managing your personal expenses. Achieve financial peace of mind and do it beautifully. With a simple interface and minimalistic one-page design, logging your day-to-day transactions has never been more fluid.
 
-Latest Commits/Edits:
-06/02/2020 04:35 PM builded 5.9 in production release channel
-06/03/2020 04:37 PM build 6.0.1 App release
 

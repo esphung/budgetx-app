@@ -6,22 +6,6 @@ CREATED:   12/01/2019 12:35 AM
 UPDATED:
 */
 
-// type User @model {
-//   id: ID!
-//   name: String!
-//   avatar: String
-//   # friends: [User] @connection(name: "friends")
-// }
-
-// var ID = function () {
-//   // Math.random should be unique because of its seeding algorithm.
-//   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-//   // after the decimal.
-//   return Math.random().toString(36).substr(2, 9);
-// };
-
-// import defaultCategories from '../data/categories';
-
 import uuidv4 from '../functions/uuidv4';
 
 // User function with multiple constructors
@@ -34,7 +18,7 @@ export default function User(id) {
     username: '', // username, // User's Storage Key
     email: '', // '' // email;
     full_name: '',
-    image_url: 'https://profilepicturesbucketbudgetxbudgetxenv-budgetxenv.s3.amazonaws.com/public/avatar.png', // 'https://reactnative.dev/img/tiny_logo.png',
+    image_url: 'https://profilepicturesbucketbudgetxbudgetxenv-budgetxenv.s3.amazonaws.com/public/avatar.png',
   }
   // this.phoneNumber = '';
   // this.password = '';

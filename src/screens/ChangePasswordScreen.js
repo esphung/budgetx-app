@@ -1,20 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { NetworkConsumer } from 'react-native-offline';
+
+import { StatusBar } from 'expo-status-bar';
+
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 
-// import { showMessage, hideMessage } from "react-native-flash-message";
+import { showMessage } from 'react-native-flash-message';
 
 import Dialog from 'react-native-dialog';
-
-import HelpMessage from '../components/HelpMessage';
-
-import {
-  setHasRatedUs,
-  setIsBackedUp,
-  setUserToken,
-  setStorageKey,
-  setAuthenticated,
-} from '../../globals'
 
 import {
   AsyncStorage,
@@ -22,11 +16,10 @@ import {
   TouchableWithoutFeedback,
   Text,
   SafeAreaView,
-  StatusBar,
   KeyboardAvoidingView,
   Keyboard,
   View,
-  Alert,
+  // Alert,
 } from 'react-native';
 
 import {
@@ -39,15 +32,17 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import colors from '../../colors';
+import OfflineScreen from './OfflineScreen';
+
+import HelpMessage from 'components/HelpMessage';
+
+import { originalTheme } from 'src/colors';
 
 import styles from '../../styles';
 
-import getButtonStyle from '../../src/functions/getButtonStyle';
+import getButtonStyle from 'functions/getButtonStyle';
 
-
-function ChangePasswordScreen(props) {
-  const { navigation } = props;
+function ChangePasswordScreen({ navigation }) {
   // hooks
   const [oldPassword, setOldPassword] = useState(null);
 
@@ -64,9 +59,9 @@ function ChangePasswordScreen(props) {
   // input refs
   const newPasswordInputRef = useRef(null);
 
-  const [helpMessage, setHelpMessage] = useState('')
+  const [helpMessage, setHelpMessage] = useState('');
 
-  function onChangeText(key, value) {
+  const onChangeText = (key, value) => {
     // console.log(key, value);
     // this.setState({[key]: value})
     if (key === 'oldPassword') {
@@ -74,32 +69,28 @@ function ChangePasswordScreen(props) {
     } else if (key === 'newPassword') {
       setNewPassword(value);
     }
-  }
-
+  };
   const changePassword = async () => {
     // const { password1, password2 } = this.state
     await Auth.currentAuthenticatedUser()
-      .then((user) => {
-        return Auth.changePassword(user, oldPassword, newPassword);
-      })
-      .then((data) => {
+      .then((user) => Auth.changePassword(user, oldPassword, newPassword))
+      .then(() => {
         // console.log('Password changed successfully', data);
         // Alert.alert('Password changed successfully');
-        // showMessage('Password changed successfully')
-
-        navigation.goBack()
+        showMessage({ message: 'Password changed successfully', type: 'success' });
+        // navigation.goBack();
+        navigation.navigate('AuthLoading');
       })
       .catch((err) => {
         if (!err.message) {
-          console.log('Error changing password: ', err);
+          showMessage({ message: 'Error changing password: ', description: err.message, type: 'danger' });
           // Alert.alert('Error changing password: ', err);
         } else {
-          console.log('Error changing password: ', err.message);
+          showMessage({ message: 'Error changing password: ', description: err.message, type: 'danger' });
           // Alert.alert('Error changing password: ', err.message);
         }
       });
   };
-
   function handleOldPasswordInputSubmit() {
     newPasswordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
@@ -109,105 +100,20 @@ function ChangePasswordScreen(props) {
     // newPasswordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
-
-
   // Sign out from the app
   const signOut = async () => {
     // global.showGlobalValues();
-    await Auth.signOut().then((succ) => {
-      // setUserToken('');
-
-      // setStorageKey('');
-
-      // // setAuthenticated(false);
-
-      // setHasRatedUs(false);
-
-      global.email = '';
-
-      global.emailAddressInput = '';
-
-      global.authenticated = false;
-
-      global.emailAddressInput = '';
-
-      global.isFederated = false;
-
-      global.displayName = '';
-      
-      AsyncStorage.removeItem('hasRatedUs');
-      
+    await Auth.signOut().then(() => {
       AsyncStorage.removeItem('userToken');
-
-      AsyncStorage.removeItem('isFederated');
-
-      AsyncStorage.removeItem('authenticated');      
 
       AsyncStorage.removeItem('storageKey');
 
-      // global.clearGlobalValues()
-
-      // AsyncStorage.removeItem('isLoginEnabled');
-
-      // // AsyncStorage.removeItem('isUserAuthenticated');
-      AsyncStorage.removeItem('authenticated');
-
-      AsyncStorage.removeItem('isAppleSignedIn')
-
-
-      // global.storageKey = '';
-
-      // // global.isUserAuthenticated = false;
-      // global.authenticated = false;
-
-      global.avatar = require('../../assets/avatar.png');
-
-
-      // // console.log('Removed AsyncsStorage Variables ..');
-
-
-      // // AsyncStorage.getAllKeys((err, keys) => {
-      // //   AsyncStorage.multiGet(keys, (error, stores) => {
-      // //     stores.map((result, i, store) => {
-      // //       console.log({ [store[i][0]]: store[i][1] });
-      // //       return true;
-      // //     });
-      // //   });
-      // // });
-
-      // setHasRatedUs(false);
-
-      // setIsBackedUp(false)
-
-      // AsyncStorage.setItem('storageKey', JSON.stringify(''))
-
-      navigation.navigate('AuthLoading');
-
-      // global.showGlobalValues();
-
-      // // console.log('Sign out complete');
-      // showMessage('Signed out');
+      showMessage({ message: 'Sign out successful', type: 'success' });
     })
-    .catch((err) => console.log('Error while signing out!', err));
-
-
+      .catch((err) => showMessage({ message: err.message, type: 'danger' }));
   };
-  
   // Confirm sign out
-  const signOutAlert = async () => {
-    setShouldShowSignOutDialog(true);
-    // await Alert.alert(
-    //   // 'Sign Out',
-    //   'Sign out?  :(',
-    //   'Are you sure?',
-    //   [
-    //     { text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel' },
-    //     // Calling signOut
-    //     { text: 'OK', onPress: () => signOut() },
-    //   ],
-    //   { cancelable: false },
-    // );
-  };
+  // const signOutAlert = async () => setShouldShowSignOutDialog(true);
 
   const toggleShowPasswords = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -217,47 +123,23 @@ function ChangePasswordScreen(props) {
     if (newPassword && oldPassword) {
       setIsSubmitBtnEnabled(true);
       if (newPassword === oldPassword) {
-        setIcon( <AntDesign onPress={() => toggleShowPasswords()}
-                    name="unlock"
-                    // size={styles.iconStyle.fontSize}
-                    // color={styles.iconStyle.color}
-                    style={styles.iconStyle}
-                    />)
-        
-        setHelpMessage('')
-        
+        setIcon(<AntDesign onPress={toggleShowPasswords} name="unlock" style={styles.iconStyle}/>)
+        setHelpMessage('');
       } else {
-        setIcon( <AntDesign onPress={() => toggleShowPasswords()}
-                    name="lock"
-                    // size={styles.iconStyle.fontSize}
-                    // color={styles.iconStyle.color}
-                    style={styles.iconStyle}
-                    />)
-        // setIsSubmitBtnEnabled(false);
-        // setHelpMessage('password don\'t match')
+        setIcon(<AntDesign onPress={toggleShowPasswords} name="lock" style={styles.iconStyle} />)
       }
     } else {
       setIsSubmitBtnEnabled(false);
       // set help message
-      setHelpMessage('enter the old password\nand the new password you want')
+      setHelpMessage('enter the old password\nand the new password you want');
     }
   }, [newPassword, oldPassword]);
-
   useEffect(() => {
-    setIcon( <AntDesign onPress={() => toggleShowPasswords()}
-                  name="lock"
-                  // size={styles.iconStyle.fontSize}
-                  // color={styles.iconStyle.color}
-                  style={styles.iconStyle}
-                  />)
-    return () => {
-      // effect
-    };
-  }, [])
-
+    setIcon(<AntDesign onPress={toggleShowPasswords} name="lock" style={styles.iconStyle} />);
+  }, []);
   const dialogBox = (
     <View>
-      <Dialog.Container visible={true}>
+      <Dialog.Container visible>
         <Dialog.Title>Sign Out</Dialog.Title>
         <Dialog.Description>
           Do you want to sign out?
@@ -267,156 +149,134 @@ function ChangePasswordScreen(props) {
       </Dialog.Container>
     </View>
   );
-
-  const view = (
+  const changePasswordScreenView = (
     <SafeAreaView style={styles.container}>
-    {
-      shouldShowSignOutDialog && dialogBox
-    }
-      <StatusBar />
+      { shouldShowSignOutDialog && dialogBox }
+      <StatusBar style="light" />
       <KeyboardAvoidingView
         style={styles.container}
         behavior="padding"
         enabled={false}
       >
-
-      {
-        global.authenticated &&
-        <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
-            {/* Info */}
-            <Container style={styles.infoContainer}>
-              <View style={styles.container}>
-                <View
-                  style={
-                    [styles.buttonStyle, { borderRadius: 4, marginBottom: 20 }]
-                  }
-                >
-                  <Text style={styles.buttonText}>Change password</Text>
-                </View>
-                {/* Old password */}
-                <Item rounded style={styles.itemStyle}>
-                 {
-                  icon
-                 }
-                  <Input
-                    style={styles.input}
-                    placeholder="Old password"
-                    placeholderTextColor="#adb4bc"
-                    returnKeyType="next"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry={isPasswordVisible}
-                    onSubmitEditing={() => handleOldPasswordInputSubmit()}
-                    onChangeText={(value) => onChangeText('oldPassword', value)}
-
-                    keyboardAppearance="dark"
-                  />
-                </Item>
-                {/* New password */}
-                <Item rounded style={styles.itemStyle}>
-                {
-                  icon
-                }
-                  <Input
-                    style={styles.input}
-                    placeholder="New password"
-                    placeholderTextColor="#adb4bc"
-                    returnKeyType="go"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry={isPasswordVisible}
-                    ref={newPasswordInputRef}
-
-                    onSubmitEditing={() => handleNewPasswordInputSubmit()}
-                    onChangeText={(value) => onChangeText('newPassword', value)}
-
-                    keyboardAppearance="dark"
-                  />
-                </Item>
-                <TouchableOpacity
-                  disabled={!isSubmitBtnEnabled}
-                  onPress={changePassword}
-                  style={getButtonStyle(isSubmitBtnEnabled)}
-                >
-                  <Text style={styles.buttonText}>
-                    Submit
-                  </Text>
-                </TouchableOpacity>
-                <HelpMessage message={helpMessage} />
-                <View
-                  style={
-                    {
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      paddingBottom: 100,
+        {
+        global.authenticated && (
+          <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+              {/* Info */}
+              <Container style={styles.infoContainer}>
+                <View style={styles.container}>
+                  <View
+                    style={
+                      [styles.buttonStyle, { borderRadius: 4, marginBottom: 20 }]
                     }
+                  >
+                    <Text style={styles.buttonText}>Change password</Text>
+                  </View>
+                  {/* Old password */}
+                  <Item rounded style={styles.itemStyle}>
+                     {
+                      icon
+                     }
+                    <Input
+                      style={styles.input}
+                      placeholder="Old password"
+                      placeholderTextColor="#adb4bc"
+                      returnKeyType="next"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      secureTextEntry={isPasswordVisible}
+                      onSubmitEditing={() => handleOldPasswordInputSubmit()}
+                      onChangeText={(value) => onChangeText('oldPassword', value)}
+
+                      keyboardAppearance="dark"
+                    />
+                  </Item>
+                  {/* New password */}
+                  <Item rounded style={styles.itemStyle}>
+                  {
+                    icon
                   }
-                />
-               { /*
-               <TouchableOpacity
-                  style={
-                    [styles.buttonStyle,
+                    <Input
+                      style={styles.input}
+                      placeholder="New password"
+                      placeholderTextColor="#adb4bc"
+                      returnKeyType="go"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      secureTextEntry={isPasswordVisible}
+                      ref={newPasswordInputRef}
+
+                      onSubmitEditing={() => handleNewPasswordInputSubmit()}
+                      onChangeText={(value) => onChangeText('newPassword', value)}
+
+                      keyboardAppearance="dark"
+                    />
+                  </Item>
+                  <TouchableOpacity
+                    disabled={!isSubmitBtnEnabled}
+                    onPress={changePassword}
+                    style={getButtonStyle(isSubmitBtnEnabled)}
+                  >
+                    <Text style={styles.buttonText}>
+                      Submit
+                    </Text>
+                  </TouchableOpacity>
+                  <HelpMessage message={helpMessage} />
+                  <View
+                    style={
                       {
-                        flexDirection: 'row',
                         justifyContent: 'center',
-                      },
-                    ]
-                  }
-                  onPress={signOutAlert}
-                >
-                  <Ionicons active name="md-power" style={{ color: '#fff', paddingRight: 10 }} />
-                  <Text style={styles.buttonText}>
-                    Sign out
-                  </Text>
-                </TouchableOpacity>
-              */}
-              </View>
-            </Container>
-          </View>
-        </TouchableWithoutFeedback> ||
-        <View
-          style={
-            {
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingBottom: 100,
-            }
-          }
-        ><TouchableOpacity
-          style={
-            [styles.buttonStyle,
+                        alignItems: 'center',
+                        paddingBottom: 100,
+                      }
+                    }
+                  />
+                </View>
+              </Container>
+            </View>
+          </TouchableWithoutFeedback>
+        ) || (
+          <View
+            style={
               {
-                flexDirection: 'row',
                 justifyContent: 'center',
-              },
-            ]
-          }
-          onPress={() => setShouldShowSignOutDialog(true)}
-        >
-
-          <Ionicons active name="md-power" style={{ color: '#fff', paddingRight: 10 }} />
-          <Text style={styles.buttonText}>
-            Sign out
-          </Text>
-        </TouchableOpacity>
-
-         
-      </View>
+                alignItems: 'center',
+                paddingBottom: 100,
+              }
+            }
+          >
+            <TouchableOpacity
+              style={
+                [styles.buttonStyle,
+                  {
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                  },
+                ]
+              }
+              onPress={() => setShouldShowSignOutDialog(true)}
+            >
+              <Ionicons active name="md-power" style={{ color: originalTheme.inputIconColor, paddingRight: 10 }} />
+              <Text style={styles.buttonText}>
+                Sign out
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )
       }
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
+  const offline = <OfflineScreen />;
+
+  let view = (
+    <NetworkConsumer>
+      {
+        ({ isConnected }) => (isConnected ? changePasswordScreenView : offline)
+      }
+    </NetworkConsumer>
+  );
   return view;
 }
-
-ChangePasswordScreen.navigationOptions = () => {
-  const navbar = {
-    headerTransparent: {},
-    headerTintColor: colors.white,
-    // headerLeft: null,
-  };
-  return navbar;
-};
 
 export default ChangePasswordScreen;

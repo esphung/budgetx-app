@@ -15,7 +15,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'src/colors';
 
 import styles from '../../../styles';
 
@@ -147,42 +147,6 @@ function UserOptions(props) {
       // isDisabled = true;
       caret = null;
     }
-    // /* Backup Data */
-    // if (title === ('Backup Data')) {
-    //   // console.log('isBackupDisabled: ', global.getIsBackedUp());
-    //   // console.log('isBackupDisabled: ', isBackupDisabled);
-    //   if (isBackupDisabled) {
-    //     // title = '';
-    //     // rowHeight = 0;
-    //     textColor = colors.offWhite
-    //     // caret = currentSettingsVersion
-    //     caret = null;
-    //     // backgroundColor = 'transparent';
-    //     opacity = opacity;
-
-    //     isDisabled = isBackupDisabled
-    //   }
-    // }
-    // /* Restore Backup Data */
-    // if (title === 'Restore Backup Data') {
-    //   // isDisabled = isRestoreDisabled
-    //   if (!isBackupDisabled) {
-    //     title = 'Restored Local Backup';
-    //     textColor = colors.offWhite
-    //     // caret = currentSettingsVersion
-    //     caret = null;
-    //     // backgroundColor = 'transparent';
-    //     isDisabled = !isBackupDisabled
-    //   }
-    //   if (!isUserLoggedIn) {
-    //     // title = null;
-    //     textColor = colors.offWhite
-    //     // backgroundColor = 'transparent';
-    //     isDisabled = true
-    //     caret = null;
-    //     // rowHeight = 0;
-    //   }
-    // }
 
     /* Reset Data */
     if (key.includes('Reset Data')) {

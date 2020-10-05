@@ -26,7 +26,7 @@ import * as Permissions from 'expo-permissions';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import mime from 'mime-types';
+// import mime from 'mime-types';
 
 import Storage from '@aws-amplify/storage';
 
@@ -34,15 +34,15 @@ import Dialog from 'react-native-dialog';
 
 import Auth from '@aws-amplify/auth';
 
+import { getAuthentication, isDeviceOnline } from 'controllers/Network';
+
 // ui colors
-import colors from '../../../colors';
+import colors from 'src/colors';
 
 import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-} from '../../storage/SettingsStorage';
-
-import { isDeviceOnline } from '../../../network-functions';
+  loadStorage,
+  saveStorage,
+} from 'controllers/Storage';
 
 const styles = StyleSheet.create({
   // container: {
@@ -100,19 +100,19 @@ const styles = StyleSheet.create({
   },
 });
 
-const getAuthentication = async () => {
-  let authenticated = false;
-  await Auth.currentAuthenticatedUser()
-    .then((cognito) => {
-      // console.log('cognito: ', cognito);
-      authenticated = Boolean(cognito);
-    }).catch((err) => {
-      console.log('err: ', err);
-    });
-  return authenticated;
-};
+// const getAuthentication = async () => {
+//   let authenticated = false;
+//   await Auth.currentAuthenticatedUser()
+//     .then((cognito) => {
+//       // console.log('cognito: ', cognito);
+//       authenticated = Boolean(cognito);
+//     }).catch((err) => {
+//       console.log('err: ', err);
+//     });
+//   return authenticated;
+// };
 
-function ProfileUserImage(props) {
+function ProfileUserImage({ style, avatarImage, }) {
   const [image, setImage] = useState(global.avatar);
 
   const [isReady, setIsReady] = useState(true);
@@ -177,13 +177,13 @@ function ProfileUserImage(props) {
   );
   // this handles the imagse upload to S3
   const handleImagePicked = async (imageResult) => {
-    const settings = await loadSettingsStorage(global.storageKey);
+    const settings = await loadStorage(global.storageKey);
 
     // const imageName = imageResult.uri.replace(/^.*[\\\/]/, '');
     // console.log('imageName: ', imageName);
-    const fileType = mime.lookup(imageResult.uri);
+    // const fileType = mime.lookup(imageResult.uri);
     // console.log('fileType: ', fileType);
-    const access = { level: 'public', contentType: fileType };
+    const access = { level: 'public', contentType: 'image/jpeg' }; // fileType };
     // console.log('access: ', access);
     fetch(imageResult.uri).then((response) => {
       setIsLoading(true);
@@ -210,11 +210,11 @@ function ProfileUserImage(props) {
 
                 // console.log('stored: ', stored);
 
-                // let settings = await loadSettingsStorage(global.storageKey);
+                // let settings = await loadStorage(global.storageKey);
 
                 settings.user.image_url = stored;
 
-                saveSettingsStorage(global.storageKey, settings);
+                saveStorage(global.storageKey, settings);
 
                 global.avatar = { uri: settings.user.image_url };
 
@@ -239,7 +239,7 @@ function ProfileUserImage(props) {
 
     settings.user.image_url = imageResult.uri;
 
-    saveSettingsStorage(global.storageKey, settings);
+    saveStorage(global.storageKey, settings);
 
     global.avatar = { uri: settings.user.image_url };
 
@@ -254,7 +254,7 @@ function ProfileUserImage(props) {
     if (!(await getAuthentication())) return;
     // try {
     /* Get local stored user image */
-    const storage = await loadSettingsStorage(global.storageKey);
+    const storage = await loadStorage(global.storageKey);
     // console.log('storage: ', storage.user);
     global.avatar = { uri: storage.user.image_url };
     // setImage(global.avatar);
@@ -271,10 +271,10 @@ function ProfileUserImage(props) {
         const stored = await Storage.get(`@${global.storageKey}/picture.jpg`, { level: 'public' });
         // console.log('stored: ', stored);
         global.avatar = ({ uri: stored });
-        const settings = await loadSettingsStorage(global.storageKey);
+        const settings = await loadStorage(global.storageKey);
         settings.user.image_url = stored;
 
-        saveSettingsStorage(global.storageKey, settings);
+        saveStorage(global.storageKey, settings);
         // setImage(global.avatar);
         // setIsLoading(false);
         // setIsReady(true);
@@ -345,7 +345,7 @@ function ProfileUserImage(props) {
 
   const imageView = (
     <TouchableOpacity onPress={imagePressed}>
-      <View style={[styles.userImageMaskView, props.style]}>
+      <View style={[styles.userImageMaskView, style]}>
         <ImageBackground style={styles.userImage} source={global.defaultAvatar}>
           <Image style={styles.userImage} source={image} />
         </ImageBackground>

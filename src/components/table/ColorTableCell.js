@@ -8,11 +8,11 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'src/colors';
 
 import styles from '../../../styles';
 
-import capitalizeFLetter from '../../functions/capitalizeFLetter';
+import capitalizeFLetter from 'functions/capitalizeFLetter';
 
 // arbitrary size limits
 const MAX_PILL_WIDTH = 176;

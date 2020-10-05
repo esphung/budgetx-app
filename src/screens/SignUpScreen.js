@@ -46,8 +46,7 @@ import {
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 // import the Analytics category
-import Analytics from '@aws-amplify/analytics';
-
+// import Analytics from '@aws-amplify/analytics';
 
 // import 'cross-fetch/polyfill';
 // import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
@@ -63,6 +62,18 @@ import { showMessage } from 'react-native-flash-message';
 
 import Dialog from 'react-native-dialog';
 
+import colors from 'src/colors';
+
+import isValidEmail from 'functions/isValidEmail';
+
+import {
+  loadStorage,
+  saveStorage,
+  // compareListTransactions,
+  // retrieveOnlineTransactions,
+  // retrieveOnlineCategories,
+} from 'controllers/Storage';
+
 import OfflineScreen from './OfflineScreen';
 
 import SpinnerMask from '../components/SpinnerMask';
@@ -71,29 +82,14 @@ import HelpMessage from '../components/HelpMessage';
 
 import countries from '../data/countries';
 
-import colors from '../../colors';
-
 import styles from '../../styles';
 
-import isValidEmail from '../../src/functions/isValidEmail';
-
-import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-  // compareListTransactions,
-  retrieveOnlineTransactions,
-  retrieveOnlineCategories,
-} from '../storage/SettingsStorage';
-
-import User from '../models/User';
+// import User from '../models/User';
 
 // AWS.config.region = 'us-east-1'; // Region
 // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 //   IdentityPoolId: 'us-east-1:f1677c4d-8148-4c3e-97e0-d81ffd75c15a',
 // });
-
-
-
 
 // import Offline from '../components/Offline';
 
@@ -105,17 +101,16 @@ import User from '../models/User';
 
 import getButtonStyle from '../../src/functions/getButtonStyle';
 
-function SignUpScreen(props) {
-  /*
-  * > Hooks
-  */
+function SignUpScreen({ navigation }) {
+  const emailFromProps = navigation.getParam('emailAddress');
+
   const [isLoading, setIsLoading] = useState(false);
 
   // const [username, setUsername] = useState(null);
 
   const [password, setPassword] = useState(null);
 
-  const [email, setEmail] = useState(global.emailAddressInput);
+  const [email, setEmail] = useState(emailFromProps);
 
   // const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -135,15 +130,15 @@ function SignUpScreen(props) {
 
   const [isResendCodeBtnEnabled, setIsResendCodeBtnEnabled] = useState(false);
 
-  const [isAuthCodeInputEnabled, setIsAuthCodeInputEnabled] = useState(true);
+  const [isAuthCodeInputEnabled] = useState(true);
 
   const [helpMessage, setHelpMessage] = useState(null);
 
   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
-  const [dialogMessage, setDialogMessage] = useState('');
+  const [dialogMessage] = useState('');
 
-  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogTitle] = useState('');
 
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 
@@ -175,7 +170,6 @@ function SignUpScreen(props) {
   //   setIsKeyboardAvoidEnabled(false);
   //   setDialCode(null);
 
-
   //   setIsConfirmSignUpBtnEnabled(false);
   //   setIsResendCodeBtnEnabled(false);
   //   setIsAuthCodeInputEnabled(true);
@@ -198,50 +192,16 @@ function SignUpScreen(props) {
     // // setCountryData(countries);
     // setHelpMessage('Hello.');
     setHelpMessage('sign up with your email and pick a password');
-
-
     // return () => {
     //   // effect
     //   setHelpMessage('enter your email and pick a password');
     // };
   }, []);
 
-  // useEffect(() => {
-  //   // if (!username || username.length < global.minUsernameLength || !isValidUsername(username)) {
-  //   //   setHelpMessage('Username invalid');
-  //   // }
-
-  //   // if (!password) {
-  //   //   setHelpMessage('Password invalid');
-  //   // }
-
-  //   if (!email || !password  || password.length < minPasswordLength) {
-  //     setHelpMessage('this way you can save your stuff in the cloud');
-  //   } else if (!isValidEmail(email)) {
-  //     setHelpMessage('Invalid email');
-  //   } else if (password.length < global.minPasswordLength) {
-  //     setHelpMessage('Password too short');
-  //   }
-
-
-  //   // else if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
-  //   //   setHelpMessage('Phone is invalid');
-  //   // }
-
-  //   // else {
-  //   //   setHelpMessage('');
-  //   // }
-  //   return () => {
-  //     // effect
-      
-  //   };
-  // });
-
   useEffect(() => {
     if (password && isValidEmail(email) && password.length >= global.minPasswordLength) {
       setIsSignUpBtnEnabled(true);
-    }
-    else {
+    } else {
       setIsSignUpBtnEnabled(false);
     }
   }, [password, email]);
@@ -264,16 +224,10 @@ function SignUpScreen(props) {
   * > Handlers
   */
   function onChangeText(key, value) {
-    // console.log('key:', key);
-    // console.log('value:', value);
-
-    // if (key === 'username') {
-    //   setUsername(value.replace(/[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').toLowerCase());
-    // }
     if (key === 'password') {
       setPassword(value.replace(' ', ''));
     } else if (key === 'email') {
-      var re = /^(((\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const re = /^(((\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       // return re.test(String(email).toLowerCase());
       setEmail(value.replace(/^[` ~!#$%^&*()|+\=?;:'",<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'authCode') {
@@ -281,97 +235,16 @@ function SignUpScreen(props) {
     }
   }
 
-  // function cognitoSignUp (emailInput, passwordInput) {
-  //   var poolData = {
-  //   UserPoolId:  'us-east-1_9xOuE8Wfh', // '...', // Your user pool id here
-  //   ClientId: '19d0h4e6cc04l9d8dc4tf2imhq', // '...', // Your client id here
-  //   };
-  //   var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-     
-  //   var attributeList = [];
-     
-  //   var dataEmail = {
-  //       Name: 'email',
-  //       Value: emailInput, // 'email@mydomain.com',
-  //   };
-     
-  //   var dataPhoneNumber = {
-  //       Name: 'phone_number',
-  //       Value: '+15555555555',
-  //   };
-  //   var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-  //   var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(
-  //       dataPhoneNumber
-  //   );
-     
-  //   attributeList.push(attributeEmail);
-  //   attributeList.push(attributePhoneNumber);
-     
-  //   userPool.signUp(
-  //     // 'username',
-  //     'email',
-  //     'password', attributeList, null, function(
-  //       err,
-  //       result
-  //   ) {
-  //       if (err) {
-  //           showMessage(err.message || JSON.stringify(err));
-  //           console.log('err: ', err);
-  //           return;
-  //       }
-  //       var cognitoUser = result.user;
-  //       console.log('user name is ' + cognitoUser.getUsername());
-  //       showMessage('user name is ' + cognitoUser.getUsername());
-  //   });
-  // }
-
-  function handleUsernameInputSubmit() {
-    passwordInputRef.current._root.focus();
-    // console.log(passwordInputRef.current._root.focus());
-  }
-
-  function handlePasswordInputSubmit() {
-    // emailInputRef.current._root.focus();
-    // console.log(passwordInputRef.current._root.focus());
-    signUp()
-  }
+  const handlePasswordInputSubmit = () => signUp();
 
   function handleEmailInputSubmit() {
     passwordInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
   }
 
-  // function handlePhoneNumberInputSubmit(value) {
-  //   if (value === '+') {
-  //     setPhoneNumber(dialCode);
-  //     return;
-  //   }
-  //   // console.log(value);
-  //   // console.log(typeof value);
-
-  //   const regexDialCode = /^(\+?\d{1,3}|\d{1,4})$/;
-  //   // setPhoneNumber(`${dialCode}${value}`);
-  //   const phone = value.replace(regexDialCode, '');
-  //   // value = value.replace(/[+.]{1,3}/g,'');
-
-  //   if (!value.includes(dialCode)) {
-  //     value = `${dialCode}${value}`;
-  //     setPhoneNumber(`${dialCode}${phone}`);
-      
-  //   }
-  // }
-
   function handleAuthCodeInputSubmit() {
     // emailInputRef.current._root.focus();
     // console.log(passwordInputRef.current._root.focus());
-  }
-
-  /*
-  * > Modal Methods
-  */
-  function showModal() {
-    setModalVisible(true);
-    // this.setState({ modalVisible: true })
   }
   function hideModal() {
     setModalVisible(false);
@@ -379,98 +252,96 @@ function SignUpScreen(props) {
     // phoneNumberInputRef.current._root.focus();
   }
 
-  async function selectCountry(country) {
-    // Get data from Countries.js
-    // const countryData = await countries;
-    try {
-      // Get the country code
-      const countryCode = await countries.filter(
-        (obj) => obj.name === country,
-      )[0].dial_code;
-      // Get the country flag
-      const countryFlag = await countries.filter(
-        (obj) => obj.name === country,
-      )[0].flag;
+  // async function selectCountry(country) {
+  //   // Get data from Countries.js
+  //   // const countryData = await countries;
+  //   try {
+  //     // Get the country code
+  //     const countryCode = await countries.filter(
+  //       (obj) => obj.name === country,
+  //     )[0].dial_code;
+  //     // Get the country flag
+  //     const countryFlag = await countries.filter(
+  //       (obj) => obj.name === country,
+  //     )[0].flag;
 
-      setDialCode(countryCode);
-
-      setFlag(countryFlag);
-
-      setPhoneNumber(countryCode);
+  //     // setDialCode(countryCode);
+  //     // setFlag(countryFlag);
+  //     // setPhoneNumber(countryCode);
       
 
-      // this.setState({ phoneNumber: countryCode, flag: countryFlag })
-      hideModal();
-    } catch (err) {
-      // console.log(err);
-      Alert.alert(err);
-    }
-  }
+  //     // this.setState({ phoneNumber: countryCode, flag: countryFlag })
+  //     hideModal();
+  //   } catch (err) {
+  //     // console.log(err);
+  //     Alert.alert(err);
+  //   }
+  // }
 
-  const PickCountryModal = () => {
-    const modal = (
-      <Modal
-        animationType="slide"
-        // transparent={false}
-        transparent
-        visible={modalVisible}
-      >
-        <View style={
-            {
-            flex: 1,
-            backgroundColor: colors.darkTwo,
-            opacity: 0.7,
+  // const PickCountryModal = () => {
+  //   const modal = (
+  //     <Modal
+  //       animationType="slide"
+  //       // transparent={false}
+  //       transparent
+  //       visible={modalVisible}
+  //     >
+  //       <View style={
+  //           {
+  //           flex: 1,
+  //           backgroundColor: colors.darkTwo,
+  //           opacity: 0.7,
 
-            // borderWidth: 1,
-            // borderColor: 'white',
-            // borderStyle: 'solid',
-          }
-        }>
-          <View style={
-            {
-              // height: '100%',
-              marginTop: 80,
-            }
-          }>
-            {/*
-            * > Render the list of countries
-            */}
-            <FlatList
-              data={countries}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={
-                ({ item }) => (
-                  <TouchableWithoutFeedback
-                    onPress={() => selectCountry(item.name)}
-                  >
-                    <View style={styles.countryStyle}>
-                      <Text style={styles.textStyle}>
-                        {item.flag}
-                        {item.name}
-                        ({item.dial_code})
-                      </Text>
-                    </View>
-                  </TouchableWithoutFeedback>
-                )
-              }
-            />
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              hideModal();
-              // Alert.alert('Ayye!');
-            }}
-            style={styles.closeButtonStyle}
-          >
-            <Text style={styles.textStyle}>
-              Cancel
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    );
-    return modal;
-  };
+  //           // borderWidth: 1,
+  //           // borderColor: 'white',
+  //           // borderStyle: 'solid',
+  //         }
+  //       }>
+  //         <View style={
+  //           {
+  //             // height: '100%',
+  //             marginTop: 80,
+  //           }
+  //         }>
+  //           {/*
+  //           * > Render the list of countries
+  //           */}
+  //           <FlatList
+  //             data={countries}
+  //             keyExtractor={(item, index) => index.toString()}
+  //             renderItem={
+  //               ({ item }) => (
+  //                 <TouchableWithoutFeedback
+  //                   onPress={() => selectCountry(item.name)}
+  //                 >
+  //                   <View style={styles.countryStyle}>
+  //                     <Text style={styles.textStyle}>
+  //                       {item.flag}
+  //                       {item.name}
+  //                       ({item.dial_code})
+  //                     </Text>
+  //                   </View>
+  //                 </TouchableWithoutFeedback>
+  //               )
+  //             }
+  //           />
+  //         </View>
+  //         <TouchableOpacity
+  //           onPress={() => {
+  //             hideModal();
+  //             // Alert.alert('Ayye!');
+  //           }}
+  //           style={styles.closeButtonStyle}
+  //         >
+  //           <Text style={styles.textStyle}>
+  //             Cancel
+  //           </Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //     </Modal>
+  //   );
+  //   return modal;
+  // };
 
   // function isPhoneAWSFormat(phone) {
   //   // +01234567890
@@ -499,29 +370,15 @@ function SignUpScreen(props) {
     </View>
   );
 
-  // const handleFacebookLogin = async (cognito) => {
-  //   // authenticated cognito profile from fb login
-  //   // console.log('cognito: ', cognito);
-
-  //   // redirect user somewhere...ie: welcome page
-  //   // props.navigation.navigate('AuthLoading');
-
-
-
-  // };
-
-  /*
-  * > User Sign Up Methods
-  */
   // Sign up user with AWS Amplify Auth
   async function signUp() {
+    // await Auth.currentAuthenticatedUser()
+    // .then((user) => console.log('user: ', user)).catch((err) => {
+    //   // throw new Error('Already signed in!', e)
+    //   showMessage(err.message)
+    //   setHelpMessage('Already signed in!');
 
-    await Auth.currentAuthenticatedUser().then((user) => console.log('user: ', user)).catch((err) => {
-      // throw new Error('Already signed in!', e)
-      showMessage(err.message)
-      setHelpMessage('Already signed in!')
-      return
-    })
+    // })
     // cognitoSignUp(email, password);
     setIsLoading(true);
       // Alert.alert('Phonef valid');
@@ -532,7 +389,6 @@ function SignUpScreen(props) {
     await Auth.signUp({
       username: email,
       password: password,
-      // attributes: { email },
     })
     .then((succ) => {
       showMessage('Confirmation code sent!');
@@ -540,217 +396,219 @@ function SignUpScreen(props) {
       setIsConfirmVisible(true);
       setIsLoading(false);
 
-      Analytics.record({ email: email });
-      console.log(`Successful sign up Recorded: ${email}`);
+      // Analytics.record({ email: email });
+      // console.log(`Successful sign up Recorded: ${email}`);
     })
     .catch((err) => {
       setIsLoading(false);
       setIsConfirmVisible(false);
-      console.log('err: ', err);
+      // console.log('err: ', err);
       setHelpMessage(err.message);
       showMessage('sign up failed');
 
 
-      // if (err.code  === 'UsernameExistsException') {
-      //   console.log('err: ', err);
-      //   showMessage('User exists already. Enter your password to sign in');
+      if (err.code  === 'UsernameExistsException') {
+        // console.log('err: ', err);
+        showMessage('User exists already. Enter your password to sign in');
         
-      //   //   // signIn();
-      //   global.emailAddressInput = email
-      //   //   global.passwordInput = password  
-      //   props.navigation.navigate('SignIn')
+        //   // signIn();
+        // global.emailAddressInput = email
+        //   global.passwordInput = password  
+        navigation.navigate('SignIn', {
+          email
+        })
 
-      // }
-      Analytics.record({ email: email });
-      console.log(`Failed sign up Recorded: ${email}`);
+      }
+      // Analytics.record({ email: email });
+      // console.log(`Failed sign up Recorded: ${email}`);
     });
   }
-  async function signIn () {
+  // async function signIn () {
     
-    // body... 
-    await Auth.signIn(email, password).then((succ) =>  {
-      global.email = ''
+  //   // body... 
+  //   await Auth.signIn(email, password).then((succ) =>  {
+  //     // global.email = ''
 
-      global.emailAddressInput = '';
+  //     // global.emailAddressInput = '';
 
 
-      props.navigation.navigate('AuthLoading')
-      console.log('succ: ', succ);
-    }).catch(() => {
-      props.navigation.goBack();
+  //     navigation.navigate('AuthLoading')
+  //     console.log('succ: ', succ);
+  //   }).catch(() => {
+  //     navigation.goBack();
 
-      setIsLoading(false);
+  //     setIsLoading(false);
 
-    });
+  //   });
 
-    setIsLoading(false);
+  //   setIsLoading(false);
     
 
-  }
+  // }
 
-   const checkForFBUserSettings = async () => {
-    // let settings = {}
-    let transactions = []
-    Auth.currentAuthenticatedUser({
-        bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
-    }).then(async (fb) => {
+  //  const checkForFBUserSettings = async () => {
+  //   // let settings = {}
+  //   let transactions = []
+  //   Auth.currentAuthenticatedUser({
+  //       bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+  //   }).then(async (fb) => {
 
-      // let new_user = new User(global.storageKey)
+  //     // let new_user = new User(global.storageKey)
 
-      //   new_user.name = (fb.name);
-
-        
-
-      //   new_user.picture = fb.picture
-
-      //   // console.log('new_user: ', new_user);s
-
-      //   /* Create Settings to be stored on sign in confirmation */
-      //   let storage = await loadSettingsStorage(fb.id);
-
-
-      //   transactions = storage.transactions;
-
-      //   console.log('storage: ', storage);
-
-
-
-      //   let Image_Http_URL ={ uri: fb.picture.data.url};
-
-      //     // global.avatar = Image_Http_URL;
-
-      //   let settings = {
-      //     user: new_user,
-      //     transactions: storage.transactions, // what ever currently existing transactions exist
-      //     categories: storage.categories,
-      //     payees: storage.payees, // ???
-      //     image_url: Image_Http_URL,
-      //     version: 0,
-      //   };
-
-        // global.avatar = settings.image_url
-
-    await Auth.signIn(email, password)
-      .then(async user => {
-        // console.log('fb:', fb);
-
-        // console.log('user: ', user);
-
-        let storage = await loadSettingsStorage(fb.id);
-
-        let settings = storage
-
-        settings.user.id  = user.attributes.sub;
-
-        settings.user.email = user.attributes.email; // global.emailAddressInput
-
-        settings.user.name  = fb.name
-
-        // settings.transactions = transactions;
-
-        global.storageKey = user.id
-
-        global.avatar = settings.image_url
-
-        await saveSettingsStorage(global.storageKey, settings);
-
-        // console.log('Object.keys(fb): ', Object.keys(fb));s
-
-        /* Create financely user from fb credentials */
-
-        // let new_user = new User(user.attributes.sub)
-
-        // new_user.name = (fb.name);
-
-        // new_user.email = user.attributes.email; // global.emailAddressInput
-
-        // new_user.picture = fb.picture
-
-        // console.log('new_user: ', new_user);s
-
-        /* Create Settings to be stored on sign in confirmation */
-        // let storage = await loadSettingsStorage(fb.id);
-
-        // console.log('storage: ', storage);
-
-
-
-        // let Image_Http_URL ={ uri: fb.picture.data.url};
-
-          // global.avatar = Image_Http_URL;
-
-
+  //     //   new_user.name = (fb.name);
 
         
 
+  //     //   new_user.picture = fb.picture
+
+  //     //   // console.log('new_user: ', new_user);s
+
+  //     //   /* Create Settings to be stored on sign in confirmation */
+  //     //   let storage = await loadStorage(fb.id);
+
+
+  //     //   transactions = storage.transactions;
+
+  //     //   console.log('storage: ', storage);
+
+
+
+  //     //   let Image_Http_URL ={ uri: fb.picture.data.url};
+
+  //     //     // global.avatar = Image_Http_URL;
+
+  //     //   let settings = {
+  //     //     user: new_user,
+  //     //     transactions: storage.transactions, // what ever currently existing transactions exist
+  //     //     categories: storage.categories,
+  //     //     payees: storage.payees, // ???
+  //     //     image_url: Image_Http_URL,
+  //     //     version: 0,
+  //     //   };
+
+  //       // global.avatar = settings.image_url
+
+  //   await Auth.signIn(email, password)
+  //     .then(async user => {
+  //       // console.log('fb:', fb);
+
+  //       // console.log('user: ', user);
+
+  //       let storage = await loadStorage(fb.id);
+
+  //       let settings = storage
+
+  //       settings.user.id  = user.attributes.sub;
+
+  //       settings.user.email = user.attributes.email; // global.emailAddressInput
+
+  //       settings.user.name  = fb.name
+
+  //       // settings.transactions = transactions;
+
+  //       global.storageKey = user.id
+
+  //       global.avatar = settings.image_url
+
+  //       await saveStorage(global.storageKey, settings);
+
+  //       // console.log('Object.keys(fb): ', Object.keys(fb));s
+
+  //       /* Create financely user from fb credentials */
+
+  //       // let new_user = new User(user.attributes.sub)
+
+  //       // new_user.name = (fb.name);
+
+  //       // new_user.email = user.attributes.email; // global.emailAddressInput
+
+  //       // new_user.picture = fb.picture
+
+  //       // console.log('new_user: ', new_user);s
+
+  //       /* Create Settings to be stored on sign in confirmation */
+  //       // let storage = await loadStorage(fb.id);
+
+  //       // console.log('storage: ', storage);
+
+
+
+  //       // let Image_Http_URL ={ uri: fb.picture.data.url};
+
+  //         // global.avatar = Image_Http_URL;
+
+
+
         
 
-        // await saveSettingsStorage(global.storageKey, settings);
+        
+
+  //       // await saveStorage(global.storageKey, settings);
 
 
-        props.navigation.navigate('AuthLoading');
+  //       navigation.navigate('AuthLoading');
 
-      })
-      .catch(err => console.log(err));
-    })
-    .catch(err => console.log(err));
-  };
+  //     })
+  //     .catch(err => console.log(err));
+  //   })
+  //   .catch(err => console.log(err));
+  // };
 
 
-   const checkForExisitngSettings = async () => {
+  //  const checkForExisitngSettings = async () => {
 
-    // let storage = await loadSettingsStorage(global.storageKey);
+  //   // let storage = await loadStorage(global.storageKey);
 
-    // /* Previous settings */
-    // settings = {
-    //     user: {},
-    //     transactions: storage.transactions, // what ever currently existing transactions exist
-    //     categories: storage.categories,
-    //     payees: storage.payees, // ???
-    //     image_url: global.avatar,
-    //     version: 0,
-    //   };
-    // // let transactions = []
+  //   // /* Previous settings */
+  //   // settings = {
+  //   //     user: {},
+  //   //     transactions: storage.transactions, // what ever currently existing transactions exist
+  //   //     categories: storage.categories,
+  //   //     payees: storage.payees, // ???
+  //   //     image_url: global.avatar,
+  //   //     version: 0,
+  //   //   };
+  //   // // let transactions = []
    
 
-    // await Auth.signIn(email, password)
-    //   .then(async user => {
-    //      // console.log('user: ', user);
+  //   // await Auth.signIn(email, password)
+  //   //   .then(async user => {
+  //   //      // console.log('user: ', user);
 
-    //     // console.log('Object.keys(fb): ', Object.keys(fb));s
+  //   //     // console.log('Object.keys(fb): ', Object.keys(fb));s
 
-    //     /* Create financely user from fb credentials */
+  //   //     /* Create financely user from fb credentials */
 
-    //     settings.user = new User(user.attributes.sub)
+  //   //     settings.user = new User(user.attributes.sub)
 
-    //     // new_user.name = (fb.name);
+  //   //     // new_user.name = (fb.name);
 
-    //     settings.user.email = user.attributes.email; // global.emailAddressInput
+  //   //     settings.user.email = user.attributes.email; // global.emailAddressInput
 
-    //     // new_user.picture = fb.picture
+  //   //     // new_user.picture = fb.picture
 
-    //     // console.log('new_user: ', new_user);s
+  //   //     // console.log('new_user: ', new_user);s
 
-    //     /* Create Settings to be stored on sign in confirmation */
+  //   //     /* Create Settings to be stored on sign in confirmation */
         
 
-    //     // console.log('storage: ', storage);
-    //     // let Image_Http_URL ={ uri: fb.picture.data.url};
-    //     // global.avatar = Image_Http_URL;
+  //   //     // console.log('storage: ', storage);
+  //   //     // let Image_Http_URL ={ uri: fb.picture.data.url};
+  //   //     // global.avatar = Image_Http_URL;
 
         
 
-    //     global.avatar = settings.image_url
+  //   //     global.avatar = settings.image_url
 
-    //     global.storageKey = settings.user.id
+  //   //     global.storageKey = settings.user.id
 
-    //     await saveSettingsStorage(global.storageKey, settings);
+  //   //     await saveStorage(global.storageKey, settings);
 
-    //     props.navigation.navigate('AuthLoading');
-    //   })
-    //   .catch(err => console.log(err)
-    // )
-  };
+  //   //     navigation.navigate('AuthLoading');
+  //   //   })
+  //   //   .catch(err => console.log(err)
+  //   // )
+  // };
 
 
   // Confirm users and redirect them to the SignIn page
@@ -761,7 +619,7 @@ function SignUpScreen(props) {
           showMessage('Sign Up Successful!');
           setHelpMessage('Sign Up Successful!')
 
-          props.navigation.navigate('SignIn');
+          navigation.navigate('SignIn');
           
         })
         .catch((err) => {
@@ -1046,14 +904,14 @@ function SignUpScreen(props) {
 
   const offline = <OfflineScreen />;
 
-  // const view = (
-  //   <NetworkConsumer>
-  //     {
-  //       ({ isConnected }) => (isConnected ? signup : offline)
-  //     }
-  //   </NetworkConsumer>
-  // );
-  const view = isConnected ? signup : offline;
+  const view = (
+    <NetworkConsumer>
+      {
+        ({ isConnected }) => (isConnected ? signup : offline)
+      }
+    </NetworkConsumer>
+  );
+  // const view = isConnected ? signup : offline;
 
   // return view;
 

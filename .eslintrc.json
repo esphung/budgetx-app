@@ -8,6 +8,13 @@
     "parser": "babel-eslint",
     "extends": "airbnb",
     "rules": {
-      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+      "import/no-extraneous-dependencies": "off",
+      "camelcase": "off",
+      "operator-assignment": "off",
+      "no-underscore-dangle": "off",
+      "import/no-unresolved": "off",
+      "no-param-reassign": "off",
+      "react/jsx-props-no-spreading": "off"
     }
 }

@@ -12,12 +12,12 @@ import uuidv4 from '../functions/uuidv4';
 
 function Category(id, name, color, type, owner, version) {
   const obj = {
-    id: (id) ? id : uuidv4(),
-    name: (name) ? name : 'None',
-    color:  (color) ? color : '#ffffff',
-    type: (type) ? type : 'EXPENSE',
-    owner: (owner)  ? owner : global.storageKey,
-    version: (version) ? version : 0,
+    id: id, // (id) ? id : uuidv4(),
+    name: name, // (name) ? name : 'None',
+    color: color, // (color) ? color : '#ffffff',
+    type: type, // (type) ? type : 'EXPENSE',
+    owner: owner, // (owner)  ? owner : global.storageKey,
+    version: version, // (version) ? version : 0,
   };
   return obj;
 }
@@ -28,7 +28,6 @@ function Category(id, name, color, type, owner, version) {
 // console.log('Category: ', Category());
 
 export default Category;
-
 
 
 // /*

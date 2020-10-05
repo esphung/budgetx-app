@@ -31,20 +31,20 @@ import {
 } from 'native-base';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'src/colors';
 
 import styles from '../../../styles';
 
 // import SpinnerMask from '../SpinnerMask';
 
 import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-} from '../../storage/SettingsStorage';
+  loadStorage,
+  saveStorage,
+} from 'controllers/Storage';
 
 import isValidEmail from '../../functions/isValidEmail';
 
-import { isDeviceOnline } from '../../../network-functions';
+import { isDeviceOnline } from 'controllers/Network';
 
 const spinnerView = (
   <View
@@ -453,7 +453,7 @@ function UserNameEmailInput(props) {
 
 
     try {
-      let storage = await loadSettingsStorage(global.storageKey)
+      let storage = await loadStorage(global.storageKey)
       setEmail(storage.user.email)
       global.email = storage.user.email
     } catch(e) {
@@ -475,9 +475,9 @@ function UserNameEmailInput(props) {
   }
 
   const submitName = async () => {
-    const storage = await loadSettingsStorage(global.storageKey);
+    const storage = await loadStorage(global.storageKey);
 
-    // saveSettingsStorage(global.storageKey, storage);
+    // saveStorage(global.storageKey, storage);
     if (await isDeviceOnline()) {
       try {
         await Auth.currentAuthenticatedUser()
@@ -500,19 +500,19 @@ function UserNameEmailInput(props) {
 
     storage.user.name = name;
 
-    saveSettingsStorage(global.storageKey, storage);
+    saveStorage(global.storageKey, storage);
   };
 
   const handleFullNameChange = async (text) => {
-    // let storage = await loadSettingsStorage(global.storageKey)
+    // let storage = await loadStorage(global.storageKey)
     // storage.user.full_name = text;
     // console.log('storage.user: ', storage.user);
 
-    // saveSettingsStorage(global.storageKey, storage)
+    // saveStorage(global.storageKey, storage)
     setName(text);
   };
   async function loadResources() {
-    const storage = await loadSettingsStorage(global.storageKey);
+    const storage = await loadStorage(global.storageKey);
 
     setUniqueId(storage.user.id);
 

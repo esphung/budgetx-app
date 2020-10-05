@@ -10,13 +10,15 @@ import {
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { NetworkConsumer } from 'react-native-offline';
+// import { NetworkConsumer } from 'react-native-offline';
 
-import colors from '../../colors';
+import colors, { originalTheme } from 'src/colors';
 
 import styles from '../../styles';
 
-import InfoBox from '../components/InfoBox';
+import InfoBox from 'components/InfoBox';
+
+// import AnimatedOffline from '../components/AnimatedOffline';
 
 const OfflineScreen = () => {
   const page = (
@@ -29,23 +31,28 @@ const OfflineScreen = () => {
       >
         <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <InfoBox icon={(<MaterialCommunityIcons name="access-point-network-off" size={styles.iconStyle.fontSize} color={colors.shamrockGreen} />)} title="It appears you are offline!" />
+            <InfoBox
+                title="It appears you are offline!"
+                message="Or have a weak internet connection ..."
+              />
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </View>
   );
 
-  const view = (
-    <NetworkConsumer>
-      {
-        ({ isConnected }) => (isConnected ? <View /> : page)
-      }
-    </NetworkConsumer>
-  );
+  // const view = (
+  //   <NetworkConsumer>
+  //     {
+  //       ({ isConnected }) => (isConnected ? page)
+  //     }
+  //   </NetworkConsumer>
+  // );
 
 
-  return view;
+  // return view;
+  return page;
+  // return <AnimatedOffline />
 };
 
 OfflineScreen.navigationOptions = () => ({

@@ -15,14 +15,17 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import colors from '../../colors';
+import colors from 'colors';
 
 function SpinnerMask() {
   const spinnerView = (
     <View
       style={
         {
-          flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.darkTwo,
         }
       }
     >

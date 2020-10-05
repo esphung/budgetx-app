@@ -1,73 +1,24 @@
-/*
-https://github.com/jacse/react-native-app-intro-slider
-*/
-
 import React, { useState } from 'react';
-
-// import {
-//   Container,
-//   Item,
-//   Input,
-//   Icon,
-//   Button,
-// } from 'native-base';
-
-
-// import { AppLoading } from 'expo';
-
-
-import { Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
-
-// import Icon from 'react-native-vector-icons/Ionicons';
-
-import { NavigationEvents } from 'react-navigation';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
 
 import {
   SafeAreaView,
   AsyncStorage,
-  StyleSheet,
+  // StyleSheet,
   View,
   Text,
-  Image
+  Image,
 } from 'react-native';
 
 import AppIntroSlider from 'react-native-app-intro-slider';
 
 // ui colors
-import colors from '../../colors';
+import colors from 'src/colors';
 
 // ui styles
 import styles from '../../styles';
 
-// const styles = StyleSheet.create({
-//   slide: {
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-
-//     borderWidth: 1,
-//     borderColor: 'white',
-//     borderStyle: 'dashed',
-
-//   },
-//   buttonCircle: {
-//     // width: 40,
-//     // height: 40,
-//     // backgroundColor: 'rgba(0, 0, 0, .2)',
-//     borderRadius: 20,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   //[...]
-// });
-
-// let imageViewStyle = {
-//   // borderWidth: 1,
-//   // borderColor: 'white',
-//   // borderStyle: 'solid',
-// }
-
-let slide = {
+const slide = {
   flex: 1,
   alignItems: 'center',
   justifyContent: 'center',
@@ -77,66 +28,50 @@ let slide = {
   // borderWidth: 1,
   // borderColor: 'white',
   // borderStyle: 'dashed',
-}
-// let buttonCircle = {
-//   width: 40,
-//   height: 40,
-//   // backgroundColor: 'rgba(0, 0, 0, .2)',
-//   borderRadius: 20,
-//   justifyContent: 'center',
-//   alignItems: 'center',
-// }
+};
 
 const slides = [
   {
     key: 1,
-    title: `welcome to financely\n`,
+    title: 'welcome to financely\n',
     subtitle: 'a classic way to spend\n',
     text: 'keep track of your money by using financely just like you would a',
     foot: '\ncheckbook register',
     image: global.appIconImage243x260,
     // backgroundColor: '#59b2ab',
     style: {},
-    icon: <FontAwesome
-    style={{
-      // flex:1,
-      // position: 'absolute',
-      // bottom: screenHeight/6,
-      // marginBottom:  20,
-
-    }}
-    name="bank" size={36} color={colors.white} />,
+    icon: (
+      <FontAwesome
+        name="bank"
+        size={36}
+        color={colors.white}
+      />
+  ),
   },
   {
     key: 4,
-    title: `know how much you have\n`,
+    title: 'know how much you have\n',
     subtitle: 'when you have it',
     text: 'banks are not always up to date. everytime you make a new transaction, add it to financely',
     foot: '\nnever overdraft again',
     image: global.appIconImage243x260,
     // backgroundColor: '#59b2ab',
     style: {},
-    icon: <FontAwesome 
-    style={{
-      // flex: 1,
-      // position: 'absolute',
-      // bottom: screenHeight/6,
-      // marginBottom:  20,
+    icon: (
+      <FontAwesome
+        style={{
+          // flex: 1,
+          // position: 'absolute',
+          // bottom: screenHeight/6,
+          // marginBottom:  20,
 
-    }}
-    name="money" size={36} color={colors.white} />,
+        }}
+        name="money"
+        size={36}
+        color={colors.white}
+      />
+    ),
   },
-  // {
-  //   key: 2,
-  //   title: '',
-  //   subtitle: '',
-  //   text: 'banking apps aren\'t always up to date\n(they don\'t want to be)',
-  //   // and can easily distract you with offers and ads',
-  //   image: global.appIconImage243x260,
-  //   // backgroundColor: '#febe29',
-  //   style: {},
-  // icon: {},
-  // },
   {
     key: 3,
     title: 'built to be offline\n',
@@ -146,27 +81,25 @@ const slides = [
     image: global.appIconImage243x260,
     // backgroundColor: '#22bcb5',
     style: {},
-    icon: <Entypo
-    style={{
-      // flex: 1,
-      // position: 'absolute',
-      // bottom: screenHeight/6,
-      // marginBottom:  20,
-
-    }} name="network" size={36} color={colors.white} />,
-  }
+    icon: (
+      <Entypo
+        name="network"
+        size={36}
+        color={colors.white}
+      />
+    ),
+  },
 ];
 
 export default function MyAppIntroSlider({ navigation }) {
-  const handleRoute = (route) => {
-    navigation.navigate(route)
-  };
+  // const handleRoute = (route) => {
+  //   navigation.navigate(route)
+  // };
   const [showRealApp, setShowRealApp] = useState(false);
 
   const _renderItem = ({ item }) => {
-    return (
+    const view = (
       <SafeAreaView style={slide}>
-       
         <View style={{
           flex: 1,
           width: screenWidth,
@@ -267,6 +200,7 @@ export default function MyAppIntroSlider({ navigation }) {
         </View>
       </SafeAreaView>
     );
+    return view;
   }
   const _onDone = () => {
     // User finished the introduction.
@@ -279,30 +213,17 @@ export default function MyAppIntroSlider({ navigation }) {
 
     setShowRealApp(true);
   }
+  let view = null;
 
-  const _renderNextButton = () => {
-    return (
-      <View>
-{/*        <Ionicons
-          name="md-arrow-round-forward"
-          color="rgba(255, 255, 255, .9)"
-          color={colors.white}
-          size={36}
-        />*/}
-      </View>
-    );
-  };
-  
-  if (showRealApp) {
-    // <AppLoading />;
-    return null
-  } else {
-    return (
+  if (!showRealApp) {
+
+
+  view = (
       <AppIntroSlider
         // dotClickEnabled
-        keyExtractor={item => item.key.toString()}
+        keyExtractor={(item) => item.key.toString()}
         renderItem={_renderItem}
-        renderNextButton={_renderNextButton}
+        // renderNextButton={_renderNextButton}
         data={slides}
         onDone={_onDone}
 
@@ -315,6 +236,10 @@ export default function MyAppIntroSlider({ navigation }) {
       />
     );
   }
+
+  return view;
+
+  
 }
 
 MyAppIntroSlider.navigationOptions = () => {

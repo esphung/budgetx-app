@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
 
-import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 
 import { showMessage } from 'react-native-flash-message';
+
+// import AsyncStorage from '@react-native-community/async-storage';
 
 import {
   // StyleSheet,
@@ -26,33 +28,14 @@ import {
   Platform,
   // BlurViewIOS,
   // BlurView,
-  AsyncStorage,
+  // AsyncStorage,
 } from 'react-native';
-
-import {
-  // Container,
-  // Header,
-  // Content,
-  ListItem,
-  // CheckBox,
-  // Body,
-  // Right
-} from 'native-base';
-
-// import { BlurView } from 'expo-blur';
-
-// import {
-//   Container,
-//   Item,
-//   Input,
-//   // Icon,
-// } from 'native-base';
 
 import Auth from '@aws-amplify/auth';
 
 import { NavigationEvents } from 'react-navigation';
 
-import { SwipeListView } from 'react-native-swipe-list-view';
+// import { SwipeListView } from 'react-native-swipe-list-view';
 
 // import { Ionicons } from 'expo-vector-icons';
 
@@ -63,7 +46,7 @@ import Dialog from 'react-native-dialog';
 // import Constants from 'expo-constants';
 
 // ui colors
-import colors from '../../colors';
+import colors from 'src/colors';
 
 import styles from '../../styles';
 
@@ -73,12 +56,10 @@ import BlueButton from '../components/BlueButton';
 
 // import HelpMessage from '../../storybook/stories/HelpMessage';
 
-import { isDeviceOnline } from '../../network-functions';
-
 import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-} from '../storage/SettingsStorage';
+  loadStorage,
+  saveStorage,
+} from '../controllers/Storage';
 
 // import CustomSwipeCell from '../components/CustomSwipeCell';
 
@@ -108,24 +89,38 @@ import searchByName from '../functions/searchByName';
 
 /* my custom queries */
 import {
-  UpdateTransaction,
+  
   // removeTransaction,
   DeleteTransaction,
   // removePayee,
-  removeCategory,
+  // removeCategory,
   // savePayee,
-  SaveCategory,
+  // AddCategory,
   // saveTransaction,
-  UpdateCategory,
+  // UpdateCategory,
   // getCategoryByID,
   // fetchStoredTransactions,
   // fetchStoredCategories,
   // getTransactionByID,
-  listAllOnlineCategories,
+  // ListCategories,
   // removeCategory,
+  DeleteCategory,
 } from '../storage/my_queries';
 
+import {
+  UpdateTransaction,
+  // AddCategory,
+} from '../queries/Transaction';
+
+import {
+  UpdateCategory,
+  AddCategory,
+  ListCategories,
+} from '../queries/Category';
+
 import { getCrayolaColors } from '../data/crayola';
+
+import { getAuthentication, isDeviceOnline } from '../controllers/Network';
 
 const MAX_NAME_LENGTH = 15;
 
@@ -136,63 +131,12 @@ function negToPos(num) {
   return Math.abs(num);
 }
 
-const getAuthentication = async () => {
-  global.authenticated = false;
-  Auth.currentAuthenticatedUser()
-    .then(async () => {
-      // console.log('user authenticated: ', cognito.attributes.sub);
-      global.authenticated = true;
-    }).catch(() => {
-      // console.warn('error getting user authentication: ', err);
-    });
-  return global.authenticated;
-};
-
-const deleteAllOnlineCategories = async () => {
-  // if (await isDeviceOnline() !== true) return;
-
-  // alert(await isDeviceOnline() && getAuthentication() && JSON.parse(await AsyncStorage.getItem('someBoolean')))
-  // Auth.currentAuthenticatedUser().then(async () => {
-    try {
-      const storage = await loadSettingsStorage(global.storageKey);
-
-      let { categories } = storage;
-
-
-
-      // categories.forEach((category) => {
-      //   removeCategory(category);
-      // });
-
-      if (await isDeviceOnline() && getAuthentication() && JSON.parse(await AsyncStorage.getItem('someBoolean'))) {
-        const onlineCategories = await listAllOnlineCategories();
-        categories.forEach((item) => {
-          removeCategory(item);
-        });
-      }
-      // showMessage({
-      //   message: 'All categories deleted',
-      //   // duration: 550,
-      //   position: 'bottom',
-      //   color: colors.shamrockGreen, // "#606060", // text color
-      //   // opacity: 0.5,
-      //   textStyle: styles.textStyle,
-      //   // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-      // });
-
-    } catch (e) {
-      // statements
-      console.log(e);
-    }
-  // });
-  // .catch((err) => console.log('err: ', err));
-};
 
 const pushAllCategoriesToCloud = async () => {
   Auth.currentAuthenticatedUser()
     .then(async () => {
       try {
-        const storage = await loadSettingsStorage(global.storageKey);
+        const storage = await loadStorage(global.storageKey);
 
         const { categories } = storage;
 
@@ -244,12 +188,17 @@ const optionsPillStyle = {
   marginHorizontal: 6,
 };
 
-export default function CustomizeCategoriesScreen() {
+export default function CustomizeCategoriesScreen({ navigation }) {
+  const isDeviceSyncEnabled = navigation.getParam('isDeviceSyncEnabled');
+
+  // const storage = navigation.getParam('storage');
+  // setFlatlistData()
+
+  const isUserLoggedIn = navigation.getParam('isUserLoggedIn');
+
   const [selected, setSelected] = useState(new Map());
 
-  const [isReady, setIsReady] = useState(false);
-
-  const [data, setData] = useState([]);
+  const [flatlistCategoryData, setFlatlistCategoryData] = useState(navigation.getParam('currentCategories'));
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -261,9 +210,7 @@ export default function CustomizeCategoriesScreen() {
 
   const [currentCategory, setCurrentCategory] = useState(null);
 
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
-
-  const [flatlistData, setFlatlistData] = useState(getFlatListDataFromObject(colors));
+  const [flatlistData, setFlatlistData] = useState(getFlatListDataFromObject(colors).concat(getFlatListDataFromObject(getCrayolaColors())));
 
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -273,27 +220,35 @@ export default function CustomizeCategoriesScreen() {
 
   const [currentColor, setCurrentColor] = useState(colors.offWhite);
 
+  const deleteAllOnlineCategories = async () => {
+    try {
+      const storage = await loadStorage(global.storageKey);
+
+      const { categories } = storage;
+
+      if (await isDeviceOnline() && getAuthentication() && isDeviceSyncEnabled) {
+        const onlineCategories = await ListCategories();
+        categories.forEach((item) => {
+          DeleteCategory(item);
+        });
+      }
+    } catch (e) {
+      // statements
+      console.log(e);
+    }
+  };
+
   const resetCategories = async () => {
-    deleteAllOnlineCategories()
-    // .then(async () => {
-      let list = defaultCategories();
+    deleteAllOnlineCategories().then(async () => {
+      const list = defaultCategories();
+      await loadStorage(global.storageKey).then((result) => {
+        result.categories = list;
 
-      try {
-        const storage = await loadSettingsStorage(global.storageKey);
-
-        storage.categories = list;
-
-        saveSettingsStorage(global.storageKey, storage);
-
-        // setData(list);
+        saveStorage(global.storageKey, result);
 
         reloadCategories();
-      } catch(e) {
-        // statements
-        console.log(e);
-      }
-    // })
-
+      });
+    });
   };
   const showCategoryEditing = () => {
     setShowCreateCategoryButton(false);
@@ -339,10 +294,10 @@ export default function CustomizeCategoriesScreen() {
   const reloadCategories = async () => {
     // setIsLoading(true);
     try {
-      const storage = await loadSettingsStorage(global.storageKey);
+      const storage = await loadStorage(global.storageKey);
       const { categories } = storage;
 
-      setData(categories);
+      setFlatlistCategoryData(categories);
     } catch(e) {
       // statements
       console.log(e);
@@ -352,7 +307,7 @@ export default function CustomizeCategoriesScreen() {
   const deleteStoredCategory = async (item) => {
     // console.log('global.storageKey: ', global.storageKey);
     // const previous = item; // for user redo purposes
-    const storage = await loadSettingsStorage(global.storageKey);
+    const storage = await loadStorage(global.storageKey);
 
     const arr = storage.categories;
 
@@ -368,23 +323,24 @@ export default function CustomizeCategoriesScreen() {
 
     // UpdateCategory(blankCategory);
 
-    if (await isDeviceOnline() && getAuthentication() && JSON.parse(await AsyncStorage.getItem('someBoolean'))) {
-      removeCategory(found);
+    if (await isDeviceOnline() && getAuthentication() && isDeviceSyncEnabled) {
+      DeleteCategory(found);
     }
     
-    saveSettingsStorage(global.storageKey, storage);
+    saveStorage(global.storageKey, storage);
 
     clearState().then(reloadCategories);
   };
   const addCategory = async (name, color, type) => {
-    setIsAddingCategory(true);
+    // setIsAddingCategory(true);
     // const list = await loadUserCategories();
-    const userObject = await loadSettingsStorage(global.storageKey);
+    const userObject = await loadStorage(global.storageKey);
     // console.log(userObject.user.categories);
 
     const list = userObject.categories;
 
     let obj = searchByName(name, list);
+
     if (obj) {
       if (obj.type === type) {
         // Alert.alert('Category already exists');
@@ -396,14 +352,17 @@ export default function CustomizeCategoriesScreen() {
 
         userObject.categories = list;
 
-        saveSettingsStorage(global.storageKey, userObject);
 
-        setData(list);
+        await Auth.currentAuthenticatedUser().then(() => {
+          // obj = new Category(uuidv4(), name, color, type, cognito.attributes.sub, 0);
+          AddCategory(obj);
+        });
+
+        saveStorage(global.storageKey, userObject);
+
+        setFlatlistCategoryData(list);
       }
 
-      await Auth.currentAuthenticatedUser().then(() => {
-        SaveCategory(obj);
-      });
     }
     if (!obj) {
       // create new category
@@ -415,11 +374,11 @@ export default function CustomizeCategoriesScreen() {
 
       userObject.categories = list;
 
-      saveSettingsStorage(global.storageKey, userObject);
+      saveStorage(global.storageKey, userObject);
 
-      setData(list);
+      setFlatlistCategoryData(list);
     }
-    setIsAddingCategory(false);
+    // setIsAddingCategory(false);
 
     clearState()
 
@@ -431,22 +390,22 @@ export default function CustomizeCategoriesScreen() {
 
 
   const storeUserCategories = async (list) => {
-    const storage = await loadSettingsStorage(global.storageKey);
+    const storage = await loadStorage(global.storageKey);
 
     storage.categories = list;
 
-    saveSettingsStorage(global.storageKey, storage);
+    saveStorage(global.storageKey, storage);
   };
   const updateUserTransactionCategories = async (list) => {
     // let success = false;
-    const storage = await loadSettingsStorage(global.storageKey);
+    const storage = await loadStorage(global.storageKey);
 
     // let { categories } = storage;
 
     // update all of the user's transactions 'categories
     storage.categories = list;
 
-    // setData(list);
+    // setFlatlistCategoryData(list);
 
     storage.transactions.forEach(async (transaction) => {
       /* Upddate transaction category */
@@ -469,27 +428,24 @@ export default function CustomizeCategoriesScreen() {
         transaction.amount = negToPos(transaction.amount)
       }
 
-      /* Sync new transaction and transaction's category to online */
-      Auth.currentAuthenticatedUser().then(async (cognito) => {
-        
+      if (await getAuthentication()) {
+      await ListCategories().then(async (online_categories) => {
+          let found = searchByID(transaction.category.id, online_categories);
+          if (found) UpdateCategory(transaction.category);
+          else {
+            found = searchByName(transaction.category.name, online_categories);
+            transaction.category = found
+            await UpdateCategory(transaction.category);
+          }
 
-        let online_categories = await listAllOnlineCategories();
-        let found = searchByID(transaction.category.id, online_categories);
-        if (found) {
-          UpdateCategory(transaction.category);
-        } else {
-          found = searchByName(transaction.category.name, online_categories);
-          transaction.category = found
-          UpdateCategory(transaction.category);
-        }
+          await UpdateTransaction(transaction);
 
-        UpdateTransaction(transaction);
+        })
+      }
 
-      }).catch((err) => {
-        console.log('error authenticating user for customized category update: ', err);
-      })
+
     });
-    saveSettingsStorage(storageKey, storage);
+    saveStorage(storageKey, storage);
   };
 
   const filterCategories = (local, online) => {
@@ -557,32 +513,29 @@ export default function CustomizeCategoriesScreen() {
   return unique;
 };
   const retrieveStoredCategories = async () => {
-
-    const storage = await loadSettingsStorage(global.storageKey);
+    const storage = await loadStorage(global.storageKey);
     // setAuthenticated(await getAuthentication())
     await Auth.currentAuthenticatedUser().then(async (user) =>  {
       setIsLoading(true)
       global.authenticated = true;
-      if (await isDeviceOnline() && JSON.parse(await AsyncStorage.getItem('someBoolean'))) {
-        let online_categories = await listAllOnlineCategories()
+      if (await isDeviceOnline() && isDeviceSyncEnabled) {
+        let online_categories = await ListCategories()
         // storage.categories = list;
 
         let local_categories = storage.categories;
 
         let merged = filterCategories(local_categories, online_categories)
 
-        setData(merged);
+        setFlatlistCategoryData(merged);
 
         storage.categories = merged
-
-
       } else {
-        setData(storage.categories);
+        setFlatlistCategoryData(storage.categories);
       }
 
-      saveSettingsStorage(global.storageKey, storage)
+      saveStorage(global.storageKey, storage)
 
-      setIsLoading(false)
+      
     }).catch(async () => {
       global.authenticated = false;
 
@@ -590,13 +543,12 @@ export default function CustomizeCategoriesScreen() {
 
       // let merged = filterCategories(local_categories, online_categories)
 
-      setData(local_categories);
+      setFlatlistCategoryData(local_categories);
 
-      
-
-      // saveSettingsStorage(global.storageKey, storage)
+      // saveStorage(global.storageKey, storage)
     })
     // clearState()
+    setIsLoading(false)
     
   };
   const deleteBtnPressed = async () => {
@@ -636,7 +588,7 @@ export default function CustomizeCategoriesScreen() {
         />
       </View>
     );
-    if (data) {
+    if (flatlistCategoryData) {
       return view;
     }
   }
@@ -644,20 +596,29 @@ export default function CustomizeCategoriesScreen() {
     // console.log(item);
     const view = (
       <CellItem
-        authenticated={global.authenticated}
-        // onPress={() => onPress(item)}
+        // authenticated={global.authenticate}
+        onPress={() => {
+          onSelect(item.id)
+          // const category = searchByID(id, data);
+          if (!currentCategory || currentCategory.id !== item.id) {
+            setCurrentCategory(item);
+          } else {
+            setCurrentCategory(null);
+          }
+        }}
+        item={item}
 
-        id={item.id}
-        name={item.name}
+        // id={item.id}
+        // name={item.name}
         selected={!!selected.get(item.id)}
         onSelect={onSelect}
 
         currentCategory={currentCategory}
-        color={item.color}
+        // color={item.color}
 
         addCategory={addCategory}
 
-        data={data}
+        data={flatlistCategoryData}
 
         setCurrentCategory={setCurrentCategory}
       />
@@ -699,21 +660,21 @@ export default function CustomizeCategoriesScreen() {
 
     setCurrentCategory(null);
 
-    setIsAddingCategory(false);
+    // setIsAddingCategory(false);
 
-    setIsLoading(false);
+    // setIsLoading(false);
   }
 
-  useEffect(() => {
-    setFlatlistData(getFlatListDataFromObject(colors).concat(getFlatListDataFromObject(getCrayolaColors())))
+  // useEffect(() => {
+  //   setFlatlistData(getFlatListDataFromObject(colors).concat(getFlatListDataFromObject(getCrayolaColors())))
     
-    return () => {
-      // effect
-      clearState()
-      // setIsReady(true);
+  //   return () => {
+  //     // effect
+  //     clearState()
+  //     // setIsReady(true);
 
-    };
-  }, [])
+  //   };
+  // }, [])
 
   useEffect(() => {
     if (currentCategory) {
@@ -923,7 +884,7 @@ export default function CustomizeCategoriesScreen() {
     // setCurrentType(currentCategory.type);
 
     try {
-      const storage = await loadSettingsStorage(global.storageKey);
+      const storage = await loadStorage(global.storageKey);
 
       const obj = searchByID(currentCategory.id, storage.categories);
 
@@ -931,9 +892,9 @@ export default function CustomizeCategoriesScreen() {
 
       setCurrentType(obj.type);
 
-      saveSettingsStorage(global.storageKey, storage);
+      saveStorage(global.storageKey, storage);
 
-      setData(storage.categories);
+      setFlatlistCategoryData(storage.categories);
 
       storeUserCategories(storage.categories);
       
@@ -958,7 +919,7 @@ export default function CustomizeCategoriesScreen() {
     setIsLoading(true);
 
     try {
-      const storage = await loadSettingsStorage(storageKey);
+      const storage = await loadStorage(storageKey);
 
       const obj = await searchByID(currentCategory.id, storage.categories);
 
@@ -966,9 +927,9 @@ export default function CustomizeCategoriesScreen() {
 
       obj.color = selectedColor.value
 
-      saveSettingsStorage(global.storageKey, storage);
+      saveStorage(global.storageKey, storage);
 
-      setData(storage.categories);
+      setFlatlistCategoryData(storage.categories);
 
       storeUserCategories(storage.categories);
       
@@ -1091,8 +1052,23 @@ export default function CustomizeCategoriesScreen() {
     <TouchableOpacity
       style={
         [
-          optionsPillStyle,
+          // optionsPillStyle,
           {
+            maxHeight: MAX_PILL_HEIGHT,
+                       minWidth: MIN_PILL_WIDTH,
+                       width: global.screenWidth/4,
+                       height: '60%', // 37,
+                       maxHeight: 50,
+             
+                       alignItems: 'center',
+                       justifyContent: 'center',
+             
+                       marginHorizontal: 4,
+                       marginVertical: 10,
+
+             
+                       borderRadius: 17,
+                       borderWidth: 1,
             borderColor: colors.offWhite,
             backgroundColor: 'transparent',
           }
@@ -1168,11 +1144,11 @@ export default function CustomizeCategoriesScreen() {
                      {
                        maxHeight: MAX_PILL_HEIGHT,
                        minWidth: MIN_PILL_WIDTH,
-                       maxWidth: MAX_PILL_WIDTH,
+                       width: global.screenWidth/4,
                        height: '60%', // 37,
                        maxHeight: 50,
              
-                       // alignItems: 'center',
+                       alignItems: 'center',
                        justifyContent: 'center',
              
                        marginHorizontal: 4,
@@ -1208,20 +1184,21 @@ export default function CustomizeCategoriesScreen() {
                          // styles.buttonStyle,
                          optionsPillStyle,
                          {
-                           // maxHeight: MAX_PILL_HEIGHT,
-                           // minWidth: MIN_PILL_WIDTH,
-                           // maxWidth: MAX_PILL_WIDTH,
-                           // height: '60%', // 37,
-                           // maxHeight: 50,
+                          maxHeight: MAX_PILL_HEIGHT,
+                       minWidth: MIN_PILL_WIDTH,
+                       width: global.screenWidth/4,
+                       height: '60%', // 37,
+                       maxHeight: 50,
              
-                           // // alignItems: 'center',
-                           // justifyContent: 'center',
+                       alignItems: 'center',
+                       justifyContent: 'center',
              
-                           // marginHorizontal: 4,
-                           // marginVertical: 10,
+                       marginHorizontal: 4,
+                       marginVertical: 10,
+
              
-                           // borderRadius: 17,
-                           // borderWidth: 1,
+                       borderRadius: 17,
+                       borderWidth: 1,
                            // borderStyle: 'solid',
                            borderColor: currentType === 'EXPENSE' ? 'transparent' : colors.pinkRed,
              
@@ -1290,7 +1267,7 @@ export default function CustomizeCategoriesScreen() {
 
   let view = (
     <SafeAreaView style={styles.container}>
-      <NavigationEvents onWillFocus={retrieveStoredCategories} />
+      
       <View
         style={{
           flex: 1,
@@ -1302,7 +1279,7 @@ export default function CustomizeCategoriesScreen() {
       <FlatList
 
         style={styles.table}
-        data={data}
+        data={flatlistCategoryData}
         renderItem={(item) => renderItem(item)}
         // renderItem={({ item }) => (
         //   <CellItem
@@ -1378,7 +1355,7 @@ export default function CustomizeCategoriesScreen() {
         
 
         {
-          showCreateCategoryButton && 
+          // showCreateCategoryButton && 
         
         <View style={{
           // flexDirection: 'column',
@@ -1396,8 +1373,6 @@ export default function CustomizeCategoriesScreen() {
           // borderStyle: 'solid',
         }}>
 
-
-
        
           <BlueButton
             icon={(<AntDesign name="addfile" size={24} color={colors.white} />)}
@@ -1411,7 +1386,6 @@ export default function CustomizeCategoriesScreen() {
         </View>
         
         }
-        
 
         <View style={{
           height: 10,
@@ -1423,76 +1397,19 @@ export default function CustomizeCategoriesScreen() {
           // borderStyle: 'solid',
         }} />
       </View>
-      {
-        isLoading && <View style={
-      {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right:  0,
-        opacity: 0.5,
-
-        zIndex:  1,
-
-        backgroundColor: colors.dark,
-
-      }
-    }><ActivityIndicator size="large" color={colors.white} /></View>
-      }
+    
       </View>
-{/*      {
-        // !isReady &&
-        // true &&
-        <ActivityIndicator color={colors.offWhite} size="small" />
-      }*/}
       {
         resetDialog
       }
-
     </SafeAreaView>
   );
-
-  // if (shouldShowDialog) {
-  //   return dialogBox;
-  // }
-
-  // if (shouldShowColorBox) {
-  //   return colorBox;
-  // }
-
-
-
-  // const appLoading = (
-  //   <View
-  //     style={
-  //       {
-  //         flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.darkTwo
-  //       }
-  //     }
-  //   >
-     
-  //     <AppLoading
-  //       startAsync={clearState}
-  //       onFinish={() => setIsReady(true)}
-  //       onError={console.warn}
-  //     />
-  //   </View>
-  // );
-
-  // if (isLoading) {
-  //   return appLoading;
-  // }
-
   return view;
 };
 
 CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   const promptUserForCategoryReset = async () => {
-    CustomizeCategoriesScreen.showDialog()
+    CustomizeCategoriesScreen.showDialog();
   };
   const navbar = {
     // headerTransparent: {},
@@ -1520,17 +1437,5 @@ CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
   return navbar;
 };
 
-CustomizeCategoriesScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
-CellItem.propTypes = {
-  id: PropTypes.string.isRequired,
-  name: PropTypes.string,
-  selected: PropTypes.bool.isRequired,
-  onSelect: PropTypes.func.isRequired,
-};
 
 // export default CustomizeCategoriesScreen;

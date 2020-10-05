@@ -1,3 +1,5 @@
+// SHARE US BUTTON
+// RATE US BUTTON
 import React from 'react';
 
 // import { AntDesign } from '@expo/vector-icons';
@@ -13,7 +15,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 // import PropTypes from 'prop-types';
 
 // ui colors
-import colors from '../../colors';
+import colors from 'src/colors';
 
 import styles from '../../styles';
 

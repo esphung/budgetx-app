@@ -3,7 +3,7 @@ import { dates } from './dates';
 import checkIfLeapYear from './checkIfLeapYear';
 
 Date.prototype.addDays = (days) => {
-  const date = new Date(this.valueOf());
+  const date = new Date()
   date.setDate(date.getDate() + days);
   return date;
 };
@@ -55,33 +55,53 @@ export default async function calculateMonthSpent(array) {
     if (months31days.includes(currentMonth)) {
       daysInMonth = 31;
     } else if (months30days.includes(currentMonth)) {
-      daysInMonth = 29;
+      daysInMonth = 30;
     }
-    try {
-      const lastDate = await firstDate.addDays(daysInMonth);
+
+    const lastDate = firstDate.addDays(daysInMonth);
+
+
+    // console.log('lastDate: ', lastDate);
+    // try {
+    //   const lastDate = await firstDate.addDays(daysInMonth);
 
       if (!lastDate) {
         balance = Number(0).toFixed(2);
         return balance;
-      }
-      // console.log('Last Date:', lastDate);
+      } else {
 
       array.forEach((element) => {
         // statements
-        if (dates.compare(element.date, firstDate) >= 0) {
+        if (new Date(element.date).getMonth() === new Date(firstDate).getMonth() + 1) {
           // console.log(dates.compare(element.date, lastDate));
-          if ((element.type) === 'EXPENSE') {
+          // console.log('new Date(element.date).getMonth(), new Date(firstDate).getMonth() + 1: ', new Date(element.date).getMonth(), new Date(firstDate).getMonth() + 1);
+          // if ((element.type) === 'EXPENSE') {
             // console.log(element.amount);
             // console.log('element.amount: ', Number(element.amount).toFixed(2));
             balance += Math.abs(element.amount);
-          }
+          // }
         }
       });
-    } catch (e) {
-      // statements
-      // console.log(e);
-      console.log('Error calculating month\'s spent balance:', e);
-    }
+        
+      }
+    //   // console.log('Last Date:', lastDate);
+
+    //   array.forEach((element) => {
+    //     // statements
+    //     if (dates.compare(element.date, firstDate) >= 0) {
+    //       // console.log(dates.compare(element.date, lastDate));
+    //       if ((element.type) === 'EXPENSE') {
+    //         // console.log(element.amount);
+    //         // console.log('element.amount: ', Number(element.amount).toFixed(2));
+    //         balance += Math.abs(element.amount);
+    //       }
+    //     }
+    //   });
+    // } catch (e) {
+    //   // statements
+    //   // console.log(e);
+    //   console.log('Error calculating month\'s spent balance:', e);
+    // }
   }
   // return balance.toFixed(2);
   return balance;

@@ -12,15 +12,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 import * as MailComposer from 'expo-mail-composer';
 
-import OfflineScreen from '../screens/OfflineScreen';
+import OfflineScreen from 'screens/OfflineScreen';
 
-import SpinnerMask from '../../src/components/SpinnerMask';
+import SpinnerMask from 'components/SpinnerMask';
 
-import HelpMessage from '../components/HelpMessage';
+import HelpMessage from 'components/HelpMessage';
 
 import { showMessage } from 'react-native-flash-message';
 
-import TouchableText from '../components/TouchableText';
+import TouchableText from 'components/TouchableText';
 
 import {
   TouchableOpacity,
@@ -45,15 +45,15 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import colors from '../../colors';
+import colors from 'src/colors';
 
 import styles from '../../styles';
 
-import isValidUsername from '../../src/functions/isValidUsername';
+import isValidUsername from 'functions/isValidUsername';
 
-import getButtonStyle from '../../src/functions/getButtonStyle';
+import getButtonStyle from 'functions/getButtonStyle';
 
-import isValidEmail from '../../src/functions/isValidEmail';
+import isValidEmail from 'functions/isValidEmail';
 
 // import uuidv4 from '../../src/functions/uuidv4';
 

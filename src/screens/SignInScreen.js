@@ -21,9 +21,9 @@ Amplify.configure(config);
 // Analytics.record({ name: "User authenticated!" });
 // console.log('Analytics recorded user authenticated!');
 
-import SpinnerMask from '../../src/components/SpinnerMask';
+import SpinnerMask from 'components/SpinnerMask';
 
-import HelpMessage from '../components/HelpMessage';
+import HelpMessage from 'components/HelpMessage';
 
 import {
   // StyleSheet,
@@ -43,7 +43,7 @@ import {
 // import the Analytics category
 import Analytics from '@aws-amplify/analytics';
 
-import { isDeviceOnline } from '../../network-functions';
+import { isDeviceOnline } from 'controllers/Network';
 
 import {
   Container,
@@ -64,7 +64,7 @@ import {
 import Auth from '@aws-amplify/auth';
 
 // ui colors
-import colors from '../../colors';
+import colors from 'src/colors';
 
 import styles from '../../styles';
 
@@ -111,7 +111,7 @@ function appleSignInCallback(authResult) {
 }
 */}
 
-function SignInScreen(props) {
+function SignInScreen({ navigation }) {
   // state hooks
   // const usernameInputRef = useRef(null);
 
@@ -119,7 +119,9 @@ function SignInScreen(props) {
 
   const emailInputRef = useRef(null);
 
-  const [email, setEmail] = useState(global.emailAddressInput);
+  const emailProps = navigation.getParam('email');
+
+  const [email, setEmail] = useState(emailProps);
 
   const [username, setUsername] = useState(global.emailAddressInput);
 
@@ -227,13 +229,13 @@ function SignInScreen(props) {
       await Auth.confirmSignUp(email, authCode)
         .then(() => {
           isSuccessful = true;
-          // props.navigation.navigate('SignIn');
+          // navigation.navigate('SignIn');
           setHelpMessage('Confirm successful!');
           // console.log('Confirm sign up successful');
           // Alert.alert('Confirm sign up successful');
           // global.isConfirmSent = false
           setIsConfirmVisible(false)
-          props.navigation.navigate('SignIn')
+          navigation.navigate('SignIn')
         })
         .catch((err) => {
           if (!err.message) {
@@ -375,18 +377,15 @@ function SignInScreen(props) {
   // methods
   const signIn = async () => {
     if (await isDeviceOnline() !== true) {
-      return
+      showMessage('No internet connection')
     }
-
     setIsLoading(true);
 
-  
-
     // console.log('userToken: ', userToken);
-    await AsyncStorage.setItem('userToken', String('')); 
+    AsyncStorage.setItem('userToken', String('')); 
     
-    // props.navigation.navigate('AuthLoading');
-    await Auth.signIn(email, password)
+    // navigation.navigate('AuthLoading');
+    Auth.signIn(email, password)
       .then(async (cognito) => {
         // console.log(cognito);
         if (cognito) {
@@ -406,7 +405,7 @@ function SignInScreen(props) {
           AsyncStorage.setItem('isFederated', JSON.stringify(false))
 
           AsyncStorage.setItem('authenticated', JSON.stringify(true))
-          props.navigation.navigate('AuthLoading');
+          navigation.navigate('AuthLoading');
           // setIsLoading(false);
         }
 
@@ -613,7 +612,7 @@ function SignInScreen(props) {
 
     setIsLoading(false);
 
-    props.navigation.navigate('AuthLoading');
+    navigation.navigate('AuthLoading');
 }
 
   const handleFacebookSignOut = async (userData) => {
@@ -648,23 +647,6 @@ function SignInScreen(props) {
         global.avatar = require('../../assets/avatar.png');
 
         AsyncStorage.setItem('isAppleSignedIn', JSON.stringify(false))
-
-
-        // console.log('Removed AsyncsStorage Variables ..');
-
-
-        // AsyncStorage.getAllKeys((err, keys) => {
-        //   AsyncStorage.multiGet(keys, (error, stores) => {
-        //     stores.map((result, i, store) => {
-        //       console.log({ [store[i][0]]: store[i][1] });
-        //       return true;
-        //     });
-        //   });
-        // });
-
-        // setHasRatedUs(false);
-
-        // setIsBackedUp(false)
 
         AsyncStorage.setItem('storageKey', JSON.stringify(''))
 
@@ -906,8 +888,8 @@ function SignInScreen(props) {
 
    });
 
-     // props.navigation.navigate('AuthLoading');
-  props.navigation.navigate('AuthLoading');
+     // navigation.navigate('AuthLoading');
+  navigation.navigate('AuthLoading');
 }
 
   const view = (
@@ -1172,7 +1154,7 @@ export default SignInScreen;
 
 //     //     .then(() => {
 //     //       isSuccessful = true;
-//     //       // props.navigation.navigate('SignIn');/
+//     //       // navigation.navigate('SignIn');/
 //     //       setHelpMessage('Confirm successful!');
 //     //       // console.log('Confirm sign up successful');
 //     //       // Alert.alert('Confirm sign up successful');
@@ -1222,7 +1204,7 @@ export default SignInScreen;
 
 
 //     setHelpMessage('Confirm successful!');
-//     props.navigation.navigate('Home');
+//     navigation.navigate('Home');
 //   }
 
 //   function handleAuthCodeInputSubmit(value) {
@@ -1353,7 +1335,7 @@ export default SignInScreen;
 //     // const userTokenValue = '123456789';
 //     // await AsyncStorage.setItem('userToken', userTokenValue);
 //     // // console.log('userToken set:', userTokenValue);
-//     // props.navigation.navigate('AuthLoading');
+//     // navigation.navigate('AuthLoading');
 //     await Auth.signIn(email, password)
 //       .then((cognito) => {
 //         // console.log(cognito);
@@ -1371,7 +1353,7 @@ export default SignInScreen;
 //           });
 
 
-//           props.navigation.navigate('AuthLoading');
+//           navigation.navigate('AuthLoading');
 //           // setIsLoading(false);
 //         }
 

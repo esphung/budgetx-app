@@ -42,15 +42,12 @@ export default function getFormattedDateString(date) {
 
   // console.log(getShortDate(transactionDate));
   // console.log(getShortDate(todaysDate));
-
-  if
-  (
-    getShortDate(transactionDate) === getShortDate(todaysDate)
-    // transactionDate.getDay() === todaysDate.getDay()
-    // && transactionDate.getMonth() === todaysDate.getMonth()
-    // && transactionDate.getFullYear() === todaysDate.getFullYear()
-  ) {
+  // console.log('transactionDate.getDate(): ', transactionDate.getDate());
+  // console.log('todaysDate.getDate() - 1: ', todaysDate.getDate() - 1);
+  if (getShortDate(transactionDate) === getShortDate(todaysDate) && transactionDate.getMonth()=== todaysDate.getMonth() && transactionDate.getFullYear() === todaysDate.getFullYear()) {
     day = 'Today';
+  } else if (transactionDate.getDate() === (todaysDate.getDate() - 1) && transactionDate.getMonth()=== todaysDate.getMonth() && transactionDate.getFullYear() === todaysDate.getFullYear()) {
+    day = 'Yesterday';
   }
 
   // return day+' - '+dd+'/'+mm+'/'+yyyy+' '+hours+':'+minutes;

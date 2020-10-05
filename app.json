@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme": "expoamplifytest",
+    "scheme": "financely",
     "githubUrl": "https://github.com/esphung/budgetx-app",
     "assetBundlePatterns": [
       "**/*"
@@ -11,7 +11,7 @@
       "bundleIdentifier": "com.ericphung.financely",
       "requireFullScreen": true,
       "isTabletOnly": false,
-      "usesAppleSignIn": true,
+      "usesAppleSignIn": false,
       "appStoreUrl": "https://apps.apple.com/us/app/financely/id1491309602",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Financely lets you choose an image for your profile."
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "com.ericphung.financely",
-      "versionCode": 41
+      "versionCode": 42
     },
     "name": "Financely",
     "orientation": "portrait",
@@ -29,7 +29,7 @@
       "web"
     ],
     "privacy": "public",
-    "sdkVersion": "36.0.0",
+    "sdkVersion": "39.0.0",
     "slug": "budgetx-app",
     "splash": {
       "image": "./assets/splashscreen-budgetx.png",
@@ -40,7 +40,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "version": "6.1.5",
+    "version": "6.1.7",
     "facebookScheme": "fb582566462305004",
     "facebookAppId": "582566462305004",
     "facebookDisplayName": "Financely App",

@@ -9,7 +9,7 @@ import ProfileUserImage from './ProfileUserImage';
 import UserNameEmailInput from './UserNameEmailInput';
 
 // ui colors
-import colors from '../../../colors';
+import colors from 'src/colors';
 
 // user profile rectangle
 const userProfileRectangle = {

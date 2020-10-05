@@ -1,13 +1,17 @@
 import {
   StyleSheet,
   Platform,
+  Dimensions,
 } from 'react-native';
 
-import colors from './colors';
+import colors from 'src/colors';
 
 // fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
 
+const screen = Dimensions.get('screen');
+
 export default StyleSheet.create({
+  // not  HOME
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -40,276 +44,164 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'dashed',
   },
-  normalMessage: {
-    // width: 'auto',
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 15,
-    // fontStyle: 'normal',
-    letterSpacing: 0.13,
-    color: colors.white,
+  // normalMessage: {
+  //   // width: 'auto',
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontSize: 15,
+  //   // fontStyle: 'normal',
+  //   letterSpacing: 0.13,
+  //   color: colors.white,
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
-  boldMessage: {
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
-    fontSize: 15,
-    // fontStyle: 'normal',
-    letterSpacing: 0.13,
-    color: colors.white,
-    fontWeight: '600',
-  },
-  /* Balance View */
-  balanceViewRectangle: {
-    width: '100%',
-    // alignItems: 'center',
-    // top: 70, // 70
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'dashed',
+  // },
+  // boldMessage: {
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
+  //   fontSize: 15,
+  //   // fontStyle: 'normal',
+  //   // letterSpacing: 0.13,
+  //   color: colors.white,
+  //   fontWeight: '600',
+  // },
+  // /* Balance View */
+  // balanceViewRectangle: {
+  //   width: '100%',
+  //   // alignItems: 'center',
+  //   // top: 70, // 70
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dotted',
-  },
-  balanceView: {
-    position: Platform.OS === 'ios' ? 'relative' : 'absolute',
-    width: '90%', // 346,
-    minWidth: 346,
-    // height: 74,
-    maxHeight: '95%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 9,
-    backgroundColor: colors.dark,
-    shadowColor: '#0f1725',
-    shadowOffset: {
-      width: 5,
-      height: 5,
-    },
-    shadowRadius: 16,
-    shadowOpacity: 1,
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'dotted',
+  // },
+  // balanceView: {
+  //   position: Platform.OS === 'ios' ? 'relative' : 'absolute',
+  //   width: '90%', // 346,
+  //   minWidth: 346,
+  //   // height: 74,
+  //   maxHeight: '95%',
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   borderRadius: 9,
+  //   backgroundColor: colors.dark,
+  //   shadowColor: '#0f1725',
+  //   shadowOffset: {
+  //     width: 5,
+  //     height: 5,
+  //   },
+  //   shadowRadius: 16,
+  //   shadowOpacity: 1,
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  separator: {
-    width: 1,
-    // height: '70%',
-    height: 50,
-    marginVertical: 10,
-    backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
-    opacity: 0.1,
-  },
-  currentBalanceTitle: {
-    // width: 113,
-    width: '100%',
-    // height: 20,
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
+  // separator: {
+  //   width: 1,
+  //   // height: '70%',
+  //   height: 50,
+  //   marginVertical: 10,
+  //   backgroundColor: colors.white, // 'rgba(0,0,0,0.5)',
+  //   opacity: 0.1,
+  // },
+  // currentBalanceTitle: {
+  //   // width: 113,
+  //   width: '100%',
+  //   // height: 20,
 
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 15,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.12,
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontSize: 15,
+  //   // fontWeight: 'normal',
+  //   // fontStyle: 'normal',
+  //   // letterSpacing: 0.12,
+  //   textAlign: 'center',
+  //   // textAlignVertical: 'top',
+  //   color: colors.shamrockGreen,
+
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
+  // currentSpentTitle: {
+  //   // width: 113,
+  //   width: '100%',
+  //   // height: 20,
+
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontSize: 15,
+  //   // fontWeight: 'normal',
+  //   // fontStyle: 'normal',
+  //   // letterSpacing: 0.12,
+  //   textAlign: 'center',
+  //   color: colors.pinkRed,
+
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
+  // currentBalanceValue: {
+  //   // width: 37,
+  //   width: '100%',
+  //   height: 30,
+
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontSize: 25,
+  //   // fontWeight: 'normal',
+  //   // fontStyle: 'normal',
+  //   // letterSpacing: 0.13,
+  //   textAlign: 'center',
+  //   color: colors.white,
+
+  //   // borderWidth: global.borderWidth,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
+  // currentSpentValue: {
+  //   // width: 37,
+  //   width: '100%',
+  //   height: 30,
+
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontSize: 25,
+  //   // fontWeight: 'normal',
+  //   // fontStyle: 'normal',
+  //   // letterSpacing: 0.13,
+  //   textAlign: 'center',
+  //   color: colors.white,
+
+  //   // borderWidth: global.borderWidth,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
+
+  // /* Transactions Table */
+  // emptyTableTitleStyle: {
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontWeight: '600',
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
+  // emptyTableMessageStyle: {
+  //   // width: 225,
+  //   // height: 84,
+  //   opacity: 0.65,
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontSize: 22,
+  //   textAlign: 'center',
+  //   color: colors.offWhite,
+
+  //   padding: 4,
+
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
+  numberBtnText: {
     textAlign: 'center',
-    // textAlignVertical: 'top',
-    color: colors.shamrockGreen,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  currentSpentTitle: {
-    // width: 113,
-    width: '100%',
-    // height: 20,
-
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 15,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.12,
-    textAlign: 'center',
-    color: colors.pinkRed,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  currentBalanceValue: {
-    // width: 37,
-    width: '100%',
-    height: 30,
-
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+    fontFamily: 'SFProDisplay-Regular',
     fontSize: 25,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.13,
-    textAlign: 'center',
-    color: colors.white,
-
-    // borderWidth: global.borderWidth,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  currentSpentValue: {
-    // width: 37,
-    width: '100%',
-    height: 30,
-
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 25,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.13,
-    textAlign: 'center',
-    color: colors.white,
-
-    // borderWidth: global.borderWidth,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-
-  /* Transactions Table */
-  emptyTableTitleStyle: {
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontWeight: '600',
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-  emptyTableMessageStyle: {
-    // width: 225,
-    // height: 84,
-    opacity: 0.65,
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 22,
-    textAlign: 'center',
-    color: colors.offWhite,
-
-    padding: 4,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
-
-  /* Amount Input */
-  amountInputView: {
-    flex: 1,
-    height: 46,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    backgroundColor: colors.dark,
-
-    paddingRight: 12,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dashed',
-  },
-  amountInputLabel: {
-    // flex: 0.9,
-    // flex: 1,
-
-
-    // width: '100%',
-    // height: '70%', // 30,
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 19,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.13,
-    color: colors.offWhite,
-
-    marginVertical: 8,
-    marginLeft: 12,
-
-    // paddingTop: 5,
-    // paddingLeft: 3,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dotted',
-  },
-  amountInputCurrency: {
-    // width: 200,
-    // height: '70%', // 30,
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 25,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.29,
-    textAlign: 'right',
-    color: '#ffffff',
-
-    // marginVertical: 8,
-    paddingRight: 6,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dotted',
-  },
-  amountInputSymbol: {
-    // width: '100%',
-    // height: '70%', // 30,
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: 25,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.29,
-    textAlign: 'center',
-    color: colors.offWhite,
-
-    // marginVertical: 8,
-    // marginRight: 12,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dotted',
-  },
-
-  /* keypad styles */
-  keypadRow: {
-    // flex: Platform.OS === 'ios' ? 0.25 : 0.3,
-    flex: 0.25,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-
-    // marginLeft: 4,
-    // marginRight: 4,
-
-    marginVertical: 1,
-
-    paddingVertical: 3,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'dotted',
-  },
-  numberKeyTitle: {
-    width: '100%', // 117,
-    // height: 30,
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontSize: Platform.OS === 'ios' ? 25 : 20,
-    // fontWeight: 'normal',
-    // fontStyle: 'normal',
-    // letterSpacing: 0.29,
-    textAlign: 'center',
-    shadowColor: '#0c1422',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowRadius: 0,
-    shadowOpacity: 1,
-    color: colors.white,
-
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
+    color: 'white',
   },
   addKeyView: {
     width: '100%', // 117,
@@ -393,12 +285,12 @@ export default StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  itemSymbolStyle: {
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
-    fontSize: 17,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-  },
+  // itemSymbolStyle: {
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Semibold',
+  //   fontSize: 17,
+  //   textAlign: 'center',
+  //   textAlignVertical: 'center',
+  // },
   input: {
     // alignItems: 'center',
     fontSize: 17,
@@ -523,6 +415,10 @@ export default StyleSheet.create({
   },
   innerSlide: {
     justifyContent: 'flex-end',
+
+    // borderWidth: 1,
+    // borderColor: 'white',
+    // borderStyle: 'solid',
   },
   textStyle: {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
@@ -542,24 +438,24 @@ export default StyleSheet.create({
     // borderColor: 'white',
     // borderStyle: 'solid',
   },
-  pillItemText: {
-    paddingHorizontal: 12,
+  // pillItemText: {
+  //   paddingHorizontal: 12,
 
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    // lineHeight: 28,
-    // lineHeight: 26,
-    letterSpacing: 0.12,
-    // textAlign: 'center',
+  //   fontFamily: Platform.OS === 'ios' ? 'System' : 'SFProDisplay-Regular',
+  //   fontWeight: 'normal',
+  //   fontStyle: 'normal',
+  //   // lineHeight: 28,
+  //   // lineHeight: 26,
+  //   letterSpacing: 0.12,
+  //   // textAlign: 'center',
 
-    fontSize: 17,
-    color: colors.white, // '#ffffff',
+  //   fontSize: 17,
+  //   color: colors.white, // '#ffffff',
 
-    // borderWidth: 1,
-    // borderColor: 'white',
-    // borderStyle: 'solid',
-  },
+  //   // borderWidth: 1,
+  //   // borderColor: 'white',
+  //   // borderStyle: 'solid',
+  // },
   calendarTextStyle: {
     // fontWeight: '600',
     // color: colors.white, // '#fff',
@@ -604,7 +500,7 @@ export default StyleSheet.create({
 
     // top: '10%',
 
-    // borderWidth: 2,
+    // borderWidth: 1,
     // borderColor: 'blue',
     // borderStyle: 'dashed',
 
@@ -640,7 +536,7 @@ export default StyleSheet.create({
     // borderRightWidth: 1,
     // borderRightColor: colors.dark,
     // borderRightColor: 'transparent',
-    // borderWidth: 3,
+    // borderWidth: 1,
     // borderColor: 'white',
     // borderStyle: 'dashed',
 

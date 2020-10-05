@@ -1,7 +1,7 @@
 const getUniqueId = (arr) => {
   const unique = arr.map(e => {
     // return (String(e['id']).toLowerCase()).trim()
-    return e['id'];
+    return e.id;
   })
   // store the keys of
   // the unique objects

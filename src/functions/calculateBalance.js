@@ -3,10 +3,14 @@ export default function calculateBalance(array) {
   if (array) {
     let i = array.length - 1;
     for (i; i >= 0; i -= 1) {
-      if (array[i].amount) {
-        // console.log(array[i].amount);
-        balance += array[i].amount;
+      const { amount } = array[i];
+      if (array[i].type === 'EXPENSE') {
+        balance -= Math.abs(amount);
+      } else {
+        balance += Math.abs(amount);
       }
+      // balance += amount;
+      
     }
   }
   // return balance.toFixed(2);

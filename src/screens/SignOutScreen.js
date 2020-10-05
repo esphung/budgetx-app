@@ -2,16 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 
-import { showMessage, hideMessage } from "react-native-flash-message";
+import { showMessage } from "react-native-flash-message";
 
 import Dialog from 'react-native-dialog';
 
 import {
-  setHasRatedUs,
-  setIsBackedUp,
   setUserToken,
   setStorageKey,
-  setAuthenticated,
 } from '../../globals'
 
 import {
@@ -19,7 +16,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Text,
-  SafeAreaView,
+  
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
@@ -38,7 +35,7 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import colors from '../../colors';
+import colors from 'src/colors';
 
 import styles from '../../styles';
 
@@ -254,13 +251,15 @@ function SignOutScreen({ navigation }) {
   );
 
   const view = (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, {
+      alignItems: 'center',
+    }]}>
     {
       shouldShowSignOutDialog && dialogBox
     }
       <StatusBar />
       <KeyboardAvoidingView
-        style={styles.container}
+        // style={styles.container}
         behavior="padding"
         enabled={false}
       >
@@ -269,10 +268,10 @@ function SignOutScreen({ navigation }) {
         style={
           {
             
-            flex: 1,
+            // flex: 1,
             justifyContent: 'center',
-            alignItems: 'center',
-            paddingBottom: 100,
+            // alignItems: 'center',
+            // paddingBottom: 100,
             // borderWidth: 2,
             // borderColor: 'white',
             // borderStyle: 'solid',
@@ -285,12 +284,12 @@ function SignOutScreen({ navigation }) {
         <Button
           style={
             [
-            styles.buttonStyle,
+              styles.buttonStyle,
               {
 
                 // flexDirection: 'row',
                 justifyContent: 'center',
-                // alignItems: 'center',
+                alignSelf: 'center',
 
             // borderWidth: 2,
             // borderColor: 'white',
@@ -305,7 +304,6 @@ function SignOutScreen({ navigation }) {
           <Text style={styles.buttonText}>
 
             Sign out
-
 
 
           </Text>
@@ -326,7 +324,7 @@ function SignOutScreen({ navigation }) {
       </Container>
       
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
   return view;
 }
