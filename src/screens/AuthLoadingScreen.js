@@ -1,28 +1,30 @@
 /*
 Edits:
-06/05/2020 06:00 PM | commented out
-                      AsyncStorage.setItem('authenticated', 'false');
-                      global.isFederated
-                      global.isApple.....
+06/05/2020 06:00 PM
 */
-
 import React, { useEffect } from 'react';
+
+import { LogBox } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-// AWS Amplify
-import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
+import { Auth } from 'aws-amplify';
 
-import { getAuthentication, getCognitoIdentity } from '../controllers/Network';
+import { getAuthentication, getCognitoIdentity } from 'controllers/Network';
 
-import SpinnerMask from '../components/SpinnerMask';
+import SpinnerMask from 'components/SpinnerMask';
 
-import uuidv4 from '../functions/uuidv4';
+import uuidv4 from 'functions/uuidv4';
 
-const AuthLoadingScreen = (props) => {
+// Ignore log notification by message:
+LogBox.ignoreLogs(['not authenticated']);
+
+const AuthLoadingScreen = ({ navigation }) => {
   async function retrieveCognitoUserToken() {
-    let userToken = await AsyncStorage.getItem('userToken');
     global.authenticated = await AsyncStorage.getItem('authenticated');
+
+    let userToken = await AsyncStorage.getItem('userToken');
+
     if (userToken) {
       // console.log('Local Storage userToken: ', userToken);
       global.storageKey = await AsyncStorage.getItem('storageKey');
@@ -35,7 +37,7 @@ const AuthLoadingScreen = (props) => {
           userToken = cognito.signInUserSession.accessToken.jwtToken;
           global.storageKey = AsyncStorage.getItem('storageKey');
           // console.log('storageKey: ', global.storageKey);
-        });
+        })
       userToken = await AsyncStorage.getItem('userToken');
     }
     return userToken;
@@ -68,11 +70,8 @@ const AuthLoadingScreen = (props) => {
     const hasSeenIntro = await AsyncStorage.getItem('hasSeenIntro');
     // console.log('hasSeenIntro: ', hasSeenIntro);
 
-    if (!hasSeenIntro) {
-      props.navigation.navigate('MyAppIntroSlider');
-    }
-    // global.showGlobalValues()
-    props.navigation.navigate(userToken ? 'App' : 'Auth');
+    if (!hasSeenIntro) navigation.navigate('MyAppIntroSlider');
+    navigation.navigate(userToken ? 'App' : 'Auth');
   }
   useEffect(() => {
     loadApp();

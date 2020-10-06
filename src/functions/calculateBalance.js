@@ -5,6 +5,7 @@ export default function calculateBalance(array) {
     for (i; i >= 0; i -= 1) {
       const { amount } = array[i];
       if (array[i].type === 'EXPENSE') {
+        // console.log('array[i].amount: ', array[i].amount);
         balance -= Math.abs(amount);
       } else {
         balance += Math.abs(amount);

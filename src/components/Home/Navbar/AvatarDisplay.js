@@ -24,9 +24,9 @@ import Storage from '@aws-amplify/storage';
 
 import Dialog from 'react-native-dialog';
 
-import { getAuthentication, isDeviceOnline } from 'controllers/Network';
+import { getAuthentication, isDeviceOnline } from '../../../controllers/Network';
 
-import { pickImage, getPermissionAsync } from 'controllers/ImageController';
+import { pickImage, getPermissionAsync } from '../../../controllers/ImageController';
 
 // ui colors
 import colors from 'src/colors';
@@ -109,7 +109,7 @@ function AvatarDisplay({ style, avatarImage }) {
 
       saveStorage(global.storageKey, storage);
 
-      const avatar = { uri: imageResult.uri };
+      global.avatar = { uri: imageResult.uri };
 
       setImage(avatar);
       // const imageName = imageResult.uri.replace(/^.*[\\\/]/, '');

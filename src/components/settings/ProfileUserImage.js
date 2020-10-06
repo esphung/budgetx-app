@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
 // };
 
 function ProfileUserImage({ style, avatarImage, }) {
-  const [image, setImage] = useState(global.avatar);
+  const [image, setImage] = useState(avatarImage);
 
   const [isReady, setIsReady] = useState(true);
 
@@ -216,7 +216,7 @@ function ProfileUserImage({ style, avatarImage, }) {
 
                 saveStorage(global.storageKey, settings);
 
-                global.avatar = { uri: settings.user.image_url };
+                setImage({ uri: settings.user.image_url });
 
                 // setImage(global.avatar);
 
@@ -241,9 +241,7 @@ function ProfileUserImage({ style, avatarImage, }) {
 
     saveStorage(global.storageKey, settings);
 
-    global.avatar = { uri: settings.user.image_url };
-
-    setImage(global.avatar);
+    setImage({ uri: settings.user.image_url });
 
     setIsLoading(false);
 
@@ -254,9 +252,9 @@ function ProfileUserImage({ style, avatarImage, }) {
     if (!(await getAuthentication())) return;
     // try {
     /* Get local stored user image */
-    const storage = await loadStorage(global.storageKey);
+    // const storage = await loadStorage(global.storageKey);
     // console.log('storage: ', storage.user);
-    global.avatar = { uri: storage.user.image_url };
+    // setImage({ uri: storage.user.image_url });
     // setImage(global.avatar);
     // setIsReady(true);
     // setIsLoading(false);
@@ -270,7 +268,7 @@ function ProfileUserImage({ style, avatarImage, }) {
         // setIsLoading(true)
         const stored = await Storage.get(`@${global.storageKey}/picture.jpg`, { level: 'public' });
         // console.log('stored: ', stored);
-        global.avatar = ({ uri: stored });
+        setImage({ uri: stored });
         const settings = await loadStorage(global.storageKey);
         settings.user.image_url = stored;
 
@@ -287,7 +285,7 @@ function ProfileUserImage({ style, avatarImage, }) {
     }
     setIsReady(true);
     setIsLoading(false);
-    setImage(global.avatar);
+    // setImage(global.avatar);
   };
   // const handleChooseImage = () => {
   //   const options = {
@@ -346,9 +344,11 @@ function ProfileUserImage({ style, avatarImage, }) {
   const imageView = (
     <TouchableOpacity onPress={imagePressed}>
       <View style={[styles.userImageMaskView, style]}>
-        <ImageBackground style={styles.userImage} source={global.defaultAvatar}>
-          <Image style={styles.userImage} source={image} />
-        </ImageBackground>
+        {/*<ImageBackground style={styles.userImage} source={global.defaultAvatar}>*/}
+          {
+            (image && !isLoading) ? <Image style={styles.userImage} source={image} /> : <Image style={styles.userImage} source={global.defaultAvatar} />
+          }
+        {/*</ImageBackground>*/}
       </View>
 
     </TouchableOpacity>

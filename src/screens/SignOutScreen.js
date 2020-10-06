@@ -113,8 +113,7 @@ function SignOutScreen({ navigation }) {
 
   // Sign out from the app
   const signOut = async () => {
-    // global.showGlobalValues();
-    await Auth.signOut().then((succ) => {
+    await Auth.signOut().then(async (succ) => {
       // setUserToken('');
 
       // setStorageKey('');
@@ -156,11 +155,12 @@ function SignOutScreen({ navigation }) {
       // AsyncStorage.removeItem('isLoginEnabled');
 
       // // AsyncStorage.removeItem('isUserAuthenticated');
+
       AsyncStorage.removeItem('authenticated');
 
       AsyncStorage.removeItem('someBoolean');
 
-      // AsyncStorage.removeItem('hasSeenIntro');
+      AsyncStorage.removeItem('hasSeenIntro');
 
       // AsyncStorage.removeItem('hasSeenCreateNewCategoryToolTip')
 
@@ -168,9 +168,10 @@ function SignOutScreen({ navigation }) {
       // global.storageKey = '';
 
       // // global.isUserAuthenticated = false;
-      // global.authenticated = false;
 
-      global.avatar = require('../../assets/avatar.png');
+      global.authenticated = false;
+
+      global.avatar =  global.defaultAvatar; // require('../../assets/avatar.png');
 
 
       // // console.log('Removed AsyncsStorage Variables ..');
@@ -189,20 +190,20 @@ function SignOutScreen({ navigation }) {
 
       // setIsBackedUp(false)
 
-      // AWS.config.credentials = null
+      // AsyncStorage.setItem('storageKey', JSON.stringify(''));
 
-      AsyncStorage.setItem('storageKey', JSON.stringify(''))
-
-      Auth.signOut({ global: true })
+      Auth.signOut({ global: true });
 
       navigation.navigate('AuthLoading');
+
+      
 
       // navigation.popToTop()
 
       // global.showGlobalValues();
 
       // // console.log('Sign out complete');
-      // showMessage('Signed out');
+      showMessage('Signed out');
     })
     .catch((err) => console.log('Error while signing out!', err));
 

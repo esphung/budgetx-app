@@ -29,10 +29,25 @@ import {
 
 import filterCategories from 'functions/filterCategories';
 
+import Storage from '@aws-amplify/storage';
+
+export async function getS3ProfileImage(key) {
+  /* Try to get online image */
+  // global.storageKey
+  // key
+  try {
+    let stored = await Storage.get(`@${key}/picture.jpg`, { level: 'public' });
+    return stored;
+  } catch (e) {
+    throw ('can\'t get s3 image error:', e);
+    return global.defaultAvatar;
+  }
+}
+
 // check if user device is connected to internet
 export const isDeviceOnline = async () => {
   const bool = await NetInfo.fetch().then((state) => state.isConnected);
-  // if (!bool) showMessage({ message: 'Where is the internet?', type: 'danger' });
+  if (!bool) showMessage({ message: 'No internet', type: 'danger' });
   // console.log("Connection type", state.type);
   // console.log('Is connected?', state.isConnected);
   return bool;

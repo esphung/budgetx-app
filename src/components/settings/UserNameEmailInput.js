@@ -69,6 +69,8 @@ const spinnerView = (
 function UserNameEmailInput(props) {
   const { navigation } = props;
 
+  const isUserLoggedIn = navigation.getParam('isUserLoggedIn')
+
   const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
 
   const [idLabelText, setCurrentIdText] = useState('Id');
@@ -745,7 +747,7 @@ function UserNameEmailInput(props) {
 
           onChangeText={handleEmailChange}
 
-          // editable={global.authenticated}
+          editable={!isUserLoggedIn}
           // editable={false}
 
           value={email}

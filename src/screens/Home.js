@@ -37,6 +37,8 @@ import { NavigationEvents } from 'react-navigation';
 import styles from 'styles/Home';
 
 // Home Components
+// import SpinnerMask from 'components/SpinnerMask';
+
 import Navbar from 'components/Home/Navbar';
 
 import BalanceView from 'components/Home/BalanceView';
@@ -72,33 +74,34 @@ import calculateMonthSpent from 'functions/calculateMonthSpent';
 
 // import filterOutNewestTransactions from 'functions/filterOutNewestTransactions';
 
-import filterCategories from 'functions/filterCategories';
+// import filterCategories from 'functions/filterCategories';
 
-import getUniqueId from 'functions/getUniqueId';
+// import getUniqueId from 'functions/getUniqueId';
 
 /* my custom queries */
-import {
-  DeleteTransaction,
-  DeletePayee,
-  // DeleteCategory,
-} from '../storage/my_queries';
+// import {
+//   // DeleteTransaction,
+//   // DeletePayee,
+//   // DeleteCategory,
+// } from '../storage/my_queries';
+
+// import {
+//   // UpdateCategory,
+//   // AddCategory,
+//   // ListCategories,
+// } from '../queries/Category';
+
+// import {
+//   // UpdatePayee,
+//   // AddPayee,
+// } from '../queries/Payee';
 
 import {
-  UpdateCategory,
-  AddCategory,
-  ListCategories,
-} from '../queries/Category';
-
-import {
-  UpdatePayee,
-  AddPayee,
-} from '../queries/Payee';
-
-import {
-  isDeviceOnline,
-  getAuthentication,
+  // isDeviceOnline,
+  // getAuthentication,
   // syncCategories,
   // getCognitoIdentity,
+  getS3ProfileImage,
 } from '../controllers/Network';
 
 import {
@@ -107,11 +110,11 @@ import {
   // storeUserCategories,
 } from '../controllers/Storage';
 
-import {
-  UpdateTransaction,
-  AddTransaction,
-  ListTransactions,
-} from '../queries/Transaction';
+// import {
+//   UpdateTransaction,
+//   // AddTransaction,
+//   // ListTransactions,
+// } from '../queries/Transaction';
 
 LogBox.ignoreLogs([
   '[Unhandled promise rejection: Error: Native splash screen is already hidden. Call this method before rendering any view.]',
@@ -133,9 +136,24 @@ const LONG_TABLE_HEIGHT = (screen.height * 0.4); //  (screen.height * 0.8) // sc
 
 const BOTTOM_SHEET_RESET_POSITION = screen.height - (screen.height / 2.5);
 
-const BOTTOM_SHEET_FULL_DISPLAY_POSITION = screen.height / 4;
+// const BOTTOM_SHEET_FULL_DISPLAY_POSITION = screen.height / 4;
 
 const SLIDE_DURATIONS = 500;
+
+// const spinnerMask = (
+//   <View
+//     style={{
+//       position: 'absolute',
+//       top: 0,
+//       bottom: 0,
+//       left: 0,
+//       right: 0,
+//       opacity: 0.2,
+//     }}
+//   >
+//     <SpinnerMask />
+//   </View>
+// );
 
 export default function Home({ navigation }) {
   const [currentTransactions, setCurrentTransactions] = useState([]);
@@ -158,7 +176,9 @@ export default function Home({ navigation }) {
 
   const [visible, setVisible] = useState(false);
 
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [isSyncing] = useState(false);
+
+  // const [isLoading, setIsLoading] = useState(false);
 
   const [currentTableHeight, setCurrentTableHeight] = useState(SHORT_TABLE_HEIGHT);
 
@@ -180,7 +200,7 @@ export default function Home({ navigation }) {
 
   const fadeAnim = useRef(new Animated.Value(300)).current;
 
-  const [tableRefreshes, setTableRefreshes] = useState(0);
+  // const [tableRefreshes, setTableRefreshes] = useState(0);
 
   const fadeIn = () => {
     // Will change fadeAnim value to 1 in 5 seconds
@@ -211,22 +231,22 @@ export default function Home({ navigation }) {
     setCurrentNote('');
     fadeIn();
   };
-  const updateDatabaseTransaction = async (transaction) => {
-    /* if online and logged in, update online transaction */
-    if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
-      // setIsUpdatingTransaction(true); // to show activity indicator
-      try {
-        UpdateTransaction(transaction);
-        UpdateCategory(transaction.category);
-        UpdatePayee(transaction.payee);
-        // console.log('response: ', response);
-        // setIsUpdatingTransaction(false);
-      } catch {
-        // statements
-        // setIsUpdatingTransaction(false);
-      }
-    }
-  };
+  // const updateDatabaseTransaction = async (transaction) => {
+  //   /* if online and logged in, update online transaction */
+  //   if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
+  //     // setIsUpdatingTransaction(true); // to show activity indicator
+  //     try {
+  //       UpdateTransaction(transaction);
+  //       UpdateCategory(transaction.category);
+  //       UpdatePayee(transaction.payee);
+  //       // console.log('response: ', response);
+  //       // setIsUpdatingTransaction(false);
+  //     } catch {
+  //       // statements
+  //       // setIsUpdatingTransaction(false);
+  //     }
+  //   }
+  // };
   const resetSlideView = useCallback(
     () => {
       setCurrentSlidePosition('RESET');
@@ -247,36 +267,26 @@ export default function Home({ navigation }) {
     },
     [],
   );
-  const hideSlideView = useCallback(
-    () => {
-      alert('message?: DOMString');
-      // setCurrentTransaction(null);
-      // setCurrentSlidePosition('HIDDEN');
-      Animated.timing(
-        panY, // fadeAnim, // slideViewBounceValue,
-        {
-          toValue: screen.height * 1.5, // 1, // Dimensions.get('screen').height,
-          duration: SLIDE_DURATIONS,
-          // velocity: 105,
-          // tension: 2,
-          // friction: 8,
-          // useNativeDriver: true,
-        },
-      ).start(fadeIn());
-    },
-    [],
-  );
-  // const fetchOnlineResources = async () => {
-  //    const online_transactions = await ListTransactions();
-  //    // console.log('online_transactions.length: ', online_transactions.length);
-
-  //    let list = online_transactions.filter((item) => {
-  //      // console.log('item: ', item);
-  //      if (!item.payee || !item.category) DeleteTransaction(item);
-  //      return currentTransactions.find((element) => element !== item);
-  //    });
-  // };
-  const save = async () => {
+  // const hideSlideView = useCallback(
+  //   () => {
+  //     alert('message?: DOMString');
+  //     // setCurrentTransaction(null);
+  //     // setCurrentSlidePosition('HIDDEN');
+  //     Animated.timing(
+  //       panY, // fadeAnim, // slideViewBounceValue,
+  //       {
+  //         toValue: screen.height * 1.5, // 1, // Dimensions.get('screen').height,
+  //         duration: SLIDE_DURATIONS,
+  //         // velocity: 105,
+  //         // tension: 2,
+  //         // friction: 8,
+  //         // useNativeDriver: true,
+  //       },
+  //     ).start(fadeIn());
+  //   },
+  //   [],
+  // );
+  const saveTramsactions = async () => {
     await loadStorage(global.storageKey)
       .then((storage) => {
         storage.transactions = currentTransactions;
@@ -292,6 +302,47 @@ export default function Home({ navigation }) {
     //   });
     // }
   };
+  const fetchData = async () => {
+    // const online_transactions = await ListTransactions();
+    // // console.log('online_transactions.length: ', online_transactions.length);
+
+    // let list = online_transactions.filter((item) => {
+    //   // console.log('item: ', item);
+    //   if (!item.payee || !item.category) DeleteTransaction(item);
+    //   return currentTransactions.find((element) => element !== item);
+    // });
+    Auth.currentAuthenticatedUser()
+      .then(async (cognito) => {
+        global.storageKey = cognito.attributes.sub;
+
+        const bucketImageUrl = await getS3ProfileImage(cognito.attributes.sub);
+        // console.log('bucketImageUrl: ', bucketImageUrl);
+        setAvatarImage({ uri: bucketImageUrl });
+        // console.log('cognito: ', cognito);
+
+        await loadStorage(cognito.attributes.sub)
+          .then((result) => {
+            result.user.id = cognito.attributes.sub;
+            result.user.email = cognito.attributes.email;
+            result.user.email_verified = cognito.attributes.email_verified;
+            result.user.name = cognito.attributes.name;
+            result.user.sub = cognito.attributes.sub;
+            result.user.image_url = bucketImageUrl;
+
+            setBoldMessage((result.user.name) ? result.user.name : ((result.isDeviceSyncEnabled) ? 'Cross-Device Sync Enabled' : 'Cross-Device Sync Disabled'));
+
+            setNormalMessage(result.user.email);
+
+            setCurrentTransactions(result.transactions);
+
+            setCurrentCategories(result.categories);
+
+            setIsDeviceSyncEnabled(result.isDeviceSyncEnabled);
+
+            setIsUserLoggedIn(true);
+          });
+      });
+  };
   const retrieveUserStoredSettings = async () => {
     await loadStorage(global.storageKey)
       .then((storage) => {
@@ -299,12 +350,14 @@ export default function Home({ navigation }) {
         global.storageKey = storage.user.id;
 
         // update state variables
-        // setIsUserLoggedIn(false);
-        // setIsDeviceSyncEnabled(storage.isDeviceSyncEnabled);
+        setIsUserLoggedIn(false);
+
+        setIsDeviceSyncEnabled(storage.isDeviceSyncEnabled);
 
         setAvatarImage({ uri: storage.user.image_url });
 
         if (storage.user.name) setBoldMessage(storage.user.name);
+
         if (storage.user.email) setNormalMessage(storage.user.email);
 
         // set displayed transactions
@@ -313,151 +366,13 @@ export default function Home({ navigation }) {
         setCurrentCategories(storage.categories);
 
         saveStorage(global.storageKey, storage);
-
-      })
-    await Auth.currentAuthenticatedUser()
-      .then(async (cognito) => {
-      //   // if (cognito) {
-      //   // setIsUserLoggedIn(true);
-      //   setIsSyncing(false);
-        global.storageKey = cognito.attributes.sub;
-        await loadStorage(global.storageKey)
-          .then((result) => {
-            // global.storageKey = cognito.attributes.sub;
-      //       // saveStorage(global.storageKey, storage);
-      //       await loadStorage(global.storageKey, storage)
-      //         .then(async (result) => {
-      //           result.isUserLoggedIn = true;
-      //           setIsUserLoggedIn(true);
-
-      //           // console.log('cognito: ', cognito);
-
-                result.user.id = cognito.attributes.sub;
-                result.user.email = cognito.attributes.email;
-                result.user.email_verified = cognito.attributes.email_verified;
-                result.user.name = cognito.attributes.name;
-                result.user.sub = cognito.attributes.sub;
-
-                setCurrentTransactions(result.transactions);
-
-                setCurrentCategories(result.categories);
-
-      //           setIsDeviceSyncEnabled(result.isDeviceSyncEnabled);
-
-                setAvatarImage({ uri: result.user.image_url });
-
-      //           setBoldMessage((result.user.name) ? `${result.user.name}` : `Cross-device sync ${(result.isDeviceSyncEnabled) ? 'enabled' : 'disabled'}`);
-
-                // if (result.user.email) setNormalMessage(result.user.email);
-
-      //           // Begin Device Sync
-      //           // setIsSyncing(true);
-
-      //           // Sync transactions
-      //           if (await isDeviceOnline()) {
-      //             if (result.isDeviceSyncEnabled !== true) return;
-
-      //             const online_transactions = await ListTransactions();
-      //             // console.log('online_transactions: ', online_transactions);
-      //             const merged = result.transactions.concat(online_transactions);
-
-      //             const unique = getUniqueId(merged);
-
-      //             // console.log('online_transactions.length: ', online_transactions.length);
-      //             // console.log('unique.length: ', unique.length);
-      //             // console.log('merged.length: ', merged.length);
-
-      //             result.transactions = unique;
-
-      //             // console.log('result.transactions: ', result.transactions);
-
-      //             setCurrentTransactions(result.transactions);
-
-                  // saveStorage(global.storageKey, result);
-
-      //             // console.log('result.transactions: ', result.transactions);
-
-      //             // reloadTransactions();
-
-      //             // setIsSyncing(false);
-
-      //             // result.transactions.forEach((transaction) => UpdateTransaction(transaction));
-      //           }
-      //           // sync categories
-      //           if (await isDeviceOnline()) {
-      //             if (result.isDeviceSyncEnabled !== true) return;
-
-      //             const online_categories = await ListCategories();
-      //             // console.log('online_categories: ', online_categories);
-
-      //             const mergedCategories = result.categories.concat(online_categories);
-
-      //             const uniqueCategories = getUniqueId(mergedCategories);
-
-      //             const merged = filterCategories(result.categories, online_categories);
-
-      //             result.categories = merged; // uniqueCategories;
-
-      //             // console.log('result.categories: ', result.categories);
-
-      //             setCurrentCategories(result.categories);
-
-      //             saveStorage(global.storageKey, result);
-
-      //             // console.log('result.categories: ', result.categories);
-
-      //             // reloadCategories();
-
-      //             // setIsSyncing(false);
-
-      //             // result.categories.forEach((category) => UpdateCategory(category));
-      //           }
-      //         });
-          });
-      //   setIsSyncing(false);
-      })
-      // .catch(async () => {
-        // load unauthenticated user storage
-        // await loadStorage(global.storageKey)
-        //   .then((storage) => {
-        //     // update user attributes
-        //     global.storageKey = storage.user.id;
-
-        //     // update state variables
-        //     setIsUserLoggedIn(false);
-
-        //     setIsDeviceSyncEnabled(storage.isDeviceSyncEnabled);
-
-        //     setAvatarImage({ uri: storage.user.image_url });
-
-        //     if (storage.user.name) setBoldMessage(storage.user.name);
-
-        //     if (storage.user.email) setNormalMessage(storage.user.email);
-
-        //     // set displayed transactions
-        //     setCurrentTransactions(storage.transactions);
-
-        //     // set displayed categories
-        //     setCurrentCategories(storage.categories);
-
-        //     setIsSyncing(false);
-        //   });
-      // });
-
-
-
-      // LOAD ONLINE RESOURCES
-      // fetchOnlineResources();
+      });
   };
-  // const clearState = () => {
-  //   setCurrentTransaction(null);
-  //   setCurrentCategory(null);
-  //   setCurrentAmount(0.00);
-  //   setCurrentDate(new Date());
-  //   setCurrentNote('');
-  //   hideSlideView();
-  // };
-  const loadResources = () => retrieveUserStoredSettings();
+
+  const loadResources = () => {
+    retrieveUserStoredSettings();
+    fetchData();
+  };
   const updateTransactionDate = (date) => {
     currentTransaction.date = date;
     setShouldRefresh(true);
@@ -545,9 +460,9 @@ export default function Home({ navigation }) {
     await loadStorage(global.storageKey).then(async (storage) => {
       navigation.navigate('Settings', {
         storage,
-        isDeviceSyncEnabled: storage.isDeviceSyncEnabled,
+        isDeviceSyncEnabled,
         setIsDeviceSyncEnabled,
-        isUserLoggedIn: await getAuthentication(),
+        isUserLoggedIn,
       });
     });
   };
@@ -561,12 +476,12 @@ export default function Home({ navigation }) {
       setShouldRefresh(false);
 
       // PERFORMANCE TESTING
-      setTableRefreshes(tableRefreshes + 1);
-      console.log('Refreshed table..:', tableRefreshes);
+      // setTableRefreshes(tableRefreshes + 1);
+      // console.log('Refreshed table..:', tableRefreshes);
     }
     return () => {
       setShouldRefresh(false);
-      save();
+      saveTramsactions();
       loadCurrentBalances();
     };
   }, [shouldRefresh]);
@@ -609,10 +524,7 @@ export default function Home({ navigation }) {
   };
   const view = (
     <View style={styles.container}>
-      <NavigationEvents
-        onWillBlur={loadResources}
-        onWillFocus={loadResources}
-      />
+      <NavigationEvents onWillBlur={loadResources} onWillFocus={loadResources} />
       <StatusBar style={statusBarStyle.type} />
       <Navbar
         boldMessage={boldMessage}
@@ -635,35 +547,32 @@ export default function Home({ navigation }) {
           currentTransaction={currentTransaction}
           key={currentTransactions}
           transactionBtnPressed={transactionBtnPressed}
-          // deleteBtnPressed={(transaction) => deleteBtnPressed(transaction)}
           deleteBtnPressed={deleteBtnPressed}
-          // updateStoredTransaction={(item) => updateStoredTransaction(item)}
           isSyncing={isSyncing}
           onPullRefresh={onPullRefresh}
           shouldRefresh={shouldRefresh}
         />
       </View>
-      {/* Transaction Input Panel */}
-        <Animated.View
-          style={[
-            // styles.fadingContainer,
-            {
-              opacity: fadeAnim, // Bind opacity to animated value
-            },
-            styles.southPanelWithShadows,
+      <Animated.View
+        style={[
+          {
+            opacity: fadeAnim, // Bind opacity to animated value
+          },
+          styles.southPanelWithShadows,
 
-          ]}
-        >
-          <TransactionInputPanel
-            addBtnPressed={createNewTransaction}
-            categoryBtnPressed={categoryBtnPressed}
-            currentCategories={currentCategories}
-            isCurrentCategory={isCurrentCategory}
-            inputAmountValue={currentAmount}
-            numberBtnPressed={numberBtnPressed}
-            backspaceBtnPressed={backspaceBtnPressed}
-          />
-        </Animated.View>
+        ]}
+      >
+        <TransactionInputPanel
+          addBtnPressed={createNewTransaction}
+          categoryBtnPressed={categoryBtnPressed}
+          currentCategories={currentCategories}
+          isCurrentCategory={isCurrentCategory}
+          inputAmountValue={currentAmount}
+          numberBtnPressed={numberBtnPressed}
+          backspaceBtnPressed={backspaceBtnPressed}
+          isAmountInputEditable={false}
+        />
+      </Animated.View>
 
       <BottomSheet
         visible={visible}
@@ -687,7 +596,9 @@ export default function Home({ navigation }) {
           currentDate={currentDate}
         />
       </BottomSheet>
-
+      {
+        // isLoading && spinnerMask
+      }
     </View>
   );
   return view;

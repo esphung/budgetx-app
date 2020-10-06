@@ -31,7 +31,7 @@ import {
 
 import {
   resetData,
-} from '../controllers/Storage';
+} from 'controllers/Storage';
 
 import ProfileRectangle from '../components/settings/ProfileRectangle';
 
@@ -43,7 +43,7 @@ import BlueButton from '../components/BlueButton';
 
 // import colors from '../../colors';
 
-import styles from '../styles/Settings';
+import styles from 'styles/Settings';
 
 const spinner = (
   <View
@@ -71,15 +71,13 @@ const spinner = (
 function SettingsScreen({ navigation }) {
   const storage = navigation.getParam('storage');
 
- 
-
   const setIsDeviceSyncEnabled = navigation.getParam('setIsDeviceSyncEnabled');
 
-  
+  const isUserLoggedIn = navigation.getParam('isUserLoggedIn');
 
   // const setIsUserLoggedIn = navigation.getParam('setIsUserLoggedIn');
 
-  const [currentTransactions] = useState(storage.transactions);
+  const currentTransactions = navigation.getParam('storage').transactions;
 
   const [isExportTransactionsDisabled] = useState(currentTransactions.length <= 0);
 
@@ -238,7 +236,7 @@ function SettingsScreen({ navigation }) {
     {
       storage,
       currentCategories: storage.categories,
-      isUserLoggedIn: storage.isUserLoggedIn,
+      isUserLoggedIn: isUserLoggedIn,
       isDeviceSyncEnabled: storage.isDeviceSyncEnabled,
     },
   );
@@ -286,12 +284,12 @@ function SettingsScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.rectangle5} />
       <View style={styles.topPanel}>
-        <ProfileRectangle />
+        <ProfileRectangle isUserLoggedIn={isUserLoggedIn} />
       </View>
       {/* SUBSCRIPTION PANEL */}
       <View style={styles.subscriptionPanel}>
         <SubscriptionRect
-          isUserLoggedIn={storage.isUserLoggedIn}
+          isUserLoggedIn={isUserLoggedIn}
           isDeviceSyncEnabled={storage.isDeviceSyncEnabled}
           onPress={subscriptionPanelPressed}
           setIsDeviceSyncEnabled={setIsDeviceSyncEnabled}
@@ -303,7 +301,7 @@ function SettingsScreen({ navigation }) {
           isExportTransactionsDisabled={isExportTransactionsDisabled}
           onPress={onPress}
           isRestoreDisabled={isRestoreDisabled}
-          isUserLoggedIn={storage.isUserLoggedIn}
+          isUserLoggedIn={isUserLoggedIn}
         />
       </View>
 

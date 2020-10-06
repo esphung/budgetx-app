@@ -9,4 +9,4 @@ const uuidv4 = () => {
 
 // console.log('uuidv4(): ', uuidv4());
 
-module.exports = uuidv4;
+export default uuidv4;

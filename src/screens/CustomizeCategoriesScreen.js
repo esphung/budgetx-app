@@ -104,7 +104,7 @@ import {
   // getTransactionByID,
   // ListCategories,
   // removeCategory,
-  DeleteCategory,
+  // DeleteCategory,
 } from '../storage/my_queries';
 
 import {
@@ -116,6 +116,7 @@ import {
   UpdateCategory,
   AddCategory,
   ListCategories,
+  DeleteCategory,
 } from '../queries/Category';
 
 import { getCrayolaColors } from '../data/crayola';

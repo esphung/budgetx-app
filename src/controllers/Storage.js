@@ -37,7 +37,7 @@ const DEFAULT_STORAGE = async (key) => {
   const settings = new Settings(key);
 
   // Stash user session token for auto sign in
-  const userToken = `${global.storageKey}@session${defaultCategories()}`;
+  const userToken = `${global.storageKey}@session${uuidv4()}`;
 
   AsyncStorage.setItem('userToken', userToken);
   return settings;
@@ -69,32 +69,46 @@ export const storeUserCategories = async (list) => {
     throw new Error(error);
   }
 };
-
+export const resetCategories = async () => {
+  const list = defaultCategories();
+  await loadStorage(global.storageKey)
+    .then((result) => {
+      result.categories = list;
+      saveStorage(global.storageKey, result);
+    });
+};
+export const resetTransactions = async () => {
+  const list = [];
+  await loadStorage(global.storageKey)
+    .then((result) => {
+      result.transactions = list;
+      saveStorage(global.storageKey, result);
+    });
+};
 export const resetData = async () => {
-  await loadStorage(global.storageKey).then(async (storage) => {
+  await loadStorage(global.storageKey).then((storage) => {
 
-    let {
-      categories,
-      transactions,
-      payees,
-      isDeviceSyncEnabled,
-    } = storage;
+    // let {
+    //   categories,
+    //   transactions,
+    //   payees,
+    //   isDeviceSyncEnabled,
+    // } = storage;
     
-    // do stuff online
-    if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
-      transactions.forEach((element) => DeleteTransaction(element));
-      categories.forEach((element) => DeleteCategory(element));
-      payees.forEach((element) => DeletePayee(element));
-    }
+    // // do stuff online
+    // if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
+    //   transactions.forEach((element) => DeleteTransaction(element));
+    //   categories.forEach((element) => DeleteCategory(element));
+    //   payees.forEach((element) => DeletePayee(element));
+    // }
 
     // ddo local storage stuff
-    storage.categories = defaultCategories();
+    resetCategories();
 
-    storage.transactions = [];
-
-    storage.payees = [];
+    resetTransactions();
 
     saveStorage(global.storageKey, storage); // .then(() => navigation.navigate('AuthLoading'));
+    // console.log('storage: ', storage);
   });
 
 

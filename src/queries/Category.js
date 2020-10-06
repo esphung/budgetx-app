@@ -166,6 +166,7 @@ const query = `mutation AddCategory {
 };
 
 export const UpdateCategory = async (category) => {
+  if (!category.id) alert(JSON.stringify(category))
 const query = `mutation UpdateCategory {
   updateCategory(input: {
     id: ${'"'+category.id+'"'}

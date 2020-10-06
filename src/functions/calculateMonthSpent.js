@@ -21,7 +21,7 @@ Date.prototype.addDays = (days) => {
 
 export default async function calculateMonthSpent(array) {
   // console.log('array: ', array);
-  let balance = 0;
+  let balance = 0.00;
   if (array) {
     //  get last 30 days
     const currentDate = new Date(); // TESTING: new Date(2018, 11, 24); // new Date();
@@ -78,7 +78,10 @@ export default async function calculateMonthSpent(array) {
           // if ((element.type) === 'EXPENSE') {
             // console.log(element.amount);
             // console.log('element.amount: ', Number(element.amount).toFixed(2));
-            balance += Math.abs(element.amount);
+            if (element.type === 'EXPENSE') {
+              balance += Math.abs(element.amount);
+              // console.log('Math.abs(element.amount): ', Math.abs(element.amount));
+            }
           // }
         }
       });
