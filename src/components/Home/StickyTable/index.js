@@ -269,7 +269,7 @@ const StickyTable = ({
           <StickyTableCell
             keyExtractor={(transaction) => transaction.id}
             item={item}
-            onPress={() =>  scrollToItem(item)}
+            onPress={() => transactionBtnPressed(item)} // {() =>  scrollToItem(item)}
             onLongPress={() => transactionBtnPressed(item)}
             currentTransaction={currentTransaction}
           />

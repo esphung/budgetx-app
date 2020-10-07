@@ -3,11 +3,8 @@ import {
 } from 'react-native';
 
 import app from './app.json';
-/**
-|--------------------------------------------------
-| storage variables
-|--------------------------------------------------
-*/
+
+// storage variaables
 global.bucketName = 'profilepicturesbucketbudgetxbudgetxenv-budgetxenv/';
 
 global.storageKey = 'CURRENT_USER';

@@ -57,7 +57,7 @@ const spinner = (
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#ddd',
-        opacity: 0.05,
+        opacity: 0.08,
         height: global.screenHeight,
       }
     }
@@ -98,19 +98,26 @@ function SettingsScreen({ navigation }) {
 
   const handleCancel = () => setShowResetDialogBox(false);
 
-  const resetNavigationBack = () => {
+  const resetNavigationBack = async () => {
+    setIsResetingData(true);
     // 2nd code goes here
-    resetData();
+    await resetData().then(() => setIsResetingData(false))
+    // .catch(() => setIsResetingData(false))
     // console.log('uh oh 2');
-    setIsResetingData(false);
+    handleRoute('AuthLoading');
+
+    
+    
   };
   const okBtnPressed = () => {
     // 1st code goes here
-    setIsResetingData(true);
+    // setIsResetingData(true);
     // console.log('uh oh 1'),
     resetNavigationBack();
     // Back to Hoome screenif logged in
-    handleRoute('AuthLoading');
+    // handleRoute('AuthLoading');
+
+    // setIsResetingData(false)
   };
   const inputFocus = (ref) => ref.current.focus();
 

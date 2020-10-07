@@ -59,7 +59,8 @@ import BlueButton from '../components/BlueButton';
 import {
   loadStorage,
   saveStorage,
-} from '../controllers/Storage';
+  updateUserTransactionCategories,
+} from 'controllers/Storage';
 
 // import CustomSwipeCell from '../components/CustomSwipeCell';
 
@@ -134,21 +135,21 @@ function negToPos(num) {
 
 
 const pushAllCategoriesToCloud = async () => {
-  Auth.currentAuthenticatedUser()
-    .then(async () => {
-      try {
-        const storage = await loadStorage(global.storageKey);
+  // Auth.currentAuthenticatedUser()
+  //   .then(async () => {
+  //     try {
+  //       const storage = await loadStorage(global.storageKey);
 
-        const { categories } = storage;
+  //       const { categories } = storage;
 
-        categories.forEach((category) => {
-          UpdateCategory(category);
-        });
-      } catch (e) {
-        // statements
-        console.log(e);
-      }
-    });
+  //       categories.forEach((category) => {
+  //         UpdateCategory(category);
+  //       });
+  //     } catch (e) {
+  //       // statements
+  //       console.log(e);
+  //     }
+  //   });
 };
 
 function getFlatListDataFromObject(obj) {
@@ -238,18 +239,23 @@ export default function CustomizeCategoriesScreen({ navigation }) {
       console.log(e);
     }
   };
-
   const resetCategories = async () => {
-    deleteAllOnlineCategories().then(async () => {
-      const list = defaultCategories();
+    // deleteAllOnlineCategories().then(async () => {
+      
       await loadStorage(global.storageKey).then((result) => {
+        const list = defaultCategories();
+
         result.categories = list;
 
         saveStorage(global.storageKey, result);
 
         reloadCategories();
+
+        updateUserTransactionCategories(list);
+
+        clearState();
       });
-    });
+    // });
   };
   const showCategoryEditing = () => {
     setShowCreateCategoryButton(false);
@@ -290,7 +296,18 @@ export default function CustomizeCategoriesScreen({ navigation }) {
     </Dialog.Container>
   );
   CustomizeCategoriesScreen.showDialog = () => {
-    setDialogVisible(true);
+    // setDialogVisible(true);
+      showMessage({
+        message: 'Reset All Categories?',
+        description: 'Press to confirm',
+        type: 'danger',
+        floating: true,
+        position: 'bottom',
+        onPress: () => {
+          /* THIS FUNC/CB WILL BE CALLED AFTER MESSAGE PRESS */
+          resetCategories();
+        },
+      });
   };
   const reloadCategories = async () => {
     // setIsLoading(true);
@@ -397,58 +414,6 @@ export default function CustomizeCategoriesScreen({ navigation }) {
 
     saveStorage(global.storageKey, storage);
   };
-  const updateUserTransactionCategories = async (list) => {
-    // let success = false;
-    const storage = await loadStorage(global.storageKey);
-
-    // let { categories } = storage;
-
-    // update all of the user's transactions 'categories
-    storage.categories = list;
-
-    // setFlatlistCategoryData(list);
-
-    storage.transactions.forEach(async (transaction) => {
-      /* Upddate transaction category */
-      let categoryFound = searchByID(transaction.category.id, list)
-      // transaction.category = searchByID(transaction.category.id, list);
-
-      if (!categoryFound) {
-        categoryFound = searchByName(transaction.category.name, list)
-      }
-
-      transaction.category = categoryFound
-
-      /* Update transaction type */
-      transaction.type = transaction.category.type;
-
-      /* Adjust inaccurate amounts to new category type */
-      if (transaction.type === 'EXPENSE') {
-        transaction.amount = posToNeg(transaction.amount)
-      } else if (transaction.type === 'INCOME') {
-        transaction.amount = negToPos(transaction.amount)
-      }
-
-      if (await getAuthentication()) {
-      await ListCategories().then(async (online_categories) => {
-          let found = searchByID(transaction.category.id, online_categories);
-          if (found) UpdateCategory(transaction.category);
-          else {
-            found = searchByName(transaction.category.name, online_categories);
-            transaction.category = found
-            await UpdateCategory(transaction.category);
-          }
-
-          await UpdateTransaction(transaction);
-
-        })
-      }
-
-
-    });
-    saveStorage(storageKey, storage);
-  };
-
   const filterCategories = (local, online) => {
   let items = local.concat(online);
   // let keys = ['id', 'name','version'];
@@ -909,7 +874,7 @@ export default function CustomizeCategoriesScreen({ navigation }) {
     } catch(e) {
       // statements
       console.log('error updating category type:', e);
-      setIsLoading(false);
+      // setIsLoading(false);
 
       clearState();
     }
@@ -1409,7 +1374,7 @@ export default function CustomizeCategoriesScreen({ navigation }) {
 };
 
 CustomizeCategoriesScreen.navigationOptions = ({ navigation }) => {
-  const promptUserForCategoryReset = async () => {
+  const promptUserForCategoryReset = () => {
     CustomizeCategoriesScreen.showDialog();
   };
   const navbar = {

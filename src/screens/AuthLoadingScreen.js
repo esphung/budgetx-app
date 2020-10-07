@@ -10,11 +10,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import { Auth } from 'aws-amplify';
 
-import { getAuthentication, getCognitoIdentity } from 'controllers/Network';
+import { getAuthentication, getCognitoIdentity } from 'src/controllers/Network';
 
-import SpinnerMask from 'components/SpinnerMask';
+import SpinnerMask from 'src/components/SpinnerMask';
 
-import uuidv4 from 'functions/uuidv4';
+import uuidv4 from 'src/functions/uuidv4';
+
+// import colorLog from 'src/functions/colorLog';
 
 // Ignore log notification by message:
 LogBox.ignoreLogs(['not authenticated']);
@@ -28,6 +30,8 @@ const AuthLoadingScreen = ({ navigation }) => {
     if (userToken) {
       // console.log('Local Storage userToken: ', userToken);
       global.storageKey = await AsyncStorage.getItem('storageKey');
+      // colorLog(global.storageKey);
+
       // console.log('Local Storage userToken: ', userToken.substring(0, 25), '...');
     } else {
       // get current authenticated user

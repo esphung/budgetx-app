@@ -2,13 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 
-import { showMessage } from "react-native-flash-message";
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 import Dialog from 'react-native-dialog';
 
 import {
+  setHasRatedUs,
+  setIsBackedUp,
   setUserToken,
   setStorageKey,
+  setAuthenticated,
 } from '../../globals'
 
 import {
@@ -16,7 +19,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Text,
-  
+  SafeAreaView,
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
@@ -35,7 +38,7 @@ import {
 // AWS Amplify
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
-import colors from 'src/colors';
+import colors from '../../colors';
 
 import styles from '../../styles';
 
@@ -113,7 +116,8 @@ function SignOutScreen({ navigation }) {
 
   // Sign out from the app
   const signOut = async () => {
-    await Auth.signOut().then(async (succ) => {
+    // global.showGlobalValues();
+    await Auth.signOut().then((succ) => {
       // setUserToken('');
 
       // setStorageKey('');
@@ -155,12 +159,11 @@ function SignOutScreen({ navigation }) {
       // AsyncStorage.removeItem('isLoginEnabled');
 
       // // AsyncStorage.removeItem('isUserAuthenticated');
-
       AsyncStorage.removeItem('authenticated');
 
       AsyncStorage.removeItem('someBoolean');
 
-      AsyncStorage.removeItem('hasSeenIntro');
+      // AsyncStorage.removeItem('hasSeenIntro');
 
       // AsyncStorage.removeItem('hasSeenCreateNewCategoryToolTip')
 
@@ -168,10 +171,9 @@ function SignOutScreen({ navigation }) {
       // global.storageKey = '';
 
       // // global.isUserAuthenticated = false;
+      // global.authenticated = false;
 
-      global.authenticated = false;
-
-      global.avatar =  global.defaultAvatar; // require('../../assets/avatar.png');
+      global.avatar = require('../../assets/avatar.png');
 
 
       // // console.log('Removed AsyncsStorage Variables ..');
@@ -190,20 +192,20 @@ function SignOutScreen({ navigation }) {
 
       // setIsBackedUp(false)
 
-      // AsyncStorage.setItem('storageKey', JSON.stringify(''));
+      // AWS.config.credentials = null
 
-      Auth.signOut({ global: true });
+      AsyncStorage.setItem('storageKey', JSON.stringify(''))
+
+      Auth.signOut({ global: true })
 
       navigation.navigate('AuthLoading');
-
-      
 
       // navigation.popToTop()
 
       // global.showGlobalValues();
 
       // // console.log('Sign out complete');
-      showMessage('Signed out');
+      // showMessage('Signed out');
     })
     .catch((err) => console.log('Error while signing out!', err));
 
@@ -252,15 +254,13 @@ function SignOutScreen({ navigation }) {
   );
 
   const view = (
-    <View style={[styles.container, {
-      alignItems: 'center',
-    }]}>
+    <SafeAreaView style={styles.container}>
     {
       shouldShowSignOutDialog && dialogBox
     }
       <StatusBar />
       <KeyboardAvoidingView
-        // style={styles.container}
+        style={styles.container}
         behavior="padding"
         enabled={false}
       >
@@ -269,10 +269,10 @@ function SignOutScreen({ navigation }) {
         style={
           {
             
-            // flex: 1,
+            flex: 1,
             justifyContent: 'center',
-            // alignItems: 'center',
-            // paddingBottom: 100,
+            alignItems: 'center',
+            paddingBottom: 100,
             // borderWidth: 2,
             // borderColor: 'white',
             // borderStyle: 'solid',
@@ -285,11 +285,12 @@ function SignOutScreen({ navigation }) {
         <Button
           style={
             [
-              styles.buttonStyle,
+            styles.buttonStyle,
               {
 
-                // flexDirection: 'row',
+                flexDirection: 'row',
                 justifyContent: 'center',
+                alignItems: 'center',
                 alignSelf: 'center',
 
             // borderWidth: 2,
@@ -305,6 +306,7 @@ function SignOutScreen({ navigation }) {
           <Text style={styles.buttonText}>
 
             Sign out
+
 
 
           </Text>
@@ -325,7 +327,7 @@ function SignOutScreen({ navigation }) {
       </Container>
       
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
   return view;
 }

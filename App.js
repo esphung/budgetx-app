@@ -24,6 +24,8 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import SwitchNavigator from 'navigators/SwitchNavigator';
 
+// import * as ScreenOrientation from 'expo-screen-orientation';
+
 const cacheImages = (images) => {
   const cache = images.map((image) => {
     if (typeof image === 'string') {
@@ -41,7 +43,10 @@ export default function App() {
       <NavigationContainer>
         <SwitchNavigator />
         {/* GLOBAL FLASH MESSAGE COMPONENT INSTANCE */}
-        <FlashMessage position="top" />
+        <FlashMessage
+          position="top"
+          floating
+        />
       </NavigationContainer>
     </NetworkProvider>
   );
@@ -52,6 +57,8 @@ export default function App() {
   });
 
   const loadAssetsAsync = async () => {
+    // await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+
     const imageAssets = cacheImages([
       global.settingsIcon,
       global.xIconWhite,
@@ -68,7 +75,7 @@ export default function App() {
       <AppLoading
         startAsync={loadAssetsAsync}
         onFinish={() => setImagesLoaded(true)}
-        // onError={console.warn}
+        onError={console.warn}
       />
     );
   }

@@ -148,7 +148,7 @@ const BottomSheet = ({
 
 const styles = StyleSheet.create({
   container: {
-    height: screen.height * 0.75, // 700,
+    height: screen.height * 0.7, // 700,
     // borderTopRightRadius: 12,
     // borderTopLeftRadius: 12,
   },

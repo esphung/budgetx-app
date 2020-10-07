@@ -2,6 +2,8 @@ import API, { graphqlOperation } from '@aws-amplify/api';
 
 // import gql from 'graphql-tag';
 
+import colorLog from 'functions/colorLog';
+
 // WORKING !!!
 
 import {
@@ -10,6 +12,7 @@ import {
 
 import {
   // UpdatePayee,
+  ListPayees,
   AddPayee,
 } from './Payee';
 
@@ -83,12 +86,15 @@ export const ListTransactions = async () => {
     // console.log('graphqldata.data.listTransactions.items.length: ', graphqldata.data.listTransactions.items.length);
     list = graphqldata.data.listTransactions.items;
     // console.log('online categories list.length: ', list.length);
+    // console.log('list.filter((item) => !item.payee)): ', list.filter((item) => !item.payee));
+    // let noPayeesList = list.filter((item) => !item.payee);
+    // console.log('await ListPayees(): ', await ListPayees());
     return list;
   } catch (err) {
     console.log('error fetching user transactions from online: ', err);
-    return err;
+    // return err;
   }
-  return list;
+  // return list;
 };
 
 
@@ -105,7 +111,7 @@ mutation AddTransaction {
     transactionCategoryId: ${'"'+transaction.category.id+'"'}
     type: ${'"'+transaction.type+'"'}
     note: ${'"'+transaction.note+'"'}
-    version: ${0}
+    version: ${transaction.version}
   }) {
     id
     date
@@ -133,24 +139,28 @@ mutation AddTransaction {
   `;
   try {
     let response = await API.graphql(graphqlOperation(query));
-    // console.log('transaction successfully added:', transaction);
-    return response.data.createTransaction;
+    colorLog({ message: 'transaction successfully added:' + transaction.id, color: 'yellow' });
+    // return response.data.createTransaction;
+    // console.log('response: ', response);
+    return transaction;
   } catch (err) {
-    const { message } = err;
-    console.log('error adding transaction:', message);
-    return err.message;
+    // const { message } = err;
+    // throw err;
+    // console.log('error adding transaction:', message);
+    // return err.message;
   }
 };
 
 
 export const UpdateTransaction = async (transaction) => {
-  // if (!transaction.payee) {
-  //   let payee = new Payee({
-  //     owner: transaction.id
-  //   });
-  //   AddPayee(payee);
+  if (!transaction.payee) {
+    let payee = new Payee({
+      owner: transaction.owner,
+      name: transaction.note,
+    });
+    AddPayee(payee);
   //   transaction.payee = payee;
-  // }
+  }
   // console.log('transaction.category: ', transaction.category);
   // let found = await GetCategory(transaction.category)
   // console.log('found: ', found);
@@ -195,14 +205,15 @@ mutation UpdateTransaction {
   try {
     let response = await API.graphql(graphqlOperation(query));
     // console.log('transaction successfully updated:', transaction);
+    colorLog({ message: 'transaction successfully updated:' + transaction.id, color: 'green' });
     return response.data.updateTransaction;
   } catch (err) {
     // const { message } = err;
     // console.log('error updating transaction:', err);
     // return err.message;
     // console.log('query: ', query);
-    // throw err
-    console.log('transaction: ', transaction);
+    throw err
+    // console.log('transaction: ', transaction);
     // AddTransaction(transaction);
   }
 };
@@ -210,7 +221,7 @@ mutation UpdateTransaction {
 export const DeleteTransaction = async (transaction) => {
   try {
     await API.graphql(graphqlOperation(deleteTransaction, { input: { id: transaction.id } }));
-    // console.log('transaction successfully deleted.', transaction.id);
+    console.log('transaction successfully deleted.', transaction.id);
   } catch (err) {
     console.log('error deleting transaction...', err);
   }

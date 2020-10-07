@@ -52,6 +52,8 @@ mutation AddCategory {
 
 import API, { graphqlOperation } from '@aws-amplify/api';
 
+import colorLog from 'functions/colorLog';
+
 import {
   deleteCategory,
 } from '../graphql/mutations';
@@ -96,7 +98,7 @@ import {
 export const ListCategories = async () => {
     const listCategorys = `
 query ListCategories {
-  listCategorys (limit: 1000) {
+  listCategorys {
     items {
       id
       name
@@ -153,20 +155,28 @@ const query = `mutation AddCategory {
     version
   }
 }`
-  try {
-    const response = await API.graphql(graphqlOperation(query));
-    // console.log('category successfully added:', category);
-    return response.data.createCategory;
-  } catch (err) {
-    console.log('err: ', err);
+  // try {
+    const response = await API.graphql(graphqlOperation(query)).then((response) => {
+      colorLog({ message: 'category successfully added:' + category.id, color: 'yellow' });
+      return response.data.createCategory;
+    }).catch((err) => {
+      // console.log('err: ', err);
+      return category;
+    })
+    
+  // } catch (err) {
+    // console.log('err: ', err);
     // console.log('query: ', query);
-    const { message } = err;
-    return err;
-  }
+    // const { message } = err;
+    // return err;
+    // if (err.data.errors[0].errorType === 'DynamoDB:ConditionalCheckFailedException') {
+    //   colorLog({ message: err.data.errors[0].errorType, color: 'yellow' });
+    // }
+  // }
 };
 
 export const UpdateCategory = async (category) => {
-  if (!category.id) alert(JSON.stringify(category))
+  console.log('category: ', category);
 const query = `mutation UpdateCategory {
   updateCategory(input: {
     id: ${'"'+category.id+'"'}
@@ -184,22 +194,23 @@ const query = `mutation UpdateCategory {
     version
   }
 }`
-  // try {
+  try {
     const response = await API.graphql(graphqlOperation(query));
     // console.log('category successfully updated:', category);
+    colorLog({ message: 'category successfully updated:' + category.id, color: 'green' });
     return response.data.updateCategory;
-  // } catch (err) {
+  } catch (err) {
   //   console.log('category: ', category);
   //   // const { message } = err;
-  //   // console.log('error updating category:', message);
+    colorLog({ message: 'error updating category...' + category.id, color: 'red' });
   //   // return err.message;
-  // }
+  }
 };
 
 export const DeleteCategory = async (category) => {
   try {
     await API.graphql(graphqlOperation(deleteCategory, { input: { id: category.id } }));
-    // console.log('category successfully deleted.', category.id);
+    console.log('category successfully deleted.', category.id);
   } catch (err) {
     console.log('error deleting category...', err);
   }

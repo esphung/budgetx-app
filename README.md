@@ -39,7 +39,12 @@ yarn add -D eslint-import-resolver-babel-module eslint-plugin-import babel-plugi
 # <!-- Slide  View Swiping -->
 yarn add react-native-swipe-gestures
 
+expo install expo-screen-orientation
+
+```
+
 #  Start Expo Application
+```shell
 expo start -c
 ```
 

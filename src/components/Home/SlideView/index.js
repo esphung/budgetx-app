@@ -1,6 +1,6 @@
 // Slide View Layout
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 import {
   View,
@@ -56,9 +56,27 @@ const SlideView = ({
 
   const noteTextInputRef = useRef(null);
 
-  // const inputFocus = (ref) => {
-  //   ref.current.focus();
-  // };
+  const focusOnNoteInput = () => {
+    inputFocus(noteTextInputRef);
+  };
+  const focusOnAmountInput = () => {
+    inputFocus(amountInputRef);
+  };
+
+  const inputFocus = (ref) => {
+    ref.current.focus();
+  };
+  // useEffect(() => {
+  //   // console.log('amountInputRef: ', amountInputRef);
+  //   // if (amountInputRef) inputFocus(amountInputRef)
+  //   focusOnNoteInput()
+  //   return () => {
+  //     // effect
+  //   };
+  // }, []);
+
+  const [isFocusedNoteInput, setIsFocusedNoteInput] = useState(false);
+
   const view = (
     <SafeAreaView
       style={{
@@ -85,7 +103,9 @@ const SlideView = ({
         </View>
       </TouchableOpacity>
       <View style={styles.card}>
-        <View style={styles.scrollingPillsFlatlist}>
+        {
+          isFocusedNoteInput &&
+          <View style={styles.scrollingPillsFlatlist}>
           <ScrollingPills
             categoryBtnPressed={categoryBtnPressed}
             currentCategories={currentCategories}
@@ -94,21 +114,28 @@ const SlideView = ({
             updateTransactionCategory={updateTransactionCategory}
           />
         </View>
+      }
         <View style={styles.noteTextInput}>
           <NoteTextInput
             refField={noteTextInputRef}
+            inputFocus={inputFocus}
             currentNote={currentNote}
             updateTransactionNote={updateTransactionNote}
             setCurrentNote={setCurrentNote}
+            focusOnAmountInput={focusOnAmountInput}
+            setIsFocusedNoteInput={setIsFocusedNoteInput}
+            isFocusedNoteInput={isFocusedNoteInput}
           />
         </View>
         <View style={styles.amountInput}>
           <AmountInput
             refField={amountInputRef}
+            inputFocus={inputFocus}
             handleAmountInputChange={handleAmountInputChange}
             currentAmount={currentAmount}
             setCurrentAmount={setCurrentAmount}
             updateTransactionAmount={updateTransactionAmount}
+            focusOnNoteInput={focusOnNoteInput}
           />
         </View>
         <View>

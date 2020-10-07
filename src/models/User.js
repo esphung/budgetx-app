@@ -6,7 +6,7 @@ CREATED:   12/01/2019 12:35 AM
 UPDATED:
 */
 
-import uuidv4 from '../functions/uuidv4';
+import uuidv4 from 'functions/uuidv4';
 
 // User function with multiple constructors
 export default function User(id) {

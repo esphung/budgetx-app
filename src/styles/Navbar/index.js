@@ -4,20 +4,11 @@ import colors from 'src/colors';
 
 const screen = Dimensions.get('screen');
 
-module.exports = StyleSheet.create({
+export default StyleSheet.create({
   navbar: {
-    // justifyContent: 'space-between',
-    // flex: 0.08,
     height: screen.height * 0.07, // 60,
     marginTop: Platform.OS === 'android' ? 0 : 50,
     paddingHorizontal: 5,
-    // top: 0,
-    // left: 0,
-    // right: 0,
-    // bottom: 0,
-    // width: global.screenWidth,
-    // height: 50,
-
     flexDirection: 'row',
     // alignItems: 'flex-end',
     // alignItems: 'center',
@@ -130,7 +121,6 @@ module.exports = StyleSheet.create({
     // flex: 0.5,
     // height: 50,
     // maxHeight: 50,
-    // width: (screenWidth)/(2),
     flexDirection: 'row',
     alignItems: 'center',
     // justifyContent: 'center',

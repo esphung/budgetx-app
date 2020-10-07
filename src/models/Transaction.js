@@ -29,7 +29,7 @@ function Transaction({
     amount: amount,
     owner: owner,
     payee: new Payee({
-      owner: uuid,
+      name: '',
     }),
     category: category,
     type: type,

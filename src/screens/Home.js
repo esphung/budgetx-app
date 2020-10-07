@@ -6,17 +6,17 @@ CREATED:    Thu Oct 31 23:17:49 2019
 */
 import React,
 {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
+	useState,
+	useEffect,
+	useCallback,
+	useRef,
 } from 'react';
 
 import {
-  View,
-  Animated,
-  Dimensions,
-  LogBox,
+	View,
+	Animated,
+	Dimensions,
+	LogBox,
 } from 'react-native';
 
 // import Auth from '@aws-amplify/auth';
@@ -24,13 +24,11 @@ import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 // import AsyncStorage from '@react-native-community/async-storage';
 
-// import { showMessage } from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 
 import { StatusBar } from 'expo-status-bar';
 
 import { NavigationEvents } from 'react-navigation';
-
-// import GestureRecognizer from 'react-native-swipe-gestures';
 
 // import colors from 'src/colors';
 
@@ -62,15 +60,19 @@ import SlideView from 'components/Home/SlideView';
 // data models
 import Transaction from 'models/Transaction';
 
-// import Category from 'models/Category';
+import Payee from 'models/Payee';
 
 import calculateBalance from 'functions/calculateBalance';
 
 import calculateMonthSpent from 'functions/calculateMonthSpent';
 
-// import searchByID from 'functions/searchByID';
+import colorLog from 'src/functions/colorLog';
 
-// import incrementVersion from 'functions/incrementVersion';
+import searchByID from 'functions/searchByID';
+
+// import searchByName from 'functions/searchByName';
+
+// import findTransactionArrayDifferences from 'functions/findTransactionArrayDifferences';
 
 // import filterOutNewestTransactions from 'functions/filterOutNewestTransactions';
 
@@ -85,45 +87,48 @@ import calculateMonthSpent from 'functions/calculateMonthSpent';
 //   // DeleteCategory,
 // } from '../storage/my_queries';
 
-// import {
-//   // UpdateCategory,
-//   // AddCategory,
-//   // ListCategories,
-// } from '../queries/Category';
-
-// import {
-//   // UpdatePayee,
-//   // AddPayee,
-// } from '../queries/Payee';
+import {
+	UpdateCategory,
+	AddCategory,
+	ListCategories,
+	DeleteCategory,
+} from 'queries/Category';
 
 import {
-  // isDeviceOnline,
-  // getAuthentication,
-  // syncCategories,
-  // getCognitoIdentity,
-  getS3ProfileImage,
-} from '../controllers/Network';
+	UpdatePayee,
+	AddPayee,
+	DeletePayee,
+} from 'queries/Payee';
 
 import {
-  loadStorage,
-  saveStorage,
-  // storeUserCategories,
-} from '../controllers/Storage';
+	isDeviceOnline,
+	getAuthentication,
+	// syncCategories,
+	// getCognitoIdentity,
+	getS3ProfileImage,
+} from 'controllers/Network';
 
-// import {
-//   UpdateTransaction,
-//   // AddTransaction,
-//   // ListTransactions,
-// } from '../queries/Transaction';
+import {
+	loadStorage,
+	saveStorage,
+	// storeUserCategories,
+} from 'controllers/Storage';
+
+import {
+	UpdateTransaction,
+	AddTransaction,
+	ListTransactions,
+	DeleteTransaction,
+} from 'queries/Transaction';
 
 LogBox.ignoreLogs([
-  '[Unhandled promise rejection: Error: Native splash screen is already hidden. Call this method before rendering any view.]',
-  'Animated: `useNativeDriver`',
-  'Animated.event now requires a second argument for options',
+	'[Unhandled promise rejection: Error: Native splash screen is already hidden. Call this method before rendering any view.]',
+	'Animated: `useNativeDriver`',
+	'Animated.event now requires a second argument for options',
 ]);
 
 const statusBarStyle = {
-  type: 'light',
+	type: 'light',
 };
 
 const screen = Dimensions.get('screen');
@@ -156,450 +161,581 @@ const SLIDE_DURATIONS = 500;
 // );
 
 export default function Home({ navigation }) {
-  const [currentTransactions, setCurrentTransactions] = useState([]);
+	const [currentTransactions, setCurrentTransactions] = useState([]);
 
-  const [currentCategories, setCurrentCategories] = useState([]);
+	const [currentCategories, setCurrentCategories] = useState([]);
 
-  const [currentBalance, setCurrentBalance] = useState(0.00);
+	const [currentBalance, setCurrentBalance] = useState(0.00);
 
-  const [currentSpentBalance, setCurrentBalanceSpent] = useState(0.00);
+	const [currentSpentBalance, setCurrentBalanceSpent] = useState(0.00);
 
-  const [currentTransaction, setCurrentTransaction] = useState(null);
+	const [currentTransaction, setCurrentTransaction] = useState(null);
 
-  const [currentCategory, setCurrentCategory] = useState(null);
+	const [currentCategory, setCurrentCategory] = useState(null);
 
-  const [currentAmount, setCurrentAmount] = useState(0.00);
+	const [currentAmount, setCurrentAmount] = useState(0.00);
 
-  const [currentDate, setCurrentDate] = useState(new Date());
+	const [currentDate, setCurrentDate] = useState(new Date());
 
-  const [currentNote, setCurrentNote] = useState('');
+	const [currentNote, setCurrentNote] = useState('');
 
-  const [visible, setVisible] = useState(false);
+	const [visible, setVisible] = useState(false);
 
-  const [isSyncing] = useState(false);
+	const [isSyncing] = useState(false);
 
-  // const [isLoading, setIsLoading] = useState(false);
+	// const [isLoading, setIsLoading] = useState(false);
 
-  const [currentTableHeight, setCurrentTableHeight] = useState(SHORT_TABLE_HEIGHT);
+	const [currentTableHeight, setCurrentTableHeight] = useState(SHORT_TABLE_HEIGHT);
 
-  const [isDeviceSyncEnabled, setIsDeviceSyncEnabled] = useState(false);
+	const [isDeviceSyncEnabled, setIsDeviceSyncEnabled] = useState(false);
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
-  const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
+	const [boldMessage, setBoldMessage] = useState('Get cross-device sync');
 
-  const [normalMessage, setNormalMessage] = useState('');
+	const [normalMessage, setNormalMessage] = useState('');
 
-  const [avatarImage, setAvatarImage] = useState(global.defaultAvatar);
+	const [avatarImage, setAvatarImage] = useState(global.defaultAvatar);
 
-  const [panY] = useState(new Animated.Value(Dimensions.get('screen').height));
+	const [panY] = useState(new Animated.Value(Dimensions.get('screen').height));
 
-  const [currentSlidePosition, setCurrentSlidePosition] = useState('HIDDEN');
+	const [currentSlidePosition, setCurrentSlidePosition] = useState('HIDDEN');
 
-  const [shouldRefresh, setShouldRefresh] = useState(false);
+	const [shouldRefresh, setShouldRefresh] = useState(false);
 
-  const fadeAnim = useRef(new Animated.Value(300)).current;
+	const fadeAnim = useRef(new Animated.Value(300)).current;
 
-  // const [tableRefreshes, setTableRefreshes] = useState(0);
+	const [tableRefreshes, setTableRefreshes] = useState(0);
 
-  const fadeIn = () => {
-    // Will change fadeAnim value to 1 in 5 seconds
-    Animated.spring(
-      fadeAnim,
-      {
-        toValue: 1,
-        duration: SLIDE_DURATIONS,
-      },
-    ).start(setCurrentTableHeight(SHORT_TABLE_HEIGHT));
-  };
-  const fadeOut = () => {
-    // Will change fadeAnim value to 0 in 5 seconds
-    Animated.spring(fadeAnim, {
-      toValue: 0,
-      duration: SLIDE_DURATIONS,
-    }).start(setCurrentTableHeight(LONG_TABLE_HEIGHT));
-  };
-  // const reloadTransactions = async () => {
-  //   const storage = await loadStorage(global.storageKey);
-  //   setCurrentTransactions(storage.transactions);
-  // };
-  const onDismissBottomSheet = () => {
-    setVisible(false);
-    setCurrentTransaction(null);
-    setCurrentCategory(null);
-    setCurrentAmount(null);
-    setCurrentNote('');
-    fadeIn();
-  };
-  // const updateDatabaseTransaction = async (transaction) => {
-  //   /* if online and logged in, update online transaction */
-  //   if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
-  //     // setIsUpdatingTransaction(true); // to show activity indicator
-  //     try {
-  //       UpdateTransaction(transaction);
-  //       UpdateCategory(transaction.category);
-  //       UpdatePayee(transaction.payee);
-  //       // console.log('response: ', response);
-  //       // setIsUpdatingTransaction(false);
-  //     } catch {
-  //       // statements
-  //       // setIsUpdatingTransaction(false);
-  //     }
-  //   }
-  // };
-  const resetSlideView = useCallback(
-    () => {
-      setCurrentSlidePosition('RESET');
-      // alert('message?: DOMString');
-      // fadeOut();
-      Animated.timing(
-        // fadeAnim,
-        panY,
-        {
-          toValue: BOTTOM_SHEET_RESET_POSITION,
-          duration: SLIDE_DURATIONS,
-          velocity: 100, // 100
-          tension: 12, // 32
-          friction: 8,
-          // useNativeDriver: true,
-        },
-      ).start(fadeOut());
-    },
-    [],
-  );
-  // const hideSlideView = useCallback(
-  //   () => {
-  //     alert('message?: DOMString');
-  //     // setCurrentTransaction(null);
-  //     // setCurrentSlidePosition('HIDDEN');
-  //     Animated.timing(
-  //       panY, // fadeAnim, // slideViewBounceValue,
-  //       {
-  //         toValue: screen.height * 1.5, // 1, // Dimensions.get('screen').height,
-  //         duration: SLIDE_DURATIONS,
-  //         // velocity: 105,
-  //         // tension: 2,
-  //         // friction: 8,
-  //         // useNativeDriver: true,
-  //       },
-  //     ).start(fadeIn());
-  //   },
-  //   [],
-  // );
-  const saveTramsactions = async () => {
-    await loadStorage(global.storageKey)
-      .then((storage) => {
-        storage.transactions = currentTransactions;
-        saveStorage(global.storageKey, storage);
-      });
+	const fadeIn = () => {
+		// Will change fadeAnim value to 1 in 5 seconds
+		Animated.spring(
+			fadeAnim,
+			{
+				toValue: 1,
+				duration: SLIDE_DURATIONS,
+			},
+		).start(setCurrentTableHeight(SHORT_TABLE_HEIGHT));
+	};
+	const fadeOut = () => {
+		// Will change fadeAnim value to 0 in 5 seconds
+		Animated.spring(fadeAnim, {
+			toValue: 0,
+			duration: SLIDE_DURATIONS,
+		}).start(setCurrentTableHeight(LONG_TABLE_HEIGHT));
+	};
+	// const reloadTransactions = async () => {
+	//   const storage = await loadStorage(global.storageKey);
+	//   setCurrentTransactions(storage.transactions);
+	// };
+	const onDismissBottomSheet = () => {
+		setVisible(false);
+		setCurrentTransaction(null);
+		setCurrentCategory(null);
+		setCurrentAmount(null);
+		setCurrentNote('');
+		fadeIn();
+	};
+	// const updateDatabaseTransaction = async (transaction) => {
+	//   /* if online and logged in, update online transaction */
+	//   if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
+	//     // setIsUpdatingTransaction(true); // to show activity indicator
+	//     try {
+	//       UpdateTransaction(transaction);
+	//       UpdateCategory(transaction.category);
+	//       UpdatePayee(transaction.payee);
+	//       // console.log('response: ', response);
+	//       // setIsUpdatingTransaction(false);
+	//     } catch {
+	//       // statements
+	//       // setIsUpdatingTransaction(false);
+	//     }
+	//   }
+	// };
+	const resetSlideView = useCallback(
+		() => {
+			setCurrentSlidePosition('RESET');
+			// alert('message?: DOMString');
+			// fadeOut();
+			Animated.timing(
+				// fadeAnim,
+				panY,
+				{
+					toValue: BOTTOM_SHEET_RESET_POSITION,
+					duration: SLIDE_DURATIONS,
+					velocity: 100, // 100
+					tension: 12, // 32
+					friction: 8,
+					// useNativeDriver: true,
+				},
+			).start(fadeOut());
+		},
+		[],
+	);
+	// const hideSlideView = useCallback(
+	//   () => {
+	//     alert('message?: DOMString');
+	//     // setCurrentTransaction(null);
+	//     // setCurrentSlidePosition('HIDDEN');
+	//     Animated.timing(
+	//       panY, // fadeAnim, // slideViewBounceValue,
+	//       {
+	//         toValue: screen.height * 1.5, // 1, // Dimensions.get('screen').height,
+	//         duration: SLIDE_DURATIONS,
+	//         // velocity: 105,
+	//         // tension: 2,
+	//         // friction: 8,
+	//         // useNativeDriver: true,
+	//       },
+	//     ).start(fadeIn());
+	//   },
+	//   [],
+	// );
+	const save = async () => {
+		// save device transactions
+		await loadStorage(global.storageKey)
+			.then(async (storage) => {
+				storage.transactions = currentTransactions;
+				saveStorage(global.storageKey, storage);
 
-    // if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
-    //   currentTransactions.forEach((transaction) => {
-    //     // statements
-    //     UpdatePayee(transaction.payee);
-    //     UpdateCategory(transaction.category);
-    //     UpdateTransaction(transaction);
-    //   });
-    // }
-  };
-  const fetchData = async () => {
-    // const online_transactions = await ListTransactions();
-    // // console.log('online_transactions.length: ', online_transactions.length);
+				// if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
+				//   storage.transactions.forEach((transaction) => {
+				//     // statements
+				//     UpdatePayee(transaction.payee).catch(() => {})
+				//     UpdateCategory(transaction.category).catch(() => {})
+				//     UpdateTransaction(transaction).catch(() => {})
+				//   });
+				// }
+			});
+	};
+	const getMergedTransactions = async () => {
+		console.log('await ListCategories(): ', await ListCategories());
+		colorLog({ message: global.storageKey, color: 'yellow' });
 
-    // let list = online_transactions.filter((item) => {
-    //   // console.log('item: ', item);
-    //   if (!item.payee || !item.category) DeleteTransaction(item);
-    //   return currentTransactions.find((element) => element !== item);
-    // });
-    Auth.currentAuthenticatedUser()
-      .then(async (cognito) => {
-        global.storageKey = cognito.attributes.sub;
+		const storage = await loadStorage(global.storageKey);
 
-        const bucketImageUrl = await getS3ProfileImage(cognito.attributes.sub);
-        // console.log('bucketImageUrl: ', bucketImageUrl);
-        setAvatarImage({ uri: bucketImageUrl });
-        // console.log('cognito: ', cognito);
+		if (!storage.isDeviceSyncEnabled || await isDeviceOnline() !== true) {
+			return storage.transactions;
+		}
+		storage.transactions.forEach((transaction) => {
+			if (!transaction.payee) {
+				alert('message?: DOMString')
+				transaction.payee = new Payee({ name: transaction.note });
+				AddPayee(transaction.payee).catch(() => AddPayee(transaction.payee));
+				UpdateTransaction(transaction).catch(() => AddCategory(transaction.category));
+				UpdateCategory(transaction.category).catch(() => AddCategory(transaction.category));
+				// colorLog({
+				// 	message: 'transaction: ' + JSON.stringify(transaction, ['id', 'payee'], 1),
+				// 	color: 'red',
+				// });
+			}
+			AddTransaction(transaction);
+			AddCategory(transaction.category).catch(() => UpdateCategory(transaction.category));
+			AddPayee(transaction.payee).catch(() => UpdatePayee(transaction.payee));
+			// console.log('transaction: ', transaction);
+		});
 
-        await loadStorage(cognito.attributes.sub)
-          .then((result) => {
-            result.user.id = cognito.attributes.sub;
-            result.user.email = cognito.attributes.email;
-            result.user.email_verified = cognito.attributes.email_verified;
-            result.user.name = cognito.attributes.name;
-            result.user.sub = cognito.attributes.sub;
-            result.user.image_url = bucketImageUrl;
+		const online_transactions = await ListTransactions();
+		// online_transactions = online_transactions.filter((item) => item.category && item.payee)
+		// colorLog({
+		// 	message: 'online_transactions.length: ' + online_transactions.length,
+		// 	color: 'blue',
+		// });
+		// console.log('online_transactions: ', online_transactions);
 
-            setBoldMessage((result.user.name) ? result.user.name : ((result.isDeviceSyncEnabled) ? 'Cross-Device Sync Enabled' : 'Cross-Device Sync Disabled'));
+		// colorLog({
+		// 	message: `online_transactions: ${JSON.stringify(online_transactions, [
+		// 		'id',
+		// 		'amount',,
+		// 		'category',
+		// 		'name',
+		// 		'type',
+		// 		'version',
+		// 		'payee',
+		// 	], 1)}`,
+		// 	color: 'magenta',
+		// });
 
-            setNormalMessage(result.user.email);
+		// const merged_transactions = online_transactions.map((transaction) => {
+		// 	if (!searchByID(transaction.id, storage.transactions)) {
+		// 		setCurrentTransactions([...currentTransactions, transaction]);
+		// 		storage.transactions.push(transaction);
+		// 		saveStorage(global.storageKey, storage);
+		// 		return transaction;
+		// 	}
+		// 	return transaction;
+		// });
+		// return merged_transactions; // storage.transactions
+	};
+	const getMergedCategories = async () => {
+		await loadStorage(global.storageKey).then(async (storage) => {
+			// const online_categories = await ListCategories();
+			// console.log('online_categories: ', online_categories);
+			// storage.categories.forEach((item) => {
+			// 	const found = storage.categories.find((element) => element.id === item.id);
+			// 	// console.log('found: ', found);
+			// 	if (!found) storage.categories.push(element);
+			// });
 
-            setCurrentTransactions(result.transactions);
+			storage.categories.forEach((item) => {
+				UpdateCategory(item).catch(() => AddCategory(item));
+			});
+			return storage.categories;
+		});
+	};
+	const fetchData = async () => {
+		Auth.currentAuthenticatedUser()
+			.then(async (cognito) => {
+				global.storageKey = cognito.attributes.sub;
 
-            setCurrentCategories(result.categories);
+				await loadStorage(cognito.attributes.sub)
+					.then(async (result) => {
+						const bucketImageUrl = await getS3ProfileImage(cognito.attributes.sub)
+						.then((stored) => {
+							result.user.image_url = stored;
+							setAvatarImage({ uri: stored });
+						});
+						result.user.id = cognito.attributes.sub;
+						result.user.email = cognito.attributes.email;
+						result.user.email_verified = cognito.attributes.email_verified;
+						result.user.name = cognito.attributes.name;
+						result.user.sub = cognito.attributes.sub;
 
-            setIsDeviceSyncEnabled(result.isDeviceSyncEnabled);
+						setBoldMessage((result.user.name) ? result.user.name : ((result.isDeviceSyncEnabled) ? 'Cross-Device Sync Enabled' : 'Cross-Device Sync Disabled'));
 
-            setIsUserLoggedIn(true);
-          });
-      });
-  };
-  const retrieveUserStoredSettings = async () => {
-    await loadStorage(global.storageKey)
-      .then((storage) => {
-        // update user attributes
-        global.storageKey = storage.user.id;
+						setNormalMessage(result.user.email);
+						
+						setCurrentTransactions(result.transactions.filter((transaction) => transaction.category));
 
-        // update state variables
-        setIsUserLoggedIn(false);
+						setCurrentCategories(result.categories);
 
-        setIsDeviceSyncEnabled(storage.isDeviceSyncEnabled);
+						setIsDeviceSyncEnabled(result.isDeviceSyncEnabled);
 
-        setAvatarImage({ uri: storage.user.image_url });
+						setIsUserLoggedIn(true);
 
-        if (storage.user.name) setBoldMessage(storage.user.name);
+						saveStorage(global.storageKey, result);
+					});
+				getMergedCategories();
 
-        if (storage.user.email) setNormalMessage(storage.user.email);
+				getMergedTransactions()
+			});
+			
 
-        // set displayed transactions
-        setCurrentTransactions(storage.transactions);
-        // set displayed categories
-        setCurrentCategories(storage.categories);
+			// setCurrentCategories(getMergedCategories())
 
-        saveStorage(global.storageKey, storage);
-      });
-  };
+			// setCurrentTransactions(await getMergedTransactions());
+	};
+	const retrieveUserStoredSettings = async () => {
+		await loadStorage(global.storageKey)
+			.then((storage) => {
+				// update user attributes
+				global.storageKey = storage.user.id;
 
-  const loadResources = () => {
-    retrieveUserStoredSettings();
-    fetchData();
-  };
-  const updateTransactionDate = (date) => {
-    currentTransaction.date = date;
-    setShouldRefresh(true);
-  };
-  const updateTransactionCategory = (category) => {
-    currentTransaction.category = category;
-    currentTransaction.type = category.type;
-  };
-  const updateTransactionNote = (note) => {
-    currentTransaction.note = note;
-    setShouldRefresh(true);
-  };
-  const handleNewAmountInput = (value) => {
-    setCurrentAmount(value);
-    if (String(value).length <= global.amountInputMaxLength) setCurrentAmount(value);
-  };
-  const updateTransactionAmount = (val) => {
-    currentTransaction.amount = val;
-  };
-  const numberBtnPressed = (number) => {
-    // truncate single AND leading zeros; concatenate old + new values
-    const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
-    handleNewAmountInput(newValue);
-  };
-  const createNewTransaction = () => {
-    if (!currentAmount || !currentCategory) return;
+				// update state variables
+				setIsUserLoggedIn(false);
 
-    // amount
-    let amount = 0.00;
-    if (currentCategory.type === 'EXPENSE') amount = (-Math.abs(currentAmount / (100)));
-    else amount = (Math.abs(currentAmount / (100)));
+				setIsDeviceSyncEnabled(storage.isDeviceSyncEnabled);
 
-    // date
-    const date = new Date().toISOString();
+				setAvatarImage({ uri: storage.user.image_url });
 
-    // category
-    const category = currentCategory;
+				if (storage.user.name) setBoldMessage(storage.user.name);
 
-    // destructure type from current category
-    const { type } = currentCategory;
+				if (storage.user.email) setNormalMessage(storage.user.email);
 
-    // combine input values
-    const input = {
-      amount,
-      category,
-      date,
-      owner: global.storageKey,
-      type,
-      note: '',
-      version: 0,
-    };
+				// set displayed transactions
+				setCurrentTransactions(storage.transactions.filter((transaction) => transaction.category));
+				// set displayed categories
+				setCurrentCategories(storage.categories);
 
-    const transaction = new Transaction(input);
+				saveStorage(global.storageKey, storage);
+			});
+	};
+	const loadResources = () => {
+		fetchData();
+		retrieveUserStoredSettings();
+	};
+	const updateTransactionDate = (date) => {
+		currentTransaction.date = date;
+		if (isDeviceSyncEnabled) {
+			UpdateTransaction(currentTransaction);
+		}
+		setCurrentTransactions(currentTransactions);
+		setShouldRefresh(true);
+	};
+	const updateTransactionCategory = (category) => {
+		currentTransaction.category = category;
+		currentTransaction.type = category.type;
+		if (isDeviceSyncEnabled) {
+			UpdateTransaction(currentTransaction);
+			UpdateCategory(currentTransaction.category);
+		}
+		setShouldRefresh(true);
+	};
+	const updateTransactionNote = (note) => {
+		currentTransaction.note = note;
+		currentTransaction.payee.name = note;
+		if (isDeviceSyncEnabled) {
+			UpdateTransaction(currentTransaction);
+			UpdatePayee(currentTransaction.payee);
+		}
+		setShouldRefresh(true);
+	};
+	const handleNewAmountInput = (value) => {
+		setCurrentAmount(value);
+		if (String(value).length <= global.amountInputMaxLength) setCurrentAmount(value);
+	};
+	const updateTransactionAmount = (val) => {
+		currentTransaction.amount = val;
+	};
+	const numberBtnPressed = (number) => {
+		// truncate single AND leading zeros; concatenate old + new values
+		const newValue = String(Math.trunc(Math.abs(currentAmount))) + String(number);
+		handleNewAmountInput(newValue);
+	};
+	const createNewTransaction = async () => {
+		if (!currentAmount || !currentCategory) return;
 
-    // update current transactions diisplayed
-    setCurrentTransactions([...currentTransactions, transaction]);
+		// amount
+		let amount = 0.00;
+		if (currentCategory.type === 'EXPENSE') amount = (-Math.abs(currentAmount / (100)));
+		else amount = (Math.abs(currentAmount / (100)));
 
-    // clear input values
-    setCurrentAmount(0.00);
-    setCurrentCategory(null);
+		// date
+		const date = new Date().toISOString();
 
-    // refresh table items
-    setShouldRefresh(true);
-  };
-  const backspaceBtnPressed = () => {
-    const strValue = String(currentAmount);
-    // pop last char from string value
-    const newStr = strValue.substring(0, strValue.length - 1);
-    // return string as a number value
-    const num = Number(newStr);
-    // concatenate new string value to current amount input
-    handleNewAmountInput(num);
-  };
-  async function loadCurrentBalances() {
-    const balance = (calculateBalance(currentTransactions));
-    setCurrentBalance(balance);
-    const spent = (await calculateMonthSpent(currentTransactions));
-    setCurrentBalanceSpent(spent);
-  }
-  // const displayByCategory = async () => {
-  //   const storage = await loadStorage(global.storageKey);
-  //   setCurrentTransactions(filterTransactionsByCategory(storage.transactions, currentCategory));
-  // };
-  const settingsBtnPressed = async () => {
-    await loadStorage(global.storageKey).then(async (storage) => {
-      navigation.navigate('Settings', {
-        storage,
-        isDeviceSyncEnabled,
-        setIsDeviceSyncEnabled,
-        isUserLoggedIn,
-      });
+		// category
+		const category = currentCategory;
+
+		// destructure type from current category
+		const { type } = currentCategory;
+
+		// combine input values
+		const input = {
+			amount,
+			category,
+			date,
+			owner: global.storageKey,
+			type,
+			note: '',
+			version: 0,
+		};
+
+		const transaction = new Transaction(input);
+
+		// update current transactions diisplayed
+		setCurrentTransactions([...currentTransactions, transaction]);
+
+		// clear input values
+		setCurrentAmount(0.00);
+		setCurrentCategory(null);
+
+		// refresh table items
+		setShouldRefresh(true);
+
+		if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
+		  AddTransaction(transaction);
+		  AddCategory(category);
+		  AddPayee(transaction.payee);
+		}
+
+		showMessage({
+      message: 'Success',
+      type: 'success',
+      description: 'New transaction created!',
+      floating: true,
+      position: 'bottom',
     });
-  };
-  const onPullRefresh = () => loadResources();
-  useEffect(() => {
-    loadResources();
-  }, []);
-  useEffect(() => {
-    // console.log('shouldRefresh: ', shouldRefresh);
-    if (shouldRefresh) {
-      setShouldRefresh(false);
+	};
+	const backspaceBtnPressed = () => {
+		const strValue = String(currentAmount);
+		// pop last char from string value
+		const newStr = strValue.substring(0, strValue.length - 1);
+		// return string as a number value
+		const num = Number(newStr);
+		// concatenate new string value to current amount input
+		handleNewAmountInput(num);
+	};
+	async function loadCurrentBalances() {
+		const balance = (calculateBalance(currentTransactions));
+		setCurrentBalance(balance);
+		const spent = (await calculateMonthSpent(currentTransactions));
+		setCurrentBalanceSpent(spent);
+	}
+	// const displayByCategory = async () => {
+	//   const storage = await loadStorage(global.storageKey);
+	//   setCurrentTransactions(filterTransactionsByCategory(storage.transactions, currentCategory));
+	// };
+	const settingsBtnPressed = async () => {
+		await loadStorage(global.storageKey).then(async (storage) => {
+			navigation.navigate('Settings', {
+				storage,
+				isDeviceSyncEnabled,
+				setIsDeviceSyncEnabled,
+				isUserLoggedIn,
+			});
+		});
+	};
+	const onPullRefresh = () => loadResources();
+	useEffect(() => {
+		loadResources();
 
-      // PERFORMANCE TESTING
-      // setTableRefreshes(tableRefreshes + 1);
-      // console.log('Refreshed table..:', tableRefreshes);
-    }
-    return () => {
-      setShouldRefresh(false);
-      saveTramsactions();
-      loadCurrentBalances();
-    };
-  }, [shouldRefresh]);
-  useEffect(() => {
-    loadCurrentBalances();
-  }, [currentTransactions]);
-  const deleteBtnPressed = async (transaction) => {
-    const pos = currentTransactions.indexOf(transaction);
-    currentTransactions.splice(pos, 1);
-    // refresh table items
-    setShouldRefresh(true);
-  };
-  const categoryBtnPressed = (category) => {
-    setCurrentCategory((currentCategory === category) ? null : category);
-    if (currentTransaction) {
-      updateTransactionCategory(category);
-      setShouldRefresh(true);
-    }
-  };
-  const isCurrentCategory = (category) => (currentCategory === category);
-  const transactionBtnPressed = (transaction) => {
-    if (!currentTransaction !== transaction) {
-      setCurrentTransaction(transaction);
-      setCurrentAmount(transaction.amount); // checked
-      setCurrentCategory(transaction.category);
-      setCurrentNote(transaction.note);
-      setCurrentDate(transaction.date);
-      resetSlideView();
-      setVisible(true);
-    } else if (currentTransaction && (currentTransaction === transaction)) {
-      setCurrentTransaction(null);
-    } else {
-      setCurrentTransaction(transaction);
-      setCurrentAmount(transaction.amount); // checked
-      setCurrentNote(transaction.note);
-      setCurrentDate(transaction.date);
-      resetSlideView();
-      setVisible(true);
-    }
-  };
-  const view = (
-    <View style={styles.container}>
-      <NavigationEvents onWillBlur={loadResources} onWillFocus={loadResources} />
-      <StatusBar style={statusBarStyle.type} />
-      <Navbar
-        boldMessage={boldMessage}
-        normalMessage={normalMessage}
-        avatarImage={avatarImage}
-        settingsBtnPressed={settingsBtnPressed}
-        navigation={navigation}
-        isUserLoggedIn={isUserLoggedIn}
-      />
-      <View style={styles.northPanel}>
-        <BalanceView
-          currentBalanceValue={currentBalance}
-          currentSpentValue={currentSpentBalance}
-        />
-      </View>
-      <View style={styles.centerPanel}>
-        <StickyTable
-          currentTableHeight={currentTableHeight}
-          currentTransactions={currentTransactions}
-          currentTransaction={currentTransaction}
-          key={currentTransactions}
-          transactionBtnPressed={transactionBtnPressed}
-          deleteBtnPressed={deleteBtnPressed}
-          isSyncing={isSyncing}
-          onPullRefresh={onPullRefresh}
-          shouldRefresh={shouldRefresh}
-        />
-      </View>
-      <Animated.View
-        style={[
-          {
-            opacity: fadeAnim, // Bind opacity to animated value
-          },
-          styles.southPanelWithShadows,
+		if (!global.hasSeenWelcomeMessage) {
+			showMessage({
+		    message: 'Welcome back',
+		    type: 'success',
+		    description: 'We missed you!',
+		    floating: true,
+		    position: 'bottom',
+		  });
+		  global.hasSeenWelcomeMessage = true;	
+		}
+		
+	}, []);
+	useEffect(() => {
+		// console.log('shouldRefresh: ', shouldRefresh);
+		if (shouldRefresh) {
+			setShouldRefresh(false);
 
-        ]}
-      >
-        <TransactionInputPanel
-          addBtnPressed={createNewTransaction}
-          categoryBtnPressed={categoryBtnPressed}
-          currentCategories={currentCategories}
-          isCurrentCategory={isCurrentCategory}
-          inputAmountValue={currentAmount}
-          numberBtnPressed={numberBtnPressed}
-          backspaceBtnPressed={backspaceBtnPressed}
-          isAmountInputEditable={false}
-        />
-      </Animated.View>
+			// PERFORMANCE TESTING
+			setTableRefreshes(tableRefreshes + 1);
+			console.log('Refreshed table..:', tableRefreshes);
 
-      <BottomSheet
-        visible={visible}
-        onDismiss={onDismissBottomSheet}
-      >
-        <SlideView
-          currentSlidePosition={currentSlidePosition}
-          currentTransaction={currentTransaction}
-          categoryBtnPressed={categoryBtnPressed}
-          currentCategories={currentCategories}
-          currentCategory={currentCategory}
-          // resetSlideView={resetSlideView}
-          currentNote={currentNote}
-          setCurrentNote={setCurrentNote}
-          currentAmount={Math.abs(currentAmount).toFixed(2)}
-          setCurrentAmount={setCurrentAmount}
-          updateTransactionCategory={updateTransactionCategory}
-          updateTransactionNote={updateTransactionNote}
-          updateTransactionAmount={updateTransactionAmount}
-          updateTransactionDate={updateTransactionDate}
-          currentDate={currentDate}
-        />
-      </BottomSheet>
-      {
-        // isLoading && spinnerMask
-      }
-    </View>
-  );
-  return view;
+			save();
+
+			loadCurrentBalances();
+		}
+		// return () => {
+		//   setShouldRefresh(false);
+		//   save();
+		//   loadCurrentBalances();
+		// };
+	}, [shouldRefresh]);
+	useEffect(() => {
+		loadCurrentBalances();
+	}, [currentTransactions]);
+	const deleteBtnPressed = async (transaction) => {
+		const pos = currentTransactions.indexOf(transaction);
+		currentTransactions.splice(pos, 1);
+		// refresh table items
+		setShouldRefresh(true);
+
+		if (await isDeviceOnline() && isDeviceSyncEnabled && await getAuthentication()) {
+		  DeleteTransaction(transaction);
+		  DeleteCategory(transaction.category);
+		  DeletePayee(transaction.payee);
+		}
+	};
+	const categoryBtnPressed = (category) => {
+		setCurrentCategory((currentCategory === category) ? null : category);
+		if (currentTransaction) {
+			updateTransactionCategory(category);
+			setShouldRefresh(true);
+		}
+	};
+	const isCurrentCategory = (category) => (currentCategory === category);
+	const transactionBtnPressed = (transaction) => {
+		if (!currentTransaction !== transaction) {
+			setCurrentTransaction(transaction);
+			setCurrentAmount(transaction.amount); // checked
+			setCurrentCategory(transaction.category);
+			setCurrentNote(transaction.note);
+			setCurrentDate(transaction.date);
+			resetSlideView();
+			setVisible(true);
+		} else if (currentTransaction && (currentTransaction === transaction)) {
+			setCurrentTransaction(null);
+		} else {
+			setCurrentTransaction(transaction);
+			setCurrentAmount(transaction.amount); // checked
+			setCurrentNote(transaction.note);
+			setCurrentDate(transaction.date);
+			
+			setVisible(true);
+
+			resetSlideView();
+		}
+	};
+	const view = (
+		<View style={styles.container}>
+			<NavigationEvents
+				onWillBlur={loadResources}
+				onWillFocus={loadResources}
+			/>
+			<StatusBar style={statusBarStyle.type} />
+			<Navbar
+				boldMessage={boldMessage}
+				normalMessage={normalMessage}
+				avatarImage={avatarImage}
+				settingsBtnPressed={settingsBtnPressed}
+				navigation={navigation}
+				isUserLoggedIn={isUserLoggedIn}
+			/>
+			<View style={styles.northPanel}>
+				<BalanceView
+					currentBalanceValue={currentBalance}
+					currentSpentValue={currentSpentBalance}
+				/>
+			</View>
+			<View style={styles.centerPanel}>
+				<StickyTable
+					currentTableHeight={currentTableHeight}
+					currentTransactions={currentTransactions}
+					currentTransaction={currentTransaction}
+					key={currentTransactions}
+					transactionBtnPressed={transactionBtnPressed}
+					deleteBtnPressed={deleteBtnPressed}
+					isSyncing={isSyncing}
+					onPullRefresh={onPullRefresh}
+					shouldRefresh={shouldRefresh}
+				/>
+			</View>
+			<Animated.View
+				style={[
+					{
+						opacity: fadeAnim, // Bind opacity to animated value
+					},
+					styles.southPanelWithShadows,
+
+				]}
+			>
+				<TransactionInputPanel
+					addBtnPressed={createNewTransaction}
+					categoryBtnPressed={categoryBtnPressed}
+					currentCategories={currentCategories}
+					isCurrentCategory={isCurrentCategory}
+					inputAmountValue={currentAmount}
+					numberBtnPressed={numberBtnPressed}
+					backspaceBtnPressed={backspaceBtnPressed}
+					isAmountInputEditable={false}
+				/>
+			</Animated.View>
+
+			<BottomSheet
+				visible={visible}
+				onDismiss={onDismissBottomSheet}
+			>
+				<SlideView
+					currentSlidePosition={currentSlidePosition}
+					currentTransaction={currentTransaction}
+					categoryBtnPressed={categoryBtnPressed}
+					currentCategories={currentCategories}
+					currentCategory={currentCategory}
+					// resetSlideView={resetSlideView}
+					currentNote={currentNote}
+					setCurrentNote={setCurrentNote}
+					currentAmount={Math.abs(currentAmount).toFixed(2)}
+					setCurrentAmount={setCurrentAmount}
+					updateTransactionCategory={updateTransactionCategory}
+					updateTransactionNote={updateTransactionNote}
+					updateTransactionAmount={updateTransactionAmount}
+					updateTransactionDate={updateTransactionDate}
+					currentDate={currentDate}
+				/>
+			</BottomSheet>
+			{
+				// isLoading && spinnerMask
+			}
+		</View>
+	);
+	return view;
 }
