@@ -2,11 +2,11 @@ import API, { graphqlOperation } from '@aws-amplify/api';
 
 // import gql from 'graphql-tag';
 
-import colorLog from 'functions/colorLog';
+// import colorLog from 'functions/colorLog';
 
 import {
   deletePayee,
-} from '../graphql/mutations';
+} from 'graphql/mutations';
 
 // import {
 //   listPayees,
@@ -30,11 +30,11 @@ query ListPayees {
     const graphqldata = await API.graphql(graphqlOperation(listPayees));
     // console.log('graphqldata: ', graphqldata);
     return graphqldata.data.listPayees.items;
-    console.log('online categories list.length: ', list.length);
+    // console.log('online categories list.length: ', list.length);
   } catch (err) {
-    const { message } = err;
-    console.log('error fetching category list:', message);
-    return err;
+    // const { message } = err;
+    console.log('error fetching category list:', JSON.stingify(err));
+    // return err;
   }
 };
 
@@ -125,7 +125,7 @@ export const AddPayee = async (payee) => {
   try {
     const response = await API.graphql(graphqlOperation(query));
     // console.log('payee successfully added:', payee);
-    colorLog({ message: 'payee successfully added:' + payee.id, color: 'yellow' });
+    // colorLog({ message: 'payee successfully added:' + payee.id, color: 'yellow' });
     // return response.data.updatePayee;
     return payee;
   } catch (err) {
@@ -152,10 +152,10 @@ export const UpdatePayee = async (payee) => {
 `;
   try {
     const response = await API.graphql(graphqlOperation(query));
-    console.log('payee successfully updated:', payee);
+    // colorLog({ message: 'payee successfully updated: ' + payee.id, color: 'green' });
     return response.data.updatePayee;
   } catch (err) {
-    colorLog({ message: 'error updating payee...' + payee.id, color: 'red' });
+    // colorLog({ message: 'error updating payee...' + payee.id, color: 'red' });
     // throw err;
   }
 };
@@ -166,6 +166,6 @@ export const DeletePayee = async (payee) => {
     // console.log('payee successfully deleted.', payee.id);
     // colorLog({ message: 'payee successfully deleted:' + payee.id, color: 'green' });
   } catch (err) {
-    colorLog({ message: 'error deleting payee...' + payee.id, color: 'red' });
+    // colorLog({ message: 'error deleting payee...' + payee.id, color: 'red' });
   }
 };

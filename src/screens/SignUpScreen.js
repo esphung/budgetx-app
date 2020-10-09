@@ -30,7 +30,7 @@ import {
   Modal,
   FlatList,
   // Animated,
-  // TextInput,
+  TextInput,
   // Image,
 } from 'react-native';
 
@@ -102,15 +102,19 @@ import styles from '../../styles';
 import getButtonStyle from '../../src/functions/getButtonStyle';
 
 function SignUpScreen({ navigation }) {
-  const emailFromProps = navigation.getParam('emailAddress');
+  // const emailFromProps = navigation.getParam('emailAddress');
+
+  const inputData = navigation.getParam('inputData');
+  // console.log('inputData: ', inputData);
+  // console.log('inputData: ', inputData);
 
   const [isLoading, setIsLoading] = useState(false);
 
   // const [username, setUsername] = useState(null);
 
-  const [password, setPassword] = useState(null);
+  const [password, setPassword] = useState((inputData) ? inputData.password : '');
 
-  const [email, setEmail] = useState(emailFromProps);
+  const [emailInputValue, setEmailInputValue] = useState((inputData) ? inputData.emailAddress : '');
 
   // const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -149,7 +153,7 @@ function SignUpScreen({ navigation }) {
   /*
   * > Input Refs
   */
-  // const usernameInputRef = useRef(null);
+  const usernameInputRef = useRef(null);
 
   const passwordInputRef = useRef(null);
 
@@ -192,6 +196,10 @@ function SignUpScreen({ navigation }) {
     // // setCountryData(countries);
     // setHelpMessage('Hello.');
     setHelpMessage('sign up with your email and pick a password');
+
+    if (inputData) {
+      if (inputData.emailAddress) inputFocus(passwordInputRef);
+    }
     // return () => {
     //   // effect
     //   setHelpMessage('enter your email and pick a password');
@@ -199,15 +207,15 @@ function SignUpScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (password && isValidEmail(email) && password.length >= global.minPasswordLength) {
+    if (password && isValidEmail(emailInputValue) && password.length >= global.minPasswordLength) {
       setIsSignUpBtnEnabled(true);
     } else {
       setIsSignUpBtnEnabled(false);
     }
-  }, [password, email]);
+  }, [password, emailInputValue]);
 
   useEffect(() => {
-    if (!authCode || !email) {
+    if (!authCode || !emailInputValue) {
       // console.log(username);
       setIsConfirmSignUpBtnEnabled(false);
       setIsResendCodeBtnEnabled(false);
@@ -218,7 +226,7 @@ function SignUpScreen({ navigation }) {
     return () => {
       // effect
     };
-  }, [authCode, email]);
+  }, [authCode, emailInputValue]);
 
   /*
   * > Handlers
@@ -229,13 +237,15 @@ function SignUpScreen({ navigation }) {
     } else if (key === 'email') {
       const re = /^(((\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       // return re.test(String(email).toLowerCase());
-      setEmail(value.replace(/^[` ~!#$%^&*()|+\=?;:'",<>\{\}\[\]\\\/]/gi, '').toLowerCase());
+      setEmailInputValue(value.replace(/^[` ~!#$%^&*()|+\=?;:'",<>\{\}\[\]\\\/]/gi, '').toLowerCase());
     } else if (key === 'authCode') {
       setAuthCode(value.replace(/[A-z]|[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''))
     }
   }
 
   const handlePasswordInputSubmit = () => signUp();
+
+  const inputFocus = (inputRef) => inputRef.current._root.focus();;
 
   function handleEmailInputSubmit() {
     passwordInputRef.current._root.focus();
@@ -387,12 +397,12 @@ function SignUpScreen({ navigation }) {
     // const phone_number = phoneNumber; // +01234567890 format
     // console.log(phone_number);
     await Auth.signUp({
-      username: email,
+      username: emailInputValue,
       password: password,
     })
     .then((succ) => {
       showMessage('Confirmation code sent!');
-      setHelpMessage(`Enter the confirmation code you received at ${email}`);
+      setHelpMessage(`Enter the confirmation code you received at ${emailInputValue}`);
       setIsConfirmVisible(true);
       setIsLoading(false);
 
@@ -402,23 +412,32 @@ function SignUpScreen({ navigation }) {
     .catch((err) => {
       setIsLoading(false);
       setIsConfirmVisible(false);
+
       // console.log('err: ', err);
-      setHelpMessage(err.message);
-      showMessage('sign up failed');
-
-
-      if (err.code  === 'UsernameExistsException') {
-        // console.log('err: ', err);
-        showMessage('User exists already. Enter your password to sign in');
-        
-        //   // signIn();
-        // global.emailAddressInput = email
-        //   global.passwordInput = password  
+      if (err === '[AuthError: Password cannot be empty]') alert('message?: DOMString')
+      let { message } = err;
+      if (err.code === 'InvalidParameterException') {
+        // password must have length greater than or equal to 6
+        message = 'password must have length greater than or equal to 6';
+      } else if (err.code  === 'UsernameExistsException') {
+        message = 'User exists already. Enter your password to sign in';
         navigation.navigate('SignIn', {
-          email
+          inputData: {
+            emailAddress: inputData.emailAddress,
+            password,
+          },
         })
-
       }
+
+      setHelpMessage(message);
+
+      showMessage({
+        message: 'sign up failed',
+        description: message,
+        type: 'danger',
+        floating: true,
+        duration: 3050,
+      });
       // Analytics.record({ email: email });
       // console.log(`Failed sign up Recorded: ${email}`);
     });
@@ -614,7 +633,7 @@ function SignUpScreen({ navigation }) {
   // Confirm users and redirect them to the SignIn page
   async function confirmSignUp() {
     if (authCode !== null) {
-      Auth.confirmSignUp(email, authCode)
+      Auth.confirmSignUp({ email: emailInputValue, authCode: authCode })
         .then(() => {
           showMessage('Sign Up Successful!');
           setHelpMessage('Sign Up Successful!')
@@ -639,12 +658,13 @@ function SignUpScreen({ navigation }) {
 
   // Resend code if not received already
   async function resendSignUp() {
-    await Auth.resendSignUp(email)
+    await Auth.resendSignUp({ email: emailInputValue})
     .then(() => {
       // Alert.alert('Confirmation code resent successfully!');
       showMessage({
         message: 'Confirmation code resent successfully!',
-        // type: 'success',
+        type: 'success',
+        floating: true,
       });
       setHelpMessage('Confirmation code resent successfully!')
       // console.log('Confirmation code resent successfully');
@@ -653,7 +673,8 @@ function SignUpScreen({ navigation }) {
       showMessage({
         message: 'Error requesting new confirmation code: ',
         description: err.message,
-        // type: 'success',
+        type: 'danger',
+        floating: true,
       });
       setHelpMessage(err.message)
     });
@@ -687,11 +708,10 @@ function SignUpScreen({ navigation }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     ref={emailInputRef}
-                    onSubmitEditing={() => handleEmailInputSubmit()}
+                    onSubmitEditing={handleEmailInputSubmit}
                     onChangeText={(value) => onChangeText('email', value)}
-                    // clearButtonMode="always"
-
-                    value={email}
+                    clearButtonMode="while-editing"
+                    value={emailInputValue}
 
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
@@ -796,7 +816,17 @@ function SignUpScreen({ navigation }) {
                 <Item rounded style={styles.itemStyle}>
                   <Ionicons active name="md-mail" style={styles.iconStyle} />
                   <Input
-                    style={styles.input}
+                    style={[
+                      styles.input,
+                      {
+                        // borderWidth: 1,
+                        // borderColor: 'white',
+                        // borderStyle: 'solid',
+
+                        // textAlignVertical: 'center',
+                        // padding: 2,
+                      }
+                    ]}
                     placeholder="enter a valid email"
                     placeholderTextColor={colors.offWhite}
                     keyboardType="email-address"
@@ -805,15 +835,15 @@ function SignUpScreen({ navigation }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     ref={emailInputRef}
-                    onSubmitEditing={() => handleEmailInputSubmit()}
+                    onSubmitEditing={handleEmailInputSubmit}
                     onChangeText={(value) => onChangeText('email', value)}
 
-                    value={email}
-
+                    value={emailInputValue}
+                    clearTextOnFocus
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
                     maxLength={26}
-                    // clearButtonMode="always"
+                    clearButtonMode="unless-editing"
                   />
                 </Item>
 
@@ -831,7 +861,6 @@ function SignUpScreen({ navigation }) {
                     onSubmitEditing={handlePasswordInputSubmit}
                     ref={passwordInputRef}
                     onChangeText={(value) => onChangeText('password', value)}
-
                     keyboardAppearance="dark"
                     onFocus={() => setIsKeyboardAvoidEnabled(false)}
                     maxLength={16}

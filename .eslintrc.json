@@ -15,8 +15,6 @@
       "no-underscore-dangle": "off",
       "import/no-unresolved": "off",
       "no-param-reassign": "off",
-      "react/jsx-props-no-spreading": "off",
-      "indent": [2, "tab"],
-      "no-tabs": 0
+      "react/jsx-props-no-spreading": "off"
     }
 }

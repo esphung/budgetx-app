@@ -99,25 +99,40 @@ function SettingsScreen({ navigation }) {
   const handleCancel = () => setShowResetDialogBox(false);
 
   const resetNavigationBack = async () => {
-    setIsResetingData(true);
-    // 2nd code goes here
-    await resetData().then(() => setIsResetingData(false))
-    // .catch(() => setIsResetingData(false))
-    // console.log('uh oh 2');
-    handleRoute('AuthLoading');
-
-    
-    
-  };
-  const okBtnPressed = () => {
-    // 1st code goes here
     // setIsResetingData(true);
+    // console.log('global.storageKey: ', global.storageKey);
+    // 2nd code goes here
+    
+    let bool = await resetData({
+       handleRoute,
+
+    })
+      .then((storage) => storage)
+      .catch((err) => err);
+    if (storage.transactions.length < 0) {
+      // setIsResetingData(false)
+      bool = true;
+    } else {
+      // setIsResetingData(false)
+      bool = false;
+    }
+    return bool;
+  };
+  const okBtnPressed = async () => {
+    // 1st code goes here
+    setIsResetingData(true);
     // console.log('uh oh 1'),
-    resetNavigationBack();
+    await resetNavigationBack()
+    .then((succ) => {
+      setIsResetingData(false);
+      // if (succ) handleRoute('AuthLoading')
+    }).catch(err => {
+      setIsResetingData(false);
+      console.log('err: ', err);
+    })
     // Back to Hoome screenif logged in
     // handleRoute('AuthLoading');
 
-    // setIsResetingData(false)
   };
   const inputFocus = (ref) => ref.current.focus();
 

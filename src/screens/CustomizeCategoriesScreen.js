@@ -88,6 +88,14 @@ import searchByID from '../functions/searchByID';
 
 import searchByName from '../functions/searchByName';
 
+import colorLog from 'src/functions/colorLog';
+
+// import searchByID from 'functions/searchByID';
+
+import getHighestVersionItemById from 'functions/getHighestVersionItemById';
+
+import getUniqueId from 'functions/getUniqueId';
+
 /* my custom queries */
 import {
   
@@ -230,7 +238,8 @@ export default function CustomizeCategoriesScreen({ navigation }) {
 
       if (await isDeviceOnline() && getAuthentication() && isDeviceSyncEnabled) {
         const onlineCategories = await ListCategories();
-        categories.forEach((item) => {
+        console.log('onlineCategories: ', onlineCategories);
+        onlineCategories.forEach((item) => {
           DeleteCategory(item);
         });
       }
@@ -242,19 +251,22 @@ export default function CustomizeCategoriesScreen({ navigation }) {
   const resetCategories = async () => {
     // deleteAllOnlineCategories().then(async () => {
       
-      await loadStorage(global.storageKey).then((result) => {
-        const list = defaultCategories();
+    let succ = await loadStorage(global.storageKey)
+    .then((result) => {
+      const list = defaultCategories();
 
-        result.categories = list;
+      result.categories = list;
 
-        saveStorage(global.storageKey, result);
+      saveStorage(global.storageKey, result);
 
-        reloadCategories();
+      reloadCategories();
 
-        updateUserTransactionCategories(list);
+      updateUserTransactionCategories(list);
 
-        clearState();
-      });
+      clearState();
+      return true
+    }).catch(() => false)
+    return succ;
     // });
   };
   const showCategoryEditing = () => {
@@ -288,7 +300,7 @@ export default function CustomizeCategoriesScreen({ navigation }) {
         onPress={
           () => {
             setDialogVisible(false)
-            resetCategories();
+            resetCategories()
             
           }
         }
@@ -305,7 +317,7 @@ export default function CustomizeCategoriesScreen({ navigation }) {
         position: 'bottom',
         onPress: () => {
           /* THIS FUNC/CB WILL BE CALLED AFTER MESSAGE PRESS */
-          resetCategories();
+          resetCategories()
         },
       });
   };
@@ -342,7 +354,9 @@ export default function CustomizeCategoriesScreen({ navigation }) {
     // UpdateCategory(blankCategory);
 
     if (await isDeviceOnline() && getAuthentication() && isDeviceSyncEnabled) {
-      DeleteCategory(found);
+      DeleteCategory(found).then((response) => {
+        console.log('response: ', response);
+      })
     }
     
     saveStorage(global.storageKey, storage);
@@ -352,67 +366,93 @@ export default function CustomizeCategoriesScreen({ navigation }) {
   const addCategory = async (name, color, type) => {
     // setIsAddingCategory(true);
     // const list = await loadUserCategories();
-    const userObject = await loadStorage(global.storageKey);
-    // console.log(userObject.user.categories);
+    let result = await loadStorage(global.storageKey).then(async (storage) => {
+      let found = searchByName(name, storage.categories);
+      if (found) {
+        showMessage({
+          message: 'Category already exists',
+          type: 'danger',
+          floating: true,
+          
+        })
+        return found
+      }
 
-    const list = userObject.categories;
+      else {
 
-    let obj = searchByName(name, list);
+         // create new category
+      let category = new Category({
+        id: uuidv4(),
+        name,
+        color,
+        type,
+        owner: global.storageKey,
+        version: 0,
+      });
+      if (category.type.toLowerCase() === 'income') category.color = colors.shamrockGreen;
 
-    if (obj) {
-      if (obj.type === type) {
-        // Alert.alert('Category already exists');
-      } else {
-        // create same name obj of diff type
-        obj = new Category(uuidv4(), name, color, type, global.storageKey, 0);
-
-        list.unshift(obj);
-
-        userObject.categories = list;
-
-
-        await Auth.currentAuthenticatedUser().then(() => {
+        let newCategory = await AddCategory(category).then((response) => {
           // obj = new Category(uuidv4(), name, color, type, cognito.attributes.sub, 0);
-          AddCategory(obj);
-        });
+          // console.log('response: ', response);
 
-        saveStorage(global.storageKey, userObject);
+          storage.categories.unshift(response);
 
-        setFlatlistCategoryData(list);
+          saveStorage(global.storageKey, storage);
+
+          setFlatlistCategoryData(storage.categories);
+
+          return response;
+        }).catch(err => {
+          console.log('err: ', err);
+          return category;
+        })
+
+        return newCategory;
       }
+        
+    })
 
-    }
-    if (!obj) {
-      // create new category
-      obj = new Category(uuidv4(), name, color, type, global.storageKey, 0);
-      if ((obj.type).toLowerCase() === 'income') {
-        obj.color = colors.shamrockGreen;
-      }
-      list.unshift(obj);
+    setFlatlistCategoryData([...flatlistCategoryData, result]);
 
-      userObject.categories = list;
-
-      saveStorage(global.storageKey, userObject);
-
-      setFlatlistCategoryData(list);
-    }
-    // setIsAddingCategory(false);
-
-    clearState()
-
-    return obj;
+    return result;
   };
-  const promptUserForCategoryName = async () => {
-    await Alert.prompt('Add New Category', 'Enter a name for your new category', (name) => addCategory(name, colors.white, 'EXPENSE'));
+  const promptUserForCategoryName = () => {
+    Alert.prompt(
+      'Add New Category', 'Enter a name for your new category', (name) => addCategory(name, colors.white, 'EXPENSE'));
   };
 
 
   const storeUserCategories = async (list) => {
-    const storage = await loadStorage(global.storageKey);
+    const result = await loadStorage(global.storageKey).then((storage) => {
+       storage.transactions.forEach(async (element, index) => {
+         if (list.find((item) => element.category)) {
+           console.log('element: ', element);
+           // alert('message?: DOMString')
+           await UpdateTransaction(element).then(async (response)  => {
+             console.log('response: ', response);
+             element = response;
 
-    storage.categories = list;
+             await UpdateCategory(response.category).then((response) => {
+               console.log('response: ', response);
+               return response
+             }).catch((err) => {
+               AddCategory(response.category);
+             })
+             return response;
+           }).catch((err) => {
+             console.log('err: ', err);
+             return element;
+           })
+         }
+         // await UpdateTransaction(element)
+         // statements
+       });
+    })
 
-    saveStorage(global.storageKey, storage);
+    // storage.categories = list;
+
+    // saveStorage(global.storageKey, storage);
+
   };
   const filterCategories = (local, online) => {
   let items = local.concat(online);
@@ -631,16 +671,40 @@ export default function CustomizeCategoriesScreen({ navigation }) {
     // setIsLoading(false);
   }
 
-  // useEffect(() => {
-  //   setFlatlistData(getFlatListDataFromObject(colors).concat(getFlatListDataFromObject(getCrayolaColors())))
-    
-  //   return () => {
-  //     // effect
-  //     clearState()
-  //     // setIsReady(true);
+  const loadResources = async () => {
+    const result = await ListCategories()
+    .then((online_categories) => {
+     console.log('online_categories.length: ', online_categories.length);
+     console.log('flatlistCategoryData.length: ', flatlistCategoryData.length);
+     let merged = flatlistCategoryData.concat(online_categories);
 
-  //   };
-  // }, [])
+     let filtered_categories = merged.map((item) => getHighestVersionItemById({
+       arr: merged,
+       filter: item,
+     }))
+     filtered_categories = filtered_categories.filter((item) => item.name)
+     console.log('filtered_categories.length: ', filtered_categories.length);
+
+     let uniques = getUniqueId(filtered_categories)
+     console.log('uniques.length: ', uniques.length);
+     setFlatlistCategoryData(uniques)
+     return uniques;
+    }).catch((err) => {
+     return err;
+    })
+    return result;
+  }
+
+  useEffect(() => {
+   
+    // loadResources()
+    return () => {
+      // effect
+      // clearState()
+      // setIsReady(true);
+
+    };
+  }, [])
 
   useEffect(() => {
     if (currentCategory) {

@@ -177,7 +177,7 @@ function ProfileUserImage({ style, avatarImage, }) {
   );
   // this handles the imagse upload to S3
   const handleImagePicked = async (imageResult) => {
-    const settings = await loadStorage(global.storageKey);
+    
 
     // const imageName = imageResult.uri.replace(/^.*[\\\/]/, '');
     // console.log('imageName: ', imageName);
@@ -188,11 +188,11 @@ function ProfileUserImage({ style, avatarImage, }) {
     fetch(imageResult.uri).then((response) => {
       setIsLoading(true);
 
-      setTimeout(() => {
-        setIsLoading(false);
+      // setTimeout(() => {
+      //   setIsLoading(false);
 
-        setIsReady(true);
-      }, 3000);
+      //   setIsReady(true);
+      // }, 3000);
       response.blob()
         .then((blob) => {
           // Storage.put(`@${global.storageKey}/${imageName}`, blob, access)
@@ -205,24 +205,29 @@ function ProfileUserImage({ style, avatarImage, }) {
                 const stored = await Storage.get(succ.key, {level:  'public'});
                 // `@${global.storageKey}/picture.jpg`
 
-
-
-
                 // console.log('stored: ', stored);
 
                 // let settings = await loadStorage(global.storageKey);
 
-                settings.user.image_url = stored;
+                const local = await loadStorage(global.storageKey).then((settings) => {
+                    settings.user.image_url = { uri: stored }
 
-                saveStorage(global.storageKey, settings);
+                    saveStorage(global.storageKey, settings);
 
-                setImage({ uri: settings.user.image_url });
-
-                // setImage(global.avatar);
+                    return ({ uri: settings.user.image_url });
+                }).catch((err) => {
+                  console.log('err: ', err);
+                })
 
                 // setIsLoading(false);
 
                 // setIsReady(true);
+
+                setImage(local);
+
+                setIsLoading(false);
+
+                setIsReady(true);
 
                 // console.log('successfully stored image', succ);
               } catch (e) {
@@ -234,18 +239,21 @@ function ProfileUserImage({ style, avatarImage, }) {
                 console.log('Error on succ:', e);
               }
             });
+
+
+            
         });
     });
 
-    settings.user.image_url = imageResult.uri;
+    // settings.user.image_url = imageResult.uri;
 
-    saveStorage(global.storageKey, settings);
+    // saveStorage(global.storageKey, settings);
 
-    setImage({ uri: settings.user.image_url });
+    // setImage({ uri: settings.user.image_url });
 
-    setIsLoading(false);
+    // setIsLoading(false);
 
-    setIsReady(true);
+    // setIsReady(true);
   };
   const getImage = async () => {
     // if (!(await isDeviceOnline())) return

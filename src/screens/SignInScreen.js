@@ -1,29 +1,4 @@
-import React, { useState, useEffect,  useRef } from 'react';
-
-import PropTypes from 'prop-types';
-
-import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
-
-import { NetworkConsumer } from 'react-native-offline';
-
-import { showMessage, hideMessage } from "react-native-flash-message";
-
-import FacebookLogin from '../components/FacebookLoginButton';
-
-// import the Analytics category
-// import Analytics from '@aws-amplify/analytics';
-// Analytics.record({ name: String!, attributes: Object, metrics: Object })
-
-import Amplify from '@aws-amplify/core';
-import config from '../../aws-exports';
-Amplify.configure(config);
-
-// Analytics.record({ name: "User authenticated!" });
-// console.log('Analytics recorded user authenticated!');
-
-import SpinnerMask from 'components/SpinnerMask';
-
-import HelpMessage from 'components/HelpMessage';
+import React, { useState, useEffect, useRef } from 'react';
 
 import {
   // StyleSheet,
@@ -36,7 +11,7 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Keyboard,
-  Alert,
+  // Alert,
   // Animated,
 } from 'react-native';
 
@@ -50,15 +25,32 @@ import {
   Item,
   Input,
 } from 'native-base';
+// import PropTypes from 'prop-types';
+
+import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
+
+// import { NetworkConsumer } from 'react-native-offline';
+
+import SpinnerMask from 'components/SpinnerMask';
+
+import HelpMessage from 'components/HelpMessage';
+
+import { showMessage } from 'react-native-flash-message';
+
+// import FacebookLogin from '../components/FacebookLoginButton';
 
 import {
-  loadSettingsStorage,
-  saveSettingsStorage,
-} from '../../src/storage/SettingsStorage';
+  loadStorage,
+  saveStorage,
+} from 'controllers/Storage';
 
-// import { Asset } from 'expo-asset';
+// import the Analytics category
+// import Analytics from '@aws-amplify/analytics';
+// Analytics.record({ name: String!, attributes: Object, metrics: Object })
 
-// import { AppLoading } from 'expo';
+import Amplify from '@aws-amplify/core';
+
+import Dialog from 'react-native-dialog';
 
 // AWS Amplify
 import Auth from '@aws-amplify/auth';
@@ -66,66 +58,52 @@ import Auth from '@aws-amplify/auth';
 // ui colors
 import colors from 'src/colors';
 
+// import isValidEmail from 'functions/isValidEmail';
+
+import uuidv4 from 'functions/uuidv4';
+
+import getButtonStyle from 'functions/getButtonStyle';
+
+// import isValidUsername from 'functions/isValidUsername';
+
 import styles from '../../styles';
 
 import OfflineScreen from './OfflineScreen';
 
 // import { getButtonStyle } from './functions';
 
-import getButtonStyle from '../../src/functions/getButtonStyle';
+import config from '../../aws-exports';
 
-import isValidUsername from '../../src/functions/isValidUsername';
+Amplify.configure(config);
 
-import isValidEmail from '../../src/functions/isValidEmail';
+// Analytics.record({ name: "User authenticated!" });
+// console.log('Analytics recorded user authenticated!');
 
-import Dialog from "react-native-dialog";
+// import { Asset } from 'expo-asset';
 
-import uuidv4 from '../functions/uuidv4';
+// import { AppLoading } from 'expo';
 
-import AppleSignInButton from '../components/AppleSignInButton';
-
-{/**
-<AppleAuthentication.AppleAuthenticationButton
-  onPress={onSignIn}
-  buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-  buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-  style={{ width: 200, height: 64 }} // You must choose default size
-/>
-
-
-
-
-function appleSignInCallback(authResult) {
-     // Add the apple's id token to the Cognito credentials login map.
-     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'IDENTITY_POOL_ID',
-        Logins: {
-           'appleid.apple.com': authResult['id_token']
-        }
-     });
-
-     // Obtain AWS credentials
-     AWS.config.credentials.get(function(){
-        // Access AWS resources here.
-     });
-}
-*/}
+// import AppleSignInButton from '../components/AppleSignInButton';
 
 function SignInScreen({ navigation }) {
   // state hooks
   // const usernameInputRef = useRef(null);
+  const inputData = navigation.getParam('inputData');
+  // console.log('inputData: ', inputData);
+
+  // const emailAddressProp = inputData.emailAddress;
+
+  // const passwordProp = inputData.password;
 
   const passwordInputRef = useRef(null);
 
   const emailInputRef = useRef(null);
 
-  const emailProps = navigation.getParam('email');
+  const [password, setPassword] = useState((inputData) ? inputData.password : '');
 
-  const [email, setEmail] = useState(emailProps);
+  const [email, setEmail] = useState((inputData) ? inputData.emailAddress : '');
 
-  const [username, setUsername] = useState(global.emailAddressInput);
-
-  const [password, setPassword] = useState(global.passwordInput);
+  // const [username, setUsername] = useState('');
 
   const [authCode, setAuthCode] = useState(null);
 
@@ -133,7 +111,7 @@ function SignInScreen({ navigation }) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [helpMessage, setHelpMessage] = useState(null);
+  const [helpMessage, setHelpMessage] = useState('');
 
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 
@@ -156,8 +134,6 @@ function SignInScreen({ navigation }) {
   function okDialogueBtnPressed() {
     setIsDialogVisible(false);
   }
-
-
   const confirmationDialog = (
     <View>
       <Dialog.Container visible={isDialogVisible}>
@@ -170,8 +146,6 @@ function SignInScreen({ navigation }) {
       </Dialog.Container>
     </View>
   );
-
-
   // Resend code if not received already
   async function resendSignUp() {
     // let isSuccessful = false;
@@ -189,27 +163,32 @@ function SignInScreen({ navigation }) {
       .then(() => {
         // Alert.alert('Confirmation code resent successfully!');
         setHelpMessage('Confirmation code resent successfully!');
+        showMessage({
+          message: 'Success',
+          description: 'Confirmation code resent successfully!',
+          type: 'success',
+          floating: true,
+          position: 'top',
+        })
         // setDialogTitle('Confirmation code resent successfully!');
         // setIsDialogVisible(true);
         // console.log('Confirmation code resent successfully');
       })
       .catch((err) => {
-        if (!err.message) {
+        if (err.message) {
           // console.log('Error requesting new confirmation code: ', err);
           // Alert.alert('Error requesting new confirmation code: ', err);
-          setHelpMessage('Error requesting new confirmation code');
+          setHelpMessage(err.message);
           // setDialogMessage(err);
           // setIsDialogVisible(true);
-
+          showMessage({
+            message: err.message,
+            // description: 'Confirmation code resent successfully!',
+            type: 'danger',
+            floating: true,
+            position: 'top',
+          })
         }
-        // else {
-        //   // console.log('Error requesting new confirmation code: ', err.message);
-        //   // Alert.alert('Error requesting new confirmation code: ', err.message);
-        //   setHelpMessage('Error requesting new confirmation code: ', err);
-        //   // setDialogTitle(err);
-        //   // setDialogMessage(err.message);
-        //   // setIsDialogVisible(true);
-        // }
       });
   }
 
@@ -234,8 +213,8 @@ function SignInScreen({ navigation }) {
           // console.log('Confirm sign up successful');
           // Alert.alert('Confirm sign up successful');
           // global.isConfirmSent = false
-          setIsConfirmVisible(false)
-          navigation.navigate('SignIn')
+          setIsConfirmVisible(false);
+          navigation.navigate('SignIn');
         })
         .catch((err) => {
           if (!err.message) {
@@ -247,7 +226,6 @@ function SignInScreen({ navigation }) {
     }
     if (isSuccessful) {
       setIsConfirmVisible(false);
-
     }
   }
 
@@ -565,7 +543,7 @@ function SignInScreen({ navigation }) {
     global.avatar = Image_Http_URL;
 
 
-    let storage = await loadSettingsStorage(global.storageKey);
+    let storage = await loadStorage(global.storageKey);
 
     // global.storageKey = userData.id
 
@@ -587,7 +565,7 @@ function SignInScreen({ navigation }) {
 
     storage.user.image_url = userData.picture.data.url;
 
-    saveSettingsStorage(global.storageKey, storage);
+    saveStorage(global.storageKey, storage);
 
     console.log('storage: ', storage);
 
@@ -822,14 +800,14 @@ function SignInScreen({ navigation }) {
 
     //   let userFullName = authResult.fullName.givenName + ' ' + authResult.fullName.familyName
 
-    //   let settings = await loadSettingsStorage(global.storageKey);
+    //   let settings = await loadStorage(global.storageKey);
 
     //   // if (userEmail) settings.user.email = userEmail
 
     //   if (userFullName) settings.user.full_name = userFullName
     //   settings.user.full_name = userFullName;
 
-    //   saveSettingsStorage(global.storageKey, settings);
+    //   saveStorage(global.storageKey, settings);
     // }
 
 
@@ -849,14 +827,14 @@ function SignInScreen({ navigation }) {
 
     // let userFullName = authResult.fullName.givenName + ' ' + authResult.fullName.familyName
 
-    // let settings = await loadSettingsStorage(global.storageKey);
+    // let settings = await loadStorage(global.storageKey);
 
     // if (userEmail) settings.user.email = userEmail
 
     // if (userFullName) settings.user.full_name = userFullName
     // // settings.user.name = userFullName;
 
-    // saveSettingsStorage(global.storageKey, settings);
+    // saveStorage(global.storageKey, settings);
 
     // // global.isFederated = true;
     
@@ -933,11 +911,11 @@ SignInScreen.navigationOptions = () => {
   return navbar;
 };
 
-SignInScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
+// SignInScreen.propTypes = {
+//   navigation: PropTypes.shape({
+//     navigate: PropTypes.func.isRequired,
+//   }).isRequired,
+// };
 
 
 export default SignInScreen;
@@ -993,8 +971,8 @@ export default SignInScreen;
 // } from 'native-base';
 
 // import {
-//   loadSettingsStorage,
-//   saveSettingsStorage,
+//   loadStorage,
+//   saveStorage,
 // } from '../storage/SettingsStorage';
 
 // // import { Asset } from 'expo-asset';
@@ -1182,13 +1160,13 @@ export default SignInScreen;
 
 //       try {
         
-//         let storage = await loadSettingsStorage(global.storageKey)
+//         let storage = await loadStorage(global.storageKey)
 
 //         storage.user.email = global.emailAddressInput
         
 //         console.log('storage: ', storage);
 
-//         saveSettingsStorage(global.storageKey, storage)
+//         saveStorage(global.storageKey, storage)
 //       } catch(e) {
 //         // statements
 //         console.log('e:',e);

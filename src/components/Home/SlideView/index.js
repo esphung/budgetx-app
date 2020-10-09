@@ -51,6 +51,7 @@ const SlideView = ({
   currentType,
   updateTransactionAmount,
   updateTransactionDate,
+  closeSlideView,
 }) => {
   const amountInputRef = useRef(null);
 
@@ -89,7 +90,8 @@ const SlideView = ({
     >
       <SlideViewSeparator />
       <TouchableOpacity
-        disabled
+        // disabled
+        onPress={closeSlideView}
         style={styles.dateLabel}
       >
         <View style={styles.dateAmountRectangle}>
@@ -103,18 +105,7 @@ const SlideView = ({
         </View>
       </TouchableOpacity>
       <View style={styles.card}>
-        {
-          isFocusedNoteInput &&
-          <View style={styles.scrollingPillsFlatlist}>
-          <ScrollingPills
-            categoryBtnPressed={categoryBtnPressed}
-            currentCategories={currentCategories}
-            isCurrentCategory={isCurrentCategory}
-            currentCategory={currentCategory}
-            updateTransactionCategory={updateTransactionCategory}
-          />
-        </View>
-      }
+        
         <View style={styles.noteTextInput}>
           <NoteTextInput
             refField={noteTextInputRef}
@@ -127,6 +118,18 @@ const SlideView = ({
             isFocusedNoteInput={isFocusedNoteInput}
           />
         </View>
+        {
+          isFocusedNoteInput &&
+          <View style={styles.scrollingPillsFlatlist}>
+          <ScrollingPills
+            categoryBtnPressed={categoryBtnPressed}
+            currentCategories={currentCategories}
+            isCurrentCategory={isCurrentCategory}
+            currentCategory={currentCategory}
+            updateTransactionCategory={updateTransactionCategory}
+          />
+        </View>
+      }
         <View style={styles.amountInput}>
           <AmountInput
             refField={amountInputRef}

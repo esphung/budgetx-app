@@ -85,7 +85,7 @@ const BottomSheet = ({
     duration: 300,
   });
   const _closeAnim = Animated.timing(panY, {
-    toValue: Dimensions.get('screen').height * 0.8,
+    toValue: Dimensions.get('screen').height * 0.7,
     duration: 500,
   });
 
@@ -108,7 +108,7 @@ const BottomSheet = ({
       // console.log('e: ', e);
       // ill decide if it should dismiss or reset the modal,
       // based on the direction (dy) and speed (vy) of the gesture
-      if (gs.dy > 0 && gs.vy > 2) {
+      if (gs.dy > 0 && gs.vy > 0.3) {
         return _closeAnim.start(() => onDismiss());
       }
       return _resetPositionAnim.start();

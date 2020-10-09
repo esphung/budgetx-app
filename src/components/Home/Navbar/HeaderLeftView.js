@@ -52,7 +52,9 @@ const HeaderLeftView = ({
     if (isValidEmail(sender.nativeEvent.text)) {
       // valid email input format
       navigation.navigate('SignUp', {
-        emailAddress,
+        inputData: {
+          emailAddress,
+        }
       });
     } else {
       showMessage({

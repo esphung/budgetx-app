@@ -159,6 +159,8 @@ const StickyTable = ({
     setStickyHeaderIndices,
   ] = useState(getTableIndices(currentTransactions));
 
+  const [itemsHighlighted, setItemsHighlighted] = useState([])
+
   /**
   |--------------------------------------------------
   | Table Refs
@@ -242,6 +244,16 @@ const StickyTable = ({
     );
     return view;
   }
+  const highlightItem = (item) => {
+    // console.log('itemsHighlighted.length: ', itemsHighlighted.length);
+    if (itemsHighlighted.includes(item)) {
+      itemsHighlighted.splice(itemsHighlighted.indexOf(item), 0);
+    } else {
+      setItemsHighlighted([item,...itemsHighlighted]);
+      scrollToItem(item);
+    }
+    // console.log('item: ', item);
+  }
   const renderItem = ({ item }) => {
     // console.log('item: ', item);
     let cell = (
@@ -267,10 +279,11 @@ const StickyTable = ({
         </View>
         <View style={styles.rowFront}>
           <StickyTableCell
+            // itemsHighlighted={itemsHighlighted}
             keyExtractor={(transaction) => transaction.id}
             item={item}
-            onPress={() => transactionBtnPressed(item)} // {() =>  scrollToItem(item)}
-            onLongPress={() => transactionBtnPressed(item)}
+            onPress={() => transactionBtnPressed(item)}
+            // onLongPress={() => transactionBtnPressed(item)}
             currentTransaction={currentTransaction}
           />
         </View>
@@ -287,9 +300,9 @@ const StickyTable = ({
     <RefreshControl
       refreshing={shouldRefresh}
       onRefresh={onPullRefresh}
-      title="Device Syncing"
-      tintColor={colors.shamrockGreen}
-      titleColor={colors.shamrockGreen}
+      // title="Device Syncing"
+      tintColor={colors.white}
+      titleColor={colors.white}
     />
   );
   useEffect(() => {
@@ -303,7 +316,7 @@ const StickyTable = ({
     setStickyHeaderIndices(getStickyIndices(headeredTableData));
   }, [flatlistData, currentTransactions]);
 
-  // const onEndReached = () => alert('Load next transactions');
+  const onEndReached = () => {};
   // console.log('currentTableHeight: ', currentTableHeight);
   /* Working  ios version of table */
   const ios_table = (
@@ -335,11 +348,11 @@ const StickyTable = ({
         refreshing={isSyncing}
         refreshControl={refreshControl}
 
-        // onEndReached={onEndReached}
+        onEndReached={onEndReached}
 
         // optimization
         // // initialNumToRender={24}
-        // windowSize={12} // {21}
+        windowSize={12} // {21}
         // removeClippedSubviews={true}
         // maxToRenderPerBatch={2}
         // onRefresh={() => alert('message?: DOMString')}

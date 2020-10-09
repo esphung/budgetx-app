@@ -86,26 +86,26 @@ async function myJSCallback() {
   })
   // 2nd code goes here
  
-  console.log('uh oh 2')
+  // console.log('uh oh 2');
 };
 
 var callback1 = async () => {
   // 1st code goes here
   await loadStorage(global.storageKey).then(async (result) => {
     if (result.isDeviceSyncEnabled) {
-
     // console.log('await ListCategories(): ', await ListCategories());
      let categoriesList = result.categories;
       if (categoriesList.length > 0) {
-        categoriesList.forEach((category) => {
-          DeleteCategory(category);
+        categoriesList.forEach(async (category) => {
+          await DeleteCategory(category);
         });
       }
     }
+    myJSCallback();
 
   });
-  console.log('uh oh 1'),
-  myJSCallback()
+  // console.log('uh oh 1'),
+  
 };
 
 
@@ -127,13 +127,21 @@ export const updateUserTransactionCategories = async (list) => {
 
   storage.transactions.forEach(async (transaction) => {
     /* Update transaction category */
-    let categoryFound = searchByID(transaction.category.id, list)
+    try {
+      // statements
+      let categoryFound = searchByID(transaction.category.id, list)
+      transaction.category = categoryFound
+    } catch(e) {
+      // statements
+      let categoryFound = searchByName(transaction.category.name, list)
+      transaction.category = categoryFound
+      console.log(e);
+    }
+    
     // transaction.category = searchByID(transaction.category.id, list);
 
-    if (!categoryFound) {
-      categoryFound = searchByName(transaction.category.name, list)
-    }
-    transaction.category = categoryFound
+    
+    
 
      // Update transaction type 
     transaction.type = transaction.category.type;
@@ -152,10 +160,12 @@ export const updateUserTransactionCategories = async (list) => {
   
 };
 
-export const resetData = async () => {
-  await loadStorage(global.storageKey).then(async (storage) => {
+async function firstFunction(){
 
-    resetTransactions();
+  // console.log('1: ');
+    // do some asynchronous work
+    let response = await loadStorage(global.storageKey).then((storage) => {
+        resetTransactions();
 
     // let {
     //   categories,
@@ -168,58 +178,85 @@ export const resetData = async () => {
 
     
 
-    saveStorage(global.storageKey, storage); // .then(() => navigation.navigate('AuthLoading'));
+    
     // console.log('storage: ', storage);
+
+    return storage;
+    })
+    // and when the asynchronous stuff is complete
+    // _callback();
+
+    return response
+}
+
+
+
+export const resetData = async ({ handleRoute }) => {
+  // let bool = await loadStorage(global.storageKey).then(async (storage) => {
+
+
+    let settings = await firstFunction(async (storage) => {
+
+      
+      
+      // // // do stuff online
+      // if (storage.isDeviceSyncEnabled) {
+      //   await ListTransactions()
+      //   .then((list) => {
+      //     // console.log('list: ', list);
+      //     list.forEach((transaction, index) => {
+      //       DeleteTransaction(transaction);
+      //       DeletePayee(transaction.payee);
+      //       // console.log('index: ', index);
+      //     });
+      //   })
+      //   // console.log('await ListCategories(): ', await ListCategories());
+      //   let categoriesList = await ListCategories();
+      //   if (categoriesList.length > 0) {
+      //     categoriesList.forEach((category) => {
+      //       DeleteCategory(category)
+      //     });
+      //   }
+
+      //   let payeesList = await ListPayees();
+      //   if (payeesList.length > 0) {
+      //     payeesList.forEach((payee) => {
+      //       DeletePayee(payee);
+      //     })
+      //   }
+
+
+
+        
+
+      //   // categories.forEach((element) => DeleteCategory(element));
+      //   // payees.forEach((element) => DeletePayee(element));
+
+      //   showMessage({
+      //     message: 'Reset completed',
+      //     type: 'success',
+      //     description: 'Success!',
+      //     floating: true,
+      //     position: 'bottom',
+      //   });
+      // }
+
+      return storage;
+    }).catch((err) => err)
+
     
-    // // do stuff online
-    if (storage.isDeviceSyncEnabled) {
-      let list = storage.transactions; // await ListTransactions()
-      // console.log('list: ', list);
-      list.forEach((transaction) => {
-        DeletePayee(transaction.payee);
-      });
+  // });
 
-      // list.forEach((transaction) => {
-      //   DeleteCategory(transaction.category)
-      // });
-
-      list.forEach((transaction) => {
-        // console.log('transaction: ', transaction);
-        DeleteTransaction(transaction);
-      });
-
-      // console.log('await ListCategories(): ', await ListCategories());
-      let categoriesList = await ListCategories();
-      if (categoriesList.length > 0) {
-        categoriesList.forEach((category) => {
-          DeleteCategory(category)
-        });
-      }
-
-      let payeesList = await ListPayees();
-      if (payeesList.length > 0) {
-        payeesList.forEach((payee) => {
-          DeletePayee(payee);
-        })
-      }
-
-      // categories.forEach((element) => DeleteCategory(element));
-      // payees.forEach((element) => DeletePayee(element));
-
-      showMessage({
-        message: 'Reset completed',
-        type: 'success',
-        description: 'Success!',
-        floating: true,
-        position: 'bottom',
-      });
-    }
-
-    
+  showMessage({
+    message: 'Reset completed',
+    type: 'success',
+    floating: true,
+    onPress: () => handleRoute('AuthLoading'),
+    autoHide: false,
   });
 
 
-
+  return settings;
 
   // AsyncStorage.getAllKeys((err, keys) => {
   //   AsyncStorage.multiGet(keys, (error, stores) => {
@@ -235,7 +272,7 @@ export const resetData = async () => {
   //     });
   //   });
   // });
-  // showMessage({ message: 'Reset completed', type: 'success' });
+  // showMessage({ message: 'Reset completed', type: 'success', floating: true, });
 
   // setIsResetingData(false);
 

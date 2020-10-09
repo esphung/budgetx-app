@@ -56,11 +56,11 @@ import colorLog from 'functions/colorLog';
 
 import {
   deleteCategory,
-} from '../graphql/mutations';
+} from 'graphql/mutations';
 
 import {
   getCategory,
-} from '../graphql/queries';
+} from 'graphql/queries';
 
 // const listCategorysGQL = gql`
 // query ListCategorys {
@@ -98,29 +98,36 @@ import {
 export const ListCategories = async () => {
     const listCategorys = `
 query ListCategories {
-  listCategorys {
+  listCategorys(limit: 1000000) {
     items {
       id
-      name
-      color
-      type
       owner
+      type
+      color
       version
+      transactions {
+        items {
+          id
+        }
+      }
     }
-    # nextToken
   }
 }
+
 `;
-  try {
-    const graphqldata = await API.graphql(graphqlOperation(listCategorys));
+  const graphqldata = await API.graphql(graphqlOperation(listCategorys))
+    .then((response) => {
+      // console.log('response.data.listCategorys: ', response.data.listCategorys);
+      // colorLog({ message: `global.storageKey: ${global.storageKey}`, color: 'blue', })
+      return response.data.listCategorys.items;
+    })
+    .catch((err) => {
+      // colorLog({ message: `ListCategories err: ${err}`, color: 'red', })
+      return [];
+    });
     // console.log('graphqldata: ', graphqldata);
-    return graphqldata.data.listCategorys.items;
-    // console.log('online categories list.length: ', list.length);
-  } catch (err) {
-    const { message } = err;
-    console.log('error fetching category list:', message);
-    return err;
-  }
+  return graphqldata;
+  // console.log('online categories list.length: ', list.length);
 };
 
 export const GetCategory = async (category) => {
@@ -156,13 +163,9 @@ const query = `mutation AddCategory {
   }
 }`
   // try {
-    const response = await API.graphql(graphqlOperation(query)).then((response) => {
-      colorLog({ message: 'category successfully added:' + category.id, color: 'yellow' });
-      return response.data.createCategory;
-    }).catch((err) => {
-      // console.log('err: ', err);
-      return category;
-    })
+    const result = await API.graphql(graphqlOperation(query))
+    .then((response) => response.data.createCategory)
+    .catch((err) => err.data.createCategory);
     
   // } catch (err) {
     // console.log('err: ', err);
@@ -173,10 +176,10 @@ const query = `mutation AddCategory {
     //   colorLog({ message: err.data.errors[0].errorType, color: 'yellow' });
     // }
   // }
+  return result;
 };
 
 export const UpdateCategory = async (category) => {
-  console.log('category: ', category);
 const query = `mutation UpdateCategory {
   updateCategory(input: {
     id: ${'"'+category.id+'"'}
@@ -194,25 +197,28 @@ const query = `mutation UpdateCategory {
     version
   }
 }`
-  try {
-    const response = await API.graphql(graphqlOperation(query));
-    // console.log('category successfully updated:', category);
-    colorLog({ message: 'category successfully updated:' + category.id, color: 'green' });
-    return response.data.updateCategory;
-  } catch (err) {
-  //   console.log('category: ', category);
-  //   // const { message } = err;
-    colorLog({ message: 'error updating category...' + category.id, color: 'red' });
-  //   // return err.message;
-  }
+  
+  const result = await API.graphql(graphqlOperation(query))
+  .then((response) => {
+    // console.log('response: ', response);
+    return response.data.updateCategory
+  })
+  .catch((err) => err.data.updateCategory);
+
+  return result;
 };
 
 export const DeleteCategory = async (category) => {
-  try {
-    await API.graphql(graphqlOperation(deleteCategory, { input: { id: category.id } }));
-    console.log('category successfully deleted.', category.id);
-  } catch (err) {
-    console.log('error deleting category...', err);
-  }
+  // alert('message?: DOMString')
+  // console.log('category: ', category);
+  const result = await API.graphql(graphqlOperation(deleteCategory, { input: { id: category.id } }))
+    .then((response) => {
+      // alert('message?: DOMString')
+      return response.data.deleteCategory})
+    .catch((err) => {
+      // alert('message?: DOMString')
+      return err.data.deleteCategory
+    });
+  return result;
 };
 

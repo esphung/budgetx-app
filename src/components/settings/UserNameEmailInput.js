@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { withNavigation } from 'react-navigation';
 
-import { Ionicons, AntDesign, Entypo } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import {
-  Alert,
+  // Alert,
   // StyleSheet,
   View,
   // Button,
@@ -13,8 +13,8 @@ import {
   Text,
   // Image,
   TextInput,
-  ActivityIndicator,
-  AsyncStorage
+  // ActivityIndicator,
+  AsyncStorage,
 } from 'react-native';
 
 import Dialog from 'react-native-dialog';
@@ -25,15 +25,13 @@ import { showMessage } from 'react-native-flash-message';
 import { Auth } from 'aws-amplify'; // import Auth from '@aws-amplify/auth';
 
 import {
-  Container,
+  // Container,
   Item,
   Input,
 } from 'native-base';
 
 // ui colors
 import colors from 'src/colors';
-
-import styles from '../../../styles';
 
 // import SpinnerMask from '../SpinnerMask';
 
@@ -42,130 +40,96 @@ import {
   saveStorage,
 } from 'controllers/Storage';
 
-import isValidEmail from '../../functions/isValidEmail';
-
 import { isDeviceOnline } from 'controllers/Network';
 
-const spinnerView = (
-  <View
-    style={
-      {
-        // flex: 1,
-        justifyContent: 'center',
-        // alignItems: 'center',
-        // backgroundColor: colors.dark,
-        position: 'absolute',
-        top:  0,
-        bottom: 0,
-        left: 0,
-        right: 0
-      }
-    }
-  >
-    <ActivityIndicator size="large" color={colors.offWhite} />
-  </View>
-);
+import isValidEmail from 'functions/isValidEmail';
+
+import styles from '../../../styles';
+
+// const spinnerView = (
+//   <View
+//     style={
+//       {
+//         // flex: 1,
+//         justifyContent: 'center',
+//         // alignItems: 'center',
+//         // backgroundColor: colors.dark,
+//         position: 'absolute',
+//         top:  0,
+//         bottom: 0,
+//         left: 0,
+//         right: 0
+//       }
+//     }
+//   >
+//     <ActivityIndicator size="large" color={colors.offWhite} />
+//   </View>
+// );
 
 function UserNameEmailInput(props) {
   const { navigation } = props;
 
-  const isUserLoggedIn = navigation.getParam('isUserLoggedIn')
+  const isUserLoggedIn = navigation.getParam('isUserLoggedIn');
 
-  const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
+  // const [isSignUpDisabled, setIsSignUpDisabled] = useState(false);
 
-  const [idLabelText, setCurrentIdText] = useState('Id');
+  // const [idLabelText, setCurrentIdText] = useState('Id');
 
-  const [emailLabelText, setEmailLabelText] = useState('Email');
+  // const [emailLabelText, setEmailLabelText] = useState('Email');
 
-  const [uniqueId, setUniqueId] = useState('');
+  // const [uniqueId, setUniqueId] = useState('');
 
   const [email, setEmail] = useState(global.emailAddressInput);
 
   const [name, setName] = useState('');
 
-  const [shouldAuthCodeAutoFocus, setShouldAuthCodeAutoFocus] = useState(false);
+  // const [shouldAuthCodeAutoFocus, setShouldAuthCodeAutoFocus] = useState(false);
 
-  const [shouldClearNameInput] = useState(false);
+  // const [shouldClearNameInput] = useState(false);
 
   const [codeSent, setCodeSent] = useState(false);
 
   const [isConfirming, setIsConfirming] = useState(false);
 
-  const [isSendingCode, setIsSendingCode] = useState(false);
+  // const [isSendingCode, setIsSendingCode] = useState(false);
 
-  const [authCode, setAuthCode] = useState('')
-
+  const [authCode, setAuthCode] = useState('');
 
   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
-  const [isError, setIsError] = useState(false);
+  // const [isError, setIsError] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState('');
+  // const [errorMessage, setErrorMessage] = useState('');
 
   const authCodeInputRef = useRef(null);
 
-  const [isReady, setIsReady] = useState(false);
+  // const [isReady, setIsReady] = useState(false);
 
-  function submitNewEmailAddress (email) {
+  function submitNewEmailAddress() {
     // body...
 
-    props.navigation.navigate('SignUp');
+    props.navigation.navigate('SignUp', {
+      inputData: {
+        emailAddress: email,
+      },
+    });
   }
 
-  async function verifyNewEmailAddress (email) {
-    setIsSendingCode(true);
-
-    try {
-      const user = await Auth.currentAuthenticatedUser();
-      await Auth.updateUserAttributes(user, { email: email });
-      setCodeSent(true);
-      showMessage({ message:'Code sent to this email address:', description: email, duration: 3550})
-
-      authCodeInputRef.current._root.focus(); // set cursor to field
-    } catch (error) {
-      // onError(error);
-      console.warn('error: ', error);
-      setIsSendingCode(false);
-    }
-
-    setIsSendingCode(false);
-
-    // setIsConfirming(true);
-
-    // try {
-    //   await Auth.verifyCurrentUserAttributeSubmit("email", authCode);
-
-    //   // history.push("/settings");
-
-    // } catch (error) {
-    //   // onError(error);
-    //   console.log('error: ', error);
-    //   setIsConfirming(false);
-    // }
-  }
-
-  async function handleConfirmClick () {
-    // event.preventDefault();
+  async function handleConfirmClick(event) {
+    event.preventDefault();
 
     if (!authCode) {
       // showMessage('Enter a code')
       showMessage({
-          message: 'Enter a code',
-          // duration: 550,
-          position: 'bottom',
-
-          // description: "My message description",
-          // type: 'success', // "success", "info", "warning", "danger"
-          // backgroundColor: colors.dark, // "purple", // background color
-          color: colors.pinkRed, // "#606060", // text color
-          opacity: 1,
-
-          textStyle: styles.textStyle,
-
-          // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
-        });
-        return
-      }
+        message: 'Enter a code',
+        position: 'bottom',
+        floating: true,
+        description: 'No verification code provided',
+        type: 'danger',
+        // icon: { icon: 'auto', position: 'right' }, // "none" (default), "auto" (guided by type)
+      });
+      return;
+    }
 
     setIsConfirming(true);
 
@@ -334,7 +298,7 @@ function UserNameEmailInput(props) {
   function submit(key, value) {
     // console.log(key + ':', value);
     if (key === 'name') {
-      setUniqueId(value);
+      // setUniqueId(value);
     } else if (key === 'email') {
       // setEmail(value);
       handleEmailSubmit(value)
@@ -367,7 +331,7 @@ function UserNameEmailInput(props) {
   async function handleEmailSubmit(event) {
     // event.preventDefault();
 
-    setIsSendingCode(true);
+    // setIsSendingCode(true);
     
 
     // setIsConfirming(true);
@@ -401,7 +365,7 @@ function UserNameEmailInput(props) {
       //     setCodeSent(false);
       //   })
       // })
-      setCodeSent(true);
+      // setCodeSent(true);
       // .catch(e => {
       //   showMessage(e.message)
 
@@ -444,7 +408,7 @@ function UserNameEmailInput(props) {
     } catch (error) {
       // onError(error);
       console.log('error: ', error);
-      setIsSendingCode(false);
+      // setIsSendingCode(false);
 
 
 
@@ -467,9 +431,9 @@ function UserNameEmailInput(props) {
     console.log('email: ', email);
   }
 
-  function handleTextChange(text) {
-    setUniqueId(text);
-  }
+  // function handleTextChange(text) {
+  //   setUniqueId(text);
+  // }
 
   function handleEmailChange(text) {
     setEmail(text);
@@ -516,7 +480,7 @@ function UserNameEmailInput(props) {
   async function loadResources() {
     const storage = await loadStorage(global.storageKey);
 
-    setUniqueId(storage.user.id);
+    // setUniqueId(storage.user.id);
 
     if (!storage.user.full_name) {
       setName(storage.user.name);
@@ -530,9 +494,9 @@ function UserNameEmailInput(props) {
       setEmail(cognito.attributes.email);
       // setName(cognito.attributes['custom:name'])
 
-      setIsReady(true);
+      // setIsReady(true);
     }).catch(() => {
-      setIsReady(true);
+      // setIsReady(true);
     })
 
     
@@ -570,7 +534,7 @@ function UserNameEmailInput(props) {
     >
 
     {
-      (isConfirming || !isReady) && spinnerView
+      isConfirming
     }
     <View style={{
       flex: 1,
@@ -699,9 +663,7 @@ function UserNameEmailInput(props) {
         }
         >
         {/*<Entypo name="email" size={styles.iconStyle.fontSize} color={colors.white} />*/}
-        {
-          emailLabelText
-        }
+          Email
         </Text>
         <TextInput
           style={[
